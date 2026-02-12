@@ -6,3 +6,5 @@ node_modules/
 # Protect source — only obfuscated dist/ is pushed
 src/
 obfuscate.js
+/index.html
+/vite.config.js
