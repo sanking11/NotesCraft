@@ -1,5 +1,8 @@
 node_modules/
-dist/
 .vite/
 .DS_Store
 *.local
+
+# Protect source — only obfuscated dist/ is pushed
+src/
+obfuscate.js
