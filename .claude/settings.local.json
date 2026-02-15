@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npx vite:*)"
+      "Bash(npx vite:*)",
+      "Bash(dir:*)",
+      "Bash(npm run build:protected:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(taskkill:*)"
     ]
   }
 }
