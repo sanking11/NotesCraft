@@ -5,7 +5,17 @@
       "Bash(dir:*)",
       "Bash(npm run build:protected:*)",
       "Bash(powershell -Command:*)",
-      "Bash(taskkill:*)"
+      "Bash(taskkill:*)",
+      "Bash(git add:*)",
+      "Bash(git rm:*)",
+      "WebFetch(domain:api.github.com)",
+      "Bash(curl:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:gun.eco)",
+      "Bash(nslookup:*)",
+      "Bash(netstat:*)"
     ]
   }
 }
