@@ -1406,9 +1406,9 @@ html{scroll-behavior:smooth}`;
         <div style={{position:"absolute",bottom:0,left:0,width:100,height:100,borderLeft:`1.5px solid rgba(${T.accentRgb},0.25)`,borderBottom:`1.5px solid rgba(${T.accentRgb},0.25)`,margin:20,animation:"borderGlow 3s ease-in-out infinite 1.5s"}}/>
         <div style={{position:"absolute",bottom:0,right:0,width:100,height:100,borderRight:`1.5px solid rgba(${T.accentRgb},0.25)`,borderBottom:`1px solid rgba(${T.accentRgb},0.25)`,margin:20,animation:"borderGlow 3s ease-in-out infinite 2.25s"}}/>
 
-        {/* Centering layer — scroll container + grid for safe centering */}
+        {/* Centering layer */}
         <div style={{position:"absolute",inset:0,overflowY:"auto",zIndex:10}}>
-        <div style={{minHeight:"100%",display:"grid",placeItems:"center",padding:"20px 20px 80px",boxSizing:"border-box"}}>
+        <div style={{minHeight:"100%",display:"grid",placeContent:"center",justifyItems:"center",padding:"20px 20px 80px",boxSizing:"border-box"}}>
         <div style={{textAlign:"center",animation:shake?"shake 0.6s":"fadeUp 0.5s ease-out both",width:400,maxWidth:"100%",padding:"28px 28px",borderRadius:20,background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.08)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:`1px solid rgba(${T.accentRgb},0.2)`,boxShadow:`0 8px 40px rgba(0,0,0,0.25), 0 0 80px rgba(${T.accentRgb},0.08), inset 0 0 0 1px rgba(255,255,255,${T.dark?0.06:0.12}), inset 0 1px 0 rgba(255,255,255,${T.dark?0.08:0.15})`}}>
           {/* Butterfly logo — flying animation (protected) */}
           <div onContextMenu={e=>e.preventDefault()} onDragStart={e=>e.preventDefault()} style={{margin:"0 auto 12px",animation:"butterflyFly 18s ease-in-out infinite",filter:`drop-shadow(0 4px 20px rgba(${T.accentRgb},0.4))`,userSelect:"none",WebkitUserDrag:"none",position:"relative"}}>
