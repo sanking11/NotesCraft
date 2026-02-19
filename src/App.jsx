@@ -1309,7 +1309,7 @@ html{scroll-behavior:smooth}`;
           <div style={{display:"flex",alignItems:"center",gap:20}}>
             <a href="#features" className="ld-nav-btn" style={{color:"rgba(226,232,240,0.8)",fontSize:13,fontWeight:500,textDecoration:"none",fontFamily:"inherit"}}>Features</a>
             <a href="#pricing" className="ld-nav-btn" style={{color:"rgba(226,232,240,0.8)",fontSize:13,fontWeight:500,textDecoration:"none",fontFamily:"inherit"}}>Pricing</a>
-            <button onClick={()=>goAuth("login")} className="ld-nav-btn" style={{background:"none",border:`1px solid rgba(${T.accentRgb},0.25)`,borderRadius:8,padding:"8px 20px",color:T.dark?T.text:"#e2e8f0",fontSize:13,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1}}>Sign In</button>
+            <button onClick={()=>goAuth("login")} className="ld-nav-btn" style={{background:`rgba(${T.accentRgb},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,borderRadius:8,padding:"8px 20px",color:T.dark?T.text:"#e2e8f0",fontSize:13,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1}}>Sign In</button>
           </div>
         </nav>
 
@@ -1328,7 +1328,7 @@ html{scroll-behavior:smooth}`;
           <p style={{fontSize:"clamp(16px,2vw,22px)",maxWidth:600,lineHeight:1.7,marginTop:24,color:"#cbd5e1",fontWeight:300,animation:"ldTextReveal 1s ease-out 0.6s both"}}>Privacy isn't an add-on. It's built into every word.</p>
           <div style={{display:"flex",gap:16,marginTop:40,flexWrap:"wrap",justifyContent:"center",animation:"ldTextReveal 1s ease-out 0.8s both"}}>
             <button onClick={()=>goAuth("login")} className="ld-cta" style={{padding:"16px 36px",background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:12,color:"#fff",fontSize:15,fontWeight:700,fontFamily:`${F.heading},sans-serif`,cursor:"pointer",letterSpacing:2,boxShadow:`0 4px 25px rgba(${T.accentRgb},0.35)`}}>START WRITING SECURELY</button>
-            <a href="#features" className="ld-cta-ghost" style={{padding:"16px 36px",background:"transparent",border:`1px solid rgba(${T.accentRgb},0.25)`,borderRadius:12,color:T.dark?T.text:"#e2e8f0",fontSize:15,fontWeight:600,fontFamily:`${F.heading},sans-serif`,cursor:"pointer",letterSpacing:1,textDecoration:"none",display:"inline-flex",alignItems:"center",gap:8}}>SEE HOW IT WORKS <span style={{fontSize:18}}>↓</span></a>
+            <a href="#features" className="ld-cta-ghost" style={{padding:"16px 36px",background:`rgba(${T.accentRgb},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,borderRadius:12,color:T.dark?T.text:"#e2e8f0",fontSize:15,fontWeight:600,fontFamily:`${F.heading},sans-serif`,cursor:"pointer",letterSpacing:1,textDecoration:"none",display:"inline-flex",alignItems:"center",gap:8}}>SEE HOW IT WORKS <span style={{fontSize:18}}>↓</span></a>
           </div>
           {/* Scroll hint */}
           <div style={{position:"absolute",bottom:40,animation:"ldFloat 3s ease-in-out infinite",opacity:0.4}}>
@@ -1445,7 +1445,7 @@ html{scroll-behavior:smooth}`;
                     </div>
                   ))}
                 </div>
-                <button onClick={()=>goAuth("login")} className={p.pop?"ld-cta":"ld-cta-ghost"} style={{width:"100%",padding:"14px 0",borderRadius:10,fontSize:14,fontWeight:700,fontFamily:`${F.heading},sans-serif`,cursor:"pointer",letterSpacing:2,...(p.pop?{background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",color:"#fff",boxShadow:`0 4px 20px rgba(${T.accentRgb},0.3)`}:{background:"transparent",border:`1px solid rgba(${T.accentRgb},0.2)`,color:T.dark?T.text:"#e2e8f0"})}}>{p.cta}</button>
+                <button onClick={()=>goAuth("login")} className={p.pop?"ld-cta":"ld-cta-ghost"} style={{width:"100%",padding:"14px 0",borderRadius:10,fontSize:14,fontWeight:700,fontFamily:`${F.heading},sans-serif`,cursor:"pointer",letterSpacing:2,...(p.pop?{background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",color:"#fff",boxShadow:`0 4px 20px rgba(${T.accentRgb},0.3)`}:{background:`rgba(${T.accentRgb},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,color:T.dark?T.text:"#e2e8f0"})}}>{p.cta}</button>
               </div>
             ))}
           </div>
