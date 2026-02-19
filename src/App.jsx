@@ -1316,9 +1316,6 @@ html{scroll-behavior:smooth}`;
           <div style={{animation:"ldTextReveal 1s ease-out, butterflyFly 20s ease-in-out infinite",marginBottom:20,filter:`drop-shadow(0 4px 20px rgba(${T.accentRgb},0.4))`}}>
             <ButterflyLogo s={64} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} flap/>
           </div>
-          <div style={{position:"absolute",top:"22%",left:"55%",animation:"butterflyFly2 24s ease-in-out infinite 3s",filter:`drop-shadow(0 3px 15px rgba(${T.accentRgb},0.3))`,opacity:0.7,pointerEvents:"none"}}>
-            <ButterflyLogo s={38} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} flap/>
-          </div>
           <h1 style={{fontSize:"clamp(48px,8vw,88px)",fontWeight:900,letterSpacing:"clamp(6px,1.5vw,16px)",fontFamily:`${F.heading},sans-serif`,margin:0,lineHeight:1.1,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 20%,${T.accent} 50%,${T.accent2||T.accent} 80%)`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",animation:"ldTextReveal 1s ease-out 0.2s both"}}>NOTESCRAFT</h1>
           <p style={{fontSize:"clamp(10px,1.2vw,13px)",fontWeight:500,letterSpacing:5,textTransform:"uppercase",color:T.accent,marginTop:16,animation:"ldTextReveal 1s ease-out 0.4s both"}}>Where privacy is part of the craft</p>
           <p style={{fontSize:"clamp(16px,2vw,22px)",maxWidth:600,lineHeight:1.7,marginTop:24,color:"#cbd5e1",fontWeight:300,animation:"ldTextReveal 1s ease-out 0.6s both"}}>Privacy isn't an add-on. It's built into every word.</p>
