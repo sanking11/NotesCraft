@@ -2052,7 +2052,7 @@ html{scroll-behavior:smooth}`;
                 <div style={{display:"flex",alignItems:"center",gap:3,whiteSpace:"nowrap"}}>
                   <span style={{fontSize:8,fontWeight:700,color:a.color,flexShrink:0}}>{a.label}</span>
                   <span style={{color:"rgba(255,255,255,0.15)",fontSize:7}}>│</span>
-                  {a.checks.map((c,i)=><span key={i} style={{fontSize:7,color:c.ok?"#22c55e":"rgba(239,68,68,0.7)",display:"flex",alignItems:"center",gap:1}}>{c.ok?"✓":"✗"}{c.label}</span>)}
+                  {a.checks.map((c,i)=><span key={i} style={{fontSize:9,color:c.ok?"#22c55e":"rgba(239,68,68,0.7)",display:"flex",alignItems:"center",gap:1}}>{c.ok?"✓":"✗"}{c.label}</span>)}
                 </div>
               </div>
             )})()}
