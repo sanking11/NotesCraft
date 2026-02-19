@@ -1118,6 +1118,12 @@ input:focus,textarea:focus{border-color:rgba(${T.accentRgb},0.4)!important;box-s
 @keyframes ldFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
 @keyframes ldPulseRing{0%{transform:scale(0.8);opacity:0.6}100%{transform:scale(2.5);opacity:0}}
 @keyframes ldGridFlow{0%{background-position:0 0}100%{background-position:60px 60px}}
+@keyframes neoGridScroll{0%{background-position:0 0}100%{background-position:0 60px}}
+@keyframes neoFloat1{0%,100%{transform:translateY(0)}50%{transform:translateY(-22px)}}
+@keyframes neoFloat2{0%,100%{transform:translateY(0)}50%{transform:translateY(-30px)}}
+@keyframes neoFloat3{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+@keyframes neoPulse{0%,100%{opacity:0.25}50%{opacity:0.65}}
+@keyframes scanDown{0%{top:-2%;opacity:0}5%{opacity:0.5}95%{opacity:0.5}100%{top:102%;opacity:0}}
 @keyframes ldGlowPulse{0%,100%{opacity:0.3}50%{opacity:0.7}}
 @keyframes ldTextReveal{from{opacity:0;transform:translateY(20px);filter:blur(8px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
 @keyframes ldShine{0%{left:-100%}100%{left:200%}}
@@ -1168,15 +1174,20 @@ html{scroll-behavior:smooth}`;
 
         {/* ── Animated Background ── */}
         <div style={{position:"fixed",inset:0,zIndex:0,overflow:"hidden",pointerEvents:"none"}}>
-          {/* Moving grid */}
-          <div style={{position:"absolute",inset:0,backgroundImage:`linear-gradient(rgba(${T.accentRgb},0.1) 1px,transparent 1px),linear-gradient(90deg,rgba(${T.accentRgb},0.1) 1px,transparent 1px)`,backgroundSize:"60px 60px",animation:"ldGridFlow 20s linear infinite"}}/>
-          {/* Orbs */}
-          <div style={{position:"absolute",width:600,height:600,borderRadius:"50%",background:`radial-gradient(circle,rgba(${T.accentRgb},0.18) 0%,transparent 70%)`,filter:"blur(40px)",top:"-10%",left:"-5%",animation:"ldOrb1 25s ease-in-out infinite"}}/>
-          <div style={{position:"absolute",width:500,height:500,borderRadius:"50%",background:`radial-gradient(circle,rgba(${T.accentRgb},0.14) 0%,transparent 70%)`,filter:"blur(35px)",bottom:"-5%",right:"-5%",animation:"ldOrb2 30s ease-in-out infinite"}}/>
-          <div style={{position:"absolute",width:350,height:350,borderRadius:"50%",background:`radial-gradient(circle,rgba(${T.accentRgb},0.1) 0%,transparent 70%)`,filter:"blur(30px)",top:"40%",left:"50%",animation:"ldOrb1 20s ease-in-out infinite reverse"}}/>
-          {/* Light lines */}
-          {[0,1,2].map(i=><div key={i} style={{position:"absolute",top:`${25+i*25}%`,left:0,width:200,height:"1px",background:`linear-gradient(90deg,transparent,rgba(${T.accentRgb},0.4),transparent)`,animation:`ldLine ${8+i*3}s linear infinite ${i*4}s`}}/>)}
-          {/* Particles */}
+          {/* 3D Perspective Grid Floor */}
+          <div style={{position:"absolute",bottom:"-30%",left:"-30%",right:"-30%",height:"80%",transform:"perspective(500px) rotateX(60deg)",backgroundImage:`linear-gradient(rgba(${T.accentRgb},0.35) 1px,transparent 1px),linear-gradient(90deg,rgba(${T.accentRgb},0.35) 1px,transparent 1px)`,backgroundSize:"60px 60px",animation:"neoGridScroll 3s linear infinite",WebkitMaskImage:"linear-gradient(to top,rgba(0,0,0,0.9) 0%,transparent 70%)",maskImage:"linear-gradient(to top,rgba(0,0,0,0.9) 0%,transparent 70%)"}}/>
+          {/* Aurora gradient orbs - vibrant multi-color */}
+          <div style={{position:"absolute",width:700,height:700,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.3) 0%,transparent 70%)",filter:"blur(60px)",top:"-15%",left:"-10%",animation:"ldOrb1 25s ease-in-out infinite"}}/>
+          <div style={{position:"absolute",width:600,height:600,borderRadius:"50%",background:"radial-gradient(circle,rgba(236,72,153,0.25) 0%,transparent 70%)",filter:"blur(50px)",bottom:"-10%",right:"-5%",animation:"ldOrb2 30s ease-in-out infinite"}}/>
+          <div style={{position:"absolute",width:500,height:500,borderRadius:"50%",background:`radial-gradient(circle,rgba(${T.accentRgb},0.28) 0%,transparent 70%)`,filter:"blur(45px)",top:"30%",left:"50%",animation:"ldOrb1 20s ease-in-out infinite reverse"}}/>
+          <div style={{position:"absolute",width:450,height:450,borderRadius:"50%",background:"radial-gradient(circle,rgba(6,182,212,0.22) 0%,transparent 70%)",filter:"blur(40px)",top:"60%",left:"15%",animation:"ldOrb2 22s ease-in-out infinite 3s"}}/>
+          {/* Floating neon geometric shapes */}
+          {[[180,130,'255,34,102','3%','8%',15,1,'14s','0s'],[220,160,'51,102,255','-5%','32%',-12,2,'18s','2s'],[140,100,'255,136,68','78%','12%',25,3,'16s','1s'],[100,70,'0,240,255','68%','55%',-20,1,'12s','3s'],[120,80,'170,68,255','12%','68%',35,2,'15s','4s'],[60,45,'0,255,136','48%','18%',-30,3,'10s','2.5s'],[50,35,'255,34,102','88%','78%',45,1,'11s','5s'],[40,30,'0,240,255','38%','88%',-15,2,'9s','1.5s']].map(([w,h,rgb,x,y,r,f,d,dl],i)=><div key={i} style={{position:"absolute",left:x,top:y,transform:`rotate(${r}deg)`}}><div style={{width:w,height:h,border:`2px solid rgba(${rgb},0.7)`,borderRadius:4,boxShadow:`0 0 15px rgba(${rgb},0.3),0 0 30px rgba(${rgb},0.15),inset 0 0 15px rgba(${rgb},0.06)`,animation:`neoFloat${f} ${d} ease-in-out infinite ${dl},neoPulse ${d} ease-in-out infinite ${dl}`}}/></div>)}
+          {/* Scanning beam */}
+          <div style={{position:"absolute",left:0,right:0,height:2,background:`linear-gradient(90deg,transparent 5%,rgba(${T.accentRgb},0.6) 30%,rgba(${T.accentRgb},0.9) 50%,rgba(${T.accentRgb},0.6) 70%,transparent 95%)`,boxShadow:`0 0 20px rgba(${T.accentRgb},0.4),0 0 60px rgba(${T.accentRgb},0.2)`,animation:"scanDown 6s linear infinite"}}/>
+          {/* Horizontal light streaks */}
+          {[0,1,2].map(i=><div key={i} style={{position:"absolute",top:`${25+i*25}%`,left:0,width:200,height:"1px",background:`linear-gradient(90deg,transparent,rgba(${T.accentRgb},0.5),transparent)`,animation:`ldLine ${8+i*3}s linear infinite ${i*4}s`}}/>)}
+          {/* Rising particles */}
           <div style={{position:"absolute",inset:0}}>{Array.from({length:8},(_,i)=><div key={i} className="ld-particle"/>)}</div>
         </div>
 
@@ -1372,23 +1383,29 @@ html{scroll-behavior:smooth}`;
       <div style={{position:"fixed",top:0,left:0,right:0,bottom:0,zIndex:9999,background:T.dark?`linear-gradient(135deg,${T.bg} 0%,${T.bg2} 50%,${T.bg} 100%)`:`linear-gradient(135deg,${T.bg} 0%,${T.bg2} 50%,${T.bg3} 100%)`,backgroundSize:"400% 400%",animation:"gradientShift 8s ease infinite",fontFamily:`${F.body},sans-serif`,overflow:"hidden",display:"flex",alignItems:"center",justifyContent:"center"}}>
         <style>{css}</style>
 
-        {/* Pulsing grid */}
-        <div style={{position:"absolute",inset:0,backgroundImage:`linear-gradient(rgba(${T.accentRgb},0.12) 1px,transparent 1px),linear-gradient(90deg,rgba(${T.accentRgb},0.12) 1px,transparent 1px)`,backgroundSize:"60px 60px",animation:"gridPulse 4s ease-in-out infinite"}}/>
+        {/* 3D Perspective Grid Floor */}
+        <div style={{position:"absolute",bottom:"-30%",left:"-30%",right:"-30%",height:"80%",transform:"perspective(500px) rotateX(60deg)",backgroundImage:`linear-gradient(rgba(${T.accentRgb},0.25) 1px,transparent 1px),linear-gradient(90deg,rgba(${T.accentRgb},0.25) 1px,transparent 1px)`,backgroundSize:"60px 60px",animation:"neoGridScroll 3s linear infinite",WebkitMaskImage:"linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 60%)",maskImage:"linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 60%)"}}/>
 
-        {/* Aurora / nebula bands */}
-        <div style={{position:"absolute",top:"-20%",left:"-10%",width:"120%",height:"40%",background:`linear-gradient(90deg,transparent,rgba(${T.accentRgb},0.08),rgba(${T.accentRgb},0.15),rgba(${T.accentRgb},0.08),transparent)`,filter:"blur(60px)",animation:"auroraShift 12s ease-in-out infinite",pointerEvents:"none"}}/>
-        <div style={{position:"absolute",bottom:"-15%",left:"-10%",width:"120%",height:"35%",background:`linear-gradient(90deg,transparent,rgba(${T.accentRgb},0.06),rgba(${T.accentRgb},0.12),rgba(${T.accentRgb},0.06),transparent)`,filter:"blur(50px)",animation:"auroraShift 15s ease-in-out infinite 3s",pointerEvents:"none"}}/>
+        {/* Aurora / nebula bands - vibrant */}
+        <div style={{position:"absolute",top:"-20%",left:"-10%",width:"120%",height:"40%",background:`linear-gradient(90deg,transparent,rgba(139,92,246,0.15),rgba(${T.accentRgb},0.2),rgba(139,92,246,0.15),transparent)`,filter:"blur(60px)",animation:"auroraShift 12s ease-in-out infinite",pointerEvents:"none"}}/>
+        <div style={{position:"absolute",bottom:"-15%",left:"-10%",width:"120%",height:"35%",background:`linear-gradient(90deg,transparent,rgba(236,72,153,0.12),rgba(${T.accentRgb},0.18),rgba(236,72,153,0.12),transparent)`,filter:"blur(50px)",animation:"auroraShift 15s ease-in-out infinite 3s",pointerEvents:"none"}}/>
 
         {/* Expanding pulse rings from center */}
         <div style={{position:"absolute",top:"50%",left:"50%",width:300,height:300,borderRadius:"50%",border:`1.5px solid rgba(${T.accentRgb},0.3)`,animation:"ringExpand 4s ease-out infinite",pointerEvents:"none"}}/>
         <div style={{position:"absolute",top:"50%",left:"50%",width:300,height:300,borderRadius:"50%",border:`1.5px solid rgba(${T.accentRgb},0.25)`,animation:"ringExpand 4s ease-out infinite 1.3s",pointerEvents:"none"}}/>
         <div style={{position:"absolute",top:"50%",left:"50%",width:300,height:300,borderRadius:"50%",border:`1.5px solid rgba(${T.accentRgb},0.2)`,animation:"ringExpand 4s ease-out infinite 2.6s",pointerEvents:"none"}}/>
 
-        {/* Large floating color orbs with breathing */}
-        <div style={{"--ox":"0px","--oy":"0px",position:"absolute",width:650,height:650,borderRadius:"50%",background:`radial-gradient(circle,rgba(${T.accentRgb},0.18) 0%,rgba(${T.accentRgb},0.08) 35%,transparent 70%)`,filter:"blur(30px)",top:"-15%",left:"-5%",animation:"orbMove1 22s ease-in-out infinite, orbBreathe 5s ease-in-out infinite"}}/>
-        <div style={{"--ox":"0px","--oy":"0px",position:"absolute",width:580,height:580,borderRadius:"50%",background:`radial-gradient(circle,rgba(${T.accentRgb},0.15) 0%,rgba(${T.accentRgb},0.06) 35%,transparent 70%)`,filter:"blur(25px)",bottom:"-10%",right:"-5%",animation:"orbMove2 26s ease-in-out infinite, orbBreathe 7s ease-in-out infinite 2s"}}/>
-        <div style={{"--ox":"0px","--oy":"0px",position:"absolute",width:480,height:480,borderRadius:"50%",background:`radial-gradient(circle,rgba(${T.accentRgb},0.12) 0%,rgba(${T.accentRgb},0.05) 35%,transparent 70%)`,filter:"blur(20px)",top:"30%",right:"20%",animation:"orbMove3 18s ease-in-out infinite, orbBreathe 6s ease-in-out infinite 1s"}}/>
-        <div style={{"--ox":"0px","--oy":"0px",position:"absolute",width:400,height:400,borderRadius:"50%",background:`radial-gradient(circle,rgba(${T.accentRgb},0.1) 0%,rgba(${T.accentRgb},0.04) 35%,transparent 70%)`,filter:"blur(35px)",top:"50%",left:"30%",animation:"orbMove1 30s ease-in-out infinite reverse, orbBreathe 8s ease-in-out infinite 3s"}}/>
+        {/* Large floating color orbs - multi-color */}
+        <div style={{position:"absolute",width:650,height:650,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.25) 0%,rgba(139,92,246,0.08) 35%,transparent 70%)",filter:"blur(30px)",top:"-15%",left:"-5%",animation:"orbMove1 22s ease-in-out infinite, orbBreathe 5s ease-in-out infinite"}}/>
+        <div style={{position:"absolute",width:580,height:580,borderRadius:"50%",background:"radial-gradient(circle,rgba(236,72,153,0.2) 0%,rgba(236,72,153,0.06) 35%,transparent 70%)",filter:"blur(25px)",bottom:"-10%",right:"-5%",animation:"orbMove2 26s ease-in-out infinite, orbBreathe 7s ease-in-out infinite 2s"}}/>
+        <div style={{position:"absolute",width:480,height:480,borderRadius:"50%",background:`radial-gradient(circle,rgba(${T.accentRgb},0.22) 0%,rgba(${T.accentRgb},0.07) 35%,transparent 70%)`,filter:"blur(20px)",top:"30%",right:"20%",animation:"orbMove3 18s ease-in-out infinite, orbBreathe 6s ease-in-out infinite 1s"}}/>
+        <div style={{position:"absolute",width:400,height:400,borderRadius:"50%",background:"radial-gradient(circle,rgba(6,182,212,0.18) 0%,rgba(6,182,212,0.05) 35%,transparent 70%)",filter:"blur(35px)",top:"50%",left:"30%",animation:"orbMove1 30s ease-in-out infinite reverse, orbBreathe 8s ease-in-out infinite 3s"}}/>
+
+        {/* Floating neon geometric shapes */}
+        {[[120,85,'255,34,102','5%','10%',20,1,'16s','0s'],[90,65,'51,102,255','82%','18%',-15,2,'20s','3s'],[70,50,'0,240,255','75%','72%',30,3,'14s','2s'],[55,38,'170,68,255','8%','78%',-25,1,'12s','5s']].map(([w,h,rgb,x,y,r,f,d,dl],i)=><div key={'nr'+i} style={{position:"absolute",left:x,top:y,transform:`rotate(${r}deg)`,opacity:0.3,pointerEvents:"none"}}><div style={{width:w,height:h,border:`1.5px solid rgba(${rgb},0.6)`,borderRadius:3,boxShadow:`0 0 12px rgba(${rgb},0.2),0 0 25px rgba(${rgb},0.1)`,animation:`neoFloat${f} ${d} ease-in-out infinite ${dl}`}}/></div>)}
+
+        {/* Scanning beam */}
+        <div style={{position:"absolute",left:0,right:0,height:1,background:`linear-gradient(90deg,transparent,rgba(${T.accentRgb},0.4),rgba(${T.accentRgb},0.6),rgba(${T.accentRgb},0.4),transparent)`,boxShadow:`0 0 15px rgba(${T.accentRgb},0.2)`,animation:"scanDown 8s linear infinite",pointerEvents:"none"}}/>
 
         {/* Shooting star streaks */}
         <div style={{position:"absolute",inset:0,overflow:"hidden",pointerEvents:"none"}}>
