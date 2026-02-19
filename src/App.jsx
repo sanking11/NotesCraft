@@ -228,6 +228,64 @@ const DEF_NOTES = [
   {id:"w3",title:"Reading List",blocks:[{id:"b3",type:"checklist",content:JSON.stringify([{text:"Designing Data-Intensive Applications",done:false},{text:"The Pragmatic Programmer",done:true},{text:"Atomic Habits",done:false},{text:"React Server Components deep dive",done:false},{text:"WebAssembly beyond the browser",done:false}])}],tags:["Planned","Ideas"],folder:"Personal",starred:true,archived:false,deleted:false,modified:new Date(Date.now()-14400000).toISOString(),created:new Date(Date.now()-259200000).toISOString()},
 ];
 
+/* ═══════════ PASSWORD POLICY ═══════════ */
+const BANNED_PW=new Set(["password","123456","12345678","123456789","1234567890","qwerty","abc123","password1","iloveyou","sunshine","princess","football","charlie","shadow","michael","master","jennifer","trustno1","batman","access","hello","monkey","dragon","letmein","696969","baseball","welcome","login","admin","passw0rd","starwars","solo","qwerty123","password123","123123","111111","000000","654321","qwertyuiop","lovely","7777777","888888","changeme","computer","whatever","p@ssw0rd","zaq1zaq1","qazwsx","1qaz2wsx","!@#$%^&*","password!","secret","god","love","sex","test","default","passwd","system","internet","service","server","canada","hello123","matrix","soccer","dallas","killer","trustme","jordan","amanda","hunter","buster","thomas","robert","summer","george","harley","222222","andrea","joshua","freedom","thunder","corvette","austin","1111","merlin","ginger","hammer","silver"]);
+
+const PW_WORDS=["crystal","thunder","velvet","meadow","falcon","copper","silver","harbor","dragon","forest","castle","shadow","arctic","violet","breeze","mystic","canyon","golden","marble","ember","summit","willow","orchid","stellar","phoenix","cobalt","zenith","aurora","citrus","blazer","nimble","coral","prism","drift","spark","lunar","rogue","quest","frost","blaze","tiger","cedar","ocean","delta","pixel","flare","ivory","onyx","sage","dusk"];
+
+function generateStrongPw(){
+  const w1=PW_WORDS[Math.floor(Math.random()*PW_WORDS.length)];
+  const w2=PW_WORDS[Math.floor(Math.random()*PW_WORDS.length)];
+  const w3=PW_WORDS[Math.floor(Math.random()*PW_WORDS.length)];
+  const num=Math.floor(Math.random()*90+10);
+  const syms="!@#$%&*?";
+  const sym=syms[Math.floor(Math.random()*syms.length)];
+  // Capitalize first letter of each word
+  const cap=s=>s[0].toUpperCase()+s.slice(1);
+  return cap(w1)+cap(w2)+cap(w3)+num+sym;
+}
+
+function analyzePw(p){
+  const checks=[];
+  const len=p.length;
+  if(len>=14)checks.push({label:"14+ characters",ok:true});
+  else if(len>=12)checks.push({label:"12+ characters",ok:true});
+  else checks.push({label:`${len}/12 characters`,ok:false});
+  checks.push({label:"Uppercase letter",ok:/[A-Z]/.test(p)});
+  checks.push({label:"Lowercase letter",ok:/[a-z]/.test(p)});
+  checks.push({label:"Number",ok:/[0-9]/.test(p)});
+  checks.push({label:"Symbol (!@#$…)",ok:/[^A-Za-z0-9]/.test(p)});
+  const isBanned=BANNED_PW.has(p.toLowerCase());
+  if(isBanned)checks.push({label:"Not a common password",ok:false});
+  // Score: 0-5
+  let score=0;
+  if(len>=12)score++;
+  if(len>=16)score++;
+  if(/[A-Z]/.test(p)&&/[a-z]/.test(p))score++;
+  if(/[0-9]/.test(p))score++;
+  if(/[^A-Za-z0-9]/.test(p))score++;
+  if(isBanned)score=0;
+  if(len<12)score=Math.min(score,1);
+  const labels=["Very Weak","Weak","Fair","Good","Strong","Very Strong"];
+  const colors=["#ef4444","#f97316","#eab308","#22c55e","#10b981","#06b6d4"];
+  return{checks,score,label:labels[score],color:colors[score]};
+}
+
+async function checkHIBP(p){
+  try{
+    const enc=new TextEncoder();
+    const buf=await crypto.subtle.digest("SHA-1",enc.encode(p));
+    const hex=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("").toUpperCase();
+    const prefix=hex.slice(0,5),suffix=hex.slice(5);
+    const res=await fetch("https://api.pwnedpasswords.com/range/"+prefix);
+    if(!res.ok)return{breached:false,count:0};
+    const txt=await res.text();
+    const line=txt.split("\n").find(l=>l.startsWith(suffix));
+    if(!line)return{breached:false,count:0};
+    return{breached:true,count:parseInt(line.split(":")[1])};
+  }catch{return{breached:false,count:0}}
+}
+
 /* ═══════════ FLIP CARD ═══════════ */
 function NeoFlipCard({w,h,rgb,x,y,r,f,d,dl,title,plain,enc,opacity=1,delay=0}){
   const[flipped,setFlipped]=React.useState(false);
@@ -269,6 +327,9 @@ export default function NotesCraft(){
   const[authLoad,setAuthLoad]=useState(false);
   const[showPw,setShowPw]=useState(false);
   const[pwFocus,setPwFocus]=useState(false);
+  const[showPwGen,setShowPwGen]=useState(false);
+  const[genPw,setGenPw]=useState("");
+  const[genCopied,setGenCopied]=useState(false);
   const[shake,setShake]=useState(false);
   const[showProfileMenu,setShowProfileMenu]=useState(false);
   const[profileTab,setProfileTab]=useState("info"); // "info" | "password" | "name"
@@ -402,8 +463,16 @@ export default function NotesCraft(){
   const doSignup=async()=>{
     setAuthErr("");
     if(!email||!pw||!uname){setAuthErr("All fields required");doShake();return}
-    if(pw.length<4){setAuthErr("Password: min 4 chars");doShake();return}
+    if(pw.length<12){setAuthErr("Password must be at least 12 characters");doShake();return}
+    const analysis=analyzePw(pw);
+    if(analysis.score<2){setAuthErr("Password is too weak — add uppercase, numbers, or symbols");doShake();return}
+    if(BANNED_PW.has(pw.toLowerCase())){setAuthErr("This password is too common — choose something unique");doShake();return}
     setAuthLoad(true);
+    // Check against breach database
+    try{
+      const hibp=await checkHIBP(pw);
+      if(hibp.breached){setAuthErr(`This password appeared in ${hibp.count.toLocaleString()} data breaches — choose a different one`);doShake();setAuthLoad(false);return}
+    }catch{}
     try{
       const adapter=await createSyncAdapter();
       const em=email.toLowerCase();
@@ -1654,7 +1723,29 @@ html{scroll-behavior:smooth}`;
           <div style={{display:"flex",flexDirection:"column",gap:10}}>
             {!isL&&<div style={{position:"relative"}}><div style={{position:"absolute",left:13,top:"50%",transform:"translateY(-50%)",color:T.text,opacity:0.5}}><IC.User/></div><input value={uname} onChange={e=>{setUname(e.target.value);setAuthErr("")}} placeholder="Your name" style={{...inp,width:"100%",padding:"12px 14px 12px 42px"}}/></div>}
             <div style={{position:"relative"}}><div style={{position:"absolute",left:13,top:"50%",transform:"translateY(-50%)",color:T.text,opacity:0.5}}><IC.Mail/></div><input value={email} onChange={e=>{setEmail(e.target.value);setAuthErr("")}} placeholder="Email" type="email" onKeyDown={e=>e.key==="Enter"&&(isL?doLogin():doSignup())} style={{...inp,width:"100%",padding:"12px 14px 12px 42px"}}/></div>
-            <div style={{position:"relative"}}><div style={{position:"absolute",left:13,top:"50%",transform:"translateY(-50%)",color:T.text,opacity:0.5}}><IC.Lock/></div><input value={pw} onChange={e=>{setPw(e.target.value);setAuthErr("")}} placeholder="Password" type={showPw?"text":"password"} onFocus={()=>setPwFocus(true)} onBlur={()=>setPwFocus(false)} onKeyDown={e=>e.key==="Enter"&&(isL?doLogin():doSignup())} style={{...inp,width:"100%",padding:"12px 42px 12px 42px"}}/><button onClick={()=>setShowPw(!showPw)} style={{position:"absolute",right:12,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",color:T.text,opacity:0.5,cursor:"pointer"}}>{showPw?<IC.EyeOff/>:<IC.Eye/>}</button></div>
+            <div style={{position:"relative"}}><div style={{position:"absolute",left:13,top:"50%",transform:"translateY(-50%)",color:T.text,opacity:0.5}}><IC.Lock/></div><input value={pw} onChange={e=>{setPw(e.target.value);setAuthErr("")}} placeholder={isL?"Password":"Min 12 chars · upper, lower, number, symbol"} type={showPw?"text":"password"} onFocus={()=>setPwFocus(true)} onBlur={()=>setPwFocus(false)} onKeyDown={e=>e.key==="Enter"&&(isL?doLogin():doSignup())} style={{...inp,width:"100%",padding:"12px 42px 12px 42px"}}/><button onClick={()=>setShowPw(!showPw)} style={{position:"absolute",right:12,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",color:T.text,opacity:0.5,cursor:"pointer"}}>{showPw?<IC.EyeOff/>:<IC.Eye/>}</button></div>
+            {/* Password strength meter + generator — signup only */}
+            {!isL&&pw.length>0&&(()=>{const a=analyzePw(pw);return(
+              <div style={{marginTop:2}}>
+                <div style={{display:"flex",gap:3,marginBottom:4}}>{[0,1,2,3,4].map(i=><div key={i} style={{flex:1,height:3,borderRadius:2,background:i<=a.score-1?a.color:"rgba(255,255,255,0.1)",transition:"background 0.3s"}}/>)}</div>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                  <span style={{fontSize:9,fontWeight:600,color:a.color}}>{a.label}</span>
+                  <div style={{display:"flex",gap:6,flexWrap:"wrap",justifyContent:"flex-end"}}>{a.checks.map((c,i)=><span key={i} style={{fontSize:8,color:c.ok?"#22c55e":"#ef4444",display:"flex",alignItems:"center",gap:2}}>{c.ok?"✓":"✗"} {c.label}</span>)}</div>
+                </div>
+              </div>
+            )})()}
+            {!isL&&<button type="button" onClick={()=>{const g=generateStrongPw();setGenPw(g);setGenCopied(false);setShowPwGen(true)}} style={{width:"100%",padding:"8px 0",marginTop:2,background:"none",border:`1px dashed rgba(${T.accentRgb},0.3)`,borderRadius:8,color:T.accent,fontSize:10,fontWeight:600,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5,display:"flex",alignItems:"center",justifyContent:"center",gap:6,transition:"all 0.2s"}}>🎲 Generate Strong Password</button>}
+            {!isL&&showPwGen&&genPw&&<div style={{marginTop:4,padding:"10px 12px",background:`rgba(${T.accentRgb},0.06)`,border:`1px solid rgba(${T.accentRgb},0.2)`,borderRadius:8,animation:"fadeUp 0.2s ease-out"}}>
+              <div style={{display:"flex",alignItems:"center",gap:8}}>
+                <code style={{flex:1,fontSize:11,color:"#22c55e",fontFamily:"monospace",wordBreak:"break-all",background:"rgba(0,0,0,0.3)",padding:"6px 8px",borderRadius:4,letterSpacing:0.5}}>{genPw}</code>
+                <button onClick={()=>{navigator.clipboard.writeText(genPw).then(()=>{setGenCopied(true);setTimeout(()=>setGenCopied(false),2000)})}} style={{background:`rgba(${T.accentRgb},0.15)`,border:`1px solid rgba(${T.accentRgb},0.3)`,borderRadius:6,padding:"4px 10px",color:T.accent,fontSize:9,fontWeight:600,cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>{genCopied?"Copied!":"Copy"}</button>
+              </div>
+              <div style={{display:"flex",gap:6,marginTop:6}}>
+                <button onClick={()=>{setPw(genPw);setShowPwGen(false);setAuthErr("")}} style={{flex:1,padding:"6px 0",background:`rgba(34,197,94,0.12)`,border:`1px solid rgba(34,197,94,0.3)`,borderRadius:6,color:"#22c55e",fontSize:9,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Use This Password</button>
+                <button onClick={()=>{const g=generateStrongPw();setGenPw(g);setGenCopied(false)}} style={{padding:"6px 12px",background:`rgba(${T.accentRgb},0.1)`,border:`1px solid rgba(${T.accentRgb},0.25)`,borderRadius:6,color:T.accent,fontSize:9,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>🔄</button>
+                <button onClick={()=>setShowPwGen(false)} style={{padding:"6px 10px",background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:6,color:T.dim,fontSize:9,cursor:"pointer",fontFamily:"inherit"}}>✗</button>
+              </div>
+            </div>}
           </div>
           {authErr&&<p style={{color:T.err,fontSize:12,marginTop:8,textAlign:"left"}}>{authErr}</p>}
           <button onClick={isL?doLogin:doSignup} disabled={authLoad} className="auth-submit-btn"
