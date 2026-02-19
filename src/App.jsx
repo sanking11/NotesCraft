@@ -268,6 +268,7 @@ export default function NotesCraft(){
   const[authErr,setAuthErr]=useState("");
   const[authLoad,setAuthLoad]=useState(false);
   const[showPw,setShowPw]=useState(false);
+  const[pwFocus,setPwFocus]=useState(false);
   const[shake,setShake]=useState(false);
   const[showProfileMenu,setShowProfileMenu]=useState(false);
   const[profileTab,setProfileTab]=useState("info"); // "info" | "password" | "name"
@@ -1115,6 +1116,9 @@ input::placeholder,textarea::placeholder{color:${T.faint}}
 select option{background:${T.bg};color:${T.text}}
 @keyframes fadeUp{from{opacity:0}to{opacity:1}}
 @keyframes shake{0%,100%{transform:translateX(0)}15%{transform:translateX(-8px)}30%{transform:translateX(8px)}45%{transform:translateX(-4px)}60%{transform:translateX(4px)}}
+@keyframes warnSlideIn{from{opacity:0;transform:translateX(30px) scale(0.92)}to{opacity:1;transform:translateX(0) scale(1)}}
+@keyframes warnAttention{0%,100%{transform:scale(1);box-shadow:0 0 20px rgba(245,158,11,0.15),0 8px 32px rgba(0,0,0,0.3)}50%{transform:scale(1.03);box-shadow:0 0 35px rgba(245,158,11,0.35),0 8px 32px rgba(0,0,0,0.3)}}
+@keyframes warnBorderGlow{0%,100%{border-color:rgba(245,158,11,0.25)}50%{border-color:rgba(245,158,11,0.6)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes slideIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
@@ -1621,8 +1625,11 @@ html{scroll-behavior:smooth}`;
         <div style={{position:"absolute",bottom:0,left:0,width:100,height:100,borderLeft:`1.5px solid rgba(${T.accentRgb},0.25)`,borderBottom:`1.5px solid rgba(${T.accentRgb},0.25)`,margin:20,animation:"borderGlow 3s ease-in-out infinite 1.5s"}}/>
         <div style={{position:"absolute",bottom:0,right:0,width:100,height:100,borderRight:`1.5px solid rgba(${T.accentRgb},0.25)`,borderBottom:`1px solid rgba(${T.accentRgb},0.25)`,margin:20,animation:"borderGlow 3s ease-in-out infinite 2.25s"}}/>
 
+        {/* Auth card + warning card wrapper */}
+        <div style={{position:"relative",zIndex:10,display:"flex",alignItems:"center",gap:20}}>
+
         {/* Auth card */}
-        <div style={{position:"relative",zIndex:10,textAlign:"center",animation:shake?"shake 0.6s":"fadeUp 0.5s ease-out both",width:400,maxWidth:"100%",padding:"28px 28px",borderRadius:20,background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.08)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:`1px solid rgba(${T.accentRgb},0.2)`,boxShadow:`0 8px 40px rgba(0,0,0,0.25), 0 0 80px rgba(${T.accentRgb},0.08), inset 0 0 0 1px rgba(255,255,255,${T.dark?0.06:0.12}), inset 0 1px 0 rgba(255,255,255,${T.dark?0.08:0.15})`}}>
+        <div style={{position:"relative",textAlign:"center",animation:shake?"shake 0.6s":"fadeUp 0.5s ease-out both",width:400,maxWidth:"100%",padding:"28px 28px",borderRadius:20,background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.08)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:`1px solid rgba(${T.accentRgb},0.2)`,boxShadow:`0 8px 40px rgba(0,0,0,0.25), 0 0 80px rgba(${T.accentRgb},0.08), inset 0 0 0 1px rgba(255,255,255,${T.dark?0.06:0.12}), inset 0 1px 0 rgba(255,255,255,${T.dark?0.08:0.15})`}}>
           {/* Butterfly logo — flying animation (protected) */}
           <div onContextMenu={e=>e.preventDefault()} onDragStart={e=>e.preventDefault()} style={{margin:"0 auto 12px",animation:"authButterflyFly 12s ease-in-out infinite",filter:`drop-shadow(0 4px 20px rgba(${T.accentRgb},0.4))`,userSelect:"none",WebkitUserDrag:"none",position:"relative"}}>
             <ButterflyLogo s={56} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.text} warn={T.warn} flap/>
@@ -1647,17 +1654,13 @@ html{scroll-behavior:smooth}`;
           <div style={{display:"flex",flexDirection:"column",gap:10}}>
             {!isL&&<div style={{position:"relative"}}><div style={{position:"absolute",left:13,top:"50%",transform:"translateY(-50%)",color:T.text,opacity:0.5}}><IC.User/></div><input value={uname} onChange={e=>{setUname(e.target.value);setAuthErr("")}} placeholder="Your name" style={{...inp,width:"100%",padding:"12px 14px 12px 42px"}}/></div>}
             <div style={{position:"relative"}}><div style={{position:"absolute",left:13,top:"50%",transform:"translateY(-50%)",color:T.text,opacity:0.5}}><IC.Mail/></div><input value={email} onChange={e=>{setEmail(e.target.value);setAuthErr("")}} placeholder="Email" type="email" onKeyDown={e=>e.key==="Enter"&&(isL?doLogin():doSignup())} style={{...inp,width:"100%",padding:"12px 14px 12px 42px"}}/></div>
-            <div style={{position:"relative"}}><div style={{position:"absolute",left:13,top:"50%",transform:"translateY(-50%)",color:T.text,opacity:0.5}}><IC.Lock/></div><input value={pw} onChange={e=>{setPw(e.target.value);setAuthErr("")}} placeholder="Password" type={showPw?"text":"password"} onKeyDown={e=>e.key==="Enter"&&(isL?doLogin():doSignup())} style={{...inp,width:"100%",padding:"12px 42px 12px 42px"}}/><button onClick={()=>setShowPw(!showPw)} style={{position:"absolute",right:12,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",color:T.text,opacity:0.5,cursor:"pointer"}}>{showPw?<IC.EyeOff/>:<IC.Eye/>}</button></div>
+            <div style={{position:"relative"}}><div style={{position:"absolute",left:13,top:"50%",transform:"translateY(-50%)",color:T.text,opacity:0.5}}><IC.Lock/></div><input value={pw} onChange={e=>{setPw(e.target.value);setAuthErr("")}} placeholder="Password" type={showPw?"text":"password"} onFocus={()=>setPwFocus(true)} onBlur={()=>setPwFocus(false)} onKeyDown={e=>e.key==="Enter"&&(isL?doLogin():doSignup())} style={{...inp,width:"100%",padding:"12px 42px 12px 42px"}}/><button onClick={()=>setShowPw(!showPw)} style={{position:"absolute",right:12,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",color:T.text,opacity:0.5,cursor:"pointer"}}>{showPw?<IC.EyeOff/>:<IC.Eye/>}</button></div>
           </div>
           {authErr&&<p style={{color:T.err,fontSize:12,marginTop:8,textAlign:"left"}}>{authErr}</p>}
           <button onClick={isL?doLogin:doSignup} disabled={authLoad} className="auth-submit-btn"
             style={{width:"100%",padding:"14px 0",marginTop:16,background:`linear-gradient(135deg,${T.accent},${T.accent2})`,backgroundSize:"200% 200%",border:`1px solid rgba(255,255,255,0.15)`,borderRadius:10,color:"#fff",fontSize:13,fontWeight:700,fontFamily:`${F.heading},sans-serif`,cursor:authLoad?"wait":"pointer",letterSpacing:2,textTransform:"uppercase",boxShadow:`0 4px 25px rgba(${T.accentRgb},0.35), inset 0 1px 0 rgba(255,255,255,0.15)`,opacity:authLoad?.6:1,transition:"all 0.3s cubic-bezier(0.4,0,0.2,1)"}}>
             {authLoad?"···":(isL?"SIGN IN":"CREATE ACCOUNT")}
           </button>
-          {!isL&&<details style={{marginTop:10,textAlign:"left"}}>
-            <summary style={{fontSize:10,color:T.warn||"#f59e0b",cursor:"pointer",display:"flex",alignItems:"center",gap:5,justifyContent:"center",listStyle:"none",WebkitAppearance:"none"}}><span style={{fontSize:11}}>⚠️</span><span style={{fontWeight:600,letterSpacing:0.3}}>Read before signing up</span><span style={{fontSize:8,opacity:0.6}}>▼</span></summary>
-            <p style={{fontSize:10,color:T.dim,lineHeight:1.6,margin:"8px 0 0",padding:"8px 12px",background:`rgba(${T.accentRgb},0.06)`,border:`1px solid rgba(${T.accentRgb},0.12)`,borderRadius:6}}>Your data is encrypted using a key derived from your password. If you lose your password, your data cannot be recovered. We do not store your password or encryption keys. You are solely responsible for remembering your credentials.</p>
-          </details>}
           <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:4,marginTop:14,color:"#22c55e",fontSize:8,letterSpacing:0.2,whiteSpace:"nowrap"}}>
             <div style={{width:5,height:5,borderRadius:"50%",background:"#22c55e",boxShadow:"0 0 6px #22c55e,0 0 12px rgba(34,197,94,0.3)",animation:"pulse 2s ease-in-out infinite",flexShrink:0}}/>
             <span style={{fontWeight:600}}>Secure</span>
@@ -1670,6 +1673,43 @@ html{scroll-behavior:smooth}`;
           </div>
           <button onClick={()=>setShowLanding(true)} style={{marginTop:14,background:`rgba(${T.accentRgb},0.08)`,border:`1px solid rgba(${T.accentRgb},0.25)`,borderRadius:8,padding:"8px 20px",color:T.accent,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",letterSpacing:1,transition:"all 0.3s"}}>← Back to home</button>
         </div>
+
+        {/* Encryption warning card — slides in on signup, pulses on password focus */}
+        {!isL&&<div style={{width:260,flexShrink:0,animation:"warnSlideIn 0.5s ease-out both",transition:"all 0.4s ease",...(pwFocus?{animation:"warnSlideIn 0.5s ease-out both, warnAttention 1.2s ease-in-out infinite, warnBorderGlow 1.2s ease-in-out infinite"}:{})}}>
+          <div style={{padding:"20px 18px",borderRadius:16,background:"rgba(245,158,11,0.06)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1.5px solid rgba(245,158,11,${pwFocus?0.5:0.2})`,boxShadow:`0 8px 32px rgba(0,0,0,0.3)${pwFocus?", 0 0 30px rgba(245,158,11,0.2)":""}`,transition:"border-color 0.4s, box-shadow 0.4s",textAlign:"left"}}>
+            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+              <div style={{width:32,height:32,borderRadius:8,background:"rgba(245,158,11,0.15)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,flexShrink:0}}>🔐</div>
+              <div>
+                <div style={{fontSize:11,fontWeight:700,color:"#f59e0b",letterSpacing:0.5}}>ENCRYPTION NOTICE</div>
+                <div style={{fontSize:9,color:T.dim,marginTop:1}}>Please read carefully</div>
+              </div>
+            </div>
+            <div style={{width:"100%",height:1,background:"linear-gradient(90deg,transparent,rgba(245,158,11,0.3),transparent)",marginBottom:12}}/>
+            <div style={{display:"flex",flexDirection:"column",gap:8}}>
+              <div style={{display:"flex",gap:8,alignItems:"flex-start"}}>
+                <span style={{color:"#f59e0b",fontSize:12,lineHeight:1,marginTop:1,flexShrink:0}}>●</span>
+                <p style={{fontSize:10,color:"#cbd5e1",lineHeight:1.5,margin:0}}>Your data is encrypted using a key derived from <strong style={{color:"#f59e0b"}}>your password</strong></p>
+              </div>
+              <div style={{display:"flex",gap:8,alignItems:"flex-start"}}>
+                <span style={{color:"#ef4444",fontSize:12,lineHeight:1,marginTop:1,flexShrink:0}}>●</span>
+                <p style={{fontSize:10,color:"#cbd5e1",lineHeight:1.5,margin:0}}>If you lose your password, your data <strong style={{color:"#ef4444"}}>cannot be recovered</strong></p>
+              </div>
+              <div style={{display:"flex",gap:8,alignItems:"flex-start"}}>
+                <span style={{color:"#22c55e",fontSize:12,lineHeight:1,marginTop:1,flexShrink:0}}>●</span>
+                <p style={{fontSize:10,color:"#cbd5e1",lineHeight:1.5,margin:0}}>We do <strong style={{color:"#22c55e"}}>not store</strong> your password or encryption keys</p>
+              </div>
+              <div style={{display:"flex",gap:8,alignItems:"flex-start"}}>
+                <span style={{color:T.accent,fontSize:12,lineHeight:1,marginTop:1,flexShrink:0}}>●</span>
+                <p style={{fontSize:10,color:"#cbd5e1",lineHeight:1.5,margin:0}}>You are solely responsible for remembering your credentials</p>
+              </div>
+            </div>
+            {pwFocus&&<div style={{marginTop:12,padding:"8px 10px",borderRadius:8,background:"rgba(245,158,11,0.1)",border:"1px solid rgba(245,158,11,0.25)",textAlign:"center",animation:"fadeUp 0.3s ease-out"}}>
+              <p style={{fontSize:9,fontWeight:700,color:"#f59e0b",margin:0,letterSpacing:0.5}}>⚠️ CHOOSE A PASSWORD YOU WILL REMEMBER</p>
+            </div>}
+          </div>
+        </div>}
+
+        </div>{/* end wrapper */}
 
         {/* Footer */}
         <div style={{position:"absolute",bottom:0,left:0,right:0,textAlign:"center",padding:"14px 20px",background:`linear-gradient(180deg,transparent,rgba(${T.dark?"0,0,0":"0,0,0"},0.15))`,animation:"footerFadeIn 1.2s ease-out 0.5s both",zIndex:20}}>
