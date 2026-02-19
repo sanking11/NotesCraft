@@ -1437,9 +1437,9 @@ html{scroll-behavior:smooth}`;
                   <span style={{fontSize:44,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:p.pop?T.accent:(T.dark?T.text:"#e2e8f0")}}>{p.price}</span>
                   <span style={{fontSize:14,color:"#94a3b8",marginLeft:4}}>{p.period}</span>
                 </div>
-                <div style={{marginBottom:24}}>
+                <div style={{marginBottom:24,display:"inline-flex",flexDirection:"column",textAlign:"left"}}>
                   {p.features.map((f,j)=>(
-                    <div key={j} style={{display:"flex",alignItems:"center",gap:8,padding:"6px 0",justifyContent:"center"}}>
+                    <div key={j} style={{display:"flex",alignItems:"center",gap:8,padding:"6px 0"}}>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={T.accent} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                       <span style={{fontSize:13,color:"#cbd5e1"}}>{f}</span>
                     </div>
