@@ -992,7 +992,7 @@ export default function NotesCraft(){
     return()=>{if(reminderIntervalRef.current){clearInterval(reminderIntervalRef.current);reminderIntervalRef.current=null}};
   },[user,authMode]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ─── Curved grid canvas ───
+  // ─── Curved grid canvas with glitch + drift ───
   useEffect(()=>{
     cancelAnimationFrame(gridAnimRef.current);
     const c=gridCvsRef.current;
@@ -1004,31 +1004,61 @@ export default function NotesCraft(){
     resize();
     window.addEventListener("resize",resize);
     const sp=60,rgb=T.accentRgb;
-    let off=0;
-    const draw=()=>{
+    let off=0,driftX=0,driftTarget=0,driftTimer=0;
+    // Glitch state
+    let glitchActive=false,glitchTimer=0,glitchLines=[],glitchColorShift=0;
+    const draw=(ts)=>{
       ctx.clearRect(0,0,W,H);
       const cs=H*0.78,ch=H-cs;
       off=(off+0.3)%sp;
+      // Random left/right drift
+      driftTimer++;
+      if(driftTimer>120+Math.random()*200){driftTimer=0;driftTarget=(Math.random()-0.5)*40}
+      driftX+=(driftTarget-driftX)*0.02;
+      // Random glitch trigger
+      glitchTimer++;
+      if(!glitchActive&&glitchTimer>180+Math.random()*300){
+        glitchActive=true;glitchTimer=0;
+        glitchLines=Array.from({length:3+Math.floor(Math.random()*5)},()=>({y:Math.random()*H,h:2+Math.random()*6,dx:(Math.random()-0.5)*30}));
+        glitchColorShift=Math.random()>0.5?1:0;
+      }
+      if(glitchActive&&glitchTimer>6+Math.random()*8){glitchActive=false;glitchTimer=0}
+      ctx.save();
+      ctx.translate(driftX,0);
       // Glow pass
-      ctx.strokeStyle=`rgba(${rgb},0.06)`;ctx.lineWidth=5;
-      drawGrid(ctx,W,H,sp,cs,ch,off,rgb);
+      const glitchRgb=glitchActive&&glitchColorShift?`255,${50+Math.random()*100},${Math.random()*80}`:rgb;
+      ctx.strokeStyle=`rgba(${glitchRgb},0.06)`;ctx.lineWidth=5;
+      drawGrid(ctx,W,H,sp,cs,ch,off,glitchActive?glitchLines:null,driftX);
       // Sharp pass
-      ctx.strokeStyle=`rgba(${rgb},0.2)`;ctx.lineWidth=1;
-      drawGrid(ctx,W,H,sp,cs,ch,off,rgb);
+      ctx.strokeStyle=`rgba(${glitchRgb},${glitchActive?0.35:0.2})`;ctx.lineWidth=1;
+      drawGrid(ctx,W,H,sp,cs,ch,off,glitchActive?glitchLines:null,driftX);
+      // Draw glitch scanlines
+      if(glitchActive){
+        ctx.globalAlpha=0.15+Math.random()*0.15;
+        for(const g of glitchLines){
+          ctx.fillStyle=`rgba(${rgb},0.3)`;
+          ctx.fillRect(-driftX+g.dx,g.y,W+40,g.h);
+        }
+        ctx.globalAlpha=1;
+      }
+      ctx.restore();
       gridAnimRef.current=requestAnimationFrame(draw);
     };
-    draw();
+    draw(0);
     return()=>{cancelAnimationFrame(gridAnimRef.current);window.removeEventListener("resize",resize)};
   },[showLanding,T.accentRgb]);
-  function drawGrid(ctx,W,H,sp,cs,ch,off){
+  function drawGrid(ctx,W,H,sp,cs,ch,off,glitchLines){
     const cx=W/2;
     // Horizontal lines (scroll down)
     for(let b=-sp*2;b<=H+sp;b+=sp){
       const y=b+off;
       if(y<-sp||y>H+sp*2)continue;
+      // Glitch: offset certain horizontal lines
+      let gx=0;
+      if(glitchLines){for(const g of glitchLines){if(Math.abs(y-g.y)<sp*0.6){gx=g.dx;break}}}
       ctx.beginPath();
-      if(y<=cs){ctx.moveTo(0,y);ctx.lineTo(W,y)}
-      else{const t=Math.min((y-cs)/ch,1),sag=-(t*t*140);ctx.moveTo(0,y);ctx.quadraticCurveTo(cx,y+sag,W,y)}
+      if(y<=cs){ctx.moveTo(gx,y);ctx.lineTo(W+gx,y)}
+      else{const t=Math.min((y-cs)/ch,1),sag=-(t*t*140);ctx.moveTo(gx,y);ctx.quadraticCurveTo(cx+gx,y+sag,W+gx,y)}
       ctx.stroke();
     }
     // Vertical lines (static, curve at bottom)
@@ -1173,6 +1203,12 @@ input:focus,textarea:focus{border-color:rgba(${T.accentRgb},0.4)!important;box-s
 @keyframes neoFloat2{0%,100%{transform:translateY(0)}50%{transform:translateY(-30px)}}
 @keyframes neoFloat3{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
 @keyframes neoPulse{0%,100%{opacity:0.25}50%{opacity:0.65}}
+@keyframes neoCardFlip{0%{transform:rotateY(0deg)}100%{transform:rotateY(180deg)}}
+.neo-flip-card{perspective:600px;cursor:pointer}
+.neo-flip-card .neo-flip-inner{position:relative;width:100%;height:100%;transition:transform 0.7s cubic-bezier(0.4,0,0.2,1);transform-style:preserve-3d}
+.neo-flip-card:hover .neo-flip-inner,.neo-flip-card.flipped .neo-flip-inner{transform:rotateY(180deg)}
+.neo-flip-front,.neo-flip-back{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:4px;overflow:hidden;display:flex;flex-direction:column;padding:8px 10px}
+.neo-flip-back{transform:rotateY(180deg)}
 @keyframes scanDown{0%{top:-2%;opacity:0}5%{opacity:0.5}95%{opacity:0.5}100%{top:102%;opacity:0}}
 @keyframes ldGlowPulse{0%,100%{opacity:0.3}50%{opacity:0.7}}
 @keyframes ldTextReveal{from{opacity:0;transform:translateY(20px);filter:blur(8px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
@@ -1231,8 +1267,8 @@ html{scroll-behavior:smooth}`;
           <div style={{position:"absolute",width:600,height:600,borderRadius:"50%",background:"radial-gradient(circle,rgba(236,72,153,0.25) 0%,transparent 70%)",filter:"blur(50px)",bottom:"-10%",right:"-5%",animation:"ldOrb2 30s ease-in-out infinite"}}/>
           <div style={{position:"absolute",width:500,height:500,borderRadius:"50%",background:`radial-gradient(circle,rgba(${T.accentRgb},0.28) 0%,transparent 70%)`,filter:"blur(45px)",top:"30%",left:"50%",animation:"ldOrb1 20s ease-in-out infinite reverse"}}/>
           <div style={{position:"absolute",width:450,height:450,borderRadius:"50%",background:"radial-gradient(circle,rgba(6,182,212,0.22) 0%,transparent 70%)",filter:"blur(40px)",top:"60%",left:"15%",animation:"ldOrb2 22s ease-in-out infinite 3s"}}/>
-          {/* Floating neon geometric shapes */}
-          {[[180,130,'255,34,102','3%','8%',15,1,'14s','0s'],[220,160,'51,102,255','-5%','32%',-12,2,'18s','2s'],[140,100,'255,136,68','78%','12%',25,3,'16s','1s'],[100,70,'0,240,255','68%','55%',-20,1,'12s','3s'],[120,80,'170,68,255','12%','68%',35,2,'15s','4s'],[60,45,'0,255,136','48%','18%',-30,3,'10s','2.5s'],[50,35,'255,34,102','88%','78%',45,1,'11s','5s'],[40,30,'0,240,255','38%','88%',-15,2,'9s','1.5s']].map(([w,h,rgb,x,y,r,f,d,dl],i)=><div key={i} style={{position:"absolute",left:x,top:y,transform:`rotate(${r}deg)`}}><div style={{width:w,height:h,border:`2px solid rgba(${rgb},0.7)`,borderRadius:4,boxShadow:`0 0 15px rgba(${rgb},0.3),0 0 30px rgba(${rgb},0.15),inset 0 0 15px rgba(${rgb},0.06)`,animation:`neoFloat${f} ${d} ease-in-out infinite ${dl},neoPulse ${d} ease-in-out infinite ${dl}`}}/></div>)}
+          {/* Interactive neon flip cards — normal note (front) vs encrypted (back) */}
+          {[[180,130,'255,34,102','3%','8%',15,1,'14s','0s','Meeting Notes','Team standup at 9am\nReview sprint goals\nUpdate backlog','\u2588\u2591\u2593x\u00a7\u00b6\u2592\u2588\u00a4\u2591\u00a7\n\u2593\u2592\u00a4\u2588\u2591x\u00b6\u2593\u2592\u2588\n\u2591\u00a7\u2593\u2588\u2592\u00a4x\u00b6'],[220,160,'51,102,255','-5%','32%',-12,2,'18s','2s','My Journal','Today was a great day.\nFinished the project\non time.','\u00a4\u2593\u2591\u2588\u00b6x\u00a7\u2592\u00a4\u2591\n\u2588\u2592x\u00a7\u2593\u2591\u00b6\u2588\u00a4\n\u2591\u2593\u2588x\u00a4\u2592\u00a7\u00b6'],[140,100,'255,136,68','78%','12%',25,3,'16s','1s','Ideas','Build an app for\nprivacy-first notes','\u2592\u2588\u00a7x\u2591\u2593\u00b6\u00a4\n\u2588\u2591\u2593x\u00a7\u2592\u00b6'],[100,70,'0,240,255','68%','55%',-20,1,'12s','3s','Todo','Buy groceries\nCall dentist','\u2588x\u2591\u2593\u00a7\u2592\n\u00a4\u2591\u2588x'],[120,80,'170,68,255','12%','68%',35,2,'15s','4s','Recipes','Pasta: boil 8min\nAdd sauce + basil','\u2593\u2588\u00a4x\u2591\u00a7\n\u2592\u2591\u2588\u00b6x'],[60,45,'0,255,136','48%','18%',-30,3,'10s','2.5s','Keys','API: sk-...','\u2588\u2591\u2593x'],[50,35,'255,34,102','88%','78%',45,1,'11s','5s','PIN','1234','\u2588\u2588\u2588\u2588'],[40,30,'0,240,255','38%','88%',-15,2,'9s','1.5s','Pwd','admin','\u2593\u2588\u2591x']].map(([w,h,rgb,x,y,r,f,d,dl,title,plain,enc],i)=><div key={i} className="neo-flip-card" style={{position:"absolute",left:x,top:y,width:w,height:h,zIndex:2,pointerEvents:"auto",animation:`neoFloat${f} ${d} ease-in-out infinite ${dl}`}}><div className="neo-flip-inner"><div className="neo-flip-front" style={{border:`2px solid rgba(${rgb},0.7)`,background:`rgba(${rgb},0.06)`,boxShadow:`0 0 15px rgba(${rgb},0.3),0 0 30px rgba(${rgb},0.15),inset 0 0 15px rgba(${rgb},0.06)`,transform:`rotate(${r}deg)`}}><div style={{fontSize:Math.max(7,w*0.055),fontWeight:700,color:`rgba(${rgb},0.9)`,marginBottom:2,fontFamily:"monospace",letterSpacing:1,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{title}</div><div style={{fontSize:Math.max(5,w*0.04),color:`rgba(255,255,255,0.5)`,lineHeight:1.4,fontFamily:"monospace",whiteSpace:"pre-line",overflow:"hidden",flex:1}}>{plain}</div></div><div className="neo-flip-back" style={{border:`2px solid rgba(${rgb},0.9)`,background:`rgba(${rgb},0.12)`,boxShadow:`0 0 20px rgba(${rgb},0.5),0 0 40px rgba(${rgb},0.2),inset 0 0 20px rgba(${rgb},0.1)`,transform:`rotateY(180deg) rotate(${r}deg)`}}><div style={{fontSize:Math.max(6,w*0.045),fontWeight:700,color:`rgba(${rgb},1)`,marginBottom:2,fontFamily:"monospace",letterSpacing:1,display:"flex",alignItems:"center",gap:3}}><span>&#x1F512;</span> Encrypted</div><div style={{fontSize:Math.max(5,w*0.04),color:`rgba(${rgb},0.7)`,lineHeight:1.3,fontFamily:"monospace",whiteSpace:"pre-line",overflow:"hidden",flex:1,wordBreak:"break-all"}}>{enc}</div></div></div></div>)}
           {/* Horizontal light streaks */}
           {[0,1,2].map(i=><div key={i} style={{position:"absolute",top:`${25+i*25}%`,left:0,width:200,height:"1px",background:`linear-gradient(90deg,transparent,rgba(${T.accentRgb},0.5),transparent)`,animation:`ldLine ${8+i*3}s linear infinite ${i*4}s`}}/>)}
           {/* Rising particles */}
@@ -1449,8 +1485,8 @@ html{scroll-behavior:smooth}`;
         <div style={{position:"absolute",width:480,height:480,borderRadius:"50%",background:`radial-gradient(circle,rgba(${T.accentRgb},0.22) 0%,rgba(${T.accentRgb},0.07) 35%,transparent 70%)`,filter:"blur(20px)",top:"30%",right:"20%",animation:"orbMove3 18s ease-in-out infinite, orbBreathe 6s ease-in-out infinite 1s"}}/>
         <div style={{position:"absolute",width:400,height:400,borderRadius:"50%",background:"radial-gradient(circle,rgba(6,182,212,0.18) 0%,rgba(6,182,212,0.05) 35%,transparent 70%)",filter:"blur(35px)",top:"50%",left:"30%",animation:"orbMove1 30s ease-in-out infinite reverse, orbBreathe 8s ease-in-out infinite 3s"}}/>
 
-        {/* Floating neon geometric shapes */}
-        {[[120,85,'255,34,102','5%','10%',20,1,'16s','0s'],[90,65,'51,102,255','82%','18%',-15,2,'20s','3s'],[70,50,'0,240,255','75%','72%',30,3,'14s','2s'],[55,38,'170,68,255','8%','78%',-25,1,'12s','5s']].map(([w,h,rgb,x,y,r,f,d,dl],i)=><div key={'nr'+i} style={{position:"absolute",left:x,top:y,transform:`rotate(${r}deg)`,opacity:0.3,pointerEvents:"none"}}><div style={{width:w,height:h,border:`1.5px solid rgba(${rgb},0.6)`,borderRadius:3,boxShadow:`0 0 12px rgba(${rgb},0.2),0 0 25px rgba(${rgb},0.1)`,animation:`neoFloat${f} ${d} ease-in-out infinite ${dl}`}}/></div>)}
+        {/* Interactive neon flip cards (auth page) */}
+        {[[120,85,'255,34,102','5%','10%',20,1,'16s','0s','Notes','Quick ideas\nfor later','\u2588\u2591\u2593x\u00a7\n\u2592\u2588\u00a4x'],[90,65,'51,102,255','82%','18%',-15,2,'20s','3s','Draft','Dear team...','\u00a4\u2593\u2591\u2588\n\u00b6x\u00a7'],[70,50,'0,240,255','75%','72%',30,3,'14s','2s','Secret','key: abc','\u2588\u2591\u2593x'],[55,38,'170,68,255','8%','78%',-25,1,'12s','5s','PIN','9876','\u2588\u2588\u2588\u2588']].map(([w,h,rgb,x,y,r,f,d,dl,title,plain,enc],i)=><div key={'nr'+i} className="neo-flip-card" style={{position:"absolute",left:x,top:y,width:w,height:h,zIndex:2,opacity:0.4,animation:`neoFloat${f} ${d} ease-in-out infinite ${dl}`}}><div className="neo-flip-inner"><div className="neo-flip-front" style={{border:`1.5px solid rgba(${rgb},0.6)`,background:`rgba(${rgb},0.05)`,borderRadius:3,boxShadow:`0 0 12px rgba(${rgb},0.2),0 0 25px rgba(${rgb},0.1)`,transform:`rotate(${r}deg)`}}><div style={{fontSize:Math.max(6,w*0.05),fontWeight:700,color:`rgba(${rgb},0.8)`,marginBottom:1,fontFamily:"monospace",letterSpacing:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{title}</div><div style={{fontSize:Math.max(5,w*0.04),color:"rgba(255,255,255,0.4)",lineHeight:1.3,fontFamily:"monospace",whiteSpace:"pre-line",overflow:"hidden",flex:1}}>{plain}</div></div><div className="neo-flip-back" style={{border:`1.5px solid rgba(${rgb},0.8)`,background:`rgba(${rgb},0.1)`,borderRadius:3,boxShadow:`0 0 15px rgba(${rgb},0.4),0 0 30px rgba(${rgb},0.15)`,transform:`rotateY(180deg) rotate(${r}deg)`}}><div style={{fontSize:Math.max(5,w*0.045),fontWeight:700,color:`rgba(${rgb},0.9)`,marginBottom:1,fontFamily:"monospace",display:"flex",alignItems:"center",gap:2}}><span>&#x1F512;</span></div><div style={{fontSize:Math.max(5,w*0.04),color:`rgba(${rgb},0.6)`,lineHeight:1.2,fontFamily:"monospace",whiteSpace:"pre-line",overflow:"hidden",flex:1,wordBreak:"break-all"}}>{enc}</div></div></div></div>)}
 
         {/* Shooting star streaks */}
         <div style={{position:"absolute",inset:0,overflow:"hidden",pointerEvents:"none"}}>
