@@ -255,6 +255,55 @@ function generateStrongPw(){
   return pw;
 }
 
+/* ═══════════ PASSWORD GENERATOR PAGE LOGIC ═══════════ */
+function generateRandomPw(len,upper,lower,digits,symbols,noAmbig){
+  let chars="";
+  const UP="ABCDEFGHIJKLMNOPQRSTUVWXYZ",LO="abcdefghijklmnopqrstuvwxyz",DG="0123456789",SY="!@#$%^&*()-_=+[]{}|;:,.<>?";
+  const AMBIG="0O1lI|";
+  const rm=s=>noAmbig?s.split("").filter(c=>!AMBIG.includes(c)).join(""):s;
+  if(upper)chars+=rm(UP);if(lower)chars+=rm(LO);if(digits)chars+=rm(DG);if(symbols)chars+=rm(SY);
+  if(!chars)chars=rm(LO)||LO;
+  const arr=[];
+  // Ensure at least one from each selected category
+  if(upper&&rm(UP))arr.push(rm(UP)[secRand(rm(UP).length)]);
+  if(lower&&rm(LO))arr.push(rm(LO)[secRand(rm(LO).length)]);
+  if(digits&&rm(DG))arr.push(rm(DG)[secRand(rm(DG).length)]);
+  if(symbols&&rm(SY))arr.push(rm(SY)[secRand(rm(SY).length)]);
+  while(arr.length<len)arr.push(chars[secRand(chars.length)]);
+  // Shuffle using Fisher-Yates with crypto random
+  for(let i=arr.length-1;i>0;i--){const j=secRand(i+1);[arr[i],arr[j]]=[arr[j],arr[i]]}
+  return arr.join("");
+}
+
+function generateMemorablePw(wordCount,addDigit,addSymbol){
+  const cap=s=>s[0].toUpperCase()+s.slice(1);
+  const used=new Set();const words=[];
+  while(words.length<wordCount){const idx=secRand(PW_WORDS.length);if(!used.has(idx)){used.add(idx);words.push(cap(PW_WORDS[idx]))}}
+  let pw=words.join("-");
+  if(addDigit)pw+=secRand(90)+10;
+  if(addSymbol){const sy="!@#$%&*?";pw+=sy[secRand(sy.length)]}
+  return pw;
+}
+
+function calcPwStrength(pw){
+  if(!pw)return{label:"",color:"#666",percent:0,time:""};
+  let pool=0;
+  if(/[a-z]/.test(pw))pool+=26;if(/[A-Z]/.test(pw))pool+=26;if(/[0-9]/.test(pw))pool+=10;if(/[^A-Za-z0-9]/.test(pw))pool+=32;
+  const entropy=pw.length*Math.log2(pool||1);
+  const secs=Math.pow(2,entropy)/1e12;// 1 trillion guesses/sec
+  let time;
+  if(secs<1)time="Instantly";else if(secs<60)time=Math.round(secs)+" seconds";else if(secs<3600)time=Math.round(secs/60)+" minutes";
+  else if(secs<86400)time=Math.round(secs/3600)+" hours";else if(secs<31536000)time=Math.round(secs/86400)+" days";
+  else if(secs<31536000*1e3)time=Math.round(secs/31536000).toLocaleString()+" years";
+  else if(secs<31536000*1e6)time=Math.round(secs/31536000/1e3).toLocaleString()+"K years";
+  else if(secs<31536000*1e9)time=Math.round(secs/31536000/1e6).toLocaleString()+"M years";
+  else time="Billions of years";
+  if(entropy<40)return{label:"Weak",color:"#ef4444",percent:20,time};
+  if(entropy<60)return{label:"Fair",color:"#f59e0b",percent:45,time};
+  if(entropy<80)return{label:"Strong",color:"#22c55e",percent:72,time};
+  return{label:"Very Strong",color:"#10b981",percent:100,time};
+}
+
 function analyzePw(p){
   const checks=[];
   const len=p.length;
@@ -340,6 +389,18 @@ export default function NotesCraft(){
   const[showPwGen,setShowPwGen]=useState(false);
   const[genPw,setGenPw]=useState("");
   const[genCopied,setGenCopied]=useState(false);
+  // Password Generator page state
+  const[pgMode,setPgMode]=useState("memorable");
+  const[pgLen,setPgLen]=useState(20);
+  const[pgWords,setPgWords]=useState(4);
+  const[pgUpper,setPgUpper]=useState(true);
+  const[pgLower,setPgLower]=useState(true);
+  const[pgDigits,setPgDigits]=useState(true);
+  const[pgSymbols,setPgSymbols]=useState(true);
+  const[pgNoAmbig,setPgNoAmbig]=useState(false);
+  const[pgResult,setPgResult]=useState("");
+  const[pgCopied,setPgCopied]=useState(false);
+  const[pgStrength,setPgStrength]=useState(null);
   // 2FA state
   const[twoFASetup,setTwoFASetup]=useState(null);
   const[twoFAStep,setTwoFAStep]=useState(1);
@@ -426,6 +487,13 @@ export default function NotesCraft(){
   /* Session persistence — save/restore across page refreshes */
   const saveSession=async(em,key)=>{try{const kb=await exportKey(key);sessionStorage.setItem("nc_session",JSON.stringify({email:em,key:kb}))}catch(e){}};
   const clearSession=()=>{sessionStorage.removeItem("nc_session")};
+
+  // Auto-generate password when generator page options change
+  useEffect(()=>{
+    if(infoPage!=="password-generator")return;
+    const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols);
+    setPgResult(pw);setPgStrength(calcPwStrength(pw));setPgCopied(false);
+  },[pgMode,pgLen,pgWords,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig,infoPage]);
 
   useEffect(()=>{
     if(sessionRestored.current)return;
@@ -1506,6 +1574,98 @@ html{scroll-behavior:smooth}`;
         <p style={infoP}>To the maximum extent permitted by law, NotesCraft and its developer shall not be liable for any indirect, incidental, or consequential damages arising from your use of the service, including data loss due to forgotten passwords.</p>
         <h2 style={infoH2}>7. Changes to Terms</h2>
         <p style={infoP}>We reserve the right to update these terms at any time. Continued use of NotesCraft after changes constitutes acceptance of the updated terms.</p>
+      </>,
+      "password-generator":<>
+        <h1 style={infoH}>Password Generator</h1>
+        <p style={infoP}>Generate strong, unique passwords using cryptographically secure randomness.</p>
+
+        {/* Password Display */}
+        <div style={{background:T.dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.04)",border:`1px solid ${T.bdr}`,borderRadius:12,padding:"20px 24px",marginBottom:20,position:"relative"}}>
+          <div style={{fontSize:pgResult.length>30?14:18,fontFamily:"monospace",fontWeight:600,color:T.text,wordBreak:"break-all",lineHeight:1.6,letterSpacing:0.5,minHeight:28,paddingRight:40}}>{pgResult}</div>
+          <button onClick={()=>{const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols);setPgResult(pw);setPgStrength(calcPwStrength(pw));setPgCopied(false)}}
+            style={{position:"absolute",top:12,right:12,width:32,height:32,borderRadius:"50%",background:`rgba(${T.accentRgb},0.1)`,border:`1px solid rgba(${T.accentRgb},0.2)`,color:T.accent,fontSize:16,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}} title="Regenerate">&#x21bb;</button>
+        </div>
+
+        {/* Copy Button */}
+        <button onClick={()=>{navigator.clipboard.writeText(pgResult).then(()=>{setPgCopied(true);setTimeout(()=>setPgCopied(false),2000)})}}
+          style={{width:"100%",padding:"12px 0",background:`linear-gradient(135deg,${T.accent},${T.accent2})`,border:"none",borderRadius:10,color:"#fff",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:1,marginBottom:24,transition:"all 0.2s",boxShadow:`0 4px 15px rgba(${T.accentRgb},0.3)`}}>
+          {pgCopied?"Copied!":"Copy Password"}
+        </button>
+
+        {/* Strength Meter */}
+        {pgStrength&&<div style={{marginBottom:24}}>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:8}}>
+            <span style={{fontSize:13,color:T.dim,fontWeight:600}}>Password strength:</span>
+            <span style={{fontSize:13,fontWeight:700,color:pgStrength.color}}>{pgStrength.label}</span>
+          </div>
+          <div style={{height:6,borderRadius:3,background:T.dark?"rgba(255,255,255,0.08)":"rgba(0,0,0,0.08)",overflow:"hidden",marginBottom:8}}>
+            <div style={{height:"100%",borderRadius:3,background:pgStrength.color,width:pgStrength.percent+"%",transition:"width 0.4s ease"}}/>
+          </div>
+          {pgStrength.time&&<div style={{fontSize:11,color:T.dim}}><strong style={{color:pgStrength.color}}>{pgStrength.time}</strong> to crack at 1 trillion guesses/sec</div>}
+        </div>}
+
+        {/* Mode Toggle */}
+        <div style={{display:"flex",gap:0,marginBottom:20,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",borderRadius:8,padding:3}}>
+          {["random","memorable"].map(m=><button key={m} onClick={()=>setPgMode(m)}
+            style={{flex:1,padding:"10px 0",borderRadius:6,border:"none",background:pgMode===m?`rgba(${T.accentRgb},0.2)`:"transparent",color:pgMode===m?T.accent:(T.dark?T.dim:T.dim),fontSize:13,fontWeight:pgMode===m?700:500,cursor:"pointer",fontFamily:"inherit",transition:"all 0.2s"}}>
+            {m==="random"?"Random":"Memorable"}
+          </button>)}
+        </div>
+
+        {/* Random Mode Options */}
+        {pgMode==="random"&&<div style={{display:"flex",flexDirection:"column",gap:16}}>
+          <div>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+              <label style={{fontSize:13,fontWeight:600,color:T.text}}>Password length</label>
+              <span style={{fontSize:14,fontWeight:700,color:T.accent,minWidth:28,textAlign:"right"}}>{pgLen}</span>
+            </div>
+            <input type="range" min={8} max={128} value={pgLen} onChange={e=>setPgLen(+e.target.value)}
+              style={{width:"100%",accentColor:T.accent,cursor:"pointer"}}/>
+          </div>
+          <div style={{display:"flex",flexWrap:"wrap",gap:10}}>
+            {[{label:"Uppercase (A-Z)",val:pgUpper,set:setPgUpper},{label:"Lowercase (a-z)",val:pgLower,set:setPgLower},{label:"Digits (0-9)",val:pgDigits,set:setPgDigits},{label:"Symbols (!@#$)",val:pgSymbols,set:setPgSymbols},{label:"Avoid ambiguous (0O1lI)",val:pgNoAmbig,set:setPgNoAmbig}].map((o,i)=>
+              <label key={i} style={{display:"flex",alignItems:"center",gap:6,fontSize:12,color:T.text,cursor:"pointer",minWidth:"45%"}}>
+                <div onClick={()=>o.set(!o.val)} style={{width:18,height:18,borderRadius:4,border:`2px solid ${o.val?T.accent:T.dim+"60"}`,background:o.val?`rgba(${T.accentRgb},0.2)`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",cursor:"pointer",flexShrink:0}}>
+                  {o.val&&<span style={{color:T.accent,fontSize:12,fontWeight:700}}>&#10003;</span>}
+                </div>
+                {o.label}
+              </label>
+            )}
+          </div>
+        </div>}
+
+        {/* Memorable Mode Options */}
+        {pgMode==="memorable"&&<div style={{display:"flex",flexDirection:"column",gap:16}}>
+          <div>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+              <label style={{fontSize:13,fontWeight:600,color:T.text}}>Number of words</label>
+              <span style={{fontSize:14,fontWeight:700,color:T.accent}}>{pgWords}</span>
+            </div>
+            <input type="range" min={3} max={6} value={pgWords} onChange={e=>setPgWords(+e.target.value)}
+              style={{width:"100%",accentColor:T.accent,cursor:"pointer"}}/>
+          </div>
+          <div style={{display:"flex",flexWrap:"wrap",gap:10}}>
+            {[{label:"Include number",val:pgDigits,set:setPgDigits},{label:"Include symbol",val:pgSymbols,set:setPgSymbols}].map((o,i)=>
+              <label key={i} style={{display:"flex",alignItems:"center",gap:6,fontSize:12,color:T.text,cursor:"pointer"}}>
+                <div onClick={()=>o.set(!o.val)} style={{width:18,height:18,borderRadius:4,border:`2px solid ${o.val?T.accent:T.dim+"60"}`,background:o.val?`rgba(${T.accentRgb},0.2)`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",cursor:"pointer",flexShrink:0}}>
+                  {o.val&&<span style={{color:T.accent,fontSize:12,fontWeight:700}}>&#10003;</span>}
+                </div>
+                {o.label}
+              </label>
+            )}
+          </div>
+          <div style={{fontSize:11,color:T.dim,lineHeight:1.5}}>Words are separated by hyphens and capitalized. Uses a pool of 100 words with cryptographically secure selection.</div>
+        </div>}
+
+        <div style={{marginTop:28,padding:"16px 20px",borderRadius:10,background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`}}>
+          <div style={{fontSize:13,fontWeight:700,color:T.text,marginBottom:8}}>Tips for strong passwords</div>
+          <ul style={{margin:0,paddingLeft:18,fontSize:12,color:T.dim,lineHeight:1.8}}>
+            <li>Use at least 14 characters or 4+ words for memorable passwords</li>
+            <li>Never reuse passwords across different accounts</li>
+            <li>Use a password manager to store your passwords securely</li>
+            <li>Enable two-factor authentication whenever possible</li>
+          </ul>
+        </div>
       </>
     };
     return(
@@ -1530,7 +1690,7 @@ html{scroll-behavior:smooth}`;
         </div>
         <footer style={{position:"relative",zIndex:1,padding:"30px 24px 24px",borderTop:`1px solid rgba(${T.accentRgb},0.15)`,textAlign:"center",background:`rgba(${T.dark?"0,0,0":"10,10,18"},0.12)`,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)"}}>
           <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:20,flexWrap:"wrap"}}>
-            {["about","privacy","terms"].map(p=><button key={p} onClick={()=>{setInfoPage(p);window.scrollTo(0,0)}} style={{fontSize:12,color:infoPage===p?T.accent:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:infoPage===p?700:400,letterSpacing:1,textTransform:"capitalize"}}>{p==="terms"?"Terms of Service":p==="privacy"?"Privacy Policy":p.charAt(0).toUpperCase()+p.slice(1)}</button>)}
+            {["about","privacy","terms","password-generator"].map(p=><button key={p} onClick={()=>{setInfoPage(p);window.scrollTo(0,0)}} style={{fontSize:12,color:infoPage===p?T.accent:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:infoPage===p?700:400,letterSpacing:1}}>{p==="terms"?"Terms of Service":p==="privacy"?"Privacy Policy":p==="password-generator"?"Password Generator":p.charAt(0).toUpperCase()+p.slice(1)}</button>)}
           </div>
         </footer>
       </div>
@@ -1752,6 +1912,7 @@ html{scroll-behavior:smooth}`;
             <button onClick={()=>setInfoPage("about")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>About</button>
             <button onClick={()=>setInfoPage("privacy")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Privacy</button>
             <button onClick={()=>setInfoPage("terms")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Terms</button>
+            <button onClick={()=>setInfoPage("password-generator")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Password Generator</button>
           </div>
           <p style={{fontSize:11,color:"#7a8898",letterSpacing:0.8,display:"flex",alignItems:"center",justifyContent:"center",gap:6,flexWrap:"wrap",lineHeight:2,margin:0}}>
             <span style={{fontStyle:"italic"}}>Designed and Developed by</span>
@@ -1943,7 +2104,7 @@ html{scroll-behavior:smooth}`;
               <div style={{width:28,height:28,borderRadius:7,background:`rgba(${T.accentRgb},0.15)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0}}>🎲</div>
               <div>
                 <div style={{fontSize:10,fontWeight:700,color:T.accent,letterSpacing:0.5}}>PASSWORD GENERATOR</div>
-                <div style={{fontSize:8,color:T.dim,marginTop:1}}>Strong & memorable</div>
+                <div style={{fontSize:8,color:T.dim,marginTop:1}}>Strong & memorable · <span onClick={()=>{setInfoPage("password-generator");setShowLanding(true)}} style={{color:T.accent,cursor:"pointer",textDecoration:"underline"}}>Full Tool →</span></div>
               </div>
             </div>
             <div style={{width:"100%",height:1,background:`linear-gradient(90deg,transparent,rgba(${T.accentRgb},0.25),transparent)`,marginBottom:10}}/>
@@ -1966,6 +2127,7 @@ html{scroll-behavior:smooth}`;
             <button onClick={()=>{setInfoPage("about");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>About</button>
             <button onClick={()=>{setInfoPage("privacy");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Privacy</button>
             <button onClick={()=>{setInfoPage("terms");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Terms</button>
+            <button onClick={()=>{setInfoPage("password-generator");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Password Generator</button>
           </div>
           <p style={{fontSize:11,color:T.dim,fontFamily:`${F.body},sans-serif`,letterSpacing:0.8,display:"flex",alignItems:"center",justifyContent:"center",gap:6,flexWrap:"wrap",lineHeight:2,margin:0}}>
             <span style={{fontStyle:"italic",opacity:0.7}}>Designed and Developed by</span>
