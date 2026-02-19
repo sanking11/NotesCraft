@@ -248,15 +248,15 @@ function generateStrongPw(){
 function analyzePw(p){
   const checks=[];
   const len=p.length;
-  if(len>=14)checks.push({label:"14+ characters",ok:true});
-  else if(len>=12)checks.push({label:"12+ characters",ok:true});
-  else checks.push({label:`${len}/12 characters`,ok:false});
-  checks.push({label:"Uppercase letter",ok:/[A-Z]/.test(p)});
-  checks.push({label:"Lowercase letter",ok:/[a-z]/.test(p)});
-  checks.push({label:"Number",ok:/[0-9]/.test(p)});
-  checks.push({label:"Symbol (!@#$…)",ok:/[^A-Za-z0-9]/.test(p)});
+  if(len>=14)checks.push({label:"14+",ok:true});
+  else if(len>=12)checks.push({label:"12+",ok:true});
+  else checks.push({label:`${len}/12`,ok:false});
+  checks.push({label:"A-Z",ok:/[A-Z]/.test(p)});
+  checks.push({label:"a-z",ok:/[a-z]/.test(p)});
+  checks.push({label:"0-9",ok:/[0-9]/.test(p)});
+  checks.push({label:"!@#",ok:/[^A-Za-z0-9]/.test(p)});
   const isBanned=BANNED_PW.has(p.toLowerCase());
-  if(isBanned)checks.push({label:"Not a common password",ok:false});
+  if(isBanned)checks.push({label:"Common!",ok:false});
   // Score: 0-5
   let score=0;
   if(len>=12)score++;
@@ -1727,25 +1727,14 @@ html{scroll-behavior:smooth}`;
             {/* Password strength meter + generator — signup only */}
             {!isL&&pw.length>0&&(()=>{const a=analyzePw(pw);return(
               <div style={{marginTop:2}}>
-                <div style={{display:"flex",gap:3,marginBottom:4}}>{[0,1,2,3,4].map(i=><div key={i} style={{flex:1,height:3,borderRadius:2,background:i<=a.score-1?a.color:"rgba(255,255,255,0.1)",transition:"background 0.3s"}}/>)}</div>
-                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                  <span style={{fontSize:9,fontWeight:600,color:a.color}}>{a.label}</span>
-                  <div style={{display:"flex",gap:6,flexWrap:"wrap",justifyContent:"flex-end"}}>{a.checks.map((c,i)=><span key={i} style={{fontSize:8,color:c.ok?"#22c55e":"#ef4444",display:"flex",alignItems:"center",gap:2}}>{c.ok?"✓":"✗"} {c.label}</span>)}</div>
+                <div style={{display:"flex",gap:3,marginBottom:3}}>{[0,1,2,3,4].map(i=><div key={i} style={{flex:1,height:3,borderRadius:2,background:i<=a.score-1?a.color:"rgba(255,255,255,0.1)",transition:"background 0.3s"}}/>)}</div>
+                <div style={{display:"flex",alignItems:"center",gap:4,whiteSpace:"nowrap"}}>
+                  <span style={{fontSize:7,fontWeight:700,color:a.color,flexShrink:0}}>{a.label}</span>
+                  <span style={{color:"rgba(255,255,255,0.15)",fontSize:7}}>│</span>
+                  {a.checks.map((c,i)=><span key={i} style={{fontSize:7,color:c.ok?"#22c55e":"rgba(239,68,68,0.7)",display:"flex",alignItems:"center",gap:1}}>{c.ok?"✓":"✗"}{c.label}</span>)}
                 </div>
               </div>
             )})()}
-            {!isL&&<button type="button" onClick={()=>{const g=generateStrongPw();setGenPw(g);setGenCopied(false);setShowPwGen(true)}} style={{width:"100%",padding:"8px 0",marginTop:2,background:"none",border:`1px dashed rgba(${T.accentRgb},0.3)`,borderRadius:8,color:T.accent,fontSize:10,fontWeight:600,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5,display:"flex",alignItems:"center",justifyContent:"center",gap:6,transition:"all 0.2s"}}>🎲 Generate Strong Password</button>}
-            {!isL&&showPwGen&&genPw&&<div style={{marginTop:4,padding:"10px 12px",background:`rgba(${T.accentRgb},0.06)`,border:`1px solid rgba(${T.accentRgb},0.2)`,borderRadius:8,animation:"fadeUp 0.2s ease-out"}}>
-              <div style={{display:"flex",alignItems:"center",gap:8}}>
-                <code style={{flex:1,fontSize:11,color:"#22c55e",fontFamily:"monospace",wordBreak:"break-all",background:"rgba(0,0,0,0.3)",padding:"6px 8px",borderRadius:4,letterSpacing:0.5}}>{genPw}</code>
-                <button onClick={()=>{navigator.clipboard.writeText(genPw).then(()=>{setGenCopied(true);setTimeout(()=>setGenCopied(false),2000)})}} style={{background:`rgba(${T.accentRgb},0.15)`,border:`1px solid rgba(${T.accentRgb},0.3)`,borderRadius:6,padding:"4px 10px",color:T.accent,fontSize:9,fontWeight:600,cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>{genCopied?"Copied!":"Copy"}</button>
-              </div>
-              <div style={{display:"flex",gap:6,marginTop:6}}>
-                <button onClick={()=>{setPw(genPw);setShowPwGen(false);setAuthErr("")}} style={{flex:1,padding:"6px 0",background:`rgba(34,197,94,0.12)`,border:`1px solid rgba(34,197,94,0.3)`,borderRadius:6,color:"#22c55e",fontSize:9,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Use This Password</button>
-                <button onClick={()=>{const g=generateStrongPw();setGenPw(g);setGenCopied(false)}} style={{padding:"6px 12px",background:`rgba(${T.accentRgb},0.1)`,border:`1px solid rgba(${T.accentRgb},0.25)`,borderRadius:6,color:T.accent,fontSize:9,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>🔄</button>
-                <button onClick={()=>setShowPwGen(false)} style={{padding:"6px 10px",background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:6,color:T.dim,fontSize:9,cursor:"pointer",fontFamily:"inherit"}}>✗</button>
-              </div>
-            </div>}
           </div>
           {authErr&&<p style={{color:T.err,fontSize:12,marginTop:8,textAlign:"left"}}>{authErr}</p>}
           <button onClick={isL?doLogin:doSignup} disabled={authLoad} className="auth-submit-btn"
@@ -1765,39 +1754,51 @@ html{scroll-behavior:smooth}`;
           <button onClick={()=>setShowLanding(true)} style={{marginTop:14,background:`rgba(${T.accentRgb},0.08)`,border:`1px solid rgba(${T.accentRgb},0.25)`,borderRadius:8,padding:"8px 20px",color:T.accent,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",letterSpacing:1,transition:"all 0.3s"}}>← Back to home</button>
         </div>
 
-        {/* Encryption warning card — slides in on signup, pulses on password focus */}
-        {!isL&&<div style={{width:260,flexShrink:0,animation:"warnSlideIn 0.5s ease-out both",transition:"all 0.4s ease",...(pwFocus?{animation:"warnSlideIn 0.5s ease-out both, warnAttention 1.2s ease-in-out infinite, warnBorderGlow 1.2s ease-in-out infinite"}:{})}}>
-          <div style={{padding:"20px 18px",borderRadius:16,background:"rgba(245,158,11,0.06)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1.5px solid rgba(245,158,11,${pwFocus?0.5:0.2})`,boxShadow:`0 8px 32px rgba(0,0,0,0.3)${pwFocus?", 0 0 30px rgba(245,158,11,0.2)":""}`,transition:"border-color 0.4s, box-shadow 0.4s",textAlign:"left"}}>
-            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
-              <div style={{width:32,height:32,borderRadius:8,background:"rgba(245,158,11,0.15)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,flexShrink:0}}>🔐</div>
+        {/* Side cards — warning + generator (signup only) */}
+        {!isL&&<div style={{width:260,flexShrink:0,display:"flex",flexDirection:"column",gap:14,animation:"warnSlideIn 0.5s ease-out both"}}>
+
+          {/* Encryption warning card */}
+          <div style={{padding:"18px 16px",borderRadius:16,background:"rgba(245,158,11,0.06)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1.5px solid rgba(245,158,11,${pwFocus?0.5:0.2})`,boxShadow:`0 8px 32px rgba(0,0,0,0.3)${pwFocus?", 0 0 30px rgba(245,158,11,0.2)":""}`,transition:"border-color 0.4s, box-shadow 0.4s",textAlign:"left",...(pwFocus?{animation:"warnAttention 1.2s ease-in-out infinite, warnBorderGlow 1.2s ease-in-out infinite"}:{})}}>
+            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
+              <div style={{width:28,height:28,borderRadius:7,background:"rgba(245,158,11,0.15)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0}}>🔐</div>
               <div>
-                <div style={{fontSize:11,fontWeight:700,color:"#f59e0b",letterSpacing:0.5}}>ENCRYPTION NOTICE</div>
-                <div style={{fontSize:9,color:T.dim,marginTop:1}}>Please read carefully</div>
+                <div style={{fontSize:10,fontWeight:700,color:"#f59e0b",letterSpacing:0.5}}>ENCRYPTION NOTICE</div>
+                <div style={{fontSize:8,color:T.dim,marginTop:1}}>Please read carefully</div>
               </div>
             </div>
-            <div style={{width:"100%",height:1,background:"linear-gradient(90deg,transparent,rgba(245,158,11,0.3),transparent)",marginBottom:12}}/>
-            <div style={{display:"flex",flexDirection:"column",gap:8}}>
-              <div style={{display:"flex",gap:8,alignItems:"flex-start"}}>
-                <span style={{color:"#f59e0b",fontSize:12,lineHeight:1,marginTop:1,flexShrink:0}}>●</span>
-                <p style={{fontSize:10,color:"#cbd5e1",lineHeight:1.5,margin:0}}>Your data is encrypted using a key derived from <strong style={{color:"#f59e0b"}}>your password</strong></p>
-              </div>
-              <div style={{display:"flex",gap:8,alignItems:"flex-start"}}>
-                <span style={{color:"#ef4444",fontSize:12,lineHeight:1,marginTop:1,flexShrink:0}}>●</span>
-                <p style={{fontSize:10,color:"#cbd5e1",lineHeight:1.5,margin:0}}>If you lose your password, your data <strong style={{color:"#ef4444"}}>cannot be recovered</strong></p>
-              </div>
-              <div style={{display:"flex",gap:8,alignItems:"flex-start"}}>
-                <span style={{color:"#22c55e",fontSize:12,lineHeight:1,marginTop:1,flexShrink:0}}>●</span>
-                <p style={{fontSize:10,color:"#cbd5e1",lineHeight:1.5,margin:0}}>We do <strong style={{color:"#22c55e"}}>not store</strong> your password or encryption keys</p>
-              </div>
-              <div style={{display:"flex",gap:8,alignItems:"flex-start"}}>
-                <span style={{color:T.accent,fontSize:12,lineHeight:1,marginTop:1,flexShrink:0}}>●</span>
-                <p style={{fontSize:10,color:"#cbd5e1",lineHeight:1.5,margin:0}}>You are solely responsible for remembering your credentials</p>
-              </div>
+            <div style={{width:"100%",height:1,background:"linear-gradient(90deg,transparent,rgba(245,158,11,0.3),transparent)",marginBottom:10}}/>
+            <div style={{display:"flex",flexDirection:"column",gap:6}}>
+              <div style={{display:"flex",gap:6,alignItems:"flex-start"}}><span style={{color:"#f59e0b",fontSize:10,lineHeight:1,marginTop:1,flexShrink:0}}>●</span><p style={{fontSize:9,color:"#cbd5e1",lineHeight:1.5,margin:0}}>Data encrypted with a key from <strong style={{color:"#f59e0b"}}>your password</strong></p></div>
+              <div style={{display:"flex",gap:6,alignItems:"flex-start"}}><span style={{color:"#ef4444",fontSize:10,lineHeight:1,marginTop:1,flexShrink:0}}>●</span><p style={{fontSize:9,color:"#cbd5e1",lineHeight:1.5,margin:0}}>Lost password = data <strong style={{color:"#ef4444"}}>cannot be recovered</strong></p></div>
+              <div style={{display:"flex",gap:6,alignItems:"flex-start"}}><span style={{color:"#22c55e",fontSize:10,lineHeight:1,marginTop:1,flexShrink:0}}>●</span><p style={{fontSize:9,color:"#cbd5e1",lineHeight:1.5,margin:0}}>We <strong style={{color:"#22c55e"}}>never store</strong> your password or keys</p></div>
+              <div style={{display:"flex",gap:6,alignItems:"flex-start"}}><span style={{color:T.accent,fontSize:10,lineHeight:1,marginTop:1,flexShrink:0}}>●</span><p style={{fontSize:9,color:"#cbd5e1",lineHeight:1.5,margin:0}}>You are solely responsible for credentials</p></div>
             </div>
-            {pwFocus&&<div style={{marginTop:12,padding:"8px 10px",borderRadius:8,background:"rgba(245,158,11,0.1)",border:"1px solid rgba(245,158,11,0.25)",textAlign:"center",animation:"fadeUp 0.3s ease-out"}}>
-              <p style={{fontSize:8,fontWeight:700,color:"#f59e0b",margin:0,letterSpacing:0.3,lineHeight:1.5}}>⚠️ CHOOSE A PASSWORD YOU WILL REMEMBER<br/>OR SAVE PASSWORD SOMEWHERE SAFE</p>
+            {pwFocus&&<div style={{marginTop:10,padding:"6px 8px",borderRadius:6,background:"rgba(245,158,11,0.1)",border:"1px solid rgba(245,158,11,0.25)",textAlign:"center",animation:"fadeUp 0.3s ease-out"}}>
+              <p style={{fontSize:7,fontWeight:700,color:"#f59e0b",margin:0,letterSpacing:0.3,lineHeight:1.5}}>⚠️ CHOOSE A PASSWORD YOU WILL REMEMBER<br/>OR SAVE PASSWORD SOMEWHERE SAFE</p>
             </div>}
           </div>
+
+          {/* Password generator card */}
+          <div style={{padding:"16px 14px",borderRadius:16,background:`rgba(${T.accentRgb},0.04)`,backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1.5px solid rgba(${T.accentRgb},0.2)`,boxShadow:"0 8px 32px rgba(0,0,0,0.25)",textAlign:"left"}}>
+            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
+              <div style={{width:28,height:28,borderRadius:7,background:`rgba(${T.accentRgb},0.15)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0}}>🎲</div>
+              <div>
+                <div style={{fontSize:10,fontWeight:700,color:T.accent,letterSpacing:0.5}}>PASSWORD GENERATOR</div>
+                <div style={{fontSize:8,color:T.dim,marginTop:1}}>Strong & memorable</div>
+              </div>
+            </div>
+            <div style={{width:"100%",height:1,background:`linear-gradient(90deg,transparent,rgba(${T.accentRgb},0.25),transparent)`,marginBottom:10}}/>
+            {!showPwGen?<button type="button" onClick={()=>{const g=generateStrongPw();setGenPw(g);setGenCopied(false);setShowPwGen(true)}} style={{width:"100%",padding:"8px 0",background:`rgba(${T.accentRgb},0.08)`,border:`1px dashed rgba(${T.accentRgb},0.3)`,borderRadius:8,color:T.accent,fontSize:10,fontWeight:600,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.3,transition:"all 0.2s"}}>Generate a Password</button>
+            :<div style={{animation:"fadeUp 0.2s ease-out"}}>
+              <code style={{display:"block",fontSize:11,color:"#22c55e",fontFamily:"monospace",wordBreak:"break-all",background:"rgba(0,0,0,0.3)",padding:"8px 10px",borderRadius:6,letterSpacing:0.5,marginBottom:8,border:"1px solid rgba(34,197,94,0.15)"}}>{genPw}</code>
+              <div style={{display:"flex",gap:5}}>
+                <button onClick={()=>{setPw(genPw);setShowPwGen(false);setAuthErr("")}} style={{flex:1,padding:"6px 0",background:"rgba(34,197,94,0.12)",border:"1px solid rgba(34,197,94,0.3)",borderRadius:6,color:"#22c55e",fontSize:9,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Use This</button>
+                <button onClick={()=>{navigator.clipboard.writeText(genPw).then(()=>{setGenCopied(true);setTimeout(()=>setGenCopied(false),2000)})}} style={{padding:"6px 10px",background:`rgba(${T.accentRgb},0.1)`,border:`1px solid rgba(${T.accentRgb},0.25)`,borderRadius:6,color:T.accent,fontSize:9,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>{genCopied?"✓":"Copy"}</button>
+                <button onClick={()=>{const g=generateStrongPw();setGenPw(g);setGenCopied(false)}} style={{padding:"6px 10px",background:`rgba(${T.accentRgb},0.1)`,border:`1px solid rgba(${T.accentRgb},0.25)`,borderRadius:6,color:T.accent,fontSize:9,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>🔄</button>
+              </div>
+            </div>}
+          </div>
+
         </div>}
 
         </div>{/* end wrapper */}
