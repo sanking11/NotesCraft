@@ -2118,7 +2118,7 @@ html{scroll-behavior:smooth}`;
               <div style={{width:28,height:28,borderRadius:7,background:`rgba(${T.accentRgb},0.15)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0}}>🎲</div>
               <div>
                 <div style={{fontSize:10,fontWeight:700,color:T.accent,letterSpacing:0.5}}>PASSWORD GENERATOR</div>
-                <div style={{fontSize:8,color:T.dim,marginTop:1}}>Strong & memorable · <span onClick={()=>{setInfoPage("password-generator");setShowLanding(true)}} style={{color:T.accent,cursor:"pointer",textDecoration:"underline"}}>Full Tool →</span></div>
+                <div style={{fontSize:8,color:T.dim,marginTop:1}}>Strong & memorable</div>
               </div>
             </div>
             <div style={{width:"100%",height:1,background:`linear-gradient(90deg,transparent,rgba(${T.accentRgb},0.25),transparent)`,marginBottom:10}}/>
@@ -2131,6 +2131,7 @@ html{scroll-behavior:smooth}`;
                 <button onClick={()=>{const g=generateStrongPw();setGenPw(g);setGenCopied(false)}} style={{padding:"6px 10px",background:`rgba(${T.accentRgb},0.1)`,border:`1px solid rgba(${T.accentRgb},0.25)`,borderRadius:6,color:T.accent,fontSize:9,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>🔄</button>
               </div>
             </div>}
+            <button onClick={()=>{setInfoPage("password-generator");setShowLanding(true)}} style={{width:"100%",marginTop:10,padding:"7px 0",background:`linear-gradient(135deg,rgba(${T.accentRgb},0.15),rgba(${T.accentRgb},0.08))`,border:`1px solid rgba(${T.accentRgb},0.35)`,borderRadius:8,color:T.accent,fontSize:10,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5}}>Full Tool →</button>
           </div>
 
         </div>}
