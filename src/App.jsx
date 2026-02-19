@@ -231,18 +231,28 @@ const DEF_NOTES = [
 /* ═══════════ PASSWORD POLICY ═══════════ */
 const BANNED_PW=new Set(["password","123456","12345678","123456789","1234567890","qwerty","abc123","password1","iloveyou","sunshine","princess","football","charlie","shadow","michael","master","jennifer","trustno1","batman","access","hello","monkey","dragon","letmein","696969","baseball","welcome","login","admin","passw0rd","starwars","solo","qwerty123","password123","123123","111111","000000","654321","qwertyuiop","lovely","7777777","888888","changeme","computer","whatever","p@ssw0rd","zaq1zaq1","qazwsx","1qaz2wsx","!@#$%^&*","password!","secret","god","love","sex","test","default","passwd","system","internet","service","server","canada","hello123","matrix","soccer","dallas","killer","trustme","jordan","amanda","hunter","buster","thomas","robert","summer","george","harley","222222","andrea","joshua","freedom","thunder","corvette","austin","1111","merlin","ginger","hammer","silver"]);
 
-const PW_WORDS=["crystal","thunder","velvet","meadow","falcon","copper","silver","harbor","dragon","forest","castle","shadow","arctic","violet","breeze","mystic","canyon","golden","marble","ember","summit","willow","orchid","stellar","phoenix","cobalt","zenith","aurora","citrus","blazer","nimble","coral","prism","drift","spark","lunar","rogue","quest","frost","blaze","tiger","cedar","ocean","delta","pixel","flare","ivory","onyx","sage","dusk"];
+const PW_WORDS=["crystal","thunder","velvet","meadow","falcon","copper","silver","harbor","dragon","forest","castle","shadow","arctic","violet","breeze","mystic","canyon","golden","marble","ember","summit","willow","orchid","stellar","phoenix","cobalt","zenith","aurora","citrus","blazer","nimble","coral","prism","drift","spark","lunar","rogue","quest","frost","blaze","tiger","cedar","ocean","delta","pixel","flare","ivory","onyx","sage","dusk","ripple","vortex","beacon","cinder","mosaic","glacier","tempest","nectar","quartz","scarlet","trophy","mirage","anchor","sphinx","voyage","rumble","pebble","atlas","comet","sentry","marvel","gravel","zenith","tundra","cipher","gadget","plume","rhythm","torque","vivid","magnet","nexus","alpine","riddle","saffron","lantern","jasper","bolted","vertex","garnet","whisper","nebula","dagger","eclipse","tropic","warden","zephyr","radiant","basalt","condor","ember"];
 
+/** Crypto-secure random int in [0, max) */
+function secRand(max){const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%max}
+
+const _prevPws=new Set();
 function generateStrongPw(){
-  const w1=PW_WORDS[Math.floor(Math.random()*PW_WORDS.length)];
-  const w2=PW_WORDS[Math.floor(Math.random()*PW_WORDS.length)];
-  const w3=PW_WORDS[Math.floor(Math.random()*PW_WORDS.length)];
-  const num=Math.floor(Math.random()*90+10);
-  const syms="!@#$%&*?";
-  const sym=syms[Math.floor(Math.random()*syms.length)];
-  // Capitalize first letter of each word
   const cap=s=>s[0].toUpperCase()+s.slice(1);
-  return cap(w1)+cap(w2)+cap(w3)+num+sym;
+  const syms="!@#$%&*?";
+  let pw;
+  do{
+    // Pick 3 unique words
+    const i1=secRand(PW_WORDS.length);
+    let i2;do{i2=secRand(PW_WORDS.length)}while(i2===i1);
+    let i3;do{i3=secRand(PW_WORDS.length)}while(i3===i1||i3===i2);
+    const num=secRand(90)+10;
+    const sym=syms[secRand(syms.length)];
+    pw=cap(PW_WORDS[i1])+cap(PW_WORDS[i2])+cap(PW_WORDS[i3])+num+sym;
+  }while(_prevPws.has(pw));
+  _prevPws.add(pw);
+  if(_prevPws.size>500)_prevPws.clear();
+  return pw;
 }
 
 function analyzePw(p){
