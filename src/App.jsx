@@ -1,5 +1,5 @@
 import React,{ useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { generateSalt, deriveKey, hashPassword, exportKey, importKey } from "./crypto.js";
+import { generateSalt, deriveKey, hashPassword, exportKey, importKey, generateTOTPSecret, verifyTOTP, generateRecoveryCodes } from "./crypto.js";
 import { createSyncAdapter } from "./sync.js";
 import { EncryptedStorage } from "./storage.js";
 
@@ -330,6 +330,17 @@ export default function NotesCraft(){
   const[showPwGen,setShowPwGen]=useState(false);
   const[genPw,setGenPw]=useState("");
   const[genCopied,setGenCopied]=useState(false);
+  // 2FA state
+  const[twoFASetup,setTwoFASetup]=useState(null);
+  const[twoFAStep,setTwoFAStep]=useState(1);
+  const[twoFACode,setTwoFACode]=useState("");
+  const[twoFAErr,setTwoFAErr]=useState("");
+  const[twoFALoad,setTwoFALoad]=useState(false);
+  const[twoFAShowRecovery,setTwoFAShowRecovery]=useState(false);
+  const[twoFARecoveryCodes,setTwoFARecoveryCodes]=useState([]);
+  const[twoFADisableCode,setTwoFADisableCode]=useState("");
+  const[pending2FA,setPending2FA]=useState(null);
+  const[useRecoveryCode,setUseRecoveryCode]=useState(false);
   const[shake,setShake]=useState(false);
   const[showProfileMenu,setShowProfileMenu]=useState(false);
   const[profileTab,setProfileTab]=useState("info"); // "info" | "password" | "name"
@@ -553,6 +564,12 @@ export default function NotesCraft(){
       const pwHash=await hashPassword(pw,u.salt);
       if(pwHash!==u.pwHash){setAuthErr("Wrong password");setAuthLoad(false);doShake();return}
       const es=new EncryptedStorage(adapter,key);
+      // 2FA check — if enabled, pause login and show 2FA screen
+      if(u.twoFactorEnabled){
+        setPending2FA({user:u,key,adapter,es,email:em});
+        setAuthMode("2fa");setAuthLoad(false);setTwoFACode("");setTwoFAErr("");setUseRecoveryCode(false);
+        return;
+      }
       storageRef.current=es;
       setUser(u);
       setQuotaGB(u.quotaGB||10);
@@ -587,6 +604,92 @@ export default function NotesCraft(){
 
   const openPlans=()=>setShowPlans(true);
 
+  // ─── 2FA Functions ───
+  const doVerify2FA=async()=>{
+    if(!pending2FA)return;
+    setTwoFAErr("");setTwoFALoad(true);
+    const{user:u,key,es,email:em}=pending2FA;
+    try{
+      const twofaData=await es.getTwoFA(em);
+      if(!twofaData){setTwoFAErr("2FA data not found");setTwoFALoad(false);return}
+      if(useRecoveryCode){
+        const code=twoFACode.trim().toUpperCase();
+        const idx=twofaData.recoveryCodes.indexOf(code);
+        if(idx===-1){setTwoFAErr("Invalid recovery code");setTwoFALoad(false);return}
+        twofaData.recoveryCodes.splice(idx,1);
+        await es.setTwoFA(em,twofaData);
+      }else{
+        const valid=await verifyTOTP(twofaData.secret,twoFACode);
+        if(!valid){setTwoFAErr("Invalid code — check your authenticator app");setTwoFALoad(false);return}
+      }
+      // 2FA verified — complete login
+      storageRef.current=es;
+      setUser(u);setQuotaGB(u.quotaGB||10);
+      const sn=await es.getNotes(em);const sp=await es.getPrefs(em);
+      const ln=sn||DEF_NOTES;setNotes(ln);setStorageBytes(measureNotesBytes(ln));
+      if(sp){setThemeId(sp.theme||"midnight");setTags(sp.tags||DEF_TAGS);setFolderColors(sp.folderColors||{})}
+      const sc=await es.getCalendar(em);setCalEvents(sc||[]);
+      const first=ln.find(n=>!n.deleted&&!n.archived);
+      if(first){setSelId(first.id);setETitle(first.title);setEBlocks(getBlocks(first))}
+      setAuthMode("app");saveSession(em,key);
+      setPending2FA(null);setTwoFACode("");setUseRecoveryCode(false);
+      await es.subscribe(em,(newNotes)=>{remoteSyncRef.current=true;setNotes(newNotes)},(newCal)=>setCalEvents(newCal),(newPrefs)=>{if(newPrefs){setThemeId(newPrefs.theme||"midnight");setTags(newPrefs.tags||DEF_TAGS);setFolderColors(newPrefs.folderColors||{})}});
+    }catch(e){setTwoFAErr("Verification failed: "+e.message)}
+    setTwoFALoad(false);
+  };
+
+  const doEnable2FASetup=()=>{
+    const secret=generateTOTPSecret();
+    const codes=generateRecoveryCodes();
+    setTwoFASetup({secret,recoveryCodes:codes});
+    setTwoFAStep(1);setTwoFACode("");setTwoFAErr("");
+  };
+
+  const doConfirm2FASetup=async()=>{
+    if(!twoFASetup)return;
+    setTwoFAErr("");setTwoFALoad(true);
+    try{
+      const valid=await verifyTOTP(twoFASetup.secret,twoFACode);
+      if(!valid){setTwoFAErr("Invalid code — make sure you scanned the QR code");setTwoFALoad(false);return}
+      const twofaData={secret:twoFASetup.secret,recoveryCodes:twoFASetup.recoveryCodes,enabledAt:new Date().toISOString()};
+      await storageRef.current.setTwoFA(user.email,twofaData);
+      const updatedUser={...user,twoFactorEnabled:true};
+      await storageRef.current.setUser(user.email,updatedUser);
+      setUser(updatedUser);
+      setTwoFARecoveryCodes(twoFASetup.recoveryCodes);
+      setTwoFAStep(3);setTwoFACode("");
+    }catch(e){setTwoFAErr("Setup failed: "+e.message)}
+    setTwoFALoad(false);
+  };
+
+  const doDisable2FA=async()=>{
+    setTwoFAErr("");
+    if(!twoFADisableCode){setTwoFAErr("Enter your authenticator code");return}
+    setTwoFALoad(true);
+    try{
+      const twofaData=await storageRef.current.getTwoFA(user.email);
+      if(!twofaData){setTwoFAErr("2FA data not found");setTwoFALoad(false);return}
+      const valid=await verifyTOTP(twofaData.secret,twoFADisableCode);
+      if(!valid){setTwoFAErr("Invalid code");setTwoFALoad(false);return}
+      const updatedUser={...user,twoFactorEnabled:false};
+      await storageRef.current.setUser(user.email,updatedUser);
+      setUser(updatedUser);
+      const h=await storageRef.current.getEmailHash(user.email);
+      await storageRef.current.adapter.set("twofa:"+h,"");
+      setTwoFADisableCode("");setTwoFAErr("");
+    }catch(e){setTwoFAErr("Failed: "+e.message)}
+    setTwoFALoad(false);
+  };
+
+  const doViewRecoveryCodes=async()=>{
+    setTwoFALoad(true);
+    try{
+      const twofaData=await storageRef.current.getTwoFA(user.email);
+      if(twofaData){setTwoFARecoveryCodes(twofaData.recoveryCodes);setTwoFAShowRecovery(true)}
+    }catch(e){setTwoFAErr("Failed to load: "+e.message)}
+    setTwoFALoad(false);
+  };
+
   const doChangePassword=async()=>{
     setChangePwErr("");setChangePwOk("");
     if(!changePwOld||!changePwNew||!changePwConfirm){setChangePwErr("All fields required");return}
@@ -608,6 +711,8 @@ export default function NotesCraft(){
       await es.setNotes(user.email,curNotes);
       await es.setPrefs(user.email,curPrefs);
       await es.setCalendar(user.email,curCal);
+      // Re-encrypt 2FA data if enabled
+      if(user.twoFactorEnabled){try{const td=await storageRef.current.getTwoFA(user.email);if(td)await es.setTwoFA(user.email,td)}catch{}}
       storageRef.current=es;
       setUser(updatedUser);
       saveSession(user.email,key);
@@ -639,6 +744,7 @@ export default function NotesCraft(){
       await adapter.set("notes:"+h,"");
       await adapter.set("prefs:"+h,"");
       await adapter.set("calendar:"+h,"");
+      await adapter.set("twofa:"+h,"");
       doLogout();
     }catch(e){alert("Delete failed: "+e.message)}
   };
@@ -1650,6 +1756,51 @@ html{scroll-behavior:smooth}`;
     );
   }
 
+  /* ═══════════ 2FA VERIFICATION SCREEN ═══════════ */
+  if(authMode==="2fa"){
+    return(
+      <div style={{position:"fixed",top:0,left:0,right:0,bottom:0,zIndex:9999,background:T.dark?`linear-gradient(135deg,${T.bg} 0%,${T.bg2} 50%,${T.bg} 100%)`:`linear-gradient(135deg,${T.bg} 0%,${T.bg2} 50%,${T.bg3} 100%)`,backgroundSize:"400% 400%",animation:"gradientShift 8s ease infinite",fontFamily:`${F.body},sans-serif`,overflow:"hidden",display:"flex",alignItems:"center",justifyContent:"center"}}>
+        <style>{css}</style>
+        <canvas ref={gridCvsRef} style={{position:"absolute",inset:0,width:"100%",height:"100%"}}/>
+        <div style={{position:"absolute",top:"50%",left:"50%",width:300,height:300,borderRadius:"50%",border:`1.5px solid rgba(${T.accentRgb},0.3)`,animation:"ringExpand 4s ease-out infinite",pointerEvents:"none"}}/>
+        <div style={{position:"absolute",top:"50%",left:"50%",width:300,height:300,borderRadius:"50%",border:`1.5px solid rgba(${T.accentRgb},0.2)`,animation:"ringExpand 4s ease-out infinite 2s",pointerEvents:"none"}}/>
+
+        <div style={{position:"relative",zIndex:10,textAlign:"center",animation:"fadeUp 0.5s ease-out both",width:400,maxWidth:"90%",padding:"36px 32px",borderRadius:20,background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.08)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:`1px solid rgba(${T.accentRgb},0.2)`,boxShadow:`0 8px 40px rgba(0,0,0,0.25), 0 0 80px rgba(${T.accentRgb},0.08)`}}>
+
+          <div style={{margin:"0 auto 16px",width:56,height:56,borderRadius:16,background:`rgba(${T.accentRgb},0.12)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,border:`1.5px solid rgba(${T.accentRgb},0.25)`}}>🛡️</div>
+
+          <h1 style={{fontSize:22,fontWeight:800,margin:"0 0 4px",fontFamily:`${F.heading},sans-serif`,color:T.text,letterSpacing:2}}>TWO-FACTOR AUTH</h1>
+          <p style={{fontSize:11,color:T.dim,margin:"0 0 24px"}}>{useRecoveryCode?"Enter one of your recovery codes":"Enter the 6-digit code from your authenticator app"}</p>
+
+          {useRecoveryCode?(
+            <input value={twoFACode} onChange={e=>{setTwoFACode(e.target.value.toUpperCase());setTwoFAErr("")}} placeholder="XXXXX-XXXXX" maxLength={11}
+              style={{...inp,width:"100%",padding:"14px 16px",textAlign:"center",letterSpacing:3,fontSize:18,fontFamily:"monospace"}}/>
+          ):(
+            <input value={twoFACode} onChange={e=>{const v=e.target.value.replace(/\D/g,"").slice(0,6);setTwoFACode(v);setTwoFAErr("")}} placeholder="000000" inputMode="numeric" maxLength={6} autoFocus
+              style={{...inp,width:"100%",padding:"16px 16px",textAlign:"center",letterSpacing:10,fontSize:28,fontFamily:"monospace",fontWeight:700}}
+              onKeyDown={e=>{if(e.key==="Enter"&&twoFACode.length>=6)doVerify2FA()}}/>
+          )}
+
+          {twoFAErr&&<p style={{color:T.err,fontSize:12,marginTop:10,textAlign:"center"}}>{twoFAErr}</p>}
+
+          <button onClick={doVerify2FA} disabled={twoFALoad||(!useRecoveryCode&&twoFACode.length<6)}
+            style={{width:"100%",padding:"14px 0",marginTop:16,background:`linear-gradient(135deg,${T.accent},${T.accent2})`,border:"none",borderRadius:10,color:"#fff",fontSize:14,fontWeight:700,fontFamily:`${F.heading},sans-serif`,cursor:twoFALoad?"wait":"pointer",letterSpacing:2,boxShadow:`0 4px 25px rgba(${T.accentRgb},0.35)`,opacity:twoFALoad?0.6:1,transition:"all 0.3s"}}>
+            {twoFALoad?"VERIFYING...":"VERIFY"}
+          </button>
+
+          <div style={{marginTop:16,display:"flex",flexDirection:"column",gap:8}}>
+            <button onClick={()=>{setUseRecoveryCode(!useRecoveryCode);setTwoFACode("");setTwoFAErr("")}}
+              style={{background:"none",border:"none",color:T.accent,fontSize:11,cursor:"pointer",fontFamily:"inherit",opacity:0.8}}>
+              {useRecoveryCode?"Use authenticator code instead":"Lost your device? Use a recovery code"}
+            </button>
+            <button onClick={()=>{setAuthMode("login");setPending2FA(null);setTwoFACode("");setTwoFAErr("");setUseRecoveryCode(false)}}
+              style={{background:"none",border:"none",color:T.dim,fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>← Back to Sign In</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   /* ═══════════ AUTH SCREEN ═══════════ */
   if(authMode!=="app"){
     const isL=authMode==="login";
@@ -1875,7 +2026,7 @@ html{scroll-behavior:smooth}`;
 
           {/* Tab navigation */}
           <div style={{display:"flex",borderBottom:`1px solid ${T.bdr}`,padding:"0 24px"}}>
-            {[{id:"info",label:"Account"},{id:"password",label:"Password"},{id:"name",label:"Edit Profile"},{id:"danger",label:"Danger Zone"}].map(tab=>(
+            {[{id:"info",label:"Account"},{id:"security",label:"Security"},{id:"password",label:"Password"},{id:"name",label:"Edit Profile"},{id:"danger",label:"Danger Zone"}].map(tab=>(
               <button key={tab.id} onClick={()=>{setProfileTab(tab.id);setChangePwErr("");setChangePwOk("");setChangeNameErr("");setChangeNameOk("")}}
                 style={{padding:"10px 16px",fontSize:12,fontWeight:600,color:profileTab===tab.id?T.accent:T.dim,background:"none",border:"none",borderBottom:profileTab===tab.id?`2px solid ${T.accent}`:"2px solid transparent",cursor:"pointer",fontFamily:"inherit",transition:"all 0.2s",letterSpacing:0.3}}>
                 {tab.label}
@@ -1918,6 +2069,103 @@ html{scroll-behavior:smooth}`;
                 style={{width:"100%",padding:"10px 0",borderRadius:8,fontSize:12,fontWeight:600,background:resyncStatus==="done"?`${T.ok}15`:`rgba(${T.accentRgb},0.05)`,border:`1px solid ${resyncStatus==="done"?`${T.ok}30`:`rgba(${T.accentRgb},0.1)`}`,color:resyncStatus==="done"?T.ok:T.accent,cursor:resyncStatus==="syncing"?"wait":"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",gap:6,marginTop:4,transition:"all 0.2s"}}>
                 <IC.Sync/>{resyncStatus==="syncing"?"Syncing...":resyncStatus==="done"?"Synced Successfully!":resyncStatus?"Sync Failed":"Force Resync to Cloud"}
               </button>
+            </div>}
+
+            {/* Security (2FA) tab */}
+            {profileTab==="security"&&<div style={{display:"flex",flexDirection:"column",gap:14}}>
+              <div style={{fontSize:14,fontWeight:700,color:T.text,marginBottom:4}}>Two-Factor Authentication</div>
+
+              {/* 2FA Setup Wizard */}
+              {twoFASetup?(
+                <div>
+                  {twoFAStep===1&&<div style={{display:"flex",flexDirection:"column",gap:14,alignItems:"center"}}>
+                    <p style={{fontSize:12,color:T.faint,lineHeight:1.6,textAlign:"center"}}>Scan this QR code with your authenticator app<br/>(Google Authenticator, Authy, Microsoft Authenticator, etc.)</p>
+                    <div style={{padding:12,background:"#fff",borderRadius:12,display:"inline-block"}}>
+                      <img src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(`otpauth://totp/NotesCraft:${encodeURIComponent(user.email)}?secret=${twoFASetup.secret}&issuer=NotesCraft&digits=6&period=30`)}`} alt="QR" width={180} height={180} style={{display:"block"}}/>
+                    </div>
+                    <div style={{width:"100%"}}>
+                      <label style={{fontSize:10,fontWeight:600,color:T.dim,letterSpacing:0.3,display:"block",marginBottom:4}}>Or enter this key manually:</label>
+                      <div style={{display:"flex",gap:6,alignItems:"center"}}>
+                        <code style={{flex:1,fontSize:11,fontFamily:"monospace",color:T.accent,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.04)",padding:"8px 10px",borderRadius:6,wordBreak:"break-all",letterSpacing:1,border:`1px solid ${T.bdr}`}}>{twoFASetup.secret}</code>
+                        <button onClick={()=>{navigator.clipboard.writeText(twoFASetup.secret)}} style={{padding:"8px 12px",background:`rgba(${T.accentRgb},0.1)`,border:`1px solid rgba(${T.accentRgb},0.25)`,borderRadius:6,color:T.accent,fontSize:10,fontWeight:600,cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>Copy</button>
+                      </div>
+                    </div>
+                    <button onClick={()=>setTwoFAStep(2)} style={{width:"100%",padding:"10px 0",background:`linear-gradient(135deg,${T.accent},${T.accent2})`,border:"none",borderRadius:8,color:"#fff",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",letterSpacing:1}}>Next — Verify Code</button>
+                  </div>}
+
+                  {twoFAStep===2&&<div style={{display:"flex",flexDirection:"column",gap:12}}>
+                    <p style={{fontSize:12,color:T.faint,lineHeight:1.5}}>Enter the 6-digit code from your authenticator app to confirm setup:</p>
+                    <input value={twoFACode} onChange={e=>{const v=e.target.value.replace(/\D/g,"").slice(0,6);setTwoFACode(v);setTwoFAErr("")}} placeholder="000000" inputMode="numeric" maxLength={6} autoFocus
+                      style={{width:"100%",padding:"14px 12px",borderRadius:8,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,color:T.text,fontSize:24,fontFamily:"monospace",fontWeight:700,textAlign:"center",letterSpacing:8,outline:"none",boxSizing:"border-box"}}
+                      onKeyDown={e=>{if(e.key==="Enter"&&twoFACode.length===6)doConfirm2FASetup()}}/>
+                    {twoFAErr&&<div style={{fontSize:12,color:T.err,fontWeight:500}}>{twoFAErr}</div>}
+                    <button onClick={doConfirm2FASetup} disabled={twoFALoad||twoFACode.length<6}
+                      style={{padding:"10px 0",background:`linear-gradient(135deg,${T.accent},${T.accent2})`,border:"none",borderRadius:8,color:"#fff",fontSize:13,fontWeight:600,cursor:twoFALoad?"wait":"pointer",fontFamily:"inherit",letterSpacing:1,opacity:twoFALoad||twoFACode.length<6?0.5:1}}>
+                      {twoFALoad?"Verifying...":"Verify & Enable 2FA"}
+                    </button>
+                    <button onClick={()=>{setTwoFASetup(null);setTwoFACode("");setTwoFAErr("")}} style={{padding:"8px 0",background:"none",border:`1px solid ${T.bdr}`,borderRadius:8,color:T.dim,fontSize:12,cursor:"pointer",fontFamily:"inherit"}}>Cancel</button>
+                  </div>}
+
+                  {twoFAStep===3&&<div style={{display:"flex",flexDirection:"column",gap:12}}>
+                    <div style={{padding:"10px 14px",background:"rgba(34,197,94,0.1)",border:"1px solid rgba(34,197,94,0.3)",borderRadius:8,display:"flex",alignItems:"center",gap:8}}>
+                      <span style={{fontSize:16}}>✅</span>
+                      <span style={{fontSize:12,fontWeight:600,color:"#22c55e"}}>2FA is now enabled!</span>
+                    </div>
+                    <p style={{fontSize:12,color:T.faint,lineHeight:1.5}}>Save these recovery codes in a safe place. Each can be used once if you lose access to your authenticator app.</p>
+                    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6}}>
+                      {twoFARecoveryCodes.map((c,i)=><code key={i} style={{fontSize:11,fontFamily:"monospace",padding:"6px 8px",borderRadius:4,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.04)",border:`1px solid ${T.bdr}`,color:T.text,textAlign:"center",letterSpacing:1}}>{c}</code>)}
+                    </div>
+                    <div style={{display:"flex",gap:6}}>
+                      <button onClick={()=>{navigator.clipboard.writeText(twoFARecoveryCodes.join("\n"))}} style={{flex:1,padding:"8px 0",background:`rgba(${T.accentRgb},0.1)`,border:`1px solid rgba(${T.accentRgb},0.25)`,borderRadius:6,color:T.accent,fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Copy All</button>
+                      <button onClick={()=>{const blob=new Blob(["NotesCraft Recovery Codes\n========================\n\n"+twoFARecoveryCodes.join("\n")+"\n\nEach code can only be used once.\nKeep these codes in a safe place.\n"],{type:"text/plain"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="notescraft-recovery-codes.txt";a.click()}} style={{flex:1,padding:"8px 0",background:`rgba(${T.accentRgb},0.1)`,border:`1px solid rgba(${T.accentRgb},0.25)`,borderRadius:6,color:T.accent,fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Download .txt</button>
+                    </div>
+                    <button onClick={()=>{setTwoFASetup(null);setTwoFARecoveryCodes([])}} style={{padding:"10px 0",background:`linear-gradient(135deg,${T.accent},${T.accent2})`,border:"none",borderRadius:8,color:"#fff",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",letterSpacing:1}}>Done</button>
+                  </div>}
+                </div>
+              ):(
+                <div>
+                  {user.twoFactorEnabled?(
+                    <div style={{display:"flex",flexDirection:"column",gap:14}}>
+                      <div style={{padding:"12px 16px",background:"rgba(34,197,94,0.1)",border:"1px solid rgba(34,197,94,0.25)",borderRadius:10,display:"flex",alignItems:"center",gap:10}}>
+                        <span style={{fontSize:20}}>🛡️</span>
+                        <div>
+                          <div style={{fontSize:13,fontWeight:700,color:"#22c55e"}}>2FA is Active</div>
+                          <div style={{fontSize:10,color:T.dim,marginTop:2}}>Your account is protected with two-factor authentication</div>
+                        </div>
+                      </div>
+                      <button onClick={doViewRecoveryCodes} disabled={twoFALoad}
+                        style={{padding:"10px 0",background:`rgba(${T.accentRgb},0.08)`,border:`1px solid rgba(${T.accentRgb},0.2)`,borderRadius:8,color:T.accent,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
+                        {twoFALoad?"Loading...":"View Recovery Codes"}
+                      </button>
+                      {twoFAShowRecovery&&<div style={{display:"flex",flexDirection:"column",gap:8}}>
+                        <div style={{fontSize:11,color:T.dim}}>{twoFARecoveryCodes.length} of 8 codes remaining</div>
+                        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6}}>
+                          {twoFARecoveryCodes.map((c,i)=><code key={i} style={{fontSize:11,fontFamily:"monospace",padding:"6px 8px",borderRadius:4,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.04)",border:`1px solid ${T.bdr}`,color:T.text,textAlign:"center",letterSpacing:1}}>{c}</code>)}
+                        </div>
+                        <button onClick={()=>setTwoFAShowRecovery(false)} style={{padding:"6px",background:"none",border:"none",color:T.dim,fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>Hide</button>
+                      </div>}
+                      <div style={{borderTop:`1px solid ${T.bdr}`,paddingTop:14,marginTop:4}}>
+                        <div style={{fontSize:12,fontWeight:600,color:T.text,marginBottom:8}}>Disable 2FA</div>
+                        <p style={{fontSize:11,color:T.dim,marginBottom:8,lineHeight:1.5}}>Enter a code from your authenticator app to disable 2FA:</p>
+                        <div style={{display:"flex",gap:8}}>
+                          <input value={twoFADisableCode} onChange={e=>{const v=e.target.value.replace(/\D/g,"").slice(0,6);setTwoFADisableCode(v);setTwoFAErr("")}} placeholder="000000" inputMode="numeric" maxLength={6}
+                            style={{flex:1,padding:"8px 10px",borderRadius:6,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,color:T.text,fontSize:16,fontFamily:"monospace",fontWeight:600,textAlign:"center",letterSpacing:4,outline:"none",boxSizing:"border-box"}}/>
+                          <button onClick={doDisable2FA} disabled={twoFALoad||twoFADisableCode.length<6}
+                            style={{padding:"8px 16px",background:"rgba(239,68,68,0.1)",border:"1px solid rgba(239,68,68,0.3)",borderRadius:6,color:"#ef4444",fontSize:11,fontWeight:600,cursor:twoFALoad?"wait":"pointer",fontFamily:"inherit",opacity:twoFALoad||twoFADisableCode.length<6?0.5:1}}>Disable</button>
+                        </div>
+                        {twoFAErr&&<div style={{fontSize:11,color:T.err,marginTop:6}}>{twoFAErr}</div>}
+                      </div>
+                    </div>
+                  ):(
+                    <div style={{display:"flex",flexDirection:"column",gap:14}}>
+                      <p style={{fontSize:12,color:T.faint,lineHeight:1.6}}>Add an extra layer of security to your account. When enabled, you'll need both your password and a code from your authenticator app to sign in.</p>
+                      <p style={{fontSize:11,color:T.dim,lineHeight:1.5}}>Works with any TOTP authenticator app: Google Authenticator, Authy, Microsoft Authenticator, 1Password, Bitwarden, and more.</p>
+                      <button onClick={doEnable2FASetup}
+                        style={{padding:"12px 0",background:`linear-gradient(135deg,${T.accent},${T.accent2})`,border:"none",borderRadius:8,color:"#fff",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",letterSpacing:1,boxShadow:`0 4px 15px rgba(${T.accentRgb},0.3)`}}>Enable Two-Factor Authentication</button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>}
 
             {/* Change Password tab */}
