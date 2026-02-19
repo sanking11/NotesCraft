@@ -306,6 +306,10 @@ function calcPwStrength(pw){
   return{label:"Very Strong",color:"#10b981",percent:100,time};
 }
 
+const COMMON_WORDS=["password","letmein","welcome","monkey","dragon","master","qwerty","login","admin","princess","football","shadow","sunshine","trustno","access","hello","charlie","donald","batman","michael","jennifer","jordan","thomas","robert","daniel","andrew","joshua","james","john","david","secret","love","pass","test","user","guest","default","changeme","computer","internet","server","canada"];
+function hasSequential(p,n=4){const s=p.toLowerCase();for(let i=0;i<=s.length-n;i++){let asc=true,desc=true;for(let j=1;j<n;j++){if(s.charCodeAt(i+j)!==s.charCodeAt(i)+j)asc=false;if(s.charCodeAt(i+j)!==s.charCodeAt(i)-j)desc=false}if(asc||desc)return true}return false}
+function hasRepeating(p,n=3){for(let i=0;i<=p.length-n;i++){if(p.slice(i,i+n).split("").every(c=>c===p[i]))return true}return false}
+function hasCommonWord(p){const lo=p.toLowerCase();return COMMON_WORDS.some(w=>lo.includes(w))}
 function analyzePw(p){
   const checks=[];
   const len=p.length;
@@ -317,7 +321,13 @@ function analyzePw(p){
   checks.push({label:"Number",ok:/[0-9]/.test(p)});
   checks.push({label:"Symbol (!@#$…)",ok:/[^A-Za-z0-9]/.test(p)});
   const isBanned=BANNED_PW.has(p.toLowerCase());
+  const hasSeq=hasSequential(p);
+  const hasRep=hasRepeating(p);
+  const hasWord=hasCommonWord(p);
   if(isBanned)checks.push({label:"Not a common password",ok:false});
+  if(hasSeq)checks.push({label:"No sequential chars (1234, abcd)",ok:false});
+  if(hasRep)checks.push({label:"No repeated chars (aaa, 111)",ok:false});
+  if(hasWord)checks.push({label:"No common words (password, admin…)",ok:false});
   // Score: 0-5
   let score=0;
   if(len>=12)score++;
@@ -326,6 +336,8 @@ function analyzePw(p){
   if(/[0-9]/.test(p))score++;
   if(/[^A-Za-z0-9]/.test(p))score++;
   if(isBanned)score=0;
+  if(hasSeq||hasRep)score=Math.min(score,2);
+  if(hasWord)score=Math.min(score,2);
   if(len<12)score=Math.min(score,1);
   const labels=["Very Weak","Weak","Fair","Good","Strong","Very Strong"];
   const colors=["#ef4444","#f97316","#eab308","#22c55e","#10b981","#06b6d4"];
@@ -557,7 +569,9 @@ export default function NotesCraft(){
     if(!email||!pw||!uname){setAuthErr("All fields required");doShake();return}
     if(pw.length<12){setAuthErr("Password must be at least 12 characters");doShake();return}
     const analysis=analyzePw(pw);
-    if(analysis.score<2){setAuthErr("Password is too weak — add uppercase, numbers, or symbols");doShake();return}
+    const failedChecks=analysis.checks.filter(c=>!c.ok);
+    if(failedChecks.length>0){setAuthErr("Fix: "+failedChecks.map(c=>c.label).join(", "));doShake();return}
+    if(analysis.score<3){setAuthErr("Password is too weak — try our password generator for a strong one");doShake();return}
     if(BANNED_PW.has(pw.toLowerCase())){setAuthErr("This password is too common — choose something unique");doShake();return}
     setAuthLoad(true);
     // Check against breach database
