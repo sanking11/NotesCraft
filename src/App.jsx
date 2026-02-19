@@ -1461,7 +1461,7 @@ html{scroll-behavior:smooth}`;
         </section>
 
         {/* ── Footer ── */}
-        <footer style={{position:"relative",zIndex:1,padding:"40px 24px 30px",borderTop:`1px solid rgba(${T.accentRgb},0.08)`,textAlign:"center"}}>
+        <footer style={{position:"relative",zIndex:1,padding:"40px 24px 30px",borderTop:`1px solid rgba(${T.accentRgb},0.15)`,textAlign:"center",background:`rgba(${T.dark?"0,0,0":"10,10,18"},0.5)`,backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)"}}>
           <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:10,marginBottom:16}}>
             <ButterflyLogo s={22} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn}/>
             <span style={{fontSize:14,fontWeight:700,letterSpacing:3,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0"}}>NOTESCRAFT</span>
