@@ -1007,7 +1007,7 @@ export default function NotesCraft(){
     let off=0;
     const draw=()=>{
       ctx.clearRect(0,0,W,H);
-      const cs=H*0.6,ch=H-cs;
+      const cs=H*0.78,ch=H-cs;
       off=(off+0.3)%sp;
       // Glow pass
       ctx.strokeStyle=`rgba(${rgb},0.06)`;ctx.lineWidth=5;
@@ -1028,13 +1028,13 @@ export default function NotesCraft(){
       if(y<-sp||y>H+sp*2)continue;
       ctx.beginPath();
       if(y<=cs){ctx.moveTo(0,y);ctx.lineTo(W,y)}
-      else{const t=Math.min((y-cs)/ch,1),sag=t*t*180;ctx.moveTo(0,y);ctx.quadraticCurveTo(cx,y+sag,W,y)}
+      else{const t=Math.min((y-cs)/ch,1),sag=-(t*t*140);ctx.moveTo(0,y);ctx.quadraticCurveTo(cx,y+sag,W,y)}
       ctx.stroke();
     }
     // Vertical lines (static, curve at bottom)
     for(let x=-sp*2;x<=W+sp*2;x+=sp){
       ctx.beginPath();ctx.moveTo(x,0);
-      if(cs<H){ctx.lineTo(x,cs);const d=x-cx,p=d*0.45;ctx.quadraticCurveTo(x-p*0.3,cs+ch*0.5,x-p,H+60)}
+      if(cs<H){ctx.lineTo(x,cs);const d=x-cx,p=d*-0.35;ctx.quadraticCurveTo(x-p*0.3,cs+ch*0.5,x-p,H+60)}
       else ctx.lineTo(x,H);
       ctx.stroke();
     }
