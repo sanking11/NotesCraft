@@ -1174,6 +1174,8 @@ html{scroll-behavior:smooth}`;
 
         {/* ── Animated Background ── */}
         <div style={{position:"fixed",inset:0,zIndex:0,overflow:"hidden",pointerEvents:"none"}}>
+          {/* Full-page grid */}
+          <div style={{position:"absolute",inset:0,backgroundImage:`linear-gradient(rgba(${T.accentRgb},0.15) 1px,transparent 1px),linear-gradient(90deg,rgba(${T.accentRgb},0.15) 1px,transparent 1px)`,backgroundSize:"60px 60px",animation:"ldGridFlow 20s linear infinite"}}/>
           {/* 3D Perspective Grid Floor */}
           <div style={{position:"absolute",bottom:"-30%",left:"-30%",right:"-30%",height:"80%",transform:"perspective(500px) rotateX(60deg)",backgroundImage:`linear-gradient(rgba(${T.accentRgb},0.35) 1px,transparent 1px),linear-gradient(90deg,rgba(${T.accentRgb},0.35) 1px,transparent 1px)`,backgroundSize:"60px 60px",animation:"neoGridScroll 3s linear infinite",WebkitMaskImage:"linear-gradient(to top,rgba(0,0,0,0.9) 0%,transparent 70%)",maskImage:"linear-gradient(to top,rgba(0,0,0,0.9) 0%,transparent 70%)"}}/>
           {/* Aurora gradient orbs - vibrant multi-color */}
@@ -1383,6 +1385,8 @@ html{scroll-behavior:smooth}`;
       <div style={{position:"fixed",top:0,left:0,right:0,bottom:0,zIndex:9999,background:T.dark?`linear-gradient(135deg,${T.bg} 0%,${T.bg2} 50%,${T.bg} 100%)`:`linear-gradient(135deg,${T.bg} 0%,${T.bg2} 50%,${T.bg3} 100%)`,backgroundSize:"400% 400%",animation:"gradientShift 8s ease infinite",fontFamily:`${F.body},sans-serif`,overflow:"hidden",display:"flex",alignItems:"center",justifyContent:"center"}}>
         <style>{css}</style>
 
+        {/* Full-page grid */}
+        <div style={{position:"absolute",inset:0,backgroundImage:`linear-gradient(rgba(${T.accentRgb},0.12) 1px,transparent 1px),linear-gradient(90deg,rgba(${T.accentRgb},0.12) 1px,transparent 1px)`,backgroundSize:"60px 60px"}}/>
         {/* 3D Perspective Grid Floor */}
         <div style={{position:"absolute",bottom:"-30%",left:"-30%",right:"-30%",height:"80%",transform:"perspective(500px) rotateX(60deg)",backgroundImage:`linear-gradient(rgba(${T.accentRgb},0.25) 1px,transparent 1px),linear-gradient(90deg,rgba(${T.accentRgb},0.25) 1px,transparent 1px)`,backgroundSize:"60px 60px",animation:"neoGridScroll 3s linear infinite",WebkitMaskImage:"linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 60%)",maskImage:"linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 60%)"}}/>
 
