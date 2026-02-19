@@ -2058,15 +2058,15 @@ html{scroll-behavior:smooth}`;
                 ))}
               </div>
               <div style={{display:"flex",gap:8,marginTop:4}}>
-                <button onClick={()=>setProfileTab("password")} className="glass-btn" style={{flex:1,padding:"10px 0",borderRadius:8,fontSize:12,fontWeight:600,background:`rgba(${T.accentRgb},0.08)`,border:`1px solid rgba(${T.accentRgb},0.15)`,color:T.accent,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>
+                <button onClick={()=>setProfileTab("password")} className="glass-btn" style={{flex:1,padding:"10px 0",borderRadius:8,fontSize:12,fontWeight:700,background:`rgba(${T.accentRgb},${T.dark?0.08:0.15})`,border:`1px solid rgba(${T.accentRgb},${T.dark?0.15:0.3})`,color:T.dark?T.accent:T.text,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>
                   <IC.Lock/>Change Password
                 </button>
-                <button onClick={()=>{setProfileTab("name");setChangeNameVal(user?.name||"")}} className="glass-btn" style={{flex:1,padding:"10px 0",borderRadius:8,fontSize:12,fontWeight:600,background:`rgba(${T.accentRgb},0.08)`,border:`1px solid rgba(${T.accentRgb},0.15)`,color:T.accent,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>
+                <button onClick={()=>{setProfileTab("name");setChangeNameVal(user?.name||"")}} className="glass-btn" style={{flex:1,padding:"10px 0",borderRadius:8,fontSize:12,fontWeight:700,background:`rgba(${T.accentRgb},${T.dark?0.08:0.15})`,border:`1px solid rgba(${T.accentRgb},${T.dark?0.15:0.3})`,color:T.dark?T.accent:T.text,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>
                   <IC.User/>Edit Name
                 </button>
               </div>
               <button onClick={doForceResync} disabled={resyncStatus==="syncing"} className="glass-btn"
-                style={{width:"100%",padding:"10px 0",borderRadius:8,fontSize:12,fontWeight:600,background:resyncStatus==="done"?`${T.ok}15`:`rgba(${T.accentRgb},0.05)`,border:`1px solid ${resyncStatus==="done"?`${T.ok}30`:`rgba(${T.accentRgb},0.1)`}`,color:resyncStatus==="done"?T.ok:T.accent,cursor:resyncStatus==="syncing"?"wait":"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",gap:6,marginTop:4,transition:"all 0.2s"}}>
+                style={{width:"100%",padding:"10px 0",borderRadius:8,fontSize:12,fontWeight:700,background:resyncStatus==="done"?`${T.ok}15`:`rgba(${T.accentRgb},${T.dark?0.05:0.12})`,border:`1px solid ${resyncStatus==="done"?`${T.ok}30`:`rgba(${T.accentRgb},${T.dark?0.1:0.25})`}`,color:resyncStatus==="done"?T.ok:(T.dark?T.accent:T.text),cursor:resyncStatus==="syncing"?"wait":"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",gap:6,marginTop:4,transition:"all 0.2s"}}>
                 <IC.Sync/>{resyncStatus==="syncing"?"Syncing...":resyncStatus==="done"?"Synced Successfully!":resyncStatus?"Sync Failed":"Force Resync to Cloud"}
               </button>
             </div>}
@@ -2087,7 +2087,7 @@ html{scroll-behavior:smooth}`;
                       <label style={{fontSize:10,fontWeight:600,color:T.dim,letterSpacing:0.3,display:"block",marginBottom:4}}>Or enter this key manually:</label>
                       <div style={{display:"flex",gap:6,alignItems:"center"}}>
                         <code style={{flex:1,fontSize:11,fontFamily:"monospace",color:T.accent,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.04)",padding:"8px 10px",borderRadius:6,wordBreak:"break-all",letterSpacing:1,border:`1px solid ${T.bdr}`}}>{twoFASetup.secret}</code>
-                        <button onClick={()=>{navigator.clipboard.writeText(twoFASetup.secret)}} style={{padding:"8px 12px",background:`rgba(${T.accentRgb},0.1)`,border:`1px solid rgba(${T.accentRgb},0.25)`,borderRadius:6,color:T.accent,fontSize:10,fontWeight:600,cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>Copy</button>
+                        <button onClick={()=>{navigator.clipboard.writeText(twoFASetup.secret)}} style={{padding:"8px 12px",background:`rgba(${T.accentRgb},${T.dark?0.1:0.15})`,border:`1px solid rgba(${T.accentRgb},${T.dark?0.25:0.35})`,borderRadius:6,color:T.dark?T.accent:T.text,fontSize:10,fontWeight:600,cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>Copy</button>
                       </div>
                     </div>
                     <button onClick={()=>setTwoFAStep(2)} style={{width:"100%",padding:"10px 0",background:`linear-gradient(135deg,${T.accent},${T.accent2})`,border:"none",borderRadius:8,color:"#fff",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",letterSpacing:1}}>Next — Verify Code</button>
@@ -2116,8 +2116,8 @@ html{scroll-behavior:smooth}`;
                       {twoFARecoveryCodes.map((c,i)=><code key={i} style={{fontSize:11,fontFamily:"monospace",padding:"6px 8px",borderRadius:4,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.04)",border:`1px solid ${T.bdr}`,color:T.text,textAlign:"center",letterSpacing:1}}>{c}</code>)}
                     </div>
                     <div style={{display:"flex",gap:6}}>
-                      <button onClick={()=>{navigator.clipboard.writeText(twoFARecoveryCodes.join("\n"))}} style={{flex:1,padding:"8px 0",background:`rgba(${T.accentRgb},0.1)`,border:`1px solid rgba(${T.accentRgb},0.25)`,borderRadius:6,color:T.accent,fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Copy All</button>
-                      <button onClick={()=>{const blob=new Blob(["NotesCraft Recovery Codes\n========================\n\n"+twoFARecoveryCodes.join("\n")+"\n\nEach code can only be used once.\nKeep these codes in a safe place.\n"],{type:"text/plain"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="notescraft-recovery-codes.txt";a.click()}} style={{flex:1,padding:"8px 0",background:`rgba(${T.accentRgb},0.1)`,border:`1px solid rgba(${T.accentRgb},0.25)`,borderRadius:6,color:T.accent,fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Download .txt</button>
+                      <button onClick={()=>{navigator.clipboard.writeText(twoFARecoveryCodes.join("\n"))}} style={{flex:1,padding:"8px 0",background:`rgba(${T.accentRgb},${T.dark?0.1:0.15})`,border:`1px solid rgba(${T.accentRgb},${T.dark?0.25:0.35})`,borderRadius:6,color:T.dark?T.accent:T.text,fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Copy All</button>
+                      <button onClick={()=>{const blob=new Blob(["NotesCraft Recovery Codes\n========================\n\n"+twoFARecoveryCodes.join("\n")+"\n\nEach code can only be used once.\nKeep these codes in a safe place.\n"],{type:"text/plain"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="notescraft-recovery-codes.txt";a.click()}} style={{flex:1,padding:"8px 0",background:`rgba(${T.accentRgb},${T.dark?0.1:0.15})`,border:`1px solid rgba(${T.accentRgb},${T.dark?0.25:0.35})`,borderRadius:6,color:T.dark?T.accent:T.text,fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Download .txt</button>
                     </div>
                     <button onClick={()=>{setTwoFASetup(null);setTwoFARecoveryCodes([])}} style={{padding:"10px 0",background:`linear-gradient(135deg,${T.accent},${T.accent2})`,border:"none",borderRadius:8,color:"#fff",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",letterSpacing:1}}>Done</button>
                   </div>}
@@ -2134,7 +2134,7 @@ html{scroll-behavior:smooth}`;
                         </div>
                       </div>
                       <button onClick={doViewRecoveryCodes} disabled={twoFALoad}
-                        style={{padding:"10px 0",background:`rgba(${T.accentRgb},0.08)`,border:`1px solid rgba(${T.accentRgb},0.2)`,borderRadius:8,color:T.accent,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
+                        style={{padding:"10px 0",background:`rgba(${T.accentRgb},${T.dark?0.08:0.15})`,border:`1px solid rgba(${T.accentRgb},${T.dark?0.2:0.35})`,borderRadius:8,color:T.dark?T.accent:T.text,fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>
                         {twoFALoad?"Loading...":"View Recovery Codes"}
                       </button>
                       {twoFAShowRecovery&&<div style={{display:"flex",flexDirection:"column",gap:8}}>
