@@ -260,6 +260,7 @@ function NeoFlipCard({w,h,rgb,x,y,r,f,d,dl,title,plain,enc,opacity=1,delay=0}){
 export default function NotesCraft(){
   const[authMode,setAuthMode]=useState("login");
   const[showLanding,setShowLanding]=useState(true);
+  const[infoPage,setInfoPage]=useState(null);
   const[user,setUser]=useState(null);
   const[email,setEmail]=useState("");
   const[pw,setPw]=useState("");
@@ -1260,6 +1261,93 @@ html{scroll-behavior:smooth}`;
   const inp={background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.5)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid rgba(${T.accentRgb},0.15)`,borderRadius:10,color:T.text,fontSize:14,fontFamily:`${F.body},sans-serif`,outline:"none",boxSizing:"border-box",transition:"all 0.3s",boxShadow:`0 2px 10px rgba(0,0,0,0.1), inset 0 0 10px rgba(${T.accentRgb},0.02)`};
   const glass={background:T.dark?"rgba(255,255,255,0.03)":"rgba(255,255,255,0.4)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid rgba(${T.accentRgb},0.12)`,boxShadow:`0 8px 32px rgba(0,0,0,0.15), inset 0 0 0 1px rgba(255,255,255,${T.dark?0.03:0.2})`};
 
+  /* ═══════════ INFO PAGES (About / Privacy / Terms) ═══════════ */
+  if(infoPage&&authMode!=="app"){
+    const infoGlass={background:T.dark?"rgba(255,255,255,0.03)":"rgba(255,255,255,0.06)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1px solid rgba(${T.accentRgb},0.12)`,borderRadius:20};
+    const infoH={fontSize:28,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",marginBottom:24,letterSpacing:2};
+    const infoH2={fontSize:18,fontWeight:700,fontFamily:`${F.heading},sans-serif`,color:T.accent,margin:"28px 0 12px",letterSpacing:1};
+    const infoP={fontSize:14,lineHeight:1.9,color:"#b0bec9",margin:"0 0 12px"};
+    const infoPages={
+      about:<>
+        <h1 style={infoH}>About NotesCraft</h1>
+        <p style={infoP}>NotesCraft is a privacy-first encrypted notes application designed for people who believe their thoughts deserve the same protection as their most sensitive data.</p>
+        <h2 style={infoH2}>Our Mission</h2>
+        <p style={infoP}>Privacy isn't a feature we added — it's the reason we built this. Every word you write is encrypted on your device before it ever touches the network. We can't read your notes, and neither can anyone else.</p>
+        <h2 style={infoH2}>What We Offer</h2>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,margin:"16px 0"}}>
+          {[["End-to-End Encryption","AES-256 encryption happens on your device. Your data is unreadable to everyone — including us."],["Cross-Device Sync","Access your notes from any device. Encrypted data syncs securely through the cloud."],["Rich Text & Markdown","Full formatting toolbar, code blocks, checklists, and markdown support for expressive writing."],["Calendar & Reminders","Built-in calendar with event scheduling, reminders, and task management — all encrypted."],["Custom Themes","Personalize your workspace with 20+ themes, accent colors, and font combinations."],["Zero-Knowledge Architecture","We never store your encryption keys. Only you can decrypt your data."]].map(([t,d],i)=><div key={i} style={{...infoGlass,padding:"20px 18px",borderRadius:14}}><div style={{fontSize:13,fontWeight:700,color:T.dark?T.text:"#e2e8f0",marginBottom:6}}>{t}</div><div style={{fontSize:12,lineHeight:1.7,color:"#94a3b8"}}>{d}</div></div>)}
+        </div>
+        <h2 style={infoH2}>Built With Love</h2>
+        <p style={infoP}>Designed and developed by <span style={{fontWeight:800,color:T.accent,letterSpacing:2,fontFamily:`${F.heading},sans-serif`}}>SUNNY</span> — with a passion for privacy, clean design, and great user experiences. NotesCraft is built with React, powered by AES-256 encryption, and crafted to be the most beautiful encrypted notes app you've ever used.</p>
+      </>,
+      privacy:<>
+        <h1 style={infoH}>Privacy Policy</h1>
+        <p style={{...infoP,fontStyle:"italic",opacity:0.7}}>Last updated: February 2026</p>
+        <p style={infoP}>At NotesCraft, privacy isn't just a policy — it's our entire architecture. This document explains how we handle (or rather, don't handle) your data.</p>
+        <h2 style={infoH2}>Zero Data Collection</h2>
+        <p style={infoP}>We do not use analytics, tracking pixels, cookies for advertising, or any third-party data collection tools. We don't know how you use the app, what you write, or when you use it.</p>
+        <h2 style={infoH2}>End-to-End Encryption</h2>
+        <p style={infoP}>All your notes, calendar events, and attachments are encrypted on your device using AES-256 encryption before being transmitted or stored. Your encryption key is derived from your password and never leaves your device. We have zero ability to read your data.</p>
+        <h2 style={infoH2}>Zero-Knowledge Architecture</h2>
+        <p style={infoP}>Our servers only ever see encrypted blobs. We cannot decrypt, read, analyze, or share your content — even if compelled by law — because we simply don't have the keys.</p>
+        <h2 style={infoH2}>Data Storage</h2>
+        <p style={infoP}>Your encrypted data is stored securely in the cloud solely for the purpose of cross-device synchronization. The stored data is meaningless without your encryption key, which only you possess.</p>
+        <h2 style={infoH2}>No Third-Party Sharing</h2>
+        <p style={infoP}>We do not sell, share, or provide your data to any third parties. There is no advertising, no data brokers, and no partnerships that involve your information.</p>
+        <h2 style={infoH2}>Account Deletion</h2>
+        <p style={infoP}>You can delete your account at any time. When you do, all your encrypted data is permanently removed from our servers. This action is irreversible.</p>
+        <h2 style={infoH2}>Contact</h2>
+        <p style={infoP}>If you have questions about this privacy policy, reach out through the app or visit our GitHub repository.</p>
+      </>,
+      terms:<>
+        <h1 style={infoH}>Terms of Service</h1>
+        <p style={{...infoP,fontStyle:"italic",opacity:0.7}}>Last updated: February 2026</p>
+        <p style={infoP}>By using NotesCraft, you agree to the following terms. Please read them carefully.</p>
+        <h2 style={infoH2}>1. Acceptance of Terms</h2>
+        <p style={infoP}>By accessing or using NotesCraft, you agree to be bound by these Terms of Service. If you do not agree, please do not use the application.</p>
+        <h2 style={infoH2}>2. Service Description</h2>
+        <p style={infoP}>NotesCraft is an encrypted notes application that provides end-to-end encrypted note-taking, calendar management, and file storage with cross-device synchronization.</p>
+        <h2 style={infoH2}>3. User Responsibilities</h2>
+        <p style={infoP}>You are responsible for maintaining the security of your account credentials. You must provide accurate information when creating an account. You agree not to use the service for any illegal or unauthorized purpose.</p>
+        <h2 style={infoH2}>4. Encryption & Password</h2>
+        <p style={infoP}>Your data is encrypted using a key derived from your password. <strong style={{color:"#e2e8f0"}}>If you lose your password, your data cannot be recovered.</strong> We do not store your password or encryption keys. You are solely responsible for remembering your credentials.</p>
+        <h2 style={infoH2}>5. Service Availability</h2>
+        <p style={infoP}>NotesCraft is provided "as is" without warranties of any kind. We strive for high availability but do not guarantee uninterrupted access. We may modify, suspend, or discontinue features at any time.</p>
+        <h2 style={infoH2}>6. Limitation of Liability</h2>
+        <p style={infoP}>To the maximum extent permitted by law, NotesCraft and its developer shall not be liable for any indirect, incidental, or consequential damages arising from your use of the service, including data loss due to forgotten passwords.</p>
+        <h2 style={infoH2}>7. Changes to Terms</h2>
+        <p style={infoP}>We reserve the right to update these terms at any time. Continued use of NotesCraft after changes constitutes acceptance of the updated terms.</p>
+      </>
+    };
+    return(
+      <div style={{width:"100%",height:"100vh",overflowY:"auto",overflowX:"hidden",background:T.dark?T.bg:"#0a0a12",color:T.dark?T.text:"#e2e8f0",fontFamily:`${F.body},sans-serif`,position:"relative"}}>
+        <style>{css}</style>
+        <div style={{position:"fixed",inset:0,zIndex:0,overflow:"hidden",pointerEvents:"none"}}>
+          <canvas ref={gridCvsRef} style={{position:"absolute",inset:0,width:"100%",height:"100%"}}/>
+          <div style={{position:"absolute",width:600,height:600,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.2) 0%,transparent 70%)",filter:"blur(60px)",top:"-15%",left:"-10%",animation:"ldOrb1 25s ease-in-out infinite"}}/>
+          <div style={{position:"absolute",width:500,height:500,borderRadius:"50%",background:`radial-gradient(circle,rgba(${T.accentRgb},0.18) 0%,transparent 70%)`,filter:"blur(45px)",bottom:"-10%",right:"-5%",animation:"ldOrb2 30s ease-in-out infinite"}}/>
+        </div>
+        <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:100,padding:"16px 40px",display:"flex",alignItems:"center",justifyContent:"space-between",background:`linear-gradient(180deg,${T.dark?T.bg:"#0a0a12"} 0%,transparent 100%)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)"}}>
+          <div style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer"}} onClick={()=>setInfoPage(null)}>
+            <ButterflyLogo s={28} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} flap/>
+            <span style={{fontSize:18,fontWeight:800,letterSpacing:3,fontFamily:`${F.heading},sans-serif`,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>NOTESCRAFT</span>
+          </div>
+          <button onClick={()=>setInfoPage(null)} style={{background:`rgba(${T.accentRgb},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,borderRadius:8,padding:"8px 20px",color:T.dark?T.text:"#e2e8f0",fontSize:13,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1}}>← Back</button>
+        </nav>
+        <div style={{position:"relative",zIndex:1,maxWidth:800,margin:"0 auto",padding:"100px 24px 60px"}}>
+          <div style={{...infoGlass,padding:"48px 40px"}}>
+            {infoPages[infoPage]}
+          </div>
+        </div>
+        <footer style={{position:"relative",zIndex:1,padding:"30px 24px 24px",borderTop:`1px solid rgba(${T.accentRgb},0.15)`,textAlign:"center",background:`rgba(${T.dark?"0,0,0":"10,10,18"},0.12)`,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)"}}>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:20,flexWrap:"wrap"}}>
+            {["about","privacy","terms"].map(p=><button key={p} onClick={()=>{setInfoPage(p);window.scrollTo(0,0)}} style={{fontSize:12,color:infoPage===p?T.accent:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:infoPage===p?700:400,letterSpacing:1,textTransform:"capitalize"}}>{p==="terms"?"Terms of Service":p==="privacy"?"Privacy Policy":p.charAt(0).toUpperCase()+p.slice(1)}</button>)}
+          </div>
+        </footer>
+      </div>
+    );
+  }
+
   /* ═══════════ LANDING PAGE ═══════════ */
   if(showLanding&&authMode!=="app"){
     const goAuth=(mode)=>{if(window.location.hash)history.replaceState(null,"",window.location.pathname);if(ldScrollRef.current)ldScrollRef.current.scrollTop=0;window.scrollTo(0,0);document.documentElement.scrollTop=0;setShowLanding(false);setAuthMode(mode)};
@@ -1471,6 +1559,10 @@ html{scroll-behavior:smooth}`;
             <a href="#features" style={{fontSize:12,color:"#94a3b8",textDecoration:"none"}}>Features</a>
             <a href="#pricing" style={{fontSize:12,color:"#94a3b8",textDecoration:"none"}}>Pricing</a>
             <button onClick={()=>goAuth("login")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Sign In</button>
+            <span style={{color:"rgba(148,163,184,0.3)"}}>·</span>
+            <button onClick={()=>setInfoPage("about")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>About</button>
+            <button onClick={()=>setInfoPage("privacy")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Privacy</button>
+            <button onClick={()=>setInfoPage("terms")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Terms</button>
           </div>
           <p style={{fontSize:11,color:"#7a8898",letterSpacing:0.8,display:"flex",alignItems:"center",justifyContent:"center",gap:6,flexWrap:"wrap",lineHeight:2,margin:0}}>
             <span style={{fontStyle:"italic"}}>Designed and Developed by</span>
@@ -1577,6 +1669,11 @@ html{scroll-behavior:smooth}`;
 
         {/* Footer */}
         <div style={{position:"absolute",bottom:0,left:0,right:0,textAlign:"center",padding:"14px 20px",background:`linear-gradient(180deg,transparent,rgba(${T.dark?"0,0,0":"0,0,0"},0.15))`,animation:"footerFadeIn 1.2s ease-out 0.5s both",zIndex:20}}>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:16,marginBottom:8}}>
+            <button onClick={()=>{setInfoPage("about");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>About</button>
+            <button onClick={()=>{setInfoPage("privacy");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Privacy</button>
+            <button onClick={()=>{setInfoPage("terms");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Terms</button>
+          </div>
           <p style={{fontSize:11,color:T.dim,fontFamily:`${F.body},sans-serif`,letterSpacing:0.8,display:"flex",alignItems:"center",justifyContent:"center",gap:6,flexWrap:"wrap",lineHeight:2,margin:0}}>
             <span style={{fontStyle:"italic",opacity:0.7}}>Designed and Developed by</span>
             <span className="nc-footer-name" style={{fontWeight:800,fontSize:13,letterSpacing:2.5,fontFamily:`${F.heading},sans-serif`}}>SUNNY</span>
