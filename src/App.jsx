@@ -2049,9 +2049,9 @@ html{scroll-behavior:smooth}`;
               <div style={{marginTop:2}}>
                 <div style={{display:"flex",gap:3,marginBottom:3}}>{[0,1,2,3,4].map(i=><div key={i} style={{flex:1,height:3,borderRadius:2,background:i<=a.score-1?a.color:"rgba(255,255,255,0.1)",transition:"background 0.3s"}}/>)}</div>
                 <div style={{display:"flex",alignItems:"center",gap:3,whiteSpace:"nowrap"}}>
-                  <span style={{fontSize:12,fontWeight:700,color:a.color,flexShrink:0}}>{a.label}</span>
-                  <span style={{color:"rgba(255,255,255,0.15)",fontSize:6}}>│</span>
-                  {a.checks.map((c,i)=><span key={i} style={{fontSize:6,color:c.ok?"#22c55e":"rgba(239,68,68,0.7)",display:"flex",alignItems:"center",gap:1}}>{c.ok?"✓":"✗"}{c.label}</span>)}
+                  <span style={{fontSize:8,fontWeight:700,color:a.color,flexShrink:0}}>{a.label}</span>
+                  <span style={{color:"rgba(255,255,255,0.15)",fontSize:7}}>│</span>
+                  {a.checks.map((c,i)=><span key={i} style={{fontSize:7,color:c.ok?"#22c55e":"rgba(239,68,68,0.7)",display:"flex",alignItems:"center",gap:1}}>{c.ok?"✓":"✗"}{c.label}</span>)}
                 </div>
               </div>
             )})()}
