@@ -248,15 +248,15 @@ function generateStrongPw(){
 function analyzePw(p){
   const checks=[];
   const len=p.length;
-  if(len>=14)checks.push({label:"14+",ok:true});
-  else if(len>=12)checks.push({label:"12+",ok:true});
-  else checks.push({label:`${len}/12`,ok:false});
-  checks.push({label:"A-Z",ok:/[A-Z]/.test(p)});
-  checks.push({label:"a-z",ok:/[a-z]/.test(p)});
-  checks.push({label:"0-9",ok:/[0-9]/.test(p)});
-  checks.push({label:"!@#",ok:/[^A-Za-z0-9]/.test(p)});
+  if(len>=14)checks.push({label:"14+ characters",ok:true});
+  else if(len>=12)checks.push({label:"12+ characters",ok:true});
+  else checks.push({label:`${len}/12 characters`,ok:false});
+  checks.push({label:"Uppercase letter",ok:/[A-Z]/.test(p)});
+  checks.push({label:"Lowercase letter",ok:/[a-z]/.test(p)});
+  checks.push({label:"Number",ok:/[0-9]/.test(p)});
+  checks.push({label:"Symbol (!@#$…)",ok:/[^A-Za-z0-9]/.test(p)});
   const isBanned=BANNED_PW.has(p.toLowerCase());
-  if(isBanned)checks.push({label:"Common!",ok:false});
+  if(isBanned)checks.push({label:"Not a common password",ok:false});
   // Score: 0-5
   let score=0;
   if(len>=12)score++;
@@ -1728,10 +1728,10 @@ html{scroll-behavior:smooth}`;
             {!isL&&pw.length>0&&(()=>{const a=analyzePw(pw);return(
               <div style={{marginTop:2}}>
                 <div style={{display:"flex",gap:3,marginBottom:3}}>{[0,1,2,3,4].map(i=><div key={i} style={{flex:1,height:3,borderRadius:2,background:i<=a.score-1?a.color:"rgba(255,255,255,0.1)",transition:"background 0.3s"}}/>)}</div>
-                <div style={{display:"flex",alignItems:"center",gap:4,whiteSpace:"nowrap"}}>
-                  <span style={{fontSize:7,fontWeight:700,color:a.color,flexShrink:0}}>{a.label}</span>
-                  <span style={{color:"rgba(255,255,255,0.15)",fontSize:7}}>│</span>
-                  {a.checks.map((c,i)=><span key={i} style={{fontSize:7,color:c.ok?"#22c55e":"rgba(239,68,68,0.7)",display:"flex",alignItems:"center",gap:1}}>{c.ok?"✓":"✗"}{c.label}</span>)}
+                <div style={{display:"flex",alignItems:"center",gap:3,whiteSpace:"nowrap"}}>
+                  <span style={{fontSize:6,fontWeight:700,color:a.color,flexShrink:0}}>{a.label}</span>
+                  <span style={{color:"rgba(255,255,255,0.15)",fontSize:6}}>│</span>
+                  {a.checks.map((c,i)=><span key={i} style={{fontSize:6,color:c.ok?"#22c55e":"rgba(239,68,68,0.7)",display:"flex",alignItems:"center",gap:1}}>{c.ok?"✓":"✗"}{c.label}</span>)}
                 </div>
               </div>
             )})()}
