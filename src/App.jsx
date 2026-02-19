@@ -1148,7 +1148,7 @@ html{scroll-behavior:smooth}`;
 
   /* ═══════════ LANDING PAGE ═══════════ */
   if(showLanding&&authMode!=="app"){
-    const goAuth=(mode)=>{if(window.location.hash)history.replaceState(null,"",window.location.pathname);window.scrollTo(0,0);document.documentElement.scrollTop=0;setShowLanding(false);setAuthMode(mode)};
+    const goAuth=(mode)=>{if(window.location.hash)history.replaceState(null,"",window.location.pathname);if(ldScrollRef.current)ldScrollRef.current.scrollTop=0;window.scrollTo(0,0);document.documentElement.scrollTop=0;setShowLanding(false);setAuthMode(mode)};
     const ldGlass={background:T.dark?"rgba(255,255,255,0.03)":"rgba(255,255,255,0.06)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1px solid rgba(${T.accentRgb},0.12)`,borderRadius:20};
     const ldAnim=(d)=>({animation:`ldReveal 0.8s ease-out ${d}s both`});
     const onLdScroll=()=>{const c=ldScrollRef.current;if(!c)return;const ch=c.clientHeight;c.querySelectorAll("[data-ld]").forEach(el=>{const r=el.getBoundingClientRect();if(r.top<ch*0.88)el.classList.add("ld-vis")})};
@@ -1369,7 +1369,7 @@ html{scroll-behavior:smooth}`;
   if(authMode!=="app"){
     const isL=authMode==="login";
     return(
-      <div style={{position:"fixed",top:0,left:0,right:0,bottom:0,zIndex:9999,background:T.dark?`linear-gradient(135deg,${T.bg} 0%,${T.bg2} 50%,${T.bg} 100%)`:`linear-gradient(135deg,${T.bg} 0%,${T.bg2} 50%,${T.bg3} 100%)`,backgroundSize:"400% 400%",animation:"gradientShift 8s ease infinite",fontFamily:`${F.body},sans-serif`,overflow:"hidden"}}>
+      <div style={{position:"fixed",top:0,left:0,right:0,bottom:0,zIndex:9999,background:T.dark?`linear-gradient(135deg,${T.bg} 0%,${T.bg2} 50%,${T.bg} 100%)`:`linear-gradient(135deg,${T.bg} 0%,${T.bg2} 50%,${T.bg3} 100%)`,backgroundSize:"400% 400%",animation:"gradientShift 8s ease infinite",fontFamily:`${F.body},sans-serif`,overflow:"hidden",display:"flex",alignItems:"center",justifyContent:"center"}}>
         <style>{css}</style>
 
         {/* Pulsing grid */}
@@ -1406,10 +1406,8 @@ html{scroll-behavior:smooth}`;
         <div style={{position:"absolute",bottom:0,left:0,width:100,height:100,borderLeft:`1.5px solid rgba(${T.accentRgb},0.25)`,borderBottom:`1.5px solid rgba(${T.accentRgb},0.25)`,margin:20,animation:"borderGlow 3s ease-in-out infinite 1.5s"}}/>
         <div style={{position:"absolute",bottom:0,right:0,width:100,height:100,borderRight:`1.5px solid rgba(${T.accentRgb},0.25)`,borderBottom:`1px solid rgba(${T.accentRgb},0.25)`,margin:20,animation:"borderGlow 3s ease-in-out infinite 2.25s"}}/>
 
-        {/* Centering layer */}
-        <div style={{position:"absolute",inset:0,overflowY:"auto",zIndex:10}}>
-        <div style={{minHeight:"100%",display:"grid",placeContent:"center",justifyItems:"center",padding:"20px 20px 80px",boxSizing:"border-box"}}>
-        <div style={{textAlign:"center",animation:shake?"shake 0.6s":"fadeUp 0.5s ease-out both",width:400,maxWidth:"100%",padding:"28px 28px",borderRadius:20,background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.08)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:`1px solid rgba(${T.accentRgb},0.2)`,boxShadow:`0 8px 40px rgba(0,0,0,0.25), 0 0 80px rgba(${T.accentRgb},0.08), inset 0 0 0 1px rgba(255,255,255,${T.dark?0.06:0.12}), inset 0 1px 0 rgba(255,255,255,${T.dark?0.08:0.15})`}}>
+        {/* Auth card */}
+        <div style={{position:"relative",zIndex:10,textAlign:"center",animation:shake?"shake 0.6s":"fadeUp 0.5s ease-out both",width:400,maxWidth:"100%",padding:"28px 28px",borderRadius:20,background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.08)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:`1px solid rgba(${T.accentRgb},0.2)`,boxShadow:`0 8px 40px rgba(0,0,0,0.25), 0 0 80px rgba(${T.accentRgb},0.08), inset 0 0 0 1px rgba(255,255,255,${T.dark?0.06:0.12}), inset 0 1px 0 rgba(255,255,255,${T.dark?0.08:0.15})`}}>
           {/* Butterfly logo — flying animation (protected) */}
           <div onContextMenu={e=>e.preventDefault()} onDragStart={e=>e.preventDefault()} style={{margin:"0 auto 12px",animation:"butterflyFly 18s ease-in-out infinite",filter:`drop-shadow(0 4px 20px rgba(${T.accentRgb},0.4))`,userSelect:"none",WebkitUserDrag:"none",position:"relative"}}>
             <ButterflyLogo s={56} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.text} warn={T.warn} flap/>
@@ -1445,8 +1443,6 @@ html{scroll-behavior:smooth}`;
             <IC.Shield/><span>AES-256 · Cross-Device Sync</span>
           </div>
           <button onClick={()=>setShowLanding(true)} style={{marginTop:10,background:"none",border:"none",color:T.accent,fontSize:11,cursor:"pointer",fontFamily:"inherit",opacity:0.6,letterSpacing:1}}>← Back to home</button>
-        </div>
-        </div>
         </div>
 
         {/* Footer */}
