@@ -1727,7 +1727,7 @@ html{scroll-behavior:smooth}`;
               <div style={{marginTop:2}}>
                 <div style={{display:"flex",gap:3,marginBottom:3}}>{[0,1,2,3,4].map(i=><div key={i} style={{flex:1,height:3,borderRadius:2,background:i<=a.score-1?a.color:"rgba(255,255,255,0.1)",transition:"background 0.3s"}}/>)}</div>
                 <div style={{display:"flex",alignItems:"center",gap:3,whiteSpace:"nowrap"}}>
-                  <span style={{fontSize:10,fontWeight:700,color:a.color,flexShrink:0}}>{a.label}</span>
+                  <span style={{fontSize:12,fontWeight:700,color:a.color,flexShrink:0}}>{a.label}</span>
                   <span style={{color:"rgba(255,255,255,0.15)",fontSize:6}}>│</span>
                   {a.checks.map((c,i)=><span key={i} style={{fontSize:6,color:c.ok?"#22c55e":"rgba(239,68,68,0.7)",display:"flex",alignItems:"center",gap:1}}>{c.ok?"✓":"✗"}{c.label}</span>)}
                 </div>
@@ -1753,10 +1753,10 @@ html{scroll-behavior:smooth}`;
         </div>
 
         {/* Side cards — absolutely positioned right of form, doesn't affect centering */}
-        {!isL&&<div style={{position:"absolute",left:"50%",marginLeft:224,top:"50%",transform:"translateY(-50%)",width:250,display:"flex",flexDirection:"column",gap:14,animation:"warnSlideIn 0.5s ease-out both",zIndex:10,pointerEvents:"auto"}}>
+        {!isL&&<div style={{position:"absolute",left:"50%",marginLeft:224,top:"50%",transform:"translateY(-55%)",width:250,display:"flex",flexDirection:"column",gap:14,animation:"warnSlideIn 0.5s ease-out both",zIndex:10,pointerEvents:"auto"}}>
 
           {/* Encryption warning card */}
-          <div style={{padding:"18px 16px",borderRadius:16,background:"rgba(245,158,11,0.06)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1.5px solid rgba(245,158,11,${pwFocus?0.5:0.2})`,boxShadow:`0 8px 32px rgba(0,0,0,0.3)${pwFocus?", 0 0 30px rgba(245,158,11,0.2)":""}`,transition:"border-color 0.4s, box-shadow 0.4s",textAlign:"left",...(pwFocus?{animation:"warnAttention 1.2s ease-in-out infinite, warnBorderGlow 1.2s ease-in-out infinite"}:{})}}>
+          <div style={{padding:"18px 16px",borderRadius:16,background:"rgba(10,10,20,0.65)",backdropFilter:"blur(28px)",WebkitBackdropFilter:"blur(28px)",border:`1.5px solid rgba(245,158,11,${pwFocus?0.5:0.25})`,boxShadow:`0 8px 32px rgba(0,0,0,0.3)${pwFocus?", 0 0 30px rgba(245,158,11,0.2)":""}`,transition:"border-color 0.4s, box-shadow 0.4s",textAlign:"left",...(pwFocus?{animation:"warnAttention 1.2s ease-in-out infinite, warnBorderGlow 1.2s ease-in-out infinite"}:{})}}>
             <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
               <div style={{width:28,height:28,borderRadius:7,background:"rgba(245,158,11,0.15)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0}}>🔐</div>
               <div>
@@ -1777,7 +1777,7 @@ html{scroll-behavior:smooth}`;
           </div>
 
           {/* Password generator card */}
-          <div style={{padding:"16px 14px",borderRadius:16,background:`rgba(${T.accentRgb},0.04)`,backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1.5px solid rgba(${T.accentRgb},0.2)`,boxShadow:"0 8px 32px rgba(0,0,0,0.25)",textAlign:"left"}}>
+          <div style={{padding:"16px 14px",borderRadius:16,background:"rgba(10,10,20,0.65)",backdropFilter:"blur(28px)",WebkitBackdropFilter:"blur(28px)",border:`1.5px solid rgba(${T.accentRgb},0.25)`,boxShadow:"0 8px 32px rgba(0,0,0,0.35)",textAlign:"left"}}>
             <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
               <div style={{width:28,height:28,borderRadius:7,background:`rgba(${T.accentRgb},0.15)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0}}>🎲</div>
               <div>
