@@ -1562,11 +1562,11 @@ html{scroll-behavior:smooth}`;
             style={{width:"100%",padding:"14px 0",marginTop:16,background:`linear-gradient(135deg,${T.accent},${T.accent2})`,backgroundSize:"200% 200%",border:`1px solid rgba(255,255,255,0.15)`,borderRadius:10,color:"#fff",fontSize:13,fontWeight:700,fontFamily:`${F.heading},sans-serif`,cursor:authLoad?"wait":"pointer",letterSpacing:2,textTransform:"uppercase",boxShadow:`0 4px 25px rgba(${T.accentRgb},0.35), inset 0 1px 0 rgba(255,255,255,0.15)`,opacity:authLoad?.6:1,transition:"all 0.3s cubic-bezier(0.4,0,0.2,1)"}}>
             {authLoad?"···":(isL?"SIGN IN":"CREATE ACCOUNT")}
           </button>
-          <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,marginTop:14,color:"#22c55e",fontSize:11,letterSpacing:0.5}}>
-            <div style={{width:7,height:7,borderRadius:"50%",background:"#22c55e",boxShadow:"0 0 6px #22c55e,0 0 12px rgba(34,197,94,0.3)",animation:"pulse 2s ease-in-out infinite"}}/>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:5,marginTop:14,color:"#22c55e",fontSize:9,letterSpacing:0.3,whiteSpace:"nowrap"}}>
+            <div style={{width:6,height:6,borderRadius:"50%",background:"#22c55e",boxShadow:"0 0 6px #22c55e,0 0 12px rgba(34,197,94,0.3)",animation:"pulse 2s ease-in-out infinite",flexShrink:0}}/>
             <span style={{fontWeight:600}}>Secure</span>
             <span style={{color:"rgba(255,255,255,0.3)"}}>·</span>
-            <span>AES-256 Encryption</span>
+            <span>AES-256</span>
             <span style={{color:"rgba(255,255,255,0.3)"}}>·</span>
             <span>Zero-Knowledge</span>
             <span style={{color:"rgba(255,255,255,0.3)"}}>·</span>
