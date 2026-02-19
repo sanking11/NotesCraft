@@ -1654,6 +1654,10 @@ html{scroll-behavior:smooth}`;
             style={{width:"100%",padding:"14px 0",marginTop:16,background:`linear-gradient(135deg,${T.accent},${T.accent2})`,backgroundSize:"200% 200%",border:`1px solid rgba(255,255,255,0.15)`,borderRadius:10,color:"#fff",fontSize:13,fontWeight:700,fontFamily:`${F.heading},sans-serif`,cursor:authLoad?"wait":"pointer",letterSpacing:2,textTransform:"uppercase",boxShadow:`0 4px 25px rgba(${T.accentRgb},0.35), inset 0 1px 0 rgba(255,255,255,0.15)`,opacity:authLoad?.6:1,transition:"all 0.3s cubic-bezier(0.4,0,0.2,1)"}}>
             {authLoad?"···":(isL?"SIGN IN":"CREATE ACCOUNT")}
           </button>
+          {!isL&&<div style={{marginTop:14,padding:"10px 14px",background:`rgba(${T.accentRgb},0.06)`,border:`1px solid rgba(${T.accentRgb},0.15)`,borderRadius:8,textAlign:"left"}}>
+            <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:6}}><span style={{fontSize:13}}>⚠️</span><span style={{fontSize:10,fontWeight:700,color:T.warn||"#f59e0b",letterSpacing:0.5,textTransform:"uppercase"}}>Important</span></div>
+            <p style={{fontSize:10,color:T.dim,lineHeight:1.6,margin:0}}>Your data is encrypted using a key derived from your password. If you lose your password, your data cannot be recovered. We do not store your password or encryption keys. You are solely responsible for remembering your credentials.</p>
+          </div>}
           <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:4,marginTop:14,color:"#22c55e",fontSize:8,letterSpacing:0.2,whiteSpace:"nowrap"}}>
             <div style={{width:5,height:5,borderRadius:"50%",background:"#22c55e",boxShadow:"0 0 6px #22c55e,0 0 12px rgba(34,197,94,0.3)",animation:"pulse 2s ease-in-out infinite",flexShrink:0}}/>
             <span style={{fontWeight:600}}>Secure</span>
