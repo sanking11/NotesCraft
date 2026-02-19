@@ -275,11 +275,13 @@ function generateRandomPw(len,upper,lower,digits,symbols,noAmbig){
   return arr.join("");
 }
 
-function generateMemorablePw(wordCount,addDigit,addSymbol){
+const SEP_MAP={hyphens:"-",spaces:" ",periods:".",commas:",",underscores:"_",numbers:()=>String(secRand(10)),numbersSymbols:()=>{const cs="0123456789!@#$%&*?";return cs[secRand(cs.length)]}};
+function generateMemorablePw(wordCount,addDigit,addSymbol,sepKey="hyphens"){
   const cap=s=>s[0].toUpperCase()+s.slice(1);
   const used=new Set();const words=[];
   while(words.length<wordCount){const idx=secRand(PW_WORDS.length);if(!used.has(idx)){used.add(idx);words.push(cap(PW_WORDS[idx]))}}
-  let pw=words.join("-");
+  const sepVal=SEP_MAP[sepKey];
+  let pw=typeof sepVal==="function"?words.reduce((a,w,i)=>i===0?w:a+sepVal()+w,""):words.join(sepVal);
   if(addDigit)pw+=secRand(90)+10;
   if(addSymbol){const sy="!@#$%&*?";pw+=sy[secRand(sy.length)]}
   return pw;
@@ -398,6 +400,7 @@ export default function NotesCraft(){
   const[pgDigits,setPgDigits]=useState(true);
   const[pgSymbols,setPgSymbols]=useState(true);
   const[pgNoAmbig,setPgNoAmbig]=useState(false);
+  const[pgSep,setPgSep]=useState("hyphens");
   const[pgResult,setPgResult]=useState("");
   const[pgCopied,setPgCopied]=useState(false);
   const[pgStrength,setPgStrength]=useState(null);
@@ -491,9 +494,9 @@ export default function NotesCraft(){
   // Auto-generate password when generator page options change
   useEffect(()=>{
     if(infoPage!=="password-generator")return;
-    const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols);
+    const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep);
     setPgResult(pw);setPgStrength(calcPwStrength(pw));setPgCopied(false);
-  },[pgMode,pgLen,pgWords,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig,infoPage]);
+  },[pgMode,pgLen,pgWords,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig,pgSep,infoPage]);
 
   useEffect(()=>{
     if(sessionRestored.current)return;
@@ -1582,7 +1585,7 @@ html{scroll-behavior:smooth}`;
         {/* Password Display */}
         <div style={{background:T.dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.04)",border:`1px solid ${T.bdr}`,borderRadius:12,padding:"20px 24px",marginBottom:20,position:"relative"}}>
           <div style={{fontSize:pgResult.length>30?14:18,fontFamily:"monospace",fontWeight:600,color:T.text,wordBreak:"break-all",lineHeight:1.6,letterSpacing:0.5,minHeight:28,paddingRight:40}}>{pgResult}</div>
-          <button onClick={()=>{const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols);setPgResult(pw);setPgStrength(calcPwStrength(pw));setPgCopied(false)}}
+          <button onClick={()=>{const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep);setPgResult(pw);setPgStrength(calcPwStrength(pw));setPgCopied(false)}}
             style={{position:"absolute",top:12,right:12,width:32,height:32,borderRadius:"50%",background:`rgba(${T.accentRgb},0.1)`,border:`1px solid rgba(${T.accentRgb},0.2)`,color:T.accent,fontSize:16,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}} title="Regenerate">&#x21bb;</button>
         </div>
 
@@ -1654,7 +1657,17 @@ html{scroll-behavior:smooth}`;
               </label>
             )}
           </div>
-          <div style={{fontSize:11,color:T.dim,lineHeight:1.5}}>Words are separated by hyphens and capitalized. Uses a pool of 100 words with cryptographically secure selection.</div>
+          <div>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+              <label style={{fontSize:13,fontWeight:600,color:T.text}}>Separator</label>
+              <span style={{fontSize:12,color:T.dim,fontFamily:"monospace"}}>{({hyphens:"-",spaces:"␣",periods:".",commas:",",underscores:"_",numbers:"0-9",numbersSymbols:"0-9!@#"})[pgSep]}</span>
+            </div>
+            <select value={pgSep} onChange={e=>setPgSep(e.target.value)}
+              style={{width:"100%",padding:"10px 12px",borderRadius:8,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.04)",border:`1px solid ${T.bdr}`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",cursor:"pointer",appearance:"auto"}}>
+              {[{v:"hyphens",l:"Hyphens"},{v:"spaces",l:"Spaces"},{v:"periods",l:"Periods"},{v:"commas",l:"Commas"},{v:"underscores",l:"Underscores"},{v:"numbers",l:"Numbers"},{v:"numbersSymbols",l:"Numbers and symbols"}].map(o=><option key={o.v} value={o.v}>{o.l}</option>)}
+            </select>
+          </div>
+          <div style={{fontSize:11,color:T.dim,lineHeight:1.5}}>Words are capitalized and joined with the chosen separator. Uses a pool of 100 words with cryptographically secure selection.</div>
         </div>}
 
         <div style={{marginTop:28,padding:"16px 20px",borderRadius:10,background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`}}>
@@ -2052,7 +2065,7 @@ html{scroll-behavior:smooth}`;
                 <div style={{display:"flex",alignItems:"center",gap:3,whiteSpace:"nowrap"}}>
                   <span style={{fontSize:8,fontWeight:700,color:a.color,flexShrink:0}}>{a.label}</span>
                   <span style={{color:"rgba(255,255,255,0.15)",fontSize:7}}>│</span>
-                  {a.checks.map((c,i)=><span key={i} style={{fontSize:9,color:c.ok?"#22c55e":"rgba(239,68,68,0.7)",display:"flex",alignItems:"center",gap:1}}>{c.ok?"✓":"✗"}{c.label}</span>)}
+                  {a.checks.map((c,i)=><span key={i} style={{fontSize:8,color:c.ok?"#22c55e":"rgba(239,68,68,0.7)",display:"flex",alignItems:"center",gap:1}}>{c.ok?"✓":"✗"}{c.label}</span>)}
                 </div>
               </div>
             )})()}
