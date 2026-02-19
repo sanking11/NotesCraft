@@ -1174,10 +1174,12 @@ html{scroll-behavior:smooth}`;
 
         {/* ── Animated Background ── */}
         <div style={{position:"fixed",inset:0,zIndex:0,overflow:"hidden",pointerEvents:"none"}}>
-          {/* Full-page grid */}
-          <div style={{position:"absolute",inset:0,backgroundImage:`linear-gradient(rgba(${T.accentRgb},0.15) 1px,transparent 1px),linear-gradient(90deg,rgba(${T.accentRgb},0.15) 1px,transparent 1px)`,backgroundSize:"60px 60px",animation:"ldGridFlow 20s linear infinite"}}/>
-          {/* 3D Perspective Grid Floor */}
-          <div style={{position:"absolute",bottom:"-30%",left:"-30%",right:"-30%",height:"80%",transform:"perspective(500px) rotateX(60deg)",backgroundImage:`linear-gradient(rgba(${T.accentRgb},0.35) 1px,transparent 1px),linear-gradient(90deg,rgba(${T.accentRgb},0.35) 1px,transparent 1px)`,backgroundSize:"60px 60px",animation:"neoGridScroll 3s linear infinite",WebkitMaskImage:"linear-gradient(to top,rgba(0,0,0,0.9) 0%,transparent 70%)",maskImage:"linear-gradient(to top,rgba(0,0,0,0.9) 0%,transparent 70%)"}}/>
+          {/* Full-page grid — scrolls top to bottom, glows brighter toward bottom */}
+          <div style={{position:"absolute",inset:0,backgroundImage:`linear-gradient(rgba(${T.accentRgb},0.15) 1px,transparent 1px),linear-gradient(90deg,rgba(${T.accentRgb},0.15) 1px,transparent 1px)`,backgroundSize:"60px 60px",animation:"neoGridScroll 4s linear infinite",WebkitMaskImage:"linear-gradient(to bottom,rgba(0,0,0,0.3) 0%,rgba(0,0,0,0.6) 50%,rgba(0,0,0,1) 100%)",maskImage:"linear-gradient(to bottom,rgba(0,0,0,0.3) 0%,rgba(0,0,0,0.6) 50%,rgba(0,0,0,1) 100%)"}}/>
+          {/* 3D Perspective Grid bend at bottom */}
+          <div style={{position:"absolute",bottom:"-30%",left:"-30%",right:"-30%",height:"70%",transform:"perspective(500px) rotateX(60deg)",backgroundImage:`linear-gradient(rgba(${T.accentRgb},0.4) 1px,transparent 1px),linear-gradient(90deg,rgba(${T.accentRgb},0.4) 1px,transparent 1px)`,backgroundSize:"60px 60px",animation:"neoGridScroll 3s linear infinite",WebkitMaskImage:"linear-gradient(to top,rgba(0,0,0,1) 0%,transparent 60%)",maskImage:"linear-gradient(to top,rgba(0,0,0,1) 0%,transparent 60%)"}}/>
+          {/* Horizon glow line where grid bends */}
+          <div style={{position:"absolute",bottom:"28%",left:0,right:0,height:2,background:`linear-gradient(90deg,transparent 5%,rgba(${T.accentRgb},0.5) 20%,rgba(${T.accentRgb},0.8) 50%,rgba(${T.accentRgb},0.5) 80%,transparent 95%)`,boxShadow:`0 0 30px rgba(${T.accentRgb},0.4),0 0 80px rgba(${T.accentRgb},0.2)`,filter:"blur(1px)"}}/>
           {/* Aurora gradient orbs - vibrant multi-color */}
           <div style={{position:"absolute",width:700,height:700,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.3) 0%,transparent 70%)",filter:"blur(60px)",top:"-15%",left:"-10%",animation:"ldOrb1 25s ease-in-out infinite"}}/>
           <div style={{position:"absolute",width:600,height:600,borderRadius:"50%",background:"radial-gradient(circle,rgba(236,72,153,0.25) 0%,transparent 70%)",filter:"blur(50px)",bottom:"-10%",right:"-5%",animation:"ldOrb2 30s ease-in-out infinite"}}/>
@@ -1185,8 +1187,6 @@ html{scroll-behavior:smooth}`;
           <div style={{position:"absolute",width:450,height:450,borderRadius:"50%",background:"radial-gradient(circle,rgba(6,182,212,0.22) 0%,transparent 70%)",filter:"blur(40px)",top:"60%",left:"15%",animation:"ldOrb2 22s ease-in-out infinite 3s"}}/>
           {/* Floating neon geometric shapes */}
           {[[180,130,'255,34,102','3%','8%',15,1,'14s','0s'],[220,160,'51,102,255','-5%','32%',-12,2,'18s','2s'],[140,100,'255,136,68','78%','12%',25,3,'16s','1s'],[100,70,'0,240,255','68%','55%',-20,1,'12s','3s'],[120,80,'170,68,255','12%','68%',35,2,'15s','4s'],[60,45,'0,255,136','48%','18%',-30,3,'10s','2.5s'],[50,35,'255,34,102','88%','78%',45,1,'11s','5s'],[40,30,'0,240,255','38%','88%',-15,2,'9s','1.5s']].map(([w,h,rgb,x,y,r,f,d,dl],i)=><div key={i} style={{position:"absolute",left:x,top:y,transform:`rotate(${r}deg)`}}><div style={{width:w,height:h,border:`2px solid rgba(${rgb},0.7)`,borderRadius:4,boxShadow:`0 0 15px rgba(${rgb},0.3),0 0 30px rgba(${rgb},0.15),inset 0 0 15px rgba(${rgb},0.06)`,animation:`neoFloat${f} ${d} ease-in-out infinite ${dl},neoPulse ${d} ease-in-out infinite ${dl}`}}/></div>)}
-          {/* Scanning beam */}
-          <div style={{position:"absolute",left:0,right:0,height:2,background:`linear-gradient(90deg,transparent 5%,rgba(${T.accentRgb},0.6) 30%,rgba(${T.accentRgb},0.9) 50%,rgba(${T.accentRgb},0.6) 70%,transparent 95%)`,boxShadow:`0 0 20px rgba(${T.accentRgb},0.4),0 0 60px rgba(${T.accentRgb},0.2)`,animation:"scanDown 6s linear infinite"}}/>
           {/* Horizontal light streaks */}
           {[0,1,2].map(i=><div key={i} style={{position:"absolute",top:`${25+i*25}%`,left:0,width:200,height:"1px",background:`linear-gradient(90deg,transparent,rgba(${T.accentRgb},0.5),transparent)`,animation:`ldLine ${8+i*3}s linear infinite ${i*4}s`}}/>)}
           {/* Rising particles */}
@@ -1385,10 +1385,12 @@ html{scroll-behavior:smooth}`;
       <div style={{position:"fixed",top:0,left:0,right:0,bottom:0,zIndex:9999,background:T.dark?`linear-gradient(135deg,${T.bg} 0%,${T.bg2} 50%,${T.bg} 100%)`:`linear-gradient(135deg,${T.bg} 0%,${T.bg2} 50%,${T.bg3} 100%)`,backgroundSize:"400% 400%",animation:"gradientShift 8s ease infinite",fontFamily:`${F.body},sans-serif`,overflow:"hidden",display:"flex",alignItems:"center",justifyContent:"center"}}>
         <style>{css}</style>
 
-        {/* Full-page grid */}
-        <div style={{position:"absolute",inset:0,backgroundImage:`linear-gradient(rgba(${T.accentRgb},0.12) 1px,transparent 1px),linear-gradient(90deg,rgba(${T.accentRgb},0.12) 1px,transparent 1px)`,backgroundSize:"60px 60px"}}/>
-        {/* 3D Perspective Grid Floor */}
-        <div style={{position:"absolute",bottom:"-30%",left:"-30%",right:"-30%",height:"80%",transform:"perspective(500px) rotateX(60deg)",backgroundImage:`linear-gradient(rgba(${T.accentRgb},0.25) 1px,transparent 1px),linear-gradient(90deg,rgba(${T.accentRgb},0.25) 1px,transparent 1px)`,backgroundSize:"60px 60px",animation:"neoGridScroll 3s linear infinite",WebkitMaskImage:"linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 60%)",maskImage:"linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 60%)"}}/>
+        {/* Full-page grid — scrolls down, glows brighter toward bottom */}
+        <div style={{position:"absolute",inset:0,backgroundImage:`linear-gradient(rgba(${T.accentRgb},0.12) 1px,transparent 1px),linear-gradient(90deg,rgba(${T.accentRgb},0.12) 1px,transparent 1px)`,backgroundSize:"60px 60px",animation:"neoGridScroll 4s linear infinite",WebkitMaskImage:"linear-gradient(to bottom,rgba(0,0,0,0.3) 0%,rgba(0,0,0,0.6) 50%,rgba(0,0,0,1) 100%)",maskImage:"linear-gradient(to bottom,rgba(0,0,0,0.3) 0%,rgba(0,0,0,0.6) 50%,rgba(0,0,0,1) 100%)"}}/>
+        {/* 3D Perspective Grid bend at bottom */}
+        <div style={{position:"absolute",bottom:"-30%",left:"-30%",right:"-30%",height:"70%",transform:"perspective(500px) rotateX(60deg)",backgroundImage:`linear-gradient(rgba(${T.accentRgb},0.35) 1px,transparent 1px),linear-gradient(90deg,rgba(${T.accentRgb},0.35) 1px,transparent 1px)`,backgroundSize:"60px 60px",animation:"neoGridScroll 3s linear infinite",WebkitMaskImage:"linear-gradient(to top,rgba(0,0,0,1) 0%,transparent 60%)",maskImage:"linear-gradient(to top,rgba(0,0,0,1) 0%,transparent 60%)"}}/>
+        {/* Horizon glow line where grid bends */}
+        <div style={{position:"absolute",bottom:"28%",left:0,right:0,height:2,background:`linear-gradient(90deg,transparent 5%,rgba(${T.accentRgb},0.4) 20%,rgba(${T.accentRgb},0.7) 50%,rgba(${T.accentRgb},0.4) 80%,transparent 95%)`,boxShadow:`0 0 25px rgba(${T.accentRgb},0.3),0 0 60px rgba(${T.accentRgb},0.15)`,filter:"blur(1px)"}}/>
 
         {/* Aurora / nebula bands - vibrant */}
         <div style={{position:"absolute",top:"-20%",left:"-10%",width:"120%",height:"40%",background:`linear-gradient(90deg,transparent,rgba(139,92,246,0.15),rgba(${T.accentRgb},0.2),rgba(139,92,246,0.15),transparent)`,filter:"blur(60px)",animation:"auroraShift 12s ease-in-out infinite",pointerEvents:"none"}}/>
@@ -1407,9 +1409,6 @@ html{scroll-behavior:smooth}`;
 
         {/* Floating neon geometric shapes */}
         {[[120,85,'255,34,102','5%','10%',20,1,'16s','0s'],[90,65,'51,102,255','82%','18%',-15,2,'20s','3s'],[70,50,'0,240,255','75%','72%',30,3,'14s','2s'],[55,38,'170,68,255','8%','78%',-25,1,'12s','5s']].map(([w,h,rgb,x,y,r,f,d,dl],i)=><div key={'nr'+i} style={{position:"absolute",left:x,top:y,transform:`rotate(${r}deg)`,opacity:0.3,pointerEvents:"none"}}><div style={{width:w,height:h,border:`1.5px solid rgba(${rgb},0.6)`,borderRadius:3,boxShadow:`0 0 12px rgba(${rgb},0.2),0 0 25px rgba(${rgb},0.1)`,animation:`neoFloat${f} ${d} ease-in-out infinite ${dl}`}}/></div>)}
-
-        {/* Scanning beam */}
-        <div style={{position:"absolute",left:0,right:0,height:1,background:`linear-gradient(90deg,transparent,rgba(${T.accentRgb},0.4),rgba(${T.accentRgb},0.6),rgba(${T.accentRgb},0.4),transparent)`,boxShadow:`0 0 15px rgba(${T.accentRgb},0.2)`,animation:"scanDown 8s linear infinite",pointerEvents:"none"}}/>
 
         {/* Shooting star streaks */}
         <div style={{position:"absolute",inset:0,overflow:"hidden",pointerEvents:"none"}}>
