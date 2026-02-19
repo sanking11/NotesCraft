@@ -1174,10 +1174,8 @@ html{scroll-behavior:smooth}`;
 
         {/* ── Animated Background ── */}
         <div style={{position:"fixed",inset:0,zIndex:0,overflow:"hidden",pointerEvents:"none"}}>
-          {/* Full-page grid — scrolls top to bottom, glows brighter toward bottom */}
-          <div style={{position:"absolute",inset:0,backgroundImage:`linear-gradient(rgba(${T.accentRgb},0.15) 1px,transparent 1px),linear-gradient(90deg,rgba(${T.accentRgb},0.15) 1px,transparent 1px)`,backgroundSize:"60px 60px",animation:"neoGridScroll 4s linear infinite",WebkitMaskImage:"linear-gradient(to bottom,rgba(0,0,0,0.3) 0%,rgba(0,0,0,0.6) 50%,rgba(0,0,0,1) 100%)",maskImage:"linear-gradient(to bottom,rgba(0,0,0,0.3) 0%,rgba(0,0,0,0.6) 50%,rgba(0,0,0,1) 100%)"}}/>
-          {/* 3D Perspective Grid bend at bottom */}
-          <div style={{position:"absolute",bottom:"-10%",left:"-50%",right:"-50%",height:"55%",transform:"perspective(400px) rotateX(55deg)",transformOrigin:"center top",backgroundImage:`linear-gradient(rgba(${T.accentRgb},0.5) 1px,transparent 1px),linear-gradient(90deg,rgba(${T.accentRgb},0.5) 1px,transparent 1px)`,backgroundSize:"60px 60px",animation:"neoGridScroll 3s linear infinite"}}/>
+          {/* Single 3D perspective grid — flat at top, curves at bottom */}
+          <div style={{position:"absolute",top:0,left:"-15%",right:"-15%",bottom:"-40%",transform:"perspective(700px) rotateX(18deg)",transformOrigin:"top center",backgroundImage:`linear-gradient(rgba(${T.accentRgb},0.18) 1px,transparent 1px),linear-gradient(90deg,rgba(${T.accentRgb},0.18) 1px,transparent 1px)`,backgroundSize:"60px 60px",animation:"neoGridScroll 4s linear infinite"}}/>
           {/* Aurora gradient orbs - vibrant multi-color */}
           <div style={{position:"absolute",width:700,height:700,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.3) 0%,transparent 70%)",filter:"blur(60px)",top:"-15%",left:"-10%",animation:"ldOrb1 25s ease-in-out infinite"}}/>
           <div style={{position:"absolute",width:600,height:600,borderRadius:"50%",background:"radial-gradient(circle,rgba(236,72,153,0.25) 0%,transparent 70%)",filter:"blur(50px)",bottom:"-10%",right:"-5%",animation:"ldOrb2 30s ease-in-out infinite"}}/>
@@ -1383,10 +1381,8 @@ html{scroll-behavior:smooth}`;
       <div style={{position:"fixed",top:0,left:0,right:0,bottom:0,zIndex:9999,background:T.dark?`linear-gradient(135deg,${T.bg} 0%,${T.bg2} 50%,${T.bg} 100%)`:`linear-gradient(135deg,${T.bg} 0%,${T.bg2} 50%,${T.bg3} 100%)`,backgroundSize:"400% 400%",animation:"gradientShift 8s ease infinite",fontFamily:`${F.body},sans-serif`,overflow:"hidden",display:"flex",alignItems:"center",justifyContent:"center"}}>
         <style>{css}</style>
 
-        {/* Full-page grid — scrolls down, glows brighter toward bottom */}
-        <div style={{position:"absolute",inset:0,backgroundImage:`linear-gradient(rgba(${T.accentRgb},0.12) 1px,transparent 1px),linear-gradient(90deg,rgba(${T.accentRgb},0.12) 1px,transparent 1px)`,backgroundSize:"60px 60px",animation:"neoGridScroll 4s linear infinite",WebkitMaskImage:"linear-gradient(to bottom,rgba(0,0,0,0.3) 0%,rgba(0,0,0,0.6) 50%,rgba(0,0,0,1) 100%)",maskImage:"linear-gradient(to bottom,rgba(0,0,0,0.3) 0%,rgba(0,0,0,0.6) 50%,rgba(0,0,0,1) 100%)"}}/>
-        {/* 3D Perspective Grid bend at bottom */}
-        <div style={{position:"absolute",bottom:"-10%",left:"-50%",right:"-50%",height:"55%",transform:"perspective(400px) rotateX(55deg)",transformOrigin:"center top",backgroundImage:`linear-gradient(rgba(${T.accentRgb},0.4) 1px,transparent 1px),linear-gradient(90deg,rgba(${T.accentRgb},0.4) 1px,transparent 1px)`,backgroundSize:"60px 60px",animation:"neoGridScroll 3s linear infinite"}}/>
+        {/* Single 3D perspective grid — flat at top, curves at bottom */}
+        <div style={{position:"absolute",top:0,left:"-15%",right:"-15%",bottom:"-40%",transform:"perspective(700px) rotateX(18deg)",transformOrigin:"top center",backgroundImage:`linear-gradient(rgba(${T.accentRgb},0.15) 1px,transparent 1px),linear-gradient(90deg,rgba(${T.accentRgb},0.15) 1px,transparent 1px)`,backgroundSize:"60px 60px",animation:"neoGridScroll 4s linear infinite"}}/>
 
         {/* Aurora / nebula bands - vibrant */}
         <div style={{position:"absolute",top:"-20%",left:"-10%",width:"120%",height:"40%",background:`linear-gradient(90deg,transparent,rgba(139,92,246,0.15),rgba(${T.accentRgb},0.2),rgba(139,92,246,0.15),transparent)`,filter:"blur(60px)",animation:"auroraShift 12s ease-in-out infinite",pointerEvents:"none"}}/>
