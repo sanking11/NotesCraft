@@ -310,6 +310,8 @@ export default function NotesCraft(){
   const calEventsRef=useRef(calEvents);
   calEventsRef.current=calEvents;
   const ldScrollRef=useRef(null);
+  const gridCvsRef=useRef(null);
+  const gridAnimRef=useRef(0);
 
   /* Session persistence — save/restore across page refreshes */
   const saveSession=async(em,key)=>{try{const kb=await exportKey(key);sessionStorage.setItem("nc_session",JSON.stringify({email:em,key:kb}))}catch(e){}};
@@ -990,6 +992,54 @@ export default function NotesCraft(){
     return()=>{if(reminderIntervalRef.current){clearInterval(reminderIntervalRef.current);reminderIntervalRef.current=null}};
   },[user,authMode]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // ─── Curved grid canvas ───
+  useEffect(()=>{
+    cancelAnimationFrame(gridAnimRef.current);
+    const c=gridCvsRef.current;
+    if(!c)return;
+    const ctx=c.getContext("2d");
+    const dpr=window.devicePixelRatio||1;
+    let W,H;
+    const resize=()=>{W=c.clientWidth||window.innerWidth;H=c.clientHeight||window.innerHeight;c.width=W*dpr;c.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)};
+    resize();
+    window.addEventListener("resize",resize);
+    const sp=60,rgb=T.accentRgb;
+    let off=0;
+    const draw=()=>{
+      ctx.clearRect(0,0,W,H);
+      const cs=H*0.6,ch=H-cs;
+      off=(off+0.3)%sp;
+      // Glow pass
+      ctx.strokeStyle=`rgba(${rgb},0.06)`;ctx.lineWidth=5;
+      drawGrid(ctx,W,H,sp,cs,ch,off,rgb);
+      // Sharp pass
+      ctx.strokeStyle=`rgba(${rgb},0.2)`;ctx.lineWidth=1;
+      drawGrid(ctx,W,H,sp,cs,ch,off,rgb);
+      gridAnimRef.current=requestAnimationFrame(draw);
+    };
+    draw();
+    return()=>{cancelAnimationFrame(gridAnimRef.current);window.removeEventListener("resize",resize)};
+  },[showLanding,T.accentRgb]);
+  function drawGrid(ctx,W,H,sp,cs,ch,off){
+    const cx=W/2;
+    // Horizontal lines (scroll down)
+    for(let b=-sp*2;b<=H+sp;b+=sp){
+      const y=b+off;
+      if(y<-sp||y>H+sp*2)continue;
+      ctx.beginPath();
+      if(y<=cs){ctx.moveTo(0,y);ctx.lineTo(W,y)}
+      else{const t=Math.min((y-cs)/ch,1),sag=t*t*180;ctx.moveTo(0,y);ctx.quadraticCurveTo(cx,y+sag,W,y)}
+      ctx.stroke();
+    }
+    // Vertical lines (static, curve at bottom)
+    for(let x=-sp*2;x<=W+sp*2;x+=sp){
+      ctx.beginPath();ctx.moveTo(x,0);
+      if(cs<H){ctx.lineTo(x,cs);const d=x-cx,p=d*0.45;ctx.quadraticCurveTo(x-p*0.3,cs+ch*0.5,x-p,H+60)}
+      else ctx.lineTo(x,H);
+      ctx.stroke();
+    }
+  }
+
   // ─── Dynamic font loading ───
   const fontUrl=useMemo(()=>{
     const families=new Set([F.heading,F.body,F.mono].map(f=>f.replace(/'/g,"")));
@@ -1174,8 +1224,8 @@ html{scroll-behavior:smooth}`;
 
         {/* ── Animated Background ── */}
         <div style={{position:"fixed",inset:0,zIndex:0,overflow:"hidden",pointerEvents:"none"}}>
-          {/* Single 3D perspective grid — flat at top, curves at bottom */}
-          <div style={{position:"absolute",top:0,left:"-15%",right:"-15%",bottom:"-40%",transform:"perspective(700px) rotateX(18deg)",transformOrigin:"top center",backgroundImage:`linear-gradient(rgba(${T.accentRgb},0.18) 1px,transparent 1px),linear-gradient(90deg,rgba(${T.accentRgb},0.18) 1px,transparent 1px)`,backgroundSize:"60px 60px",animation:"neoGridScroll 4s linear infinite"}}/>
+          {/* Canvas curved grid — flat at top, bends at bottom */}
+          <canvas ref={gridCvsRef} style={{position:"absolute",inset:0,width:"100%",height:"100%"}}/>
           {/* Aurora gradient orbs - vibrant multi-color */}
           <div style={{position:"absolute",width:700,height:700,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.3) 0%,transparent 70%)",filter:"blur(60px)",top:"-15%",left:"-10%",animation:"ldOrb1 25s ease-in-out infinite"}}/>
           <div style={{position:"absolute",width:600,height:600,borderRadius:"50%",background:"radial-gradient(circle,rgba(236,72,153,0.25) 0%,transparent 70%)",filter:"blur(50px)",bottom:"-10%",right:"-5%",animation:"ldOrb2 30s ease-in-out infinite"}}/>
@@ -1381,8 +1431,8 @@ html{scroll-behavior:smooth}`;
       <div style={{position:"fixed",top:0,left:0,right:0,bottom:0,zIndex:9999,background:T.dark?`linear-gradient(135deg,${T.bg} 0%,${T.bg2} 50%,${T.bg} 100%)`:`linear-gradient(135deg,${T.bg} 0%,${T.bg2} 50%,${T.bg3} 100%)`,backgroundSize:"400% 400%",animation:"gradientShift 8s ease infinite",fontFamily:`${F.body},sans-serif`,overflow:"hidden",display:"flex",alignItems:"center",justifyContent:"center"}}>
         <style>{css}</style>
 
-        {/* Single 3D perspective grid — flat at top, curves at bottom */}
-        <div style={{position:"absolute",top:0,left:"-15%",right:"-15%",bottom:"-40%",transform:"perspective(700px) rotateX(18deg)",transformOrigin:"top center",backgroundImage:`linear-gradient(rgba(${T.accentRgb},0.15) 1px,transparent 1px),linear-gradient(90deg,rgba(${T.accentRgb},0.15) 1px,transparent 1px)`,backgroundSize:"60px 60px",animation:"neoGridScroll 4s linear infinite"}}/>
+        {/* Canvas curved grid — flat at top, bends at bottom */}
+        <canvas ref={gridCvsRef} style={{position:"absolute",inset:0,width:"100%",height:"100%"}}/>
 
         {/* Aurora / nebula bands - vibrant */}
         <div style={{position:"absolute",top:"-20%",left:"-10%",width:"120%",height:"40%",background:`linear-gradient(90deg,transparent,rgba(139,92,246,0.15),rgba(${T.accentRgb},0.2),rgba(139,92,246,0.15),transparent)`,filter:"blur(60px)",animation:"auroraShift 12s ease-in-out infinite",pointerEvents:"none"}}/>
