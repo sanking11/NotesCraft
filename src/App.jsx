@@ -1275,10 +1275,10 @@ html{scroll-behavior:smooth}`;
         <p style={infoP}>Privacy isn't a feature we added — it's the reason we built this. Every word you write is encrypted on your device before it ever touches the network. We can't read your notes, and neither can anyone else.</p>
         <h2 style={infoH2}>What We Offer</h2>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,margin:"16px 0"}}>
-          {[["End-to-End Encryption","AES-256 encryption happens on your device. Your data is unreadable to everyone — including us."],["Cross-Device Sync","Access your notes from any device. Encrypted data syncs securely through the cloud."],["Rich Text & Markdown","Full formatting toolbar, code blocks, checklists, and markdown support for expressive writing."],["Calendar & Reminders","Built-in calendar with event scheduling, reminders, and task management — all encrypted."],["Custom Themes","Personalize your workspace with 20+ themes, accent colors, and font combinations."],["Zero-Knowledge Architecture","We never store your encryption keys. Only you can decrypt your data."]].map(([t,d],i)=><div key={i} style={{...infoGlass,padding:"20px 18px",borderRadius:14}}><div style={{fontSize:13,fontWeight:700,color:T.dark?T.text:"#e2e8f0",marginBottom:6}}>{t}</div><div style={{fontSize:12,lineHeight:1.7,color:"#94a3b8"}}>{d}</div></div>)}
+          {[["End-to-End Encryption","AES-256 encryption happens on your device. Your data is unreadable to everyone — including us."],["Cross-Device Sync","Access your notes from any device. Encrypted data syncs securely through the cloud."],["Rich Text & Markdown","Full formatting toolbar, code blocks, checklists, and markdown support for expressive writing."],["Calendar & Reminders","Built-in calendar with event scheduling, reminders, and task management — all encrypted."],["Custom Themes","Personalize your workspace with 50+ themes, accent colors, and font combinations."],["Zero-Knowledge Architecture","We never store your encryption keys. Only you can decrypt your data."]].map(([t,d],i)=><div key={i} style={{...infoGlass,padding:"20px 18px",borderRadius:14}}><div style={{fontSize:13,fontWeight:700,color:T.dark?T.text:"#e2e8f0",marginBottom:6}}>{t}</div><div style={{fontSize:12,lineHeight:1.7,color:"#94a3b8"}}>{d}</div></div>)}
         </div>
         <h2 style={infoH2}>Built With Love</h2>
-        <p style={infoP}>Designed and developed by <span style={{fontWeight:800,color:T.accent,letterSpacing:2,fontFamily:`${F.heading},sans-serif`}}>SUNNY</span> — with a passion for privacy, clean design, and great user experiences. NotesCraft is built with React, powered by AES-256 encryption, and crafted to be the most beautiful encrypted notes app you've ever used.</p>
+        <p style={infoP}>Designed and developed by <span style={{fontWeight:800,color:T.accent,letterSpacing:2,fontFamily:`${F.heading},sans-serif`}}>SUNNY</span> — with a passion for privacy, clean design, and great user experiences. NotesCraft is built on encrypted architecture, powered by AES-256 encryption, and crafted to be the most beautiful encrypted notes app you've ever used.</p>
       </>,
       privacy:<>
         <h1 style={infoH}>Privacy Policy</h1>
@@ -1297,7 +1297,7 @@ html{scroll-behavior:smooth}`;
         <h2 style={infoH2}>Account Deletion</h2>
         <p style={infoP}>You can delete your account at any time. When you do, all your encrypted data is permanently removed from our servers. This action is irreversible.</p>
         <h2 style={infoH2}>Contact</h2>
-        <p style={infoP}>If you have questions about this privacy policy, reach out through the app or visit our GitHub repository.</p>
+        <p style={infoP}>If you have questions about this privacy policy, reach out through the app or email <a href="mailto:privacy@notecraft.app" style={{color:T.accent,textDecoration:"none"}}>privacy@notecraft.app</a>.</p>
       </>,
       terms:<>
         <h1 style={infoH}>Terms of Service</h1>
