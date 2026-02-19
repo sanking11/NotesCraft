@@ -1695,10 +1695,8 @@ html{scroll-behavior:smooth}`;
         <div style={{position:"absolute",bottom:0,right:0,width:100,height:100,borderRight:`1.5px solid rgba(${T.accentRgb},0.25)`,borderBottom:`1px solid rgba(${T.accentRgb},0.25)`,margin:20,animation:"borderGlow 3s ease-in-out infinite 2.25s"}}/>
 
         {/* Auth card + warning card wrapper */}
-        <div style={{position:"relative",zIndex:10,display:"flex",alignItems:"center",gap:20}}>
-
         {/* Auth card */}
-        <div style={{position:"relative",textAlign:"center",animation:shake?"shake 0.6s":"fadeUp 0.5s ease-out both",width:400,maxWidth:"100%",padding:"28px 28px",borderRadius:20,background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.08)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:`1px solid rgba(${T.accentRgb},0.2)`,boxShadow:`0 8px 40px rgba(0,0,0,0.25), 0 0 80px rgba(${T.accentRgb},0.08), inset 0 0 0 1px rgba(255,255,255,${T.dark?0.06:0.12}), inset 0 1px 0 rgba(255,255,255,${T.dark?0.08:0.15})`}}>
+        <div style={{position:"relative",zIndex:10,textAlign:"center",animation:shake?"shake 0.6s":"fadeUp 0.5s ease-out both",width:400,maxWidth:"100%",padding:"28px 28px",borderRadius:20,background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.08)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:`1px solid rgba(${T.accentRgb},0.2)`,boxShadow:`0 8px 40px rgba(0,0,0,0.25), 0 0 80px rgba(${T.accentRgb},0.08), inset 0 0 0 1px rgba(255,255,255,${T.dark?0.06:0.12}), inset 0 1px 0 rgba(255,255,255,${T.dark?0.08:0.15})`}}>
           {/* Butterfly logo — flying animation (protected) */}
           <div onContextMenu={e=>e.preventDefault()} onDragStart={e=>e.preventDefault()} style={{margin:"0 auto 12px",animation:"authButterflyFly 12s ease-in-out infinite",filter:`drop-shadow(0 4px 20px rgba(${T.accentRgb},0.4))`,userSelect:"none",WebkitUserDrag:"none",position:"relative"}}>
             <ButterflyLogo s={56} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.text} warn={T.warn} flap/>
@@ -1729,7 +1727,7 @@ html{scroll-behavior:smooth}`;
               <div style={{marginTop:2}}>
                 <div style={{display:"flex",gap:3,marginBottom:3}}>{[0,1,2,3,4].map(i=><div key={i} style={{flex:1,height:3,borderRadius:2,background:i<=a.score-1?a.color:"rgba(255,255,255,0.1)",transition:"background 0.3s"}}/>)}</div>
                 <div style={{display:"flex",alignItems:"center",gap:3,whiteSpace:"nowrap"}}>
-                  <span style={{fontSize:6,fontWeight:700,color:a.color,flexShrink:0}}>{a.label}</span>
+                  <span style={{fontSize:8,fontWeight:700,color:a.color,flexShrink:0}}>{a.label}</span>
                   <span style={{color:"rgba(255,255,255,0.15)",fontSize:6}}>│</span>
                   {a.checks.map((c,i)=><span key={i} style={{fontSize:6,color:c.ok?"#22c55e":"rgba(239,68,68,0.7)",display:"flex",alignItems:"center",gap:1}}>{c.ok?"✓":"✗"}{c.label}</span>)}
                 </div>
@@ -1754,8 +1752,8 @@ html{scroll-behavior:smooth}`;
           <button onClick={()=>setShowLanding(true)} style={{marginTop:14,background:`rgba(${T.accentRgb},0.08)`,border:`1px solid rgba(${T.accentRgb},0.25)`,borderRadius:8,padding:"8px 20px",color:T.accent,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",letterSpacing:1,transition:"all 0.3s"}}>← Back to home</button>
         </div>
 
-        {/* Side cards — warning + generator (signup only) */}
-        {!isL&&<div style={{width:260,flexShrink:0,display:"flex",flexDirection:"column",gap:14,animation:"warnSlideIn 0.5s ease-out both"}}>
+        {/* Side cards — absolutely positioned right of form, doesn't affect centering */}
+        {!isL&&<div style={{position:"absolute",left:"50%",marginLeft:224,top:"50%",transform:"translateY(-50%)",width:250,display:"flex",flexDirection:"column",gap:14,animation:"warnSlideIn 0.5s ease-out both",zIndex:10,pointerEvents:"auto"}}>
 
           {/* Encryption warning card */}
           <div style={{padding:"18px 16px",borderRadius:16,background:"rgba(245,158,11,0.06)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1.5px solid rgba(245,158,11,${pwFocus?0.5:0.2})`,boxShadow:`0 8px 32px rgba(0,0,0,0.3)${pwFocus?", 0 0 30px rgba(245,158,11,0.2)":""}`,transition:"border-color 0.4s, box-shadow 0.4s",textAlign:"left",...(pwFocus?{animation:"warnAttention 1.2s ease-in-out infinite, warnBorderGlow 1.2s ease-in-out infinite"}:{})}}>
@@ -1800,8 +1798,6 @@ html{scroll-behavior:smooth}`;
           </div>
 
         </div>}
-
-        </div>{/* end wrapper */}
 
         {/* Footer */}
         <div style={{position:"absolute",bottom:0,left:0,right:0,textAlign:"center",padding:"14px 20px",background:`linear-gradient(180deg,transparent,rgba(${T.dark?"0,0,0":"0,0,0"},0.15))`,animation:"footerFadeIn 1.2s ease-out 0.5s both",zIndex:20}}>
