@@ -1704,7 +1704,7 @@ html{scroll-behavior:smooth}`;
               </div>
             </div>
             {pwFocus&&<div style={{marginTop:12,padding:"8px 10px",borderRadius:8,background:"rgba(245,158,11,0.1)",border:"1px solid rgba(245,158,11,0.25)",textAlign:"center",animation:"fadeUp 0.3s ease-out"}}>
-              <p style={{fontSize:9,fontWeight:700,color:"#f59e0b",margin:0,letterSpacing:0.5}}>⚠️ CHOOSE A PASSWORD YOU WILL REMEMBER</p>
+              <p style={{fontSize:8,fontWeight:700,color:"#f59e0b",margin:0,letterSpacing:0.3,lineHeight:1.5}}>⚠️ CHOOSE A PASSWORD YOU WILL REMEMBER<br/>OR SAVE PASSWORD SOMEWHERE SAFE</p>
             </div>}
           </div>
         </div>}
