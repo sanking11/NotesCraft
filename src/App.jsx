@@ -1904,7 +1904,7 @@ html{scroll-behavior:smooth}`;
         </div>
 
         {/* Side cards — absolutely positioned right of form, doesn't affect centering */}
-        {!isL&&<div style={{position:"absolute",left:"50%",marginLeft:224,top:"50%",transform:"translateY(-70%)",width:250,display:"flex",flexDirection:"column",gap:14,animation:"warnSlideIn 0.5s ease-out both",zIndex:10,pointerEvents:"auto"}}>
+        {!isL&&<div style={{position:"absolute",left:"50%",marginLeft:224,top:"38%",transform:"translateY(-50%)",width:250,display:"flex",flexDirection:"column",gap:14,animation:"warnSlideIn 0.5s ease-out both",zIndex:10,pointerEvents:"auto"}}>
 
           {/* Encryption warning card */}
           <div style={{padding:"18px 16px",borderRadius:16,background:"rgba(10,10,20,0.65)",backdropFilter:"blur(28px)",WebkitBackdropFilter:"blur(28px)",border:`1.5px solid rgba(245,158,11,${pwFocus?0.5:0.25})`,boxShadow:`0 8px 32px rgba(0,0,0,0.3)${pwFocus?", 0 0 30px rgba(245,158,11,0.2)":""}`,transition:"border-color 0.4s, box-shadow 0.4s",textAlign:"left",...(pwFocus?{animation:"warnAttention 1.2s ease-in-out infinite, warnBorderGlow 1.2s ease-in-out infinite"}:{})}}>
