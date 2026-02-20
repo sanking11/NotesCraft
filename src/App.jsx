@@ -402,6 +402,9 @@ export default function NotesCraft(){
   const[pwFocus,setPwFocus]=useState(false);
   const[showPwGen,setShowPwGen]=useState(false);
   const[genPw,setGenPw]=useState("");
+  const[genPwDisplay,setGenPwDisplay]=useState("");
+  const[genScrambling,setGenScrambling]=useState(false);
+  const genScrambleRef=React.useRef(null);
   const[genCopied,setGenCopied]=useState(false);
   // Password Generator page state
   const[pgMode,setPgMode]=useState("memorable");
@@ -529,6 +532,28 @@ export default function NotesCraft(){
     },40);
     return()=>{if(pgScrambleRef.current)clearInterval(pgScrambleRef.current)};
   },[pgResult]);
+
+  // Scramble animation for side card password generator
+  useEffect(()=>{
+    if(!genPw)return;
+    if(genScrambleRef.current)clearInterval(genScrambleRef.current);
+    const GLITCH="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+    const target=genPw;const len=target.length;
+    const revealed=new Array(len).fill(false);
+    let frame=0;const totalFrames=20;
+    setGenScrambling(true);
+    genScrambleRef.current=setInterval(()=>{
+      frame++;
+      const revealCount=Math.floor((frame/totalFrames)*len);
+      for(let i=0;i<revealCount;i++)revealed[i]=true;
+      setGenPwDisplay(target.split("").map((c,i)=>revealed[i]?c:GLITCH[secRand(GLITCH.length)]).join(""));
+      if(frame>=totalFrames){
+        clearInterval(genScrambleRef.current);genScrambleRef.current=null;
+        setGenPwDisplay(target);setGenScrambling(false);
+      }
+    },35);
+    return()=>{if(genScrambleRef.current)clearInterval(genScrambleRef.current)};
+  },[genPw]);
 
   // Auto-generate password when generator page options change
   useEffect(()=>{
@@ -2203,7 +2228,7 @@ html{scroll-behavior:smooth}`;
             <div style={{width:"100%",height:1,background:`linear-gradient(90deg,transparent,rgba(${T.accentRgb},0.25),transparent)`,marginBottom:10}}/>
             {!showPwGen?<button type="button" onClick={()=>{const g=generateStrongPw();setGenPw(g);setGenCopied(false);setShowPwGen(true)}} style={{width:"100%",padding:"8px 0",background:`rgba(${T.accentRgb},0.08)`,border:`1px dashed rgba(${T.accentRgb},0.3)`,borderRadius:8,color:T.accent,fontSize:10,fontWeight:600,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.3,transition:"all 0.2s"}}>Generate a Password</button>
             :<div style={{animation:"fadeUp 0.2s ease-out"}}>
-              <code style={{display:"block",fontSize:11,color:"#22c55e",fontFamily:"monospace",wordBreak:"break-all",background:"rgba(0,0,0,0.3)",padding:"8px 10px",borderRadius:6,letterSpacing:0.5,marginBottom:8,border:"1px solid rgba(34,197,94,0.15)"}}>{genPw}</code>
+              <code style={{display:"block",fontSize:11,color:genScrambling?T.accent:"#22c55e",fontFamily:"monospace",wordBreak:"break-all",background:"rgba(0,0,0,0.3)",padding:"8px 10px",borderRadius:6,letterSpacing:0.5,marginBottom:8,border:`1px solid ${genScrambling?`rgba(${T.accentRgb},0.4)`:"rgba(34,197,94,0.15)"}`,transition:"border-color 0.2s, color 0.2s",textShadow:genScrambling?`0 0 6px rgba(${T.accentRgb},0.4)`:"none"}}>{genPwDisplay||genPw}</code>
               <div style={{display:"flex",gap:5}}>
                 <button onClick={()=>{setPw(genPw);setShowPwGen(false);setAuthErr("")}} style={{flex:1,padding:"6px 0",background:"rgba(34,197,94,0.12)",border:"1px solid rgba(34,197,94,0.3)",borderRadius:6,color:"#22c55e",fontSize:9,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Use This</button>
                 <button onClick={()=>{navigator.clipboard.writeText(genPw).then(()=>{setGenCopied(true);setTimeout(()=>setGenCopied(false),2000)})}} style={{padding:"6px 10px",background:`rgba(${T.accentRgb},0.1)`,border:`1px solid rgba(${T.accentRgb},0.25)`,borderRadius:6,color:T.accent,fontSize:9,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>{genCopied?"✓":"Copy"}</button>
