@@ -1445,6 +1445,9 @@ select option{background:${T.bg};color:${T.text}}
 @keyframes pgPulseGlow{0%,100%{box-shadow:0 0 8px rgba(var(--ar),0.3)}50%{box-shadow:0 0 20px rgba(var(--ar),0.6),0 0 40px rgba(var(--ar),0.2)}}
 @keyframes pgCopySuccess{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
 @keyframes pgBtnShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes djStepIn{from{opacity:0;transform:translateY(16px) scale(0.9)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes djArrowIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+@keyframes djIconPulse{0%,100%{box-shadow:0 0 20px rgba(var(--sc),0.2)}50%{box-shadow:0 0 32px rgba(var(--sc),0.45)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes slideIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
@@ -1890,25 +1893,25 @@ html{scroll-behavior:smooth}`;
 
           {/* Horizontal flow chart */}
           <div style={{overflowX:"auto",paddingBottom:12,WebkitOverflowScrolling:"touch"}}>
-            <div style={{display:"flex",alignItems:"flex-start",gap:0,minWidth:960,position:"relative"}}>
+            <div style={{display:"flex",alignItems:"flex-start",gap:0,minWidth:900,position:"relative"}}>
               {[
-                {icon:"✍️",title:"You Type",desc:"Write notes & events freely. Data stays in browser memory.",color:"139,92,246"},
-                {icon:"🔑",title:"Key Derived",desc:"Password → AES-256 key via PBKDF2 (600K iterations). Never leaves device.",color:T.accentRgb},
-                {icon:"🔐",title:"Encrypted Locally",desc:"AES-256-GCM encrypts everything — titles, tags, content — on your device.",color:"34,197,94"},
-                {icon:"📡",title:"Blob Sent",desc:"Only unreadable encrypted blobs are transmitted. Server sees random bytes.",color:"6,182,212"},
-                {icon:"🗄️",title:"Stored Encrypted",desc:"Encrypted blobs stored with hashed keys. Server can't link data to you.",color:"245,158,11"},
-                {icon:"🔓",title:"You Decrypt",desc:"Sign in on any device — password re-derives key. Only you can read data.",color:"239,68,68"}
+                {icon:"✍️",title:"You Type",desc:"Data stays in your browser",color:"139,92,246"},
+                {icon:"🔑",title:"Key Derived",desc:"PBKDF2 · 600K iterations",color:T.accentRgb},
+                {icon:"🔐",title:"Encrypted",desc:"AES-256-GCM on device",color:"34,197,94"},
+                {icon:"📡",title:"Blob Sent",desc:"Server sees only random bytes",color:"6,182,212"},
+                {icon:"🗄️",title:"Stored Safe",desc:"Hashed keys · no metadata",color:"245,158,11"},
+                {icon:"🔓",title:"You Decrypt",desc:"Only your password unlocks",color:"239,68,68"}
               ].map((step,i)=>(
                 <React.Fragment key={i}>
-                  <div className="ld-section" data-ld="" style={{display:"flex",flexDirection:"column",alignItems:"center",textAlign:"center",flex:"0 0 140px",gap:10}}>
-                    <div style={{width:60,height:60,borderRadius:16,background:`rgba(${step.color},0.1)`,border:`2px solid rgba(${step.color},0.35)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,boxShadow:`0 0 24px rgba(${step.color},0.2),inset 0 0 12px rgba(${step.color},0.05)`,transition:"all 0.3s"}}>
+                  <div style={{display:"flex",flexDirection:"column",alignItems:"center",textAlign:"center",flex:"0 0 130px",gap:8,animation:`djStepIn 0.5s ease-out ${i*0.15}s both`}}>
+                    <div style={{width:60,height:60,borderRadius:16,background:`rgba(${step.color},0.1)`,border:`2px solid rgba(${step.color},0.35)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,boxShadow:`0 0 24px rgba(${step.color},0.2)`,animation:`djIconPulse 3s ease-in-out ${i*0.5}s infinite`,["--sc"]:step.color}}>
                       {step.icon}
                     </div>
-                    <div style={{fontSize:13,fontWeight:700,color:T.dark?T.text:"#e2e8f0",fontFamily:`${F.heading},sans-serif`,lineHeight:1.3}}>{step.title}</div>
-                    <p style={{fontSize:11,color:"#94a3b8",lineHeight:1.5,margin:0,maxWidth:130}}>{step.desc}</p>
+                    <div style={{fontSize:13,fontWeight:700,color:T.dark?T.text:"#e2e8f0",fontFamily:`${F.heading},sans-serif`,whiteSpace:"nowrap"}}>{step.title}</div>
+                    <p style={{fontSize:10,color:"#94a3b8",lineHeight:1.4,margin:0,whiteSpace:"nowrap"}}>{step.desc}</p>
                   </div>
-                  {i<5&&<div style={{display:"flex",alignItems:"center",flex:"0 0 24px",paddingTop:20}}>
-                    <svg width="24" height="20" viewBox="0 0 24 20" fill="none"><path d="M2 10h16M14 4l6 6-6 6" stroke={`rgba(${step.color},0.5)`} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  {i<5&&<div style={{display:"flex",alignItems:"center",flex:"0 0 20px",paddingTop:18,animation:`djArrowIn 0.3s ease-out ${i*0.15+0.3}s both`}}>
+                    <svg width="20" height="18" viewBox="0 0 20 18" fill="none"><path d="M2 9h12M11 4l5 5-5 5" stroke={`rgba(${step.color},0.5)`} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                   </div>}
                 </React.Fragment>
               ))}
