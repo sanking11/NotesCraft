@@ -1389,6 +1389,10 @@ select option{background:${T.bg};color:${T.text}}
 @keyframes warnSlideIn{from{opacity:0;transform:translateX(30px) scale(0.92)}to{opacity:1;transform:translateX(0) scale(1)}}
 @keyframes warnAttention{0%,100%{transform:scale(1);box-shadow:0 0 20px rgba(245,158,11,0.15),0 8px 32px rgba(0,0,0,0.3)}50%{transform:scale(1.03);box-shadow:0 0 35px rgba(245,158,11,0.35),0 8px 32px rgba(0,0,0,0.3)}}
 @keyframes warnBorderGlow{0%,100%{border-color:rgba(245,158,11,0.25)}50%{border-color:rgba(245,158,11,0.6)}}
+@keyframes pgSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes pgPulseGlow{0%,100%{box-shadow:0 0 8px rgba(var(--ar),0.3)}50%{box-shadow:0 0 20px rgba(var(--ar),0.6),0 0 40px rgba(var(--ar),0.2)}}
+@keyframes pgCopySuccess{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
+@keyframes pgBtnShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes slideIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
@@ -1599,14 +1603,18 @@ html{scroll-behavior:smooth}`;
         {/* Password Display */}
         <div style={{background:T.dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.04)",border:`1px solid ${T.bdr}`,borderRadius:12,padding:"20px 24px",marginBottom:20,position:"relative"}}>
           <div style={{fontSize:pgResult.length>30?14:18,fontFamily:"monospace",fontWeight:600,color:T.text,wordBreak:"break-all",lineHeight:1.6,letterSpacing:0.5,minHeight:28,paddingRight:40}}>{pgResult}</div>
-          <button onClick={()=>{const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep);setPgResult(pw);setPgStrength(calcPwStrength(pw));setPgCopied(false)}}
-            style={{position:"absolute",top:12,right:12,width:32,height:32,borderRadius:"50%",background:`rgba(${T.accentRgb},0.1)`,border:`1px solid rgba(${T.accentRgb},0.2)`,color:T.accent,fontSize:16,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}} title="Regenerate">&#x21bb;</button>
+          <button onClick={e=>{const btn=e.currentTarget;btn.style.animation="pgSpin 0.4s ease-out";setTimeout(()=>{btn.style.animation=""},400);const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep);setPgResult(pw);setPgStrength(calcPwStrength(pw));setPgCopied(false)}}
+            style={{position:"absolute",top:12,right:12,width:38,height:38,borderRadius:"50%",background:`linear-gradient(135deg,rgba(${T.accentRgb},0.2),rgba(${T.accentRgb},0.1))`,border:`2px solid rgba(${T.accentRgb},0.4)`,color:T.accent,fontSize:20,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",boxShadow:`0 0 12px rgba(${T.accentRgb},0.2)`}} title="Regenerate"
+            onMouseEnter={e=>{e.currentTarget.style.boxShadow=`0 0 20px rgba(${T.accentRgb},0.5)`;e.currentTarget.style.transform="scale(1.1)"}}
+            onMouseLeave={e=>{e.currentTarget.style.boxShadow=`0 0 12px rgba(${T.accentRgb},0.2)`;e.currentTarget.style.transform="scale(1)"}}>&#x21bb;</button>
         </div>
 
         {/* Copy Button */}
-        <button onClick={()=>{navigator.clipboard.writeText(pgResult).then(()=>{setPgCopied(true);setTimeout(()=>setPgCopied(false),2000)})}}
-          style={{width:"100%",padding:"12px 0",background:`linear-gradient(135deg,${T.accent},${T.accent2})`,border:"none",borderRadius:10,color:"#fff",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:1,marginBottom:24,transition:"all 0.2s",boxShadow:`0 4px 15px rgba(${T.accentRgb},0.3)`}}>
-          {pgCopied?"Copied!":"Copy Password"}
+        <button onClick={e=>{const btn=e.currentTarget;btn.style.animation="pgCopySuccess 0.3s ease-out";setTimeout(()=>{btn.style.animation=""},300);navigator.clipboard.writeText(pgResult).then(()=>{setPgCopied(true);setTimeout(()=>setPgCopied(false),2000)})}}
+          style={{width:"100%",padding:"14px 0",background:pgCopied?T.ok:`linear-gradient(135deg,${T.accent},${T.accent2})`,border:"none",borderRadius:10,color:"#fff",fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:1.5,marginBottom:24,transition:"all 0.3s",boxShadow:pgCopied?`0 0 25px ${T.ok}40`:`0 4px 20px rgba(${T.accentRgb},0.35)`,backgroundSize:"200% auto"}}
+          onMouseEnter={e=>{if(!pgCopied){e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow=`0 6px 25px rgba(${T.accentRgb},0.5)`}}}
+          onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow=pgCopied?`0 0 25px ${T.ok}40`:`0 4px 20px rgba(${T.accentRgb},0.35)`}}>
+          {pgCopied?"✓ Copied!":"Copy Password"}
         </button>
 
         {/* Strength Meter */}
