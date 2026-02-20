@@ -1884,7 +1884,7 @@ html{scroll-behavior:smooth}`;
         </section>
 
         {/* ── Encryption Flow Visual ── */}
-        <section className="ld-section" data-ld="" style={{position:"relative",zIndex:1,padding:"80px 24px 100px",maxWidth:1000,margin:"0 auto"}}>
+        <section className="ld-section" data-ld="" style={{position:"relative",zIndex:1,padding:"80px 24px 40px",maxWidth:1000,margin:"0 auto"}}>
           <div style={{textAlign:"center",marginBottom:48}}>
             <p style={{fontSize:11,fontWeight:600,letterSpacing:5,textTransform:"uppercase",color:T.accent,marginBottom:12}}>HOW IT WORKS</p>
             <h3 style={{fontSize:"clamp(26px,4vw,38px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",marginBottom:12}}>Your Data Journey</h3>
@@ -1892,7 +1892,7 @@ html{scroll-behavior:smooth}`;
           </div>
 
           {/* Horizontal flow chart */}
-          <div style={{overflowX:"auto",paddingBottom:12,WebkitOverflowScrolling:"touch"}}>
+          <div style={{overflowX:"auto",paddingBottom:0,WebkitOverflowScrolling:"touch"}}>
             <div style={{display:"flex",alignItems:"flex-start",gap:0,minWidth:960,position:"relative"}}>
               {[
                 {icon:"✍️",title:"You Type",desc:"Write notes, create events, manage your data freely in the app. Everything stays in your browser's memory.",color:"139,92,246"},
