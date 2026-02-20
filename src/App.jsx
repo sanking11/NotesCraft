@@ -513,7 +513,7 @@ export default function NotesCraft(){
     const GLITCH="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{}|;:<>?~";
     const target=pgResult;const len=target.length;
     const revealed=new Array(len).fill(false);
-    let frame=0;const totalFrames=12;
+    let frame=0;const totalFrames=24;
     setPgScrambling(true);
     pgScrambleRef.current=setInterval(()=>{
       frame++;
@@ -526,7 +526,7 @@ export default function NotesCraft(){
         clearInterval(pgScrambleRef.current);pgScrambleRef.current=null;
         setPgDisplay(target);setPgScrambling(false);
       }
-    },30);
+    },40);
     return()=>{if(pgScrambleRef.current)clearInterval(pgScrambleRef.current)};
   },[pgResult]);
 
