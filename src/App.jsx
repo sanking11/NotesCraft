@@ -1888,32 +1888,31 @@ html{scroll-behavior:smooth}`;
             <p style={{fontSize:16,color:"#94a3b8",maxWidth:600,margin:"0 auto",lineHeight:1.6}}>Every piece of data is encrypted on your device before it ever leaves. No one — not even us — can read your notes.</p>
           </div>
 
-          {/* Steps */}
-          <div style={{display:"flex",flexDirection:"column",gap:0,position:"relative"}}>
-            {/* Vertical connection line */}
-            <div style={{display:"none"}}/>
-            {[
-              {icon:"✍️",title:"You Type",desc:"Write notes, create events, manage your data freely in the app. Everything stays in your browser's memory.",color:"139,92,246",num:"01"},
-              {icon:"🔑",title:"Key Derived from Password",desc:"Your password generates a unique AES-256 encryption key using PBKDF2 with 600,000 iterations. The key never leaves your device.",color:T.accentRgb,num:"02"},
-              {icon:"🔐",title:"Encrypted on Your Device",desc:"All data is encrypted locally using AES-256-GCM before it's sent anywhere. Even your note titles and tags are encrypted.",color:"34,197,94",num:"03"},
-              {icon:"📡",title:"Encrypted Blob Transmitted",desc:"Only unreadable encrypted blobs are sent to the sync server. The server sees random bytes — no plaintext, no metadata.",color:"6,182,212",num:"04"},
-              {icon:"🗄️",title:"Stored Fully Encrypted",desc:"Data is stored as encrypted blobs on the server. Even storage keys are hashed — the server can't link data to your email.",color:"245,158,11",num:"05"},
-              {icon:"🔓",title:"Only You Can Decrypt",desc:"When you sign in on any device, your password re-derives the same key. Only you can unlock and read your data.",color:"239,68,68",num:"06"}
-            ].map((step,i)=>(
-              <div key={i} className="ld-section" data-ld="" style={{display:"flex",alignItems:"flex-start",gap:24,padding:"28px 0",position:"relative"}}>
-                {/* Number + icon */}
-                <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:8,flexShrink:0,width:72}}>
-                  <div style={{width:56,height:56,borderRadius:16,background:`rgba(${step.color},0.1)`,border:`2px solid rgba(${step.color},0.3)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,boxShadow:`0 0 20px rgba(${step.color},0.15)`}}>{step.icon}</div>
-                  <span style={{fontSize:10,fontWeight:700,color:`rgba(${step.color},0.6)`,letterSpacing:2,fontFamily:"monospace"}}>{step.num}</span>
-                  {i<5&&<div style={{width:2,height:28,background:`linear-gradient(180deg,rgba(${step.color},0.3),transparent)`,borderRadius:1}}/>}
-                </div>
-                {/* Content */}
-                <div style={{flex:1,paddingTop:4}}>
-                  <h4 style={{fontSize:17,fontWeight:700,color:T.dark?T.text:"#e2e8f0",marginBottom:6,fontFamily:`${F.heading},sans-serif`}}>{step.title}</h4>
-                  <p style={{fontSize:14,color:"#94a3b8",lineHeight:1.7,margin:0}}>{step.desc}</p>
-                </div>
-              </div>
-            ))}
+          {/* Horizontal flow chart */}
+          <div style={{overflowX:"auto",paddingBottom:12,WebkitOverflowScrolling:"touch"}}>
+            <div style={{display:"flex",alignItems:"flex-start",gap:0,minWidth:960,position:"relative"}}>
+              {[
+                {icon:"✍️",title:"You Type",desc:"Write notes & events freely. Data stays in browser memory.",color:"139,92,246"},
+                {icon:"🔑",title:"Key Derived",desc:"Password → AES-256 key via PBKDF2 (600K iterations). Never leaves device.",color:T.accentRgb},
+                {icon:"🔐",title:"Encrypted Locally",desc:"AES-256-GCM encrypts everything — titles, tags, content — on your device.",color:"34,197,94"},
+                {icon:"📡",title:"Blob Sent",desc:"Only unreadable encrypted blobs are transmitted. Server sees random bytes.",color:"6,182,212"},
+                {icon:"🗄️",title:"Stored Encrypted",desc:"Encrypted blobs stored with hashed keys. Server can't link data to you.",color:"245,158,11"},
+                {icon:"🔓",title:"You Decrypt",desc:"Sign in on any device — password re-derives key. Only you can read data.",color:"239,68,68"}
+              ].map((step,i)=>(
+                <React.Fragment key={i}>
+                  <div className="ld-section" data-ld="" style={{display:"flex",flexDirection:"column",alignItems:"center",textAlign:"center",flex:"0 0 140px",gap:10}}>
+                    <div style={{width:60,height:60,borderRadius:16,background:`rgba(${step.color},0.1)`,border:`2px solid rgba(${step.color},0.35)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,boxShadow:`0 0 24px rgba(${step.color},0.2),inset 0 0 12px rgba(${step.color},0.05)`,transition:"all 0.3s"}}>
+                      {step.icon}
+                    </div>
+                    <div style={{fontSize:13,fontWeight:700,color:T.dark?T.text:"#e2e8f0",fontFamily:`${F.heading},sans-serif`,lineHeight:1.3}}>{step.title}</div>
+                    <p style={{fontSize:11,color:"#94a3b8",lineHeight:1.5,margin:0,maxWidth:130}}>{step.desc}</p>
+                  </div>
+                  {i<5&&<div style={{display:"flex",alignItems:"center",flex:"0 0 24px",paddingTop:20}}>
+                    <svg width="24" height="20" viewBox="0 0 24 20" fill="none"><path d="M2 10h16M14 4l6 6-6 6" stroke={`rgba(${step.color},0.5)`} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  </div>}
+                </React.Fragment>
+              ))}
+            </div>
           </div>
 
           {/* Bottom highlight cards */}
