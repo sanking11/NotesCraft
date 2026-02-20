@@ -1917,21 +1917,6 @@ html{scroll-behavior:smooth}`;
               ))}
             </div>
           </div>
-
-          {/* Bottom highlight cards */}
-          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(240px,1fr))",gap:16,marginTop:40}}>
-            {[
-              {icon:"🛡️",title:"Zero-Knowledge Architecture",desc:"We never see your password, encryption keys, or plaintext data. Authentication uses separate hashed credentials."},
-              {icon:"🔬",title:"Open & Auditable",desc:"AES-256-GCM encryption, PBKDF2 key derivation with 600K iterations, SHA-256 hashed storage keys. Industry-standard cryptography."},
-              {icon:"🌍",title:"Cross-Device Sync",desc:"Your encrypted data syncs seamlessly across all devices. Each device decrypts locally using your password — the sync server only transfers encrypted blobs."}
-            ].map((card,i)=>(
-              <div key={i} style={{...ldGlass,padding:"24px 20px",borderRadius:16}}>
-                <div style={{fontSize:24,marginBottom:12}}>{card.icon}</div>
-                <h4 style={{fontSize:14,fontWeight:700,color:T.dark?T.text:"#e2e8f0",marginBottom:8}}>{card.title}</h4>
-                <p style={{fontSize:12,color:"#94a3b8",lineHeight:1.7,margin:0}}>{card.desc}</p>
-              </div>
-            ))}
-          </div>
         </section>
 
         {/* ── App Preview ── */}

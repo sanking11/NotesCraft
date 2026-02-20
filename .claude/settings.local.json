@@ -15,7 +15,8 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:gun.eco)",
       "Bash(nslookup:*)",
-      "Bash(netstat:*)"
+      "Bash(netstat:*)",
+      "Bash(npx netlify deploy:*)"
     ]
   }
 }
