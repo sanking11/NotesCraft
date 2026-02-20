@@ -414,8 +414,11 @@ export default function NotesCraft(){
   const[pgNoAmbig,setPgNoAmbig]=useState(false);
   const[pgSep,setPgSep]=useState("hyphens");
   const[pgResult,setPgResult]=useState("");
+  const[pgDisplay,setPgDisplay]=useState("");
+  const[pgScrambling,setPgScrambling]=useState(false);
   const[pgCopied,setPgCopied]=useState(false);
   const[pgStrength,setPgStrength]=useState(null);
+  const pgScrambleRef=React.useRef(null);
   // 2FA state
   const[twoFASetup,setTwoFASetup]=useState(null);
   const[twoFAStep,setTwoFAStep]=useState(1);
@@ -502,6 +505,30 @@ export default function NotesCraft(){
   /* Session persistence — save/restore across page refreshes */
   const saveSession=async(em,key)=>{try{const kb=await exportKey(key);sessionStorage.setItem("nc_session",JSON.stringify({email:em,key:kb}))}catch(e){}};
   const clearSession=()=>{sessionStorage.removeItem("nc_session")};
+
+  // Scramble/glitch reveal animation when password changes
+  useEffect(()=>{
+    if(!pgResult)return;
+    if(pgScrambleRef.current)clearInterval(pgScrambleRef.current);
+    const GLITCH="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{}|;:<>?~";
+    const target=pgResult;const len=target.length;
+    const revealed=new Array(len).fill(false);
+    let frame=0;const totalFrames=12;
+    setPgScrambling(true);
+    pgScrambleRef.current=setInterval(()=>{
+      frame++;
+      // Progressively reveal chars from left to right
+      const revealCount=Math.floor((frame/totalFrames)*len);
+      for(let i=0;i<revealCount;i++)revealed[i]=true;
+      const display=target.split("").map((c,i)=>revealed[i]?c:GLITCH[secRand(GLITCH.length)]).join("");
+      setPgDisplay(display);
+      if(frame>=totalFrames){
+        clearInterval(pgScrambleRef.current);pgScrambleRef.current=null;
+        setPgDisplay(target);setPgScrambling(false);
+      }
+    },30);
+    return()=>{if(pgScrambleRef.current)clearInterval(pgScrambleRef.current)};
+  },[pgResult]);
 
   // Auto-generate password when generator page options change
   useEffect(()=>{
@@ -1601,8 +1628,8 @@ html{scroll-behavior:smooth}`;
         <p style={infoP}>Generate strong, unique passwords using cryptographically secure randomness.</p>
 
         {/* Password Display */}
-        <div style={{background:T.dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.04)",border:`1px solid ${T.bdr}`,borderRadius:12,padding:"20px 24px",marginBottom:20,position:"relative"}}>
-          <div style={{fontSize:pgResult.length>30?14:18,fontFamily:"monospace",fontWeight:600,color:T.text,wordBreak:"break-all",lineHeight:1.6,letterSpacing:0.5,minHeight:28,paddingRight:40}}>{pgResult}</div>
+        <div style={{background:T.dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.04)",border:`1px solid ${pgScrambling?T.accent:T.bdr}`,borderRadius:12,padding:"20px 24px",marginBottom:20,position:"relative",transition:"border-color 0.3s",boxShadow:pgScrambling?`0 0 15px rgba(${T.accentRgb},0.15)`:"none"}}>
+          <div style={{fontSize:(pgDisplay||pgResult).length>30?14:18,fontFamily:"monospace",fontWeight:600,color:pgScrambling?T.accent:T.text,wordBreak:"break-all",lineHeight:1.6,letterSpacing:0.5,minHeight:28,paddingRight:40,transition:"color 0.2s",textShadow:pgScrambling?`0 0 8px rgba(${T.accentRgb},0.4)`:"none"}}>{pgDisplay||pgResult}</div>
           <button onClick={e=>{const btn=e.currentTarget;btn.style.animation="pgSpin 0.4s ease-out";setTimeout(()=>{btn.style.animation=""},400);const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep);setPgResult(pw);setPgStrength(calcPwStrength(pw));setPgCopied(false)}}
             style={{position:"absolute",top:12,right:12,width:38,height:38,borderRadius:"50%",background:`linear-gradient(135deg,rgba(${T.accentRgb},0.2),rgba(${T.accentRgb},0.1))`,border:`2px solid rgba(${T.accentRgb},0.4)`,color:T.accent,fontSize:20,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",boxShadow:`0 0 12px rgba(${T.accentRgb},0.2)`}} title="Regenerate"
             onMouseEnter={e=>{e.currentTarget.style.boxShadow=`0 0 20px rgba(${T.accentRgb},0.5)`;e.currentTarget.style.transform="scale(1.1)"}}
