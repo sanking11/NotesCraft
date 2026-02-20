@@ -1856,23 +1856,54 @@ html{scroll-behavior:smooth}`;
         </section>
 
         {/* ── Encryption Flow Visual ── */}
-        <section className="ld-section" data-ld="" style={{position:"relative",zIndex:1,padding:"60px 24px 80px",maxWidth:900,margin:"0 auto"}}>
-          <div style={{...ldGlass,padding:"40px 32px",borderRadius:20}}>
-            <div style={{textAlign:"center",marginBottom:28}}>
-              <p style={{fontSize:11,fontWeight:600,letterSpacing:5,textTransform:"uppercase",color:T.accent,marginBottom:8}}>HOW IT WORKS</p>
-              <h3 style={{fontSize:22,fontWeight:700,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0"}}>Your Data Journey</h3>
-            </div>
-            <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:12,flexWrap:"wrap"}}>
-              {[{label:"You Type",icon:"✍️"},{label:"Encrypted on Device",icon:"🔐"},{label:"Encrypted Blob Sent",icon:"📡"},{label:"Stored Encrypted",icon:"🗄️"},{label:"Only You Decrypt",icon:"🔓"}].map((step,i)=>(
-                <React.Fragment key={i}>
-                  <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:8,padding:"16px 12px",minWidth:100}}>
-                    <div style={{fontSize:28}}>{step.icon}</div>
-                    <span style={{fontSize:11,fontWeight:600,color:"#cbd5e1",textAlign:"center",lineHeight:1.4}}>{step.label}</span>
-                  </div>
-                  {i<4&&<div style={{color:`rgba(${T.accentRgb},0.7)`,fontSize:18,flexShrink:0}}>→</div>}
-                </React.Fragment>
-              ))}
-            </div>
+        <section className="ld-section" data-ld="" style={{position:"relative",zIndex:1,padding:"80px 24px 100px",maxWidth:1000,margin:"0 auto"}}>
+          <div style={{textAlign:"center",marginBottom:48}}>
+            <p style={{fontSize:11,fontWeight:600,letterSpacing:5,textTransform:"uppercase",color:T.accent,marginBottom:12}}>HOW IT WORKS</p>
+            <h3 style={{fontSize:"clamp(26px,4vw,38px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",marginBottom:12}}>Your Data Journey</h3>
+            <p style={{fontSize:16,color:"#94a3b8",maxWidth:600,margin:"0 auto",lineHeight:1.6}}>Every piece of data is encrypted on your device before it ever leaves. No one — not even us — can read your notes.</p>
+          </div>
+
+          {/* Steps */}
+          <div style={{display:"flex",flexDirection:"column",gap:0,position:"relative"}}>
+            {/* Vertical connection line */}
+            <div style={{display:"none"}}/>
+            {[
+              {icon:"✍️",title:"You Type",desc:"Write notes, create events, manage your data freely in the app. Everything stays in your browser's memory.",color:"139,92,246",num:"01"},
+              {icon:"🔑",title:"Key Derived from Password",desc:"Your password generates a unique AES-256 encryption key using PBKDF2 with 600,000 iterations. The key never leaves your device.",color:T.accentRgb,num:"02"},
+              {icon:"🔐",title:"Encrypted on Your Device",desc:"All data is encrypted locally using AES-256-GCM before it's sent anywhere. Even your note titles and tags are encrypted.",color:"34,197,94",num:"03"},
+              {icon:"📡",title:"Encrypted Blob Transmitted",desc:"Only unreadable encrypted blobs are sent to the sync server. The server sees random bytes — no plaintext, no metadata.",color:"6,182,212",num:"04"},
+              {icon:"🗄️",title:"Stored Fully Encrypted",desc:"Data is stored as encrypted blobs on the server. Even storage keys are hashed — the server can't link data to your email.",color:"245,158,11",num:"05"},
+              {icon:"🔓",title:"Only You Can Decrypt",desc:"When you sign in on any device, your password re-derives the same key. Only you can unlock and read your data.",color:"239,68,68",num:"06"}
+            ].map((step,i)=>(
+              <div key={i} className="ld-section" data-ld="" style={{display:"flex",alignItems:"flex-start",gap:24,padding:"28px 0",position:"relative"}}>
+                {/* Number + icon */}
+                <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:8,flexShrink:0,width:72}}>
+                  <div style={{width:56,height:56,borderRadius:16,background:`rgba(${step.color},0.1)`,border:`2px solid rgba(${step.color},0.3)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,boxShadow:`0 0 20px rgba(${step.color},0.15)`}}>{step.icon}</div>
+                  <span style={{fontSize:10,fontWeight:700,color:`rgba(${step.color},0.6)`,letterSpacing:2,fontFamily:"monospace"}}>{step.num}</span>
+                  {i<5&&<div style={{width:2,height:28,background:`linear-gradient(180deg,rgba(${step.color},0.3),transparent)`,borderRadius:1}}/>}
+                </div>
+                {/* Content */}
+                <div style={{flex:1,paddingTop:4}}>
+                  <h4 style={{fontSize:17,fontWeight:700,color:T.dark?T.text:"#e2e8f0",marginBottom:6,fontFamily:`${F.heading},sans-serif`}}>{step.title}</h4>
+                  <p style={{fontSize:14,color:"#94a3b8",lineHeight:1.7,margin:0}}>{step.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Bottom highlight cards */}
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(240px,1fr))",gap:16,marginTop:40}}>
+            {[
+              {icon:"🛡️",title:"Zero-Knowledge Architecture",desc:"We never see your password, encryption keys, or plaintext data. Authentication uses separate hashed credentials."},
+              {icon:"🔬",title:"Open & Auditable",desc:"AES-256-GCM encryption, PBKDF2 key derivation with 600K iterations, SHA-256 hashed storage keys. Industry-standard cryptography."},
+              {icon:"🌍",title:"Cross-Device Sync",desc:"Your encrypted data syncs seamlessly across all devices. Each device decrypts locally using your password — the sync server only transfers encrypted blobs."}
+            ].map((card,i)=>(
+              <div key={i} style={{...ldGlass,padding:"24px 20px",borderRadius:16}}>
+                <div style={{fontSize:24,marginBottom:12}}>{card.icon}</div>
+                <h4 style={{fontSize:14,fontWeight:700,color:T.dark?T.text:"#e2e8f0",marginBottom:8}}>{card.title}</h4>
+                <p style={{fontSize:12,color:"#94a3b8",lineHeight:1.7,margin:0}}>{card.desc}</p>
+              </div>
+            ))}
           </div>
         </section>
 
