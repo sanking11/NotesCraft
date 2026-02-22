@@ -1706,13 +1706,11 @@ html{scroll-behavior:smooth}`;
           <div style={{height:6,borderRadius:3,background:T.dark?"rgba(255,255,255,0.08)":"rgba(0,0,0,0.08)",overflow:"hidden",marginBottom:6}}>
             <div style={{height:"100%",borderRadius:3,background:pgStrength.color,width:pgStrength.percent+"%",transition:"width 0.4s ease"}}/>
           </div>
-          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:4}}>
-            <span style={{fontSize:10,color:T.dim}}>🖥️ Classical: <span style={{fontWeight:600,color:pgStrength.color}}>{pgStrength.time}</span></span>
-            <span style={{fontSize:10,color:T.dim}}>at 1 trillion guesses/sec</span>
+          <div style={{textAlign:"right",marginBottom:3}}>
+            <span style={{fontSize:10,color:T.dim}}>🖥️ Classical: <span style={{fontWeight:600,color:pgStrength.color}}>{pgStrength.time}</span> at 1 trillion guesses/sec</span>
           </div>
-          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-            <span style={{fontSize:10,color:T.dim}}>⚛️ Quantum: <span style={{fontWeight:600,color:pgStrength.qTime===pgStrength.time?pgStrength.color:pgStrength.qTime==="Instantly"?"#ef4444":"#f59e0b"}}>{pgStrength.qTime}</span></span>
-            <span style={{fontSize:10,color:T.dim}}>Grover's algorithm</span>
+          <div style={{textAlign:"right"}}>
+            <span style={{fontSize:10,color:T.dim}}>⚛️ Quantum: <span style={{fontWeight:600,color:pgStrength.qTime===pgStrength.time?pgStrength.color:pgStrength.qTime==="Instantly"?"#ef4444":"#f59e0b"}}>{pgStrength.qTime}</span> · Grover's algorithm</span>
           </div>
         </div>}
 
@@ -1776,16 +1774,6 @@ html{scroll-behavior:smooth}`;
               </div>}
             </div>}
           </div>
-        </div>
-
-        {/* Blog link */}
-        <div style={{marginTop:20,textAlign:"center"}}>
-          <button onClick={()=>{setInfoPage("security-blog");window.scrollTo(0,0)}}
-            style={{background:`rgba(${T.accentRgb},0.06)`,border:`1px solid rgba(${T.accentRgb},0.2)`,borderRadius:10,padding:"10px 24px",color:T.accent,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5,transition:"all 0.2s"}}
-            onMouseEnter={e=>{e.currentTarget.style.background=`rgba(${T.accentRgb},0.15)`;e.currentTarget.style.transform="translateY(-1px)"}}
-            onMouseLeave={e=>{e.currentTarget.style.background=`rgba(${T.accentRgb},0.06)`;e.currentTarget.style.transform="translateY(0)"}}>
-            Read: Cryptographic vs Normal Password Generators →
-          </button>
         </div>
 
       </>,
@@ -2020,6 +2008,18 @@ html{scroll-behavior:smooth}`;
           <div style={{...infoGlass,padding:"48px 40px"}}>
             {infoPages[infoPage]}
           </div>
+          {infoPage==="password-generator"&&<div onClick={()=>{setInfoPage("security-blog");window.scrollTo(0,0)}} style={{marginTop:32,borderRadius:16,overflow:"hidden",cursor:"pointer",border:`1px solid rgba(${T.accentRgb},0.2)`,background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.06)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",transition:"all 0.3s",boxShadow:`0 4px 24px rgba(0,0,0,0.2)`}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.boxShadow=`0 8px 32px rgba(${T.accentRgb},0.25)`}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="0 4px 24px rgba(0,0,0,0.2)"}}>
+            <div style={{height:160,background:`linear-gradient(135deg,rgba(${T.accentRgb},0.3) 0%,rgba(${T.accentRgb},0.05) 50%,rgba(139,92,246,0.2) 100%)`,display:"flex",alignItems:"center",justifyContent:"center",position:"relative",overflow:"hidden"}}>
+              <div style={{position:"absolute",inset:0,background:"repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(255,255,255,0.02) 20px,rgba(255,255,255,0.02) 40px)"}}/>
+              <div style={{fontSize:56,filter:"drop-shadow(0 4px 12px rgba(0,0,0,0.3))",zIndex:1}}>🔐</div>
+            </div>
+            <div style={{padding:"20px 24px"}}>
+              <span style={{fontSize:10,fontWeight:700,letterSpacing:2,textTransform:"uppercase",color:T.accent,display:"block",marginBottom:8}}>Security Deep-Dive</span>
+              <h3 style={{fontSize:18,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",margin:"0 0 8px",lineHeight:1.3}}>Cryptographic vs Normal Password Generators</h3>
+              <p style={{fontSize:12,color:T.dim,margin:0,lineHeight:1.5}}>Why the random numbers behind your passwords matter more than you think — explained with entropy, physics, and a cup of hot coffee.</p>
+              <span style={{display:"inline-block",marginTop:12,fontSize:11,fontWeight:600,color:T.accent,letterSpacing:0.5}}>Read Article →</span>
+            </div>
+          </div>}
         </div>
         <footer style={{position:"relative",zIndex:1,padding:"30px 24px 24px",borderTop:`1px solid rgba(${T.accentRgb},0.15)`,textAlign:"center",background:`rgba(${T.dark?"0,0,0":"10,10,18"},0.12)`,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)"}}>
           <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:20,flexWrap:"wrap",marginBottom:16}}>
