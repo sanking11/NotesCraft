@@ -306,19 +306,16 @@ function calcPwStrength(pw){
   let pool=0;
   if(/[a-z]/.test(pw))pool+=26;if(/[A-Z]/.test(pw))pool+=26;if(/[0-9]/.test(pw))pool+=10;if(/[^A-Za-z0-9]/.test(pw))pool+=32;
   const entropy=pw.length*Math.log2(pool||1);
-  const secs=Math.pow(2,entropy)/1e12;// 1 trillion guesses/sec
-  let time;
-  if(secs<1)time="Instantly";else if(secs<60)time=Math.round(secs)+" seconds";else if(secs<3600)time=Math.round(secs/60)+" minutes";
-  else if(secs<86400)time=Math.round(secs/3600)+" hours";else if(secs<31536000)time=Math.round(secs/86400)+" days";
-  else if(secs<31536000*1e3)time=Math.round(secs/31536000).toLocaleString()+" years";
-  else if(secs<31536000*1e6)time=Math.round(secs/31536000/1e3).toLocaleString()+"K years";
-  else if(secs<31536000*1e9)time=Math.round(secs/31536000/1e6).toLocaleString()+"M years";
-  else time="Billions of years";
+  const fmtTime=s=>{if(s<1)return"Instantly";if(s<60)return Math.round(s)+" seconds";if(s<3600)return Math.round(s/60)+" minutes";if(s<86400)return Math.round(s/3600)+" hours";if(s<31536000)return Math.round(s/86400)+" days";if(s<31536000*1e3)return Math.round(s/31536000).toLocaleString()+" years";if(s<31536000*1e6)return Math.round(s/31536000/1e3).toLocaleString()+"K years";if(s<31536000*1e9)return Math.round(s/31536000/1e6).toLocaleString()+"M years";return"Billions of years"};
+  const secs=Math.pow(2,entropy)/1e12;// 1 trillion guesses/sec (classical)
+  const qSecs=Math.pow(2,entropy/2)/1e12;// Grover's algorithm halves entropy bits
+  const time=fmtTime(secs);
+  const qTime=fmtTime(qSecs);
   const bits=Math.round(entropy);
-  if(entropy<40)return{label:"Weak",color:"#ef4444",percent:20,time,bits};
-  if(entropy<60)return{label:"Fair",color:"#f59e0b",percent:45,time,bits};
-  if(entropy<80)return{label:"Strong",color:"#22c55e",percent:72,time,bits};
-  return{label:"Very Strong",color:"#10b981",percent:100,time,bits};
+  if(entropy<40)return{label:"Weak",color:"#ef4444",percent:20,time,qTime,bits};
+  if(entropy<60)return{label:"Fair",color:"#f59e0b",percent:45,time,qTime,bits};
+  if(entropy<80)return{label:"Strong",color:"#22c55e",percent:72,time,qTime,bits};
+  return{label:"Very Strong",color:"#10b981",percent:100,time,qTime,bits};
 }
 
 const COMMON_WORDS=["password","letmein","welcome","monkey","dragon","master","qwerty","login","admin","princess","football","shadow","sunshine","trustno","access","hello","charlie","donald","batman","michael","jennifer","jordan","thomas","robert","daniel","andrew","joshua","james","john","david","secret","love","pass","test","user","guest","default","changeme","computer","internet","server","canada"];
@@ -1709,9 +1706,13 @@ html{scroll-behavior:smooth}`;
           <div style={{height:6,borderRadius:3,background:T.dark?"rgba(255,255,255,0.08)":"rgba(0,0,0,0.08)",overflow:"hidden",marginBottom:6}}>
             <div style={{height:"100%",borderRadius:3,background:pgStrength.color,width:pgStrength.percent+"%",transition:"width 0.4s ease"}}/>
           </div>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:4}}>
+            <span style={{fontSize:10,color:T.dim}}>🖥️ Classical: <span style={{fontWeight:600,color:pgStrength.color}}>{pgStrength.time}</span></span>
+            <span style={{fontSize:10,color:T.dim}}>at 1 trillion guesses/sec</span>
+          </div>
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-            <span style={{fontSize:10,color:T.dim}}>{pgStrength.bits} bits of entropy</span>
-            {pgStrength.time&&<span style={{fontSize:10,color:T.dim}}><span style={{fontWeight:600,color:pgStrength.color}}>{pgStrength.time}</span> to crack at 1 trillion guesses/sec</span>}
+            <span style={{fontSize:10,color:T.dim}}>⚛️ Quantum: <span style={{fontWeight:600,color:pgStrength.qTime===pgStrength.time?pgStrength.color:pgStrength.qTime==="Instantly"?"#ef4444":"#f59e0b"}}>{pgStrength.qTime}</span></span>
+            <span style={{fontSize:10,color:T.dim}}>Grover's algorithm</span>
           </div>
         </div>}
 
