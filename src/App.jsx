@@ -1939,33 +1939,6 @@ html{scroll-behavior:smooth}`;
           {/* Divider */}
           <div style={{height:1,background:`linear-gradient(90deg,transparent,${T.bdr},transparent)`,margin:"32px 0"}}/>
 
-          {/* Code Examples */}
-          <h2 style={infoH2}>Code: The Secure Way vs The Wrong Way</h2>
-          <p style={infoP}>Here's the practical difference in Python. One line separates a secure password from a vulnerable one.</p>
-
-          <div style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.06)",border:`1px solid ${T.bdr}`,padding:"3px 10px",borderRadius:"7px 7px 0 0",fontSize:11,fontFamily:"monospace",color:T.accent}}>✅ Secure — Python (CSPRNG)</div>
-          <div style={{background:T.dark?"rgba(0,0,0,0.4)":"rgba(0,0,0,0.06)",border:`1px solid ${T.bdr}`,borderRadius:"0 10px 10px 10px",padding:16,marginBottom:16,overflow:"auto",fontFamily:"monospace",fontSize:12,lineHeight:1.8,color:"#8892a4"}}>
-            <span style={{color:"#c084fc"}}>import</span> secrets{"\n"}
-            <span style={{color:"#c084fc"}}>import</span> string{"\n\n"}
-            alphabet = string.ascii_letters + string.digits + string.punctuation{"\n"}
-            password = <span style={{color:T.accent}}>''</span>.<span style={{color:"#60a5fa"}}>join</span>(secrets.<span style={{color:"#60a5fa"}}>choice</span>(alphabet) <span style={{color:"#c084fc"}}>for</span> _ <span style={{color:"#c084fc"}}>in</span> <span style={{color:"#60a5fa"}}>range</span>(<span style={{color:"#fbbf24"}}>16</span>)){"\n"}
-            <span style={{color:"#4a5568"}}># Uses /dev/urandom — true hardware entropy</span>
-          </div>
-
-          <div style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.06)",border:`1px solid ${T.bdr}`,padding:"3px 10px",borderRadius:"7px 7px 0 0",fontSize:11,fontFamily:"monospace",color:"#f87171"}}>❌ Insecure — Python (PRNG)</div>
-          <div style={{background:T.dark?"rgba(0,0,0,0.4)":"rgba(0,0,0,0.06)",border:`1px solid ${T.bdr}`,borderRadius:"0 10px 10px 10px",padding:16,marginBottom:16,overflow:"auto",fontFamily:"monospace",fontSize:12,lineHeight:1.8,color:"#8892a4"}}>
-            <span style={{color:"#c084fc"}}>import</span> random{"\n"}
-            <span style={{color:"#c084fc"}}>import</span> string{"\n\n"}
-            alphabet = string.ascii_letters + string.digits + string.punctuation{"\n"}
-            password = <span style={{color:T.accent}}>''</span>.<span style={{color:"#60a5fa"}}>join</span>(random.<span style={{color:"#60a5fa"}}>choice</span>(alphabet) <span style={{color:"#c084fc"}}>for</span> _ <span style={{color:"#c084fc"}}>in</span> <span style={{color:"#60a5fa"}}>range</span>(<span style={{color:"#fbbf24"}}>16</span>)){"\n"}
-            <span style={{color:"#4a5568"}}># Uses Mersenne Twister — deterministic, predictable</span>
-          </div>
-
-          <p style={infoP}>The <code style={{background:T.dark?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.06)",padding:"2px 6px",borderRadius:4,fontSize:12}}>secrets</code> module exists for exactly this purpose — it was added to Python's standard library specifically because developers kept using <code style={{background:T.dark?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.06)",padding:"2px 6px",borderRadius:4,fontSize:12}}>random</code> for security-sensitive tasks.</p>
-
-          {/* Divider */}
-          <div style={{height:1,background:`linear-gradient(90deg,transparent,${T.bdr},transparent)`,margin:"32px 0"}}/>
-
           {/* Fun Facts */}
           <h2 style={infoH2}>Entropy Fun Facts From Physics</h2>
           <p style={infoP}>The word "entropy" in cryptography is borrowed directly from physics — specifically thermodynamics. It measures <strong style={{color:T.text}}>disorder and unpredictability</strong> in both worlds.</p>
