@@ -1763,6 +1763,240 @@ html{scroll-behavior:smooth}`;
             <li>Enable two-factor authentication whenever possible</li>
           </ul>
         </div>
+
+        {/* ═══════ BLOG ARTICLE: Cryptographic vs Normal Password Generators ═══════ */}
+        <div style={{marginTop:48,borderTop:`1px solid ${T.bdr}`,paddingTop:40}}>
+
+          {/* Article Header */}
+          <div style={{textAlign:"center",marginBottom:40}}>
+            <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:T.accent,marginBottom:16}}>Security Deep-Dive</span>
+            <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>
+              <span style={{background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Cryptographic</span> vs <span style={{color:T.err||"#f87171"}}>Normal</span> Password Generators
+            </h2>
+            <p style={{fontSize:14,color:"#8892a4",maxWidth:500,margin:"0 auto",lineHeight:1.6}}>Why the random numbers behind your passwords matter more than you think — explained with entropy, physics, and a cup of hot coffee.</p>
+          </div>
+
+          {/* What's Inside */}
+          <h2 style={infoH2}>What's Actually Inside a Password Generator?</h2>
+          <p style={infoP}>Every password generator has a core engine — a <strong style={{color:T.text}}>random number generator (RNG)</strong>. This engine decides which characters end up in your password. The difference between a cryptographically secure generator and a normal one comes down to one thing: <strong style={{color:T.text}}>how unpredictable that engine truly is</strong>.</p>
+          <p style={infoP}>A normal generator uses what's called a <strong style={{color:T.text}}>Pseudo-Random Number Generator (PRNG)</strong>. It's fast, it looks random, and it works great for games and simulations. But if someone knows the algorithm and the starting "seed" value, they can reproduce every single output.</p>
+          <p style={infoP}>A cryptographically secure generator uses a <strong style={{color:T.text}}>CSPRNG</strong> — a Cryptographically Secure Pseudo-Random Number Generator. It draws unpredictability from physical noise in your hardware (mouse movements, CPU timing jitter, electrical noise) and is designed so that even if an attacker sees millions of outputs, they cannot predict the next one.</p>
+
+          {/* Comparison Cards */}
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,margin:"24px 0"}}>
+            <div style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderTop:`3px solid ${T.accent}`,borderRadius:14,padding:"20px 18px"}}>
+              <div style={{width:42,height:42,borderRadius:10,background:`rgba(${T.accentRgb},0.12)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,marginBottom:12}}>🔒</div>
+              <div style={{fontSize:14,fontWeight:700,color:T.dark?T.text:"#e2e8f0",marginBottom:6}}>Cryptographically Secure</div>
+              <p style={{fontSize:12,color:"#8892a4",margin:0,lineHeight:1.6}}>Uses OS-level entropy sources, hardware noise, and algorithms proven resistant to prediction attacks. Used in banking, encryption keys, and authentication tokens.</p>
+            </div>
+            <div style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderTop:"3px solid #f87171",borderRadius:14,padding:"20px 18px"}}>
+              <div style={{width:42,height:42,borderRadius:10,background:"rgba(248,113,113,0.12)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,marginBottom:12}}>🎲</div>
+              <div style={{fontSize:14,fontWeight:700,color:T.dark?T.text:"#e2e8f0",marginBottom:6}}>Normal (PRNG-based)</div>
+              <p style={{fontSize:12,color:"#8892a4",margin:0,lineHeight:1.6}}>Uses mathematical formulas like the Mersenne Twister. Fast and statistically uniform, but deterministic — the same seed always produces the same sequence.</p>
+            </div>
+          </div>
+
+          {/* Example Output */}
+          <h3 style={{fontSize:14,fontWeight:600,color:T.accent,margin:"28px 0 12px"}}>Example Output Comparison</h3>
+          <div style={{display:"flex",flexDirection:"column",gap:10,margin:"16px 0"}}>
+            <div style={{display:"flex",alignItems:"center",gap:12,background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:10,padding:"12px 16px"}}>
+              <span style={{fontSize:10,textTransform:"uppercase",letterSpacing:1.5,fontWeight:700,color:T.accent,width:70,flexShrink:0}}>CSPRNG</span>
+              <span style={{fontFamily:"monospace",fontSize:14,letterSpacing:1,color:T.dark?T.text:"#e2e8f0",wordBreak:"break-all"}}>k$9Tz!mW@4vQp&Lx</span>
+            </div>
+            <div style={{display:"flex",alignItems:"center",gap:12,background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:10,padding:"12px 16px"}}>
+              <span style={{fontSize:10,textTransform:"uppercase",letterSpacing:1.5,fontWeight:700,color:"#f87171",width:70,flexShrink:0}}>PRNG</span>
+              <span style={{fontFamily:"monospace",fontSize:14,letterSpacing:1,color:T.dark?T.text:"#e2e8f0",wordBreak:"break-all"}}>j7hR3mNq8xBw2kPf</span>
+            </div>
+          </div>
+          <p style={infoP}>Both look random to the human eye. The difference is invisible on screen — it lives in <strong style={{color:T.text}}>how the characters were chosen</strong>. A CSPRNG's output cannot be reverse-engineered; a PRNG's output theoretically can be.</p>
+
+          {/* Divider */}
+          <div style={{height:1,background:`linear-gradient(90deg,transparent,${T.bdr},transparent)`,margin:"32px 0"}}/>
+
+          {/* Comparison Table */}
+          <h2 style={infoH2}>Head-to-Head Comparison</h2>
+          <div style={{border:`1px solid ${T.bdr}`,borderRadius:14,overflow:"hidden",margin:"16px 0"}}>
+            <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+              <thead><tr style={{background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.06)"}}>
+                <th style={{textAlign:"left",padding:"12px 16px",fontWeight:600,fontSize:11,letterSpacing:1,textTransform:"uppercase",color:T.dark?T.text:"#e2e8f0",borderBottom:`1px solid ${T.bdr}`}}>Feature</th>
+                <th style={{textAlign:"left",padding:"12px 16px",fontWeight:600,fontSize:11,letterSpacing:1,textTransform:"uppercase",color:"#8892a4",borderBottom:`1px solid ${T.bdr}`}}>CSPRNG</th>
+                <th style={{textAlign:"left",padding:"12px 16px",fontWeight:600,fontSize:11,letterSpacing:1,textTransform:"uppercase",color:"#8892a4",borderBottom:`1px solid ${T.bdr}`}}>PRNG</th>
+              </tr></thead>
+              <tbody>
+                {[
+                  ["Randomness Source","Hardware entropy (electrical noise, CPU jitter)","Mathematical formula with a seed"],
+                  ["Predictability","Unpredictable","Predictable if seed known"],
+                  ["Speed","Slower (gathers entropy)","Very Fast"],
+                  ["Entropy Quality","High — 128+ bits","Low — often 32-48 bits"],
+                  ["Backtrack Resistance","Yes — past outputs safe","No — state reconstructable"],
+                  ["Suitable For","Passwords, keys, tokens, OTPs","Games, simulations, UI"],
+                  ["Attack Surface","Minimal","Wide — seed guessing, state recovery"],
+                  ["Regulatory","Meets NIST, FIPS standards","Fails crypto requirements"],
+                  ["Reproducibility","Not reproducible (by design)","Fully reproducible with same seed"]
+                ].map((row,i)=><tr key={i} style={{borderBottom:i<8?`1px solid ${T.bdr}`:"none"}}>
+                  <td style={{padding:"10px 16px",fontWeight:600,color:T.dark?T.text:"#e2e8f0"}}>{row[0]}</td>
+                  <td style={{padding:"10px 16px",color:T.accent}}>{row[1]}</td>
+                  <td style={{padding:"10px 16px",color:"#f87171"}}>{row[2]}</td>
+                </tr>)}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Divider */}
+          <div style={{height:1,background:`linear-gradient(90deg,transparent,${T.bdr},transparent)`,margin:"32px 0"}}/>
+
+          {/* Visualizing the Difference */}
+          <h2 style={infoH2}>Visualizing the Difference</h2>
+          <h3 style={{fontSize:14,fontWeight:600,color:T.dark?T.text:"#e2e8f0",margin:"20px 0 10px"}}>Entropy Score (bits)</h3>
+          <p style={infoP}>Entropy measures unpredictability. Higher entropy means more combinations an attacker must try. Each extra bit <strong style={{color:T.text}}>doubles</strong> the search space.</p>
+
+          {/* Gauge Row */}
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,margin:"20px 0"}}>
+            <div style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:14,padding:20,textAlign:"center"}}>
+              <div style={{position:"relative",width:100,height:100,margin:"0 auto 12px"}}>
+                <svg viewBox="0 0 120 120" width="100" height="100" style={{transform:"rotate(-90deg)"}}>
+                  <circle cx="60" cy="60" r="54" fill="none" stroke={T.dark?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.06)"} strokeWidth="8"/>
+                  <circle cx="60" cy="60" r="54" fill="none" stroke={T.accent} strokeWidth="8" strokeLinecap="round" strokeDasharray="339.292" strokeDashoffset="33.93"/>
+                </svg>
+                <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+                  <span style={{fontFamily:"monospace",fontSize:22,fontWeight:700,color:T.accent}}>128</span>
+                  <span style={{fontSize:9,color:"#8892a4",textTransform:"uppercase",letterSpacing:1}}>bits</span>
+                </div>
+              </div>
+              <div style={{fontSize:13,fontWeight:600,color:T.dark?T.text:"#e2e8f0"}}>CSPRNG Password</div>
+              <div style={{fontSize:11,color:"#8892a4",marginTop:2}}>16-char with full symbol set</div>
+            </div>
+            <div style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:14,padding:20,textAlign:"center"}}>
+              <div style={{position:"relative",width:100,height:100,margin:"0 auto 12px"}}>
+                <svg viewBox="0 0 120 120" width="100" height="100" style={{transform:"rotate(-90deg)"}}>
+                  <circle cx="60" cy="60" r="54" fill="none" stroke={T.dark?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.06)"} strokeWidth="8"/>
+                  <circle cx="60" cy="60" r="54" fill="none" stroke="#f87171" strokeWidth="8" strokeLinecap="round" strokeDasharray="339.292" strokeDashoffset="254.47"/>
+                </svg>
+                <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+                  <span style={{fontFamily:"monospace",fontSize:22,fontWeight:700,color:"#f87171"}}>32</span>
+                  <span style={{fontSize:9,color:"#8892a4",textTransform:"uppercase",letterSpacing:1}}>bits</span>
+                </div>
+              </div>
+              <div style={{fontSize:13,fontWeight:600,color:T.dark?T.text:"#e2e8f0"}}>PRNG Password</div>
+              <div style={{fontSize:11,color:"#8892a4",marginTop:2}}>Limited by seed entropy</div>
+            </div>
+          </div>
+
+          {/* Possible Combinations */}
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,margin:"20px 0"}}>
+            <div style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:14,padding:20,textAlign:"center"}}>
+              <div style={{fontSize:10,color:"#8892a4",textTransform:"uppercase",letterSpacing:1.5}}>Possible Combinations</div>
+              <div style={{fontFamily:"monospace",fontSize:"clamp(24px,4vw,36px)",fontWeight:600,color:T.accent,margin:"6px 0"}}>3.4 × 10<sup>38</sup></div>
+              <div style={{fontSize:12,color:"#8892a4"}}>128-bit CSPRNG space</div>
+              <div style={{fontSize:10,color:"#4a5568",fontFamily:"monospace",marginTop:4}}>= 340 undecillion attempts</div>
+            </div>
+            <div style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:14,padding:20,textAlign:"center"}}>
+              <div style={{fontSize:10,color:"#8892a4",textTransform:"uppercase",letterSpacing:1.5}}>Possible Combinations</div>
+              <div style={{fontFamily:"monospace",fontSize:"clamp(24px,4vw,36px)",fontWeight:600,color:"#f87171",margin:"6px 0"}}>4.3 × 10<sup>9</sup></div>
+              <div style={{fontSize:12,color:"#8892a4"}}>32-bit PRNG space</div>
+              <div style={{fontSize:10,color:"#4a5568",fontFamily:"monospace",marginTop:4}}>= 4.3 billion attempts</div>
+            </div>
+          </div>
+
+          {/* Bar Chart: Time to Crack */}
+          <div style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:14,padding:20,margin:"20px 0"}}>
+            <div style={{fontSize:13,fontWeight:600,color:T.dark?T.text:"#e2e8f0",marginBottom:16}}>Estimated Time to Brute-Force (10 billion guesses/sec)</div>
+            {[
+              {label:"CSPRNG 16-char",time:"1 billion+ years",pct:98,color:`linear-gradient(90deg,${T.accent},${T.accent2||T.accent})`},
+              {label:"CSPRNG 12-char",time:"3 million years",pct:78,color:`linear-gradient(90deg,${T.accent},${T.accent2||T.accent})`},
+              {label:"PRNG 16-char",time:"~0.4 seconds*",pct:28,color:"linear-gradient(90deg,#fbbf24,#f59e0b)"},
+              {label:"PRNG 8-char",time:"Instant*",pct:12,color:"linear-gradient(90deg,#f87171,#ef4444)"}
+            ].map((b,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:12,marginBottom:10}}>
+              <div style={{width:110,fontSize:11,color:"#8892a4",textAlign:"right",flexShrink:0}}>{b.label}</div>
+              <div style={{flex:1,height:28,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",borderRadius:6,overflow:"hidden"}}>
+                <div style={{height:"100%",borderRadius:6,background:b.color,width:b.pct+"%",display:"flex",alignItems:"center",paddingLeft:10,fontSize:10,fontWeight:600,color:"#0c0e13"}}>{b.time}</div>
+              </div>
+            </div>)}
+            <p style={{fontSize:10,color:"#4a5568",marginTop:8}}>* If attacker exploits the PRNG's limited seed space instead of brute-forcing characters</p>
+          </div>
+
+          {/* Attack Vulnerability */}
+          <div style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:14,padding:20,margin:"20px 0"}}>
+            <div style={{fontSize:13,fontWeight:600,color:T.dark?T.text:"#e2e8f0",marginBottom:16}}>Attack Vulnerability Breakdown</div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:24}}>
+              <div>
+                <div style={{fontSize:12,fontWeight:600,color:T.accent,marginBottom:10}}>CSPRNG Generator</div>
+                {[{a:"Brute Force",b:"Resistant",p:5},{a:"Seed Prediction",b:"Immune",p:2},{a:"State Recovery",b:"Immune",p:2},{a:"Pattern Analysis",b:"Immune",p:3}].map((r,i)=><div key={i} style={{marginBottom:8}}>
+                  <div style={{display:"flex",justifyContent:"space-between",fontSize:10,color:"#8892a4",marginBottom:3}}><span>{r.a}</span><span>{r.b}</span></div>
+                  <div style={{height:6,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",borderRadius:3,overflow:"hidden"}}><div style={{height:"100%",borderRadius:3,background:T.accent,width:r.p+"%"}}/></div>
+                </div>)}
+              </div>
+              <div>
+                <div style={{fontSize:12,fontWeight:600,color:"#f87171",marginBottom:10}}>Normal PRNG Generator</div>
+                {[{a:"Brute Force",b:"Moderate Risk",p:45},{a:"Seed Prediction",b:"High Risk",p:85},{a:"State Recovery",b:"High Risk",p:78},{a:"Pattern Analysis",b:"Vulnerable",p:70}].map((r,i)=><div key={i} style={{marginBottom:8}}>
+                  <div style={{display:"flex",justifyContent:"space-between",fontSize:10,color:"#8892a4",marginBottom:3}}><span>{r.a}</span><span>{r.b}</span></div>
+                  <div style={{height:6,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",borderRadius:3,overflow:"hidden"}}><div style={{height:"100%",borderRadius:3,background:"#f87171",width:r.p+"%"}}/></div>
+                </div>)}
+              </div>
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div style={{height:1,background:`linear-gradient(90deg,transparent,${T.bdr},transparent)`,margin:"32px 0"}}/>
+
+          {/* Code Examples */}
+          <h2 style={infoH2}>Code: The Secure Way vs The Wrong Way</h2>
+          <p style={infoP}>Here's the practical difference in Python. One line separates a secure password from a vulnerable one.</p>
+
+          <div style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.06)",border:`1px solid ${T.bdr}`,padding:"3px 10px",borderRadius:"7px 7px 0 0",fontSize:11,fontFamily:"monospace",color:T.accent}}>✅ Secure — Python (CSPRNG)</div>
+          <div style={{background:T.dark?"rgba(0,0,0,0.4)":"rgba(0,0,0,0.06)",border:`1px solid ${T.bdr}`,borderRadius:"0 10px 10px 10px",padding:16,marginBottom:16,overflow:"auto",fontFamily:"monospace",fontSize:12,lineHeight:1.8,color:"#8892a4"}}>
+            <span style={{color:"#c084fc"}}>import</span> secrets{"\n"}
+            <span style={{color:"#c084fc"}}>import</span> string{"\n\n"}
+            alphabet = string.ascii_letters + string.digits + string.punctuation{"\n"}
+            password = <span style={{color:T.accent}}>''</span>.<span style={{color:"#60a5fa"}}>join</span>(secrets.<span style={{color:"#60a5fa"}}>choice</span>(alphabet) <span style={{color:"#c084fc"}}>for</span> _ <span style={{color:"#c084fc"}}>in</span> <span style={{color:"#60a5fa"}}>range</span>(<span style={{color:"#fbbf24"}}>16</span>)){"\n"}
+            <span style={{color:"#4a5568"}}># Uses /dev/urandom — true hardware entropy</span>
+          </div>
+
+          <div style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.06)",border:`1px solid ${T.bdr}`,padding:"3px 10px",borderRadius:"7px 7px 0 0",fontSize:11,fontFamily:"monospace",color:"#f87171"}}>❌ Insecure — Python (PRNG)</div>
+          <div style={{background:T.dark?"rgba(0,0,0,0.4)":"rgba(0,0,0,0.06)",border:`1px solid ${T.bdr}`,borderRadius:"0 10px 10px 10px",padding:16,marginBottom:16,overflow:"auto",fontFamily:"monospace",fontSize:12,lineHeight:1.8,color:"#8892a4"}}>
+            <span style={{color:"#c084fc"}}>import</span> random{"\n"}
+            <span style={{color:"#c084fc"}}>import</span> string{"\n\n"}
+            alphabet = string.ascii_letters + string.digits + string.punctuation{"\n"}
+            password = <span style={{color:T.accent}}>''</span>.<span style={{color:"#60a5fa"}}>join</span>(random.<span style={{color:"#60a5fa"}}>choice</span>(alphabet) <span style={{color:"#c084fc"}}>for</span> _ <span style={{color:"#c084fc"}}>in</span> <span style={{color:"#60a5fa"}}>range</span>(<span style={{color:"#fbbf24"}}>16</span>)){"\n"}
+            <span style={{color:"#4a5568"}}># Uses Mersenne Twister — deterministic, predictable</span>
+          </div>
+
+          <p style={infoP}>The <code style={{background:T.dark?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.06)",padding:"2px 6px",borderRadius:4,fontSize:12}}>secrets</code> module exists for exactly this purpose — it was added to Python's standard library specifically because developers kept using <code style={{background:T.dark?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.06)",padding:"2px 6px",borderRadius:4,fontSize:12}}>random</code> for security-sensitive tasks.</p>
+
+          {/* Divider */}
+          <div style={{height:1,background:`linear-gradient(90deg,transparent,${T.bdr},transparent)`,margin:"32px 0"}}/>
+
+          {/* Fun Facts */}
+          <h2 style={infoH2}>Entropy Fun Facts From Physics</h2>
+          <p style={infoP}>The word "entropy" in cryptography is borrowed directly from physics — specifically thermodynamics. It measures <strong style={{color:T.text}}>disorder and unpredictability</strong> in both worlds.</p>
+
+          {/* Fun Fact 1: Coffee */}
+          {[
+            {emoji:"☕",title:"Why Does Your Coffee Go Cold?",body:"You make a fresh cup of hot coffee. You leave it on your desk. 20 minutes later, it's lukewarm. Why? Entropy. In physics, the Second Law of Thermodynamics says that entropy (disorder) in a closed system always increases. Your hot coffee has concentrated heat energy — that's low entropy. The room is cooler — that's high entropy. Heat flows from hot to cold until everything equalizes.",simple:"Think of it like pouring a drop of red ink into water. It spreads out everywhere and you can never get it back into one neat drop. Heat does the same thing. Your coffee's warmth escapes into the room because nature always moves toward spreading things out evenly. That's entropy — the reason you've never seen a cold cup of coffee spontaneously heat itself up!"},
+            {emoji:"🃏",title:"A Shuffled Deck Has More Arrangements Than Atoms in Earth",body:"A standard 52-card deck can be arranged in 52! (52 factorial) ways. That's roughly 8 × 10⁶⁷ possible orderings. For perspective, there are only about 10⁵⁰ atoms in the entire Earth. Every time you properly shuffle a deck, that specific ordering has almost certainly never existed before in human history.",simple:"Imagine every human who ever lived shuffled a deck once every second since the Big Bang. They still wouldn't come close to covering all possible orderings. A well-shuffled deck is nature's own password generator — and it's exactly this massive possibility space that makes cryptographic passwords strong. More possibilities = harder to guess = more entropy."},
+            {emoji:"🌌",title:"The Universe Will \"Die\" of Entropy",body:"Scientists predict that in about 10¹⁰⁰ years (a googol years), the universe will reach maximum entropy — a state called Heat Death. All stars will burn out, all matter will decay, and temperature will be perfectly uniform everywhere.",simple:"Imagine the universe is a giant battery. Right now, it has charged spots (stars, planets) and empty spots (cold space). This difference drives everything — weather, life, chemistry. But slowly, everything is evening out. One day, everything will be the exact same temperature and nothing can ever happen again. Same principle as your coffee — just on a cosmic scale!"},
+            {emoji:"🔗",title:"So How Does This Connect to Passwords?",body:"In cryptography, entropy = unpredictability. A password with 128 bits of entropy has 2¹²⁸ possible states — just like a physical system with enormous disorder. An attacker trying to guess it faces the same hopeless odds as trying to un-shuffle a deck back to a specific order.",simple:"Your computer collects tiny bits of chaos from the real world — electrical static, the exact microsecond you pressed a key, tiny temperature fluctuations in the chip. It mixes all this unpredictable physical noise into your password. So in a very real way, the same force of nature that cools your coffee is what makes your password uncrackable."}
+          ].map((fact,i)=><div key={i} style={{background:`linear-gradient(135deg,${T.dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.04)"},${T.dark?"rgba(255,255,255,0.02)":"rgba(0,0,0,0.02)"})`,border:`1px solid rgba(${T.accentRgb},0.2)`,borderRadius:18,padding:"24px 22px",margin:"20px 0",position:"relative",overflow:"hidden"}}>
+            <div style={{position:"absolute",top:-30,right:-30,width:120,height:120,background:`radial-gradient(circle,rgba(${T.accentRgb},0.1),transparent 70%)`,pointerEvents:"none"}}/>
+            <div style={{fontSize:28,marginBottom:10}}>{fact.emoji}</div>
+            <h4 style={{fontFamily:`${F.heading},sans-serif`,fontSize:16,color:T.accent,marginBottom:10}}>{fact.title}</h4>
+            <p style={{fontSize:13,color:"#8892a4",lineHeight:1.7,marginBottom:10}}>{fact.body}</p>
+            <div style={{background:`rgba(${T.accentRgb},0.06)`,borderLeft:`3px solid ${T.accent}`,padding:"10px 14px",borderRadius:"0 8px 8px 0",fontSize:12,color:"#8892a4",lineHeight:1.7}}>
+              <strong style={{color:T.accent}}>In simple words: </strong>{fact.simple}
+            </div>
+          </div>)}
+
+          {/* Divider */}
+          <div style={{height:1,background:`linear-gradient(90deg,transparent,${T.bdr},transparent)`,margin:"32px 0"}}/>
+
+          {/* Conclusion */}
+          <h2 style={infoH2}>The Bottom Line</h2>
+          <p style={infoP}>If you're building an app, writing a script, or choosing a password manager — always check that it uses a <strong style={{color:T.text}}>CSPRNG</strong> under the hood. In Python, use <code style={{background:T.dark?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.06)",padding:"2px 6px",borderRadius:4,fontSize:12}}>secrets</code>. In JavaScript, use <code style={{background:T.dark?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.06)",padding:"2px 6px",borderRadius:4,fontSize:12}}>crypto.getRandomValues()</code>.</p>
+          <p style={infoP}>The visual difference between a CSPRNG password and a PRNG password is zero. But the security difference is the gap between <strong style={{color:T.accent}}>"uncrackable for billions of years"</strong> and <strong style={{color:"#f87171"}}>"broken in under a second."</strong></p>
+          <p style={infoP}>And the next time your coffee goes cold, you can tell your coworkers it happened because of the Second Law of Thermodynamics — the very same law that keeps their passwords safe.</p>
+
+          <div style={{textAlign:"center",marginTop:32,fontSize:12,color:"#4a5568"}}>Written with entropy and intention.</div>
+        </div>
       </>
     };
     return(
