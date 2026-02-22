@@ -1895,10 +1895,10 @@ html{scroll-behavior:smooth}`;
           <div style={{overflowX:"auto",paddingBottom:0,WebkitOverflowScrolling:"touch"}}>
             <div style={{display:"flex",alignItems:"flex-start",gap:0,minWidth:960,position:"relative"}}>
               {[
-                {icon:"✍️",title:"You Type",desc:"Write notes, create events, manage your data freely in the app. Everything stays in your browser's memory.",color:"139,92,246"},
-                {icon:"🔑",title:"Key Derived",desc:"Your password generates a unique AES-256 encryption key using PBKDF2 with 600,000 iterations. The key never leaves your device.",color:T.accentRgb},
-                {icon:"🔐",title:"Encrypted Locally",desc:"All data is encrypted locally using AES-256-GCM before it's sent anywhere. Even your note titles and tags are encrypted.",color:"34,197,94"},
-                {icon:"📡",title:"Blob Sent",desc:"Only unreadable encrypted blobs are sent to the sync server. The server sees random bytes — no plaintext, no metadata.",color:"6,182,212"},
+                {icon:"✍️",title:"You Type",desc:"Write notes, create events, manage your data freely in the app.",color:"139,92,246"},
+                {icon:"🔑",title:"Key Derived",desc:"Your password generates a unique AES-256 encryption key. The key never leaves your device.",color:T.accentRgb},
+                {icon:"🔐",title:"Encrypted Locally",desc:"All data is encrypted before it's sent to server. Even your note titles and tags are encrypted.",color:"34,197,94"},
+                {icon:"📡",title:"Blob Sent",desc:"Only unreadable encrypted blobs are sent to the server. The server sees random bytes — no plaintext, no metadata.",color:"6,182,212"},
                 {icon:"🗄️",title:"Stored Encrypted",desc:"Data is stored as encrypted blobs on the server. Even storage keys are hashed — the server can't link data to your email.",color:"245,158,11"},
                 {icon:"🔓",title:"You Decrypt",desc:"When you sign in on any device, your password re-derives the same key. Only you can unlock and read your data.",color:"239,68,68"}
               ].map((step,i)=>(
