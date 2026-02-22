@@ -1711,7 +1711,7 @@ html{scroll-behavior:smooth}`;
           </div>
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
             <span style={{fontSize:10,color:T.dim}}>{pgStrength.bits} bits of entropy</span>
-            {pgStrength.time&&<span style={{fontSize:10,color:T.dim}}>Crack time: <span style={{fontWeight:600,color:pgStrength.color}}>{pgStrength.time}</span></span>}
+            {pgStrength.time&&<span style={{fontSize:10,color:T.dim}}><span style={{fontWeight:600,color:pgStrength.color}}>{pgStrength.time}</span> to crack at 1 trillion guesses/sec</span>}
           </div>
         </div>}
 
