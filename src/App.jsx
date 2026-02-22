@@ -1756,7 +1756,7 @@ html{scroll-behavior:smooth}`;
                   style={{width:"100%",accentColor:T.accent,cursor:"pointer"}}/>
               </div>
               <div style={{display:"flex",gap:12,alignItems:"center",flexWrap:"wrap"}}>
-                {[{label:"Number",val:pgDigits,set:setPgDigits},{label:"Symbol",val:pgSymbols,set:setPgSymbols}].map((o,i)=>
+                {[{label:"Number",val:pgDigits,set:setPgDigits},{label:"Symbol",val:pgSymbols,set:setPgSymbols},{label:"Your Words",val:pgUseCustom,set:v=>{setPgUseCustom(v);if(!v){setPgCustomWords("");setPgCustomErr("")}}}].map((o,i)=>
                   <label key={i} style={{display:"flex",alignItems:"center",gap:5,fontSize:11,color:T.text,cursor:"pointer"}}>
                     <div onClick={()=>o.set(!o.val)} style={{width:16,height:16,borderRadius:3,border:`2px solid ${o.val?T.accent:T.dim+"60"}`,background:o.val?`rgba(${T.accentRgb},0.2)`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",cursor:"pointer",flexShrink:0}}>
                       {o.val&&<span style={{color:T.accent,fontSize:10,fontWeight:700}}>✓</span>}
@@ -1769,24 +1769,13 @@ html{scroll-behavior:smooth}`;
                   {[{v:"hyphens",l:"Hyphens"},{v:"spaces",l:"Spaces"},{v:"periods",l:"Periods"},{v:"commas",l:"Commas"},{v:"underscores",l:"Underscores"},{v:"numbers",l:"Numbers"},{v:"numbersSymbols",l:"Num+Sym"}].map(o=><option key={o.v} value={o.v}>{o.l}</option>)}
                 </select>
               </div>
+              {pgUseCustom&&<div>
+                <input type="text" value={pgCustomWords} onChange={e=>{setPgCustomWords(e.target.value);const err=validateCustomWords(e.target.value);setPgCustomErr(err)}} placeholder="e.g. sun moon star — separate with spaces or commas" style={{width:"100%",padding:"8px 10px",borderRadius:6,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.04)",border:`1.5px solid ${pgCustomErr?T.err||"#ef4444":T.bdr}`,color:T.text,fontSize:12,fontFamily:"inherit",outline:"none",boxSizing:"border-box",letterSpacing:0.3,transition:"border-color 0.2s"}} onFocus={e=>{if(!pgCustomErr)e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{if(!pgCustomErr)e.currentTarget.style.borderColor=T.bdr}}/>
+                {pgCustomErr&&<p style={{fontSize:10,color:T.err||"#ef4444",margin:"4px 0 0",fontWeight:500}}>{pgCustomErr}</p>}
+              </div>}
             </div>}
           </div>
         </div>
-
-        {/* Custom Words Toggle + Input — only in memorable mode */}
-        {pgMode==="memorable"&&<div style={{marginTop:12}}>
-          <label style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer",marginBottom:pgUseCustom?8:0}}>
-            <div onClick={()=>{setPgUseCustom(!pgUseCustom);if(pgUseCustom){setPgCustomWords("");setPgCustomErr("")}}} style={{width:18,height:18,borderRadius:4,border:`2px solid ${pgUseCustom?T.accent:T.dim+"60"}`,background:pgUseCustom?`rgba(${T.accentRgb},0.2)`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",cursor:"pointer",flexShrink:0}}>
-              {pgUseCustom&&<span style={{color:T.accent,fontSize:11,fontWeight:700}}>✓</span>}
-            </div>
-            <span style={{fontSize:12,fontWeight:600,color:T.text}}>Use Your Own Words</span>
-            <span style={{fontSize:10,color:T.dim}}>(mixed in randomly)</span>
-          </label>
-          {pgUseCustom&&<div>
-            <input type="text" value={pgCustomWords} onChange={e=>{setPgCustomWords(e.target.value);const err=validateCustomWords(e.target.value);setPgCustomErr(err)}} placeholder="e.g. sun moon star — separate with spaces or commas" style={{width:"100%",padding:"10px 14px",borderRadius:8,background:T.dark?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.04)",border:`1.5px solid ${pgCustomErr?T.err||"#ef4444":T.bdr}`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box",letterSpacing:0.3,transition:"border-color 0.2s"}} onFocus={e=>{if(!pgCustomErr)e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{if(!pgCustomErr)e.currentTarget.style.borderColor=T.bdr}}/>
-            {pgCustomErr&&<p style={{fontSize:10,color:T.err||"#ef4444",margin:"6px 0 0",fontWeight:500}}>{pgCustomErr}</p>}
-          </div>}
-        </div>}
 
         {/* Blog link */}
         <div style={{marginTop:20,textAlign:"center"}}>
