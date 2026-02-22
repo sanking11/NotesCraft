@@ -322,7 +322,7 @@ function calcPwStrength(pw,memInfo){
     if(s<1)return"Instantly";if(s<60)return Math.round(s)+" seconds";if(s<3600)return Math.round(s/60)+" minutes";if(s<86400)return Math.round(s/3600)+" hours";if(s<31536000)return Math.round(s/86400)+" days";
     const y=s/31536000;if(!isFinite(y))return"∞ years";
     const names=[[1e33,"decillion"],[1e30,"nonillion"],[1e27,"octillion"],[1e24,"septillion"],[1e21,"sextillion"],[1e18,"quintillion"],[1e15,"quadrillion"],[1e12,"trillion"],[1e9,"billion"],[1e6,"million"],[1e3,"thousand"]];
-    for(const[v,n]of names){if(y>=v){const r=y/v;if(!isFinite(r)||r>999e15)return"10^"+Math.floor(Math.log10(y))+" years";return(r>=1e3?Math.round(r).toLocaleString():r>=100?Math.round(r).toLocaleString():r.toFixed(1).replace(/\.0$/,""))+" "+n+" years"}}
+    for(const[v,n]of names){if(y>=v){const r=y/v;if(!isFinite(r))return"∞ years";if(r>=1e6)return r.toExponential(2)+" "+n+" years";return(r>=1e3?Math.round(r).toLocaleString():r>=100?Math.round(r).toLocaleString():r.toFixed(1).replace(/\.0$/,""))+" "+n+" years"}}
     return Math.round(y).toLocaleString()+" years";
   };
   const secs=Math.pow(2,entropy)/1e9;// 10^9 attempts/sec (modern GPU)
@@ -1741,16 +1741,15 @@ html{scroll-behavior:smooth}`;
             <div style={{height:"100%",borderRadius:3,background:pgStrength.color,width:pgStrength.percent+"%",transition:"width 0.4s ease"}}/>
           </div>
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:3}}>
-            <span style={{fontSize:10,color:T.dim}}>{pgStrength.bits} bits of entropy</span>
-            <span style={{fontSize:10,color:T.dim}}>🖥️ Classical: <span style={{fontWeight:600,color:pgStrength.color}}>{pgStrength.time}</span></span>
+            <span style={{fontSize:10,color:T.dim}}>{pgStrength.bits} bits of entropy · Effective Bits: <span style={{fontWeight:600}}>{pgStrength.qBits}</span></span>
           </div>
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:3}}>
-            <span style={{fontSize:10,color:T.dim}}>Effective Bits: <span style={{fontWeight:600}}>{pgStrength.qBits}</span></span>
-            <span style={{fontSize:10,color:T.dim}}>modern GPU (10⁹ attempts/sec)</span>
+            <span style={{fontSize:10,color:T.dim}}>🖥️ Classical <span style={{opacity:0.6}}>[modern GPU · 10⁹ attempts/sec]</span> :</span>
+            <span style={{fontSize:10,fontWeight:600,color:pgStrength.color}}>{pgStrength.time}</span>
           </div>
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-            <span style={{fontSize:10,color:T.dim}}>at 10⁷ Grover iter/sec</span>
-            <span style={{fontSize:10,color:T.dim}}>⚛️ Quantum: <span style={{fontWeight:600,color:pgStrength.qColor}}>{pgStrength.qTime}</span></span>
+            <span style={{fontSize:10,color:T.dim}}>⚛️ Quantum <span style={{opacity:0.6}}>[10⁷ Grover iter/sec]</span> :</span>
+            <span style={{fontSize:10,fontWeight:600,color:pgStrength.qColor}}>{pgStrength.qTime}</span>
           </div>
         </div>}
 
