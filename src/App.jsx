@@ -1672,6 +1672,14 @@ html{scroll-behavior:smooth}`;
           {pgCopied?"✓ Copied!":"Copy Password"}
         </button>
 
+        {/* Download Button */}
+        <button onClick={()=>{if(!pgResult)return;const blob=new Blob([pgResult],{type:"text/plain"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="password.txt";document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url)}}
+          style={{width:"100%",padding:"12px 0",background:`rgba(${T.accentRgb},${T.dark?0.08:0.15})`,border:`1px solid rgba(${T.accentRgb},${T.dark?0.2:0.35})`,borderRadius:10,color:T.dark?T.accent:T.text,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",letterSpacing:1,marginBottom:24,transition:"all 0.3s"}}
+          onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.background=`rgba(${T.accentRgb},${T.dark?0.15:0.25})`}}
+          onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.background=`rgba(${T.accentRgb},${T.dark?0.08:0.15})`}}>
+          ↓ Download as .txt
+        </button>
+
         {/* Strength Meter */}
         {pgStrength&&<div style={{marginBottom:24}}>
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:8}}>
