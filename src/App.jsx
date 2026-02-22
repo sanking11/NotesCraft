@@ -2155,8 +2155,8 @@ html{scroll-behavior:smooth}`;
               <div style={{marginTop:2}}>
                 <div style={{display:"flex",gap:3,marginBottom:3}}>{[0,1,2,3,4].map(i=><div key={i} style={{flex:1,height:3,borderRadius:2,background:i<=a.score-1?a.color:"rgba(255,255,255,0.1)",transition:"background 0.3s"}}/>)}</div>
                 <div style={{fontSize:9,fontWeight:700,color:a.color,marginBottom:2}}>{a.label}</div>
-                <div style={{display:"flex",alignItems:"center",gap:4,flexWrap:"nowrap"}}>
-                  {a.checks.map((c,i)=><span key={i} style={{fontSize:8,color:c.ok?"#22c55e":"rgba(239,68,68,0.7)",display:"flex",alignItems:"center",gap:1,whiteSpace:"nowrap"}}>{c.ok?"✓":"✗"}{c.label}</span>)}
+                <div style={{display:"flex",alignItems:"center",gap:3,flexWrap:"nowrap",overflow:"hidden"}}>
+                  {a.checks.map((c,i)=><span key={i} style={{fontSize:7,color:c.ok?"#22c55e":"rgba(239,68,68,0.7)",display:"flex",alignItems:"center",gap:1,whiteSpace:"nowrap"}}>{c.ok?"✓":"✗"}{c.label}</span>)}
                 </div>
               </div>
             )})()}
