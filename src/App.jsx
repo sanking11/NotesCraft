@@ -205,7 +205,7 @@ const ButterflyLogo=({s=48,accentRgb,accent,accent2,text,warn,flap})=>{
 };
 
 /* ═══════════════════════════════════════════════════
-   STORAGE — encrypted via AES-256-GCM + P2P sync via Gun.js
+   STORAGE — encrypted via AES-256-GCM + sync via relay server
    See: crypto.js, sync.js, storage.js
    ═══════════════════════════════════════════════════ */
 
@@ -586,7 +586,7 @@ export default function NotesCraft(){
   // Enforce quantum-safe minimums
   useEffect(()=>{
     if(!pgQuantumSafe)return;
-    if(pgMode==="random"){if(pgLen<65)setPgLen(65);setPgUpper(true);setPgLower(true);setPgDigits(true);setPgSymbols(true)}
+    if(pgMode==="random"){setPgLen(65);setPgUpper(true);setPgLower(true);setPgDigits(true);setPgSymbols(true)}
     else{if(pgWords<5)setPgWords(5);setPgDigits(true);setPgSymbols(true)}
   },[pgQuantumSafe,pgMode]);
   // Auto-generate password when generator page options change
