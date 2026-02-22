@@ -301,11 +301,23 @@ function generateMemorablePw(wordCount,addDigit,addSymbol,sepKey="hyphens",custo
   return pw;
 }
 
-function calcPwStrength(pw){
+function calcPwStrength(pw,memInfo){
   if(!pw)return{label:"",color:"#666",percent:0,time:""};
-  let pool=0;
-  if(/[a-z]/.test(pw))pool+=26;if(/[A-Z]/.test(pw))pool+=26;if(/[0-9]/.test(pw))pool+=10;if(/[^A-Za-z0-9]/.test(pw))pool+=32;
-  const entropy=pw.length*Math.log2(pool||1);
+  let entropy;
+  if(memInfo){
+    // Dictionary-aware entropy for memorable passwords
+    // Attacker knows: word list size, separator set, digit/symbol suffix patterns
+    const wordListSize=new Set(PW_WORDS).size;// 99 unique words
+    const sepChoices=7;// hyphens,spaces,periods,commas,underscores,numbers,numbersSymbols
+    entropy=memInfo.wordCount*Math.log2(wordListSize)+Math.log2(sepChoices)
+      +(memInfo.addDigit?Math.log2(90):0)// digits 10-99
+      +(memInfo.addSymbol?Math.log2(8):0);// 8 symbol chars
+    if(memInfo.customCount>0)entropy+=memInfo.customCount*Math.log2(50000);// assume attacker checks 50k common words for custom
+  }else{
+    let pool=0;
+    if(/[a-z]/.test(pw))pool+=26;if(/[A-Z]/.test(pw))pool+=26;if(/[0-9]/.test(pw))pool+=10;if(/[^A-Za-z0-9]/.test(pw))pool+=32;
+    entropy=pw.length*Math.log2(pool||1);
+  }
   const fmtTime=s=>{
     if(s<1)return"Instantly";if(s<60)return Math.round(s)+" seconds";if(s<3600)return Math.round(s/60)+" minutes";if(s<86400)return Math.round(s/3600)+" hours";if(s<31536000)return Math.round(s/86400)+" days";
     const y=s/31536000;if(!isFinite(y))return"∞ years";
@@ -592,8 +604,10 @@ export default function NotesCraft(){
     if(infoPage!=="password-generator")return;
     const cw=pgUseCustom?pgCustomWords:"";
     if(cw){const err=validateCustomWords(cw);setPgCustomErr(err);if(err)return;}else{setPgCustomErr("")}
+    const customCount=cw?cw.split(/[\s,;]+/).filter(w=>w.length>0).length:0;
     const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep,cw);
-    setPgResult(pw);setPgStrength(calcPwStrength(pw));setPgCopied(false);
+    const mem=pgMode==="memorable"?{wordCount:pgWords,addDigit:pgDigits,addSymbol:pgSymbols,customCount}:null;
+    setPgResult(pw);setPgStrength(calcPwStrength(pw,mem));setPgCopied(false);
   },[pgMode,pgLen,pgWords,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig,pgSep,pgCustomWords,pgUseCustom,pgQuantumSafe,infoPage]);
 
   useEffect(()=>{
@@ -1692,7 +1706,7 @@ html{scroll-behavior:smooth}`;
         {/* Password Display */}
         <div style={{background:T.dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.04)",border:`1px solid ${pgScrambling?T.accent:T.bdr}`,borderRadius:12,padding:"20px 24px",marginBottom:20,position:"relative",transition:"border-color 0.3s",boxShadow:pgScrambling?`0 0 15px rgba(${T.accentRgb},0.15)`:"none"}}>
           <div style={{fontSize:(pgDisplay||pgResult).length>30?14:18,fontFamily:"monospace",fontWeight:600,color:pgScrambling?T.accent:T.text,wordBreak:"break-all",lineHeight:1.6,letterSpacing:0.5,minHeight:28,paddingRight:40,transition:"color 0.2s",textShadow:pgScrambling?`0 0 8px rgba(${T.accentRgb},0.4)`:"none"}}>{pgDisplay||pgResult}</div>
-          <button onClick={e=>{const btn=e.currentTarget;btn.style.animation="pgSpin 0.4s ease-out";setTimeout(()=>{btn.style.animation=""},400);const cw=pgUseCustom?pgCustomWords:"";if(cw){const err=validateCustomWords(cw);setPgCustomErr(err);if(err)return}else{setPgCustomErr("")}const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep,cw);setPgResult(pw);setPgStrength(calcPwStrength(pw));setPgCopied(false)}}
+          <button onClick={e=>{const btn=e.currentTarget;btn.style.animation="pgSpin 0.4s ease-out";setTimeout(()=>{btn.style.animation=""},400);const cw=pgUseCustom?pgCustomWords:"";if(cw){const err=validateCustomWords(cw);setPgCustomErr(err);if(err)return}else{setPgCustomErr("")}const cc=cw?cw.split(/[\s,;]+/).filter(w=>w.length>0).length:0;const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep,cw);const mi=pgMode==="memorable"?{wordCount:pgWords,addDigit:pgDigits,addSymbol:pgSymbols,customCount:cc}:null;setPgResult(pw);setPgStrength(calcPwStrength(pw,mi));setPgCopied(false)}}
             style={{position:"absolute",top:12,right:12,width:38,height:38,borderRadius:"50%",background:`linear-gradient(135deg,rgba(${T.accentRgb},0.2),rgba(${T.accentRgb},0.1))`,border:`2px solid rgba(${T.accentRgb},0.4)`,color:T.accent,fontSize:20,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",boxShadow:`0 0 12px rgba(${T.accentRgb},0.2)`}} title="Regenerate"
             onMouseEnter={e=>{e.currentTarget.style.boxShadow=`0 0 20px rgba(${T.accentRgb},0.5)`;e.currentTarget.style.transform="scale(1.1)"}}
             onMouseLeave={e=>{e.currentTarget.style.boxShadow=`0 0 12px rgba(${T.accentRgb},0.2)`;e.currentTarget.style.transform="scale(1)"}}>&#x21bb;</button>

@@ -16,7 +16,8 @@
       "WebFetch(domain:gun.eco)",
       "Bash(nslookup:*)",
       "Bash(netstat:*)",
-      "Bash(npx netlify deploy:*)"
+      "Bash(npx netlify deploy:*)",
+      "Bash(node -e:*)"
     ]
   }
 }
