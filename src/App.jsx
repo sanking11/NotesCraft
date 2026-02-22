@@ -274,12 +274,16 @@ function generateRandomPw(len,upper,lower,digits,symbols,noAmbig){
 }
 
 const SEP_MAP={hyphens:"-",spaces:" ",periods:".",commas:",",underscores:"_",numbers:()=>String(secRand(10)),numbersSymbols:()=>{const cs="0123456789!@#$%&*?";return cs[secRand(cs.length)]}};
-function generateMemorablePw(wordCount,addDigit,addSymbol,sepKey="hyphens"){
+function generateMemorablePw(wordCount,addDigit,addSymbol,sepKey="hyphens",customWordsStr=""){
   const cap=s=>s[0].toUpperCase()+s.slice(1);
-  const used=new Set();const words=[];
-  while(words.length<wordCount){const idx=secRand(PW_WORDS.length);if(!used.has(idx)){used.add(idx);words.push(cap(PW_WORDS[idx]))}}
+  const custom=customWordsStr.split(/[\s,;]+/).filter(w=>w.length>0).map(w=>cap(w.toLowerCase()));
+  const need=Math.max(0,wordCount-custom.length);
+  const used=new Set();const rWords=[];
+  while(rWords.length<need){const idx=secRand(PW_WORDS.length);if(!used.has(idx)){used.add(idx);rWords.push(cap(PW_WORDS[idx]))}}
+  const all=[...custom,...rWords];
+  for(let i=all.length-1;i>0;i--){const j=secRand(i+1);[all[i],all[j]]=[all[j],all[i]]}
   const sepVal=SEP_MAP[sepKey];
-  let pw=typeof sepVal==="function"?words.reduce((a,w,i)=>i===0?w:a+sepVal()+w,""):words.join(sepVal);
+  let pw=typeof sepVal==="function"?all.reduce((a,w,i)=>i===0?w:a+sepVal()+w,""):all.join(sepVal);
   if(addDigit)pw+=secRand(90)+10;
   if(addSymbol){const sy="!@#$%&*?";pw+=sy[secRand(sy.length)]}
   _hashPw(pw).then(h=>{_prevHashes.add(h);if(_prevHashes.size>500)_prevHashes.clear()});
@@ -299,10 +303,11 @@ function calcPwStrength(pw){
   else if(secs<31536000*1e6)time=Math.round(secs/31536000/1e3).toLocaleString()+"K years";
   else if(secs<31536000*1e9)time=Math.round(secs/31536000/1e6).toLocaleString()+"M years";
   else time="Billions of years";
-  if(entropy<40)return{label:"Weak",color:"#ef4444",percent:20,time};
-  if(entropy<60)return{label:"Fair",color:"#f59e0b",percent:45,time};
-  if(entropy<80)return{label:"Strong",color:"#22c55e",percent:72,time};
-  return{label:"Very Strong",color:"#10b981",percent:100,time};
+  const bits=Math.round(entropy);
+  if(entropy<40)return{label:"Weak",color:"#ef4444",percent:20,time,bits};
+  if(entropy<60)return{label:"Fair",color:"#f59e0b",percent:45,time,bits};
+  if(entropy<80)return{label:"Strong",color:"#22c55e",percent:72,time,bits};
+  return{label:"Very Strong",color:"#10b981",percent:100,time,bits};
 }
 
 const COMMON_WORDS=["password","letmein","welcome","monkey","dragon","master","qwerty","login","admin","princess","football","shadow","sunshine","trustno","access","hello","charlie","donald","batman","michael","jennifer","jordan","thomas","robert","daniel","andrew","joshua","james","john","david","secret","love","pass","test","user","guest","default","changeme","computer","internet","server","canada"];
@@ -415,6 +420,7 @@ export default function NotesCraft(){
   const[pgSymbols,setPgSymbols]=useState(true);
   const[pgNoAmbig,setPgNoAmbig]=useState(false);
   const[pgSep,setPgSep]=useState("hyphens");
+  const[pgCustomWords,setPgCustomWords]=useState("");
   const[pgResult,setPgResult]=useState("");
   const[pgDisplay,setPgDisplay]=useState("");
   const[pgScrambling,setPgScrambling]=useState(false);
@@ -557,9 +563,9 @@ export default function NotesCraft(){
   // Auto-generate password when generator page options change
   useEffect(()=>{
     if(infoPage!=="password-generator")return;
-    const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep);
+    const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep,pgCustomWords);
     setPgResult(pw);setPgStrength(calcPwStrength(pw));setPgCopied(false);
-  },[pgMode,pgLen,pgWords,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig,pgSep,infoPage]);
+  },[pgMode,pgLen,pgWords,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig,pgSep,pgCustomWords,infoPage]);
 
   useEffect(()=>{
     if(sessionRestored.current)return;
@@ -1657,7 +1663,7 @@ html{scroll-behavior:smooth}`;
         {/* Password Display */}
         <div style={{background:T.dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.04)",border:`1px solid ${pgScrambling?T.accent:T.bdr}`,borderRadius:12,padding:"20px 24px",marginBottom:20,position:"relative",transition:"border-color 0.3s",boxShadow:pgScrambling?`0 0 15px rgba(${T.accentRgb},0.15)`:"none"}}>
           <div style={{fontSize:(pgDisplay||pgResult).length>30?14:18,fontFamily:"monospace",fontWeight:600,color:pgScrambling?T.accent:T.text,wordBreak:"break-all",lineHeight:1.6,letterSpacing:0.5,minHeight:28,paddingRight:40,transition:"color 0.2s",textShadow:pgScrambling?`0 0 8px rgba(${T.accentRgb},0.4)`:"none"}}>{pgDisplay||pgResult}</div>
-          <button onClick={e=>{const btn=e.currentTarget;btn.style.animation="pgSpin 0.4s ease-out";setTimeout(()=>{btn.style.animation=""},400);const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep);setPgResult(pw);setPgStrength(calcPwStrength(pw));setPgCopied(false)}}
+          <button onClick={e=>{const btn=e.currentTarget;btn.style.animation="pgSpin 0.4s ease-out";setTimeout(()=>{btn.style.animation=""},400);const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep,pgCustomWords);setPgResult(pw);setPgStrength(calcPwStrength(pw));setPgCopied(false)}}
             style={{position:"absolute",top:12,right:12,width:38,height:38,borderRadius:"50%",background:`linear-gradient(135deg,rgba(${T.accentRgb},0.2),rgba(${T.accentRgb},0.1))`,border:`2px solid rgba(${T.accentRgb},0.4)`,color:T.accent,fontSize:20,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",boxShadow:`0 0 12px rgba(${T.accentRgb},0.2)`}} title="Regenerate"
             onMouseEnter={e=>{e.currentTarget.style.boxShadow=`0 0 20px rgba(${T.accentRgb},0.5)`;e.currentTarget.style.transform="scale(1.1)"}}
             onMouseLeave={e=>{e.currentTarget.style.boxShadow=`0 0 12px rgba(${T.accentRgb},0.2)`;e.currentTarget.style.transform="scale(1)"}}>&#x21bb;</button>
@@ -1679,14 +1685,19 @@ html{scroll-behavior:smooth}`;
           </button>
         </div>
 
-        {/* Strength Meter — inline */}
-        {pgStrength&&<div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}>
-          <span style={{fontSize:11,color:T.dim,fontWeight:600,whiteSpace:"nowrap"}}>Strength:</span>
-          <div style={{flex:1,height:6,borderRadius:3,background:T.dark?"rgba(255,255,255,0.08)":"rgba(0,0,0,0.08)",overflow:"hidden"}}>
+        {/* Strength Meter */}
+        {pgStrength&&<div style={{marginBottom:16}}>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:6}}>
+            <span style={{fontSize:12,fontWeight:600,color:T.text}}>Password Strength</span>
+            <span style={{fontSize:12,fontWeight:700,color:pgStrength.color}}>{pgStrength.label}</span>
+          </div>
+          <div style={{height:6,borderRadius:3,background:T.dark?"rgba(255,255,255,0.08)":"rgba(0,0,0,0.08)",overflow:"hidden",marginBottom:6}}>
             <div style={{height:"100%",borderRadius:3,background:pgStrength.color,width:pgStrength.percent+"%",transition:"width 0.4s ease"}}/>
           </div>
-          <span style={{fontSize:11,fontWeight:700,color:pgStrength.color,whiteSpace:"nowrap"}}>{pgStrength.label}</span>
-          {pgStrength.time&&<span style={{fontSize:10,color:T.dim,whiteSpace:"nowrap"}}>{pgStrength.time}</span>}
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+            <span style={{fontSize:10,color:T.dim}}>{pgStrength.bits} bits of entropy</span>
+            {pgStrength.time&&<span style={{fontSize:10,color:T.dim}}>Crack time: <span style={{fontWeight:600,color:pgStrength.color}}>{pgStrength.time}</span></span>}
+          </div>
         </div>}
 
         {/* Mode Toggle + Options — two-column layout */}
@@ -1746,6 +1757,12 @@ html{scroll-behavior:smooth}`;
             </div>}
           </div>
         </div>
+
+        {/* Custom Words Input — full width below grid, only in memorable mode */}
+        {pgMode==="memorable"&&<div style={{marginTop:12}}>
+          <label style={{fontSize:12,fontWeight:600,color:T.text,marginBottom:6,display:"block"}}>Your Words <span style={{fontWeight:400,fontSize:10,color:T.dim}}>(optional — your words get mixed in randomly)</span></label>
+          <input type="text" value={pgCustomWords} onChange={e=>setPgCustomWords(e.target.value)} placeholder="e.g. sun moon star — separate with spaces or commas" style={{width:"100%",padding:"10px 14px",borderRadius:8,background:T.dark?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.04)",border:`1.5px solid ${T.bdr}`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box",letterSpacing:0.3,transition:"border-color 0.2s"}} onFocus={e=>e.currentTarget.style.borderColor=T.accent} onBlur={e=>e.currentTarget.style.borderColor=T.bdr}/>
+        </div>}
 
         {/* Blog link */}
         <div style={{marginTop:20,textAlign:"center"}}>
@@ -1991,9 +2008,17 @@ html{scroll-behavior:smooth}`;
           </div>
         </div>
         <footer style={{position:"relative",zIndex:1,padding:"30px 24px 24px",borderTop:`1px solid rgba(${T.accentRgb},0.15)`,textAlign:"center",background:`rgba(${T.dark?"0,0,0":"10,10,18"},0.12)`,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)"}}>
-          <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:20,flexWrap:"wrap"}}>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:20,flexWrap:"wrap",marginBottom:16}}>
             {["about","privacy","terms","password-generator","security-blog"].map(p=><button key={p} onClick={()=>{setInfoPage(p);window.scrollTo(0,0)}} style={{fontSize:12,color:infoPage===p?T.accent:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:infoPage===p?700:400,letterSpacing:1}}>{p==="terms"?"Terms of Service":p==="privacy"?"Privacy Policy":p==="password-generator"?"Password Generator":p==="security-blog"?"Blog":p.charAt(0).toUpperCase()+p.slice(1)}</button>)}
           </div>
+          <p style={{fontSize:11,color:"#7a8898",letterSpacing:0.8,display:"flex",alignItems:"center",justifyContent:"center",gap:6,flexWrap:"wrap",lineHeight:2,margin:0}}>
+            <span style={{fontStyle:"italic"}}>Designed and Developed by</span>
+            <span className="nc-footer-name" style={{fontWeight:800,fontSize:12,letterSpacing:2.5,fontFamily:`${F.heading},sans-serif`}}>SUNNY</span>
+            <span>with lots of</span>
+            <span style={{display:"inline-flex",alignItems:"center",gap:3}}>love <span style={{animation:"footerHeartbeat 1.5s ease-in-out infinite",display:"inline-block",fontSize:13}}>💚</span></span>
+            <span style={{display:"inline-flex",alignItems:"center",gap:3}}>coffee <span style={{animation:"footerSteam 2s ease-in-out infinite",display:"inline-block",fontSize:13}}>☕</span></span>
+            <span style={{display:"inline-flex",alignItems:"center",gap:3}}>and AI <span style={{animation:"footerBlink 3s ease-in-out infinite",display:"inline-block",fontSize:13}}>👽</span></span>
+          </p>
         </footer>
       </div>
     );
