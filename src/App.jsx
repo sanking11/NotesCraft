@@ -1892,7 +1892,7 @@ html{scroll-behavior:smooth}`;
           </div>
 
           {/* Horizontal flow chart */}
-          <div style={{overflowX:"auto",paddingBottom:0,WebkitOverflowScrolling:"touch"}}>
+          <div style={{overflowX:"hidden",paddingBottom:0}}>
             <div style={{display:"flex",alignItems:"flex-start",gap:0,minWidth:960,position:"relative"}}>
               {[
                 {icon:"✍️",title:"You Type",desc:"Write notes, create events, manage your data freely in the app.",color:"139,92,246"},
@@ -1902,7 +1902,7 @@ html{scroll-behavior:smooth}`;
                 {icon:"🗄️",title:"Stored Encrypted",desc:"Data is stored as encrypted blobs on the server. Even storage keys are hashed — the server can't link data to your email.",color:"245,158,11"},
                 {icon:"🔓",title:"You Decrypt",desc:"When you sign in on any device, your password re-derives the same key. Only you can unlock and read your data.",color:"239,68,68"}
               ].map((step,i)=>(
-                <React.Fragment key={i}>
+              <React.Fragment key={i}>
                   <div className="ld-section" data-ld="" style={{display:"flex",flexDirection:"column",alignItems:"center",textAlign:"center",flex:"0 0 140px",gap:8,transitionDelay:`${i*0.15}s`}}>
                     <div style={{width:60,height:60,borderRadius:16,background:`rgba(${step.color},0.1)`,border:`2px solid rgba(${step.color},0.35)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,boxShadow:`0 0 24px rgba(${step.color},0.2)`}}>
                       {step.icon}
