@@ -17,7 +17,8 @@
       "Bash(nslookup:*)",
       "Bash(netstat:*)",
       "Bash(npx netlify deploy:*)",
-      "Bash(node -e:*)"
+      "Bash(node -e:*)",
+      "Bash(npm install:*)"
     ]
   }
 }

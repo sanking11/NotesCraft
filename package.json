@@ -12,7 +12,8 @@
   "dependencies": {
     "gun": "^0.2020.1241",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
     "@types/react": "^18.3.18",
