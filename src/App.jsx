@@ -274,6 +274,17 @@ function generateRandomPw(len,upper,lower,digits,symbols,noAmbig){
 }
 
 const SEP_MAP={hyphens:"-",spaces:" ",periods:".",commas:",",underscores:"_",numbers:()=>String(secRand(10)),numbersSymbols:()=>{const cs="0123456789!@#$%&*?";return cs[secRand(cs.length)]}};
+function validateCustomWords(wordsStr){
+  const words=wordsStr.split(/[\s,;]+/).filter(w=>w.length>0);
+  for(const w of words){
+    const lo=w.toLowerCase();
+    if(COMMON_WORDS.includes(lo))return`"${w}" is a common password — choose a different word`;
+    if(hasSequential(lo,3))return`"${w}" contains sequential characters (abc, 123…)`;
+    if(hasRepeating(lo,3))return`"${w}" contains repeated characters`;
+    if(lo.length<2)return`"${w}" is too short — use at least 2 characters`;
+  }
+  return"";
+}
 function generateMemorablePw(wordCount,addDigit,addSymbol,sepKey="hyphens",customWordsStr=""){
   const cap=s=>s[0].toUpperCase()+s.slice(1);
   const custom=customWordsStr.split(/[\s,;]+/).filter(w=>w.length>0).map(w=>cap(w.toLowerCase()));
@@ -421,6 +432,8 @@ export default function NotesCraft(){
   const[pgNoAmbig,setPgNoAmbig]=useState(false);
   const[pgSep,setPgSep]=useState("hyphens");
   const[pgCustomWords,setPgCustomWords]=useState("");
+  const[pgUseCustom,setPgUseCustom]=useState(false);
+  const[pgCustomErr,setPgCustomErr]=useState("");
   const[pgResult,setPgResult]=useState("");
   const[pgDisplay,setPgDisplay]=useState("");
   const[pgScrambling,setPgScrambling]=useState(false);
@@ -563,9 +576,11 @@ export default function NotesCraft(){
   // Auto-generate password when generator page options change
   useEffect(()=>{
     if(infoPage!=="password-generator")return;
-    const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep,pgCustomWords);
+    const cw=pgUseCustom?pgCustomWords:"";
+    if(cw){const err=validateCustomWords(cw);setPgCustomErr(err);if(err)return;}else{setPgCustomErr("")}
+    const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep,cw);
     setPgResult(pw);setPgStrength(calcPwStrength(pw));setPgCopied(false);
-  },[pgMode,pgLen,pgWords,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig,pgSep,pgCustomWords,infoPage]);
+  },[pgMode,pgLen,pgWords,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig,pgSep,pgCustomWords,pgUseCustom,infoPage]);
 
   useEffect(()=>{
     if(sessionRestored.current)return;
@@ -1663,7 +1678,7 @@ html{scroll-behavior:smooth}`;
         {/* Password Display */}
         <div style={{background:T.dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.04)",border:`1px solid ${pgScrambling?T.accent:T.bdr}`,borderRadius:12,padding:"20px 24px",marginBottom:20,position:"relative",transition:"border-color 0.3s",boxShadow:pgScrambling?`0 0 15px rgba(${T.accentRgb},0.15)`:"none"}}>
           <div style={{fontSize:(pgDisplay||pgResult).length>30?14:18,fontFamily:"monospace",fontWeight:600,color:pgScrambling?T.accent:T.text,wordBreak:"break-all",lineHeight:1.6,letterSpacing:0.5,minHeight:28,paddingRight:40,transition:"color 0.2s",textShadow:pgScrambling?`0 0 8px rgba(${T.accentRgb},0.4)`:"none"}}>{pgDisplay||pgResult}</div>
-          <button onClick={e=>{const btn=e.currentTarget;btn.style.animation="pgSpin 0.4s ease-out";setTimeout(()=>{btn.style.animation=""},400);const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep,pgCustomWords);setPgResult(pw);setPgStrength(calcPwStrength(pw));setPgCopied(false)}}
+          <button onClick={e=>{const btn=e.currentTarget;btn.style.animation="pgSpin 0.4s ease-out";setTimeout(()=>{btn.style.animation=""},400);const cw=pgUseCustom?pgCustomWords:"";if(cw){const err=validateCustomWords(cw);setPgCustomErr(err);if(err)return}else{setPgCustomErr("")}const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep,cw);setPgResult(pw);setPgStrength(calcPwStrength(pw));setPgCopied(false)}}
             style={{position:"absolute",top:12,right:12,width:38,height:38,borderRadius:"50%",background:`linear-gradient(135deg,rgba(${T.accentRgb},0.2),rgba(${T.accentRgb},0.1))`,border:`2px solid rgba(${T.accentRgb},0.4)`,color:T.accent,fontSize:20,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",boxShadow:`0 0 12px rgba(${T.accentRgb},0.2)`}} title="Regenerate"
             onMouseEnter={e=>{e.currentTarget.style.boxShadow=`0 0 20px rgba(${T.accentRgb},0.5)`;e.currentTarget.style.transform="scale(1.1)"}}
             onMouseLeave={e=>{e.currentTarget.style.boxShadow=`0 0 12px rgba(${T.accentRgb},0.2)`;e.currentTarget.style.transform="scale(1)"}}>&#x21bb;</button>
@@ -1758,10 +1773,19 @@ html{scroll-behavior:smooth}`;
           </div>
         </div>
 
-        {/* Custom Words Input — full width below grid, only in memorable mode */}
+        {/* Custom Words Toggle + Input — only in memorable mode */}
         {pgMode==="memorable"&&<div style={{marginTop:12}}>
-          <label style={{fontSize:12,fontWeight:600,color:T.text,marginBottom:6,display:"block"}}>Your Words <span style={{fontWeight:400,fontSize:10,color:T.dim}}>(optional — your words get mixed in randomly)</span></label>
-          <input type="text" value={pgCustomWords} onChange={e=>setPgCustomWords(e.target.value)} placeholder="e.g. sun moon star — separate with spaces or commas" style={{width:"100%",padding:"10px 14px",borderRadius:8,background:T.dark?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.04)",border:`1.5px solid ${T.bdr}`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box",letterSpacing:0.3,transition:"border-color 0.2s"}} onFocus={e=>e.currentTarget.style.borderColor=T.accent} onBlur={e=>e.currentTarget.style.borderColor=T.bdr}/>
+          <label style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer",marginBottom:pgUseCustom?8:0}}>
+            <div onClick={()=>{setPgUseCustom(!pgUseCustom);if(pgUseCustom){setPgCustomWords("");setPgCustomErr("")}}} style={{width:18,height:18,borderRadius:4,border:`2px solid ${pgUseCustom?T.accent:T.dim+"60"}`,background:pgUseCustom?`rgba(${T.accentRgb},0.2)`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",cursor:"pointer",flexShrink:0}}>
+              {pgUseCustom&&<span style={{color:T.accent,fontSize:11,fontWeight:700}}>✓</span>}
+            </div>
+            <span style={{fontSize:12,fontWeight:600,color:T.text}}>Use Your Own Words</span>
+            <span style={{fontSize:10,color:T.dim}}>(mixed in randomly)</span>
+          </label>
+          {pgUseCustom&&<div>
+            <input type="text" value={pgCustomWords} onChange={e=>{setPgCustomWords(e.target.value);const err=validateCustomWords(e.target.value);setPgCustomErr(err)}} placeholder="e.g. sun moon star — separate with spaces or commas" style={{width:"100%",padding:"10px 14px",borderRadius:8,background:T.dark?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.04)",border:`1.5px solid ${pgCustomErr?T.err||"#ef4444":T.bdr}`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box",letterSpacing:0.3,transition:"border-color 0.2s"}} onFocus={e=>{if(!pgCustomErr)e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{if(!pgCustomErr)e.currentTarget.style.borderColor=T.bdr}}/>
+            {pgCustomErr&&<p style={{fontSize:10,color:T.err||"#ef4444",margin:"6px 0 0",fontWeight:500}}>{pgCustomErr}</p>}
+          </div>}
         </div>}
 
         {/* Blog link */}
