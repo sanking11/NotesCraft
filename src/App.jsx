@@ -306,16 +306,25 @@ function calcPwStrength(pw){
   let pool=0;
   if(/[a-z]/.test(pw))pool+=26;if(/[A-Z]/.test(pw))pool+=26;if(/[0-9]/.test(pw))pool+=10;if(/[^A-Za-z0-9]/.test(pw))pool+=32;
   const entropy=pw.length*Math.log2(pool||1);
-  const fmtTime=s=>{if(s<1)return"Instantly";if(s<60)return Math.round(s)+" seconds";if(s<3600)return Math.round(s/60)+" minutes";if(s<86400)return Math.round(s/3600)+" hours";if(s<31536000)return Math.round(s/86400)+" days";if(s<31536000*1e3)return Math.round(s/31536000).toLocaleString()+" years";if(s<31536000*1e6)return Math.round(s/31536000/1e3).toLocaleString()+"K years";if(s<31536000*1e9)return Math.round(s/31536000/1e6).toLocaleString()+"M years";return"Billions of years"};
-  const secs=Math.pow(2,entropy)/1e12;// 1 trillion guesses/sec (classical)
-  const qSecs=Math.pow(2,entropy/2)/1e12;// Grover's algorithm halves entropy bits
+  const fmtTime=s=>{
+    if(s<1)return"Instantly";if(s<60)return Math.round(s)+" seconds";if(s<3600)return Math.round(s/60)+" minutes";if(s<86400)return Math.round(s/3600)+" hours";if(s<31536000)return Math.round(s/86400)+" days";
+    const y=s/31536000;
+    const names=[[1e33,"decillion"],[1e30,"nonillion"],[1e27,"octillion"],[1e24,"septillion"],[1e21,"sextillion"],[1e18,"quintillion"],[1e15,"quadrillion"],[1e12,"trillion"],[1e9,"billion"],[1e6,"million"],[1e3,"thousand"]];
+    for(const[v,n]of names){if(y>=v){const r=y/v;return(r>=100?Math.round(r).toLocaleString():r.toFixed(1).replace(/\.0$/,""))+" "+n+" years"}}
+    return Math.round(y).toLocaleString()+" years";
+  };
+  const secs=Math.pow(2,entropy)/1e9;// 10^9 attempts/sec (modern GPU)
+  const qEffBits=entropy/2;// Grover's halves entropy
+  const qSecs=Math.pow(2,qEffBits)/1e7;// 10^7 Grover iterations/sec (optimistic future quantum)
   const time=fmtTime(secs);
   const qTime=fmtTime(qSecs);
   const bits=Math.round(entropy);
-  if(entropy<40)return{label:"Weak",color:"#ef4444",percent:20,time,qTime,bits};
-  if(entropy<60)return{label:"Fair",color:"#f59e0b",percent:45,time,qTime,bits};
-  if(entropy<80)return{label:"Strong",color:"#22c55e",percent:72,time,qTime,bits};
-  return{label:"Very Strong",color:"#10b981",percent:100,time,qTime,bits};
+  const qBits=+(qEffBits).toFixed(1);
+  const qResist=qEffBits>=64;
+  if(entropy<40)return{label:"Weak",color:"#ef4444",percent:20,time,qTime,bits,qBits,qResist};
+  if(entropy<60)return{label:"Fair",color:"#f59e0b",percent:45,time,qTime,bits,qBits,qResist};
+  if(entropy<80)return{label:"Strong",color:"#22c55e",percent:72,time,qTime,bits,qBits,qResist};
+  return{label:"Very Strong",color:"#10b981",percent:100,time,qTime,bits,qBits,qResist};
 }
 
 const COMMON_WORDS=["password","letmein","welcome","monkey","dragon","master","qwerty","login","admin","princess","football","shadow","sunshine","trustno","access","hello","charlie","donald","batman","michael","jennifer","jordan","thomas","robert","daniel","andrew","joshua","james","john","david","secret","love","pass","test","user","guest","default","changeme","computer","internet","server","canada"];
@@ -431,6 +440,7 @@ export default function NotesCraft(){
   const[pgCustomWords,setPgCustomWords]=useState("");
   const[pgUseCustom,setPgUseCustom]=useState(false);
   const[pgCustomErr,setPgCustomErr]=useState("");
+  const[pgQuantumSafe,setPgQuantumSafe]=useState(false);
   const[pgResult,setPgResult]=useState("");
   const[pgDisplay,setPgDisplay]=useState("");
   const[pgScrambling,setPgScrambling]=useState(false);
@@ -570,6 +580,12 @@ export default function NotesCraft(){
     return()=>{if(genScrambleRef.current)clearInterval(genScrambleRef.current)};
   },[genPw]);
 
+  // Enforce quantum-safe minimums
+  useEffect(()=>{
+    if(!pgQuantumSafe)return;
+    if(pgMode==="random"){if(pgLen<20)setPgLen(20);setPgUpper(true);setPgLower(true);setPgDigits(true);setPgSymbols(true)}
+    else{if(pgWords<5)setPgWords(5);setPgDigits(true);setPgSymbols(true)}
+  },[pgQuantumSafe,pgMode]);
   // Auto-generate password when generator page options change
   useEffect(()=>{
     if(infoPage!=="password-generator")return;
@@ -577,7 +593,7 @@ export default function NotesCraft(){
     if(cw){const err=validateCustomWords(cw);setPgCustomErr(err);if(err)return;}else{setPgCustomErr("")}
     const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep,cw);
     setPgResult(pw);setPgStrength(calcPwStrength(pw));setPgCopied(false);
-  },[pgMode,pgLen,pgWords,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig,pgSep,pgCustomWords,pgUseCustom,infoPage]);
+  },[pgMode,pgLen,pgWords,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig,pgSep,pgCustomWords,pgUseCustom,pgQuantumSafe,infoPage]);
 
   useEffect(()=>{
     if(sessionRestored.current)return;
@@ -1700,18 +1716,41 @@ html{scroll-behavior:smooth}`;
         {/* Strength Meter */}
         {pgStrength&&<div style={{marginBottom:16}}>
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:6}}>
-            <span style={{fontSize:12,fontWeight:600,color:T.text}}>Password Strength</span>
+            <div style={{display:"flex",alignItems:"center",gap:8}}>
+              <span style={{fontSize:12,fontWeight:600,color:T.text}}>Password Strength</span>
+              {pgStrength.qResist&&<span style={{fontSize:9,fontWeight:700,color:"#10b981",background:"rgba(16,185,129,0.12)",border:"1px solid rgba(16,185,129,0.3)",borderRadius:4,padding:"2px 6px",letterSpacing:0.5}}>✅ Quantum Resistant</span>}
+            </div>
             <span style={{fontSize:12,fontWeight:700,color:pgStrength.color}}>{pgStrength.label}</span>
           </div>
           <div style={{height:6,borderRadius:3,background:T.dark?"rgba(255,255,255,0.08)":"rgba(0,0,0,0.08)",overflow:"hidden",marginBottom:6}}>
             <div style={{height:"100%",borderRadius:3,background:pgStrength.color,width:pgStrength.percent+"%",transition:"width 0.4s ease"}}/>
           </div>
-          <div style={{textAlign:"right",marginBottom:3}}>
-            <span style={{fontSize:10,color:T.dim}}>🖥️ Classical: <span style={{fontWeight:600,color:pgStrength.color}}>{pgStrength.time}</span> at 1 trillion guesses/sec</span>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:3}}>
+            <span style={{fontSize:10,color:T.dim}}>{pgStrength.bits} bits of entropy</span>
+            <span style={{fontSize:10,color:T.dim}}>🖥️ Classical: <span style={{fontWeight:600,color:pgStrength.color}}>{pgStrength.time}</span></span>
           </div>
-          <div style={{textAlign:"right"}}>
-            <span style={{fontSize:10,color:T.dim}}>⚛️ Quantum: <span style={{fontWeight:600,color:pgStrength.qTime===pgStrength.time?pgStrength.color:pgStrength.qTime==="Instantly"?"#ef4444":"#f59e0b"}}>{pgStrength.qTime}</span> · Grover's algorithm</span>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:3}}>
+            <span style={{fontSize:10,color:T.dim}}>modern GPU (10⁹ attempts/sec)</span>
+            <span style={{fontSize:10,color:T.dim}}>⚛️ Quantum (Optimistic): <span style={{fontWeight:600,color:pgStrength.qTime===pgStrength.time?pgStrength.color:pgStrength.qTime==="Instantly"?"#ef4444":"#f59e0b"}}>{pgStrength.qTime}</span></span>
           </div>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+            <span style={{fontSize:10,color:T.dim}}>Effective Bits: <span style={{fontWeight:600}}>{pgStrength.qBits}</span></span>
+            <span style={{fontSize:10,color:T.dim}}>at 10⁷ Grover iter/sec</span>
+          </div>
+        </div>}
+
+        {/* Quantum Resistant toggle */}
+        <label style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer",marginBottom:pgQuantumSafe?10:12}}>
+          <div onClick={()=>setPgQuantumSafe(!pgQuantumSafe)} style={{width:18,height:18,borderRadius:4,border:`2px solid ${pgQuantumSafe?"#10b981":T.dim+"60"}`,background:pgQuantumSafe?"rgba(16,185,129,0.2)":"transparent",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",cursor:"pointer",flexShrink:0}}>
+            {pgQuantumSafe&&<span style={{color:"#10b981",fontSize:11,fontWeight:700}}>✓</span>}
+          </div>
+          <span style={{fontSize:12,fontWeight:600,color:T.text}}>⚛️ Quantum Resistant</span>
+          <span style={{fontSize:9,color:T.dim}}>(enforces min {pgMode==="random"?"20 chars + all charsets":"5 words"} for 128+ bit entropy)</span>
+        </label>
+        {pgQuantumSafe&&<div style={{marginBottom:12,padding:"12px 14px",borderRadius:8,background:T.dark?"rgba(245,158,11,0.06)":"rgba(245,158,11,0.08)",border:"1px solid rgba(245,158,11,0.2)",fontSize:10,lineHeight:1.7,color:T.dim}}>
+          <p style={{margin:"0 0 8px"}}><span style={{color:"#f59e0b"}}>⚠️</span> <strong style={{color:T.text}}>Disclaimer:</strong> Quantum resistance estimates model Grover's search algorithm (O(√N) speedup) against symmetric key spaces at 10⁷ logical Grover iterations/sec — an optimistic projection for fault-tolerant quantum hardware. <strong style={{color:T.text}}>No cryptographically relevant quantum computer currently exists.</strong> These are forward-looking theoretical projections, not assessments of present-day risk.</p>
+          <p style={{margin:"0 0 8px"}}>Real-world quantum attack feasibility depends on logical qubit count, gate fidelity thresholds, quantum error correction overhead (surface codes), decoherence rates, and circuit depth limitations — variables that remain unsolved at scale. <strong style={{color:T.text}}>No guarantees are made regarding actual post-quantum security.</strong> This model is for entropy planning and threat modeling purposes only.</p>
+          <p style={{margin:0}}><span style={{color:"#10b981"}}>🔒</span> <strong style={{color:T.text}}>Zero-Knowledge:</strong> All entropy calculation, strength analysis, and password generation execute entirely client-side via Web Crypto API (CSPRNG). No passwords, hashes, or telemetry are transmitted. Your data never leaves this browser tab.</p>
         </div>}
 
         {/* Mode Toggle + Options — two-column layout */}
@@ -1731,14 +1770,14 @@ html{scroll-behavior:smooth}`;
                   <label style={{fontSize:12,fontWeight:600,color:T.text}}>Length</label>
                   <span style={{fontSize:13,fontWeight:700,color:T.accent}}>{pgLen}</span>
                 </div>
-                <input type="range" min={8} max={128} value={pgLen} onChange={e=>setPgLen(+e.target.value)}
+                <input type="range" min={pgQuantumSafe?20:8} max={128} value={pgLen} onChange={e=>setPgLen(+e.target.value)}
                   style={{width:"100%",accentColor:T.accent,cursor:"pointer"}}/>
               </div>
               <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
-                {[{label:"Uppercase",val:pgUpper,set:setPgUpper},{label:"Lowercase",val:pgLower,set:setPgLower},{label:"Digits",val:pgDigits,set:setPgDigits},{label:"Symbols",val:pgSymbols,set:setPgSymbols},{label:"No ambiguous",val:pgNoAmbig,set:setPgNoAmbig}].map((o,i)=>
-                  <label key={i} style={{display:"flex",alignItems:"center",gap:5,fontSize:11,color:T.text,cursor:"pointer"}}>
-                    <div onClick={()=>o.set(!o.val)} style={{width:16,height:16,borderRadius:3,border:`2px solid ${o.val?T.accent:T.dim+"60"}`,background:o.val?`rgba(${T.accentRgb},0.2)`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",cursor:"pointer",flexShrink:0}}>
-                      {o.val&&<span style={{color:T.accent,fontSize:10,fontWeight:700}}>✓</span>}
+                {[{label:"Uppercase",val:pgUpper,set:setPgUpper,lock:pgQuantumSafe},{label:"Lowercase",val:pgLower,set:setPgLower,lock:pgQuantumSafe},{label:"Digits",val:pgDigits,set:setPgDigits,lock:pgQuantumSafe},{label:"Symbols",val:pgSymbols,set:setPgSymbols,lock:pgQuantumSafe},{label:"No ambiguous",val:pgNoAmbig,set:setPgNoAmbig}].map((o,i)=>
+                  <label key={i} style={{display:"flex",alignItems:"center",gap:5,fontSize:11,color:o.lock&&o.val?T.accent:T.text,cursor:o.lock&&o.val?"not-allowed":"pointer",opacity:o.lock&&o.val?0.7:1}}>
+                    <div onClick={()=>{if(o.lock&&o.val)return;o.set(!o.val)}} style={{width:16,height:16,borderRadius:3,border:`2px solid ${o.val?T.accent:T.dim+"60"}`,background:o.val?`rgba(${T.accentRgb},0.2)`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",cursor:o.lock&&o.val?"not-allowed":"pointer",flexShrink:0}}>
+                      {o.val&&<span style={{color:T.accent,fontSize:10,fontWeight:700}}>{o.lock?"🔒":"✓"}</span>}
                     </div>
                     {o.label}
                   </label>
@@ -1751,14 +1790,14 @@ html{scroll-behavior:smooth}`;
                   <label style={{fontSize:12,fontWeight:600,color:T.text}}>Words</label>
                   <span style={{fontSize:13,fontWeight:700,color:T.accent}}>{pgWords}</span>
                 </div>
-                <input type="range" min={3} max={6} value={pgWords} onChange={e=>setPgWords(+e.target.value)}
+                <input type="range" min={pgQuantumSafe?5:3} max={6} value={pgWords} onChange={e=>setPgWords(+e.target.value)}
                   style={{width:"100%",accentColor:T.accent,cursor:"pointer"}}/>
               </div>
               <div style={{display:"flex",gap:12,alignItems:"center",flexWrap:"wrap"}}>
-                {[{label:"Number",val:pgDigits,set:setPgDigits},{label:"Symbol",val:pgSymbols,set:setPgSymbols},{label:"Your Words",val:pgUseCustom,set:v=>{setPgUseCustom(v);if(!v){setPgCustomWords("");setPgCustomErr("")}}}].map((o,i)=>
-                  <label key={i} style={{display:"flex",alignItems:"center",gap:5,fontSize:11,color:T.text,cursor:"pointer"}}>
-                    <div onClick={()=>o.set(!o.val)} style={{width:16,height:16,borderRadius:3,border:`2px solid ${o.val?T.accent:T.dim+"60"}`,background:o.val?`rgba(${T.accentRgb},0.2)`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",cursor:"pointer",flexShrink:0}}>
-                      {o.val&&<span style={{color:T.accent,fontSize:10,fontWeight:700}}>✓</span>}
+                {[{label:"Number",val:pgDigits,set:setPgDigits,lock:pgQuantumSafe},{label:"Symbol",val:pgSymbols,set:setPgSymbols,lock:pgQuantumSafe},{label:"Your Words",val:pgUseCustom,set:v=>{setPgUseCustom(v);if(!v){setPgCustomWords("");setPgCustomErr("")}}}].map((o,i)=>
+                  <label key={i} style={{display:"flex",alignItems:"center",gap:5,fontSize:11,color:o.lock&&o.val?T.accent:T.text,cursor:o.lock&&o.val?"not-allowed":"pointer",opacity:o.lock&&o.val?0.7:1}}>
+                    <div onClick={()=>{if(o.lock&&o.val)return;o.set(!o.val)}} style={{width:16,height:16,borderRadius:3,border:`2px solid ${o.val?T.accent:T.dim+"60"}`,background:o.val?`rgba(${T.accentRgb},0.2)`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",cursor:o.lock&&o.val?"not-allowed":"pointer",flexShrink:0}}>
+                      {o.val&&<span style={{color:T.accent,fontSize:10,fontWeight:700}}>{o.lock?"🔒":"✓"}</span>}
                     </div>
                     {o.label}
                   </label>
