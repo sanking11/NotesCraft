@@ -236,22 +236,18 @@ const PW_WORDS=["crystal","thunder","velvet","meadow","falcon","copper","silver"
 /** Crypto-secure random int in [0, max) */
 function secRand(max){const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%max}
 
-const _prevPws=new Set();
+const _prevHashes=new Set();
+async function _hashPw(pw){const buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(pw));return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("")}
 function generateStrongPw(){
   const cap=s=>s[0].toUpperCase()+s.slice(1);
   const syms="!@#$%&*?";
-  let pw;
-  do{
-    // Pick 3 unique words
-    const i1=secRand(PW_WORDS.length);
-    let i2;do{i2=secRand(PW_WORDS.length)}while(i2===i1);
-    let i3;do{i3=secRand(PW_WORDS.length)}while(i3===i1||i3===i2);
-    const num=secRand(90)+10;
-    const sym=syms[secRand(syms.length)];
-    pw=cap(PW_WORDS[i1])+cap(PW_WORDS[i2])+cap(PW_WORDS[i3])+num+sym;
-  }while(_prevPws.has(pw));
-  _prevPws.add(pw);
-  if(_prevPws.size>500)_prevPws.clear();
+  const i1=secRand(PW_WORDS.length);
+  let i2;do{i2=secRand(PW_WORDS.length)}while(i2===i1);
+  let i3;do{i3=secRand(PW_WORDS.length)}while(i3===i1||i3===i2);
+  const num=secRand(90)+10;
+  const sym=syms[secRand(syms.length)];
+  const pw=cap(PW_WORDS[i1])+cap(PW_WORDS[i2])+cap(PW_WORDS[i3])+num+sym;
+  _hashPw(pw).then(h=>{_prevHashes.add(h);if(_prevHashes.size>500)_prevHashes.clear()});
   return pw;
 }
 
@@ -272,7 +268,9 @@ function generateRandomPw(len,upper,lower,digits,symbols,noAmbig){
   while(arr.length<len)arr.push(chars[secRand(chars.length)]);
   // Shuffle using Fisher-Yates with crypto random
   for(let i=arr.length-1;i>0;i--){const j=secRand(i+1);[arr[i],arr[j]]=[arr[j],arr[i]]}
-  return arr.join("");
+  const pw=arr.join("");
+  _hashPw(pw).then(h=>{_prevHashes.add(h);if(_prevHashes.size>500)_prevHashes.clear()});
+  return pw;
 }
 
 const SEP_MAP={hyphens:"-",spaces:" ",periods:".",commas:",",underscores:"_",numbers:()=>String(secRand(10)),numbersSymbols:()=>{const cs="0123456789!@#$%&*?";return cs[secRand(cs.length)]}};
@@ -284,6 +282,7 @@ function generateMemorablePw(wordCount,addDigit,addSymbol,sepKey="hyphens"){
   let pw=typeof sepVal==="function"?words.reduce((a,w,i)=>i===0?w:a+sepVal()+w,""):words.join(sepVal);
   if(addDigit)pw+=secRand(90)+10;
   if(addSymbol){const sy="!@#$%&*?";pw+=sy[secRand(sy.length)]}
+  _hashPw(pw).then(h=>{_prevHashes.add(h);if(_prevHashes.size>500)_prevHashes.clear()});
   return pw;
 }
 
