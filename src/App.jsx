@@ -587,7 +587,7 @@ export default function NotesCraft(){
   useEffect(()=>{
     if(!pgQuantumSafe)return;
     if(pgMode==="random"){setPgLen(65);setPgUpper(true);setPgLower(true);setPgDigits(true);setPgSymbols(true)}
-    else{if(pgWords<5)setPgWords(5);setPgDigits(true);setPgSymbols(true)}
+    else{setPgWords(10);setPgDigits(true);setPgSymbols(true)}
   },[pgQuantumSafe,pgMode]);
   // Auto-generate password when generator page options change
   useEffect(()=>{
@@ -1760,7 +1760,7 @@ html{scroll-behavior:smooth}`;
             {pgQuantumSafe&&<span style={{color:"#10b981",fontSize:11,fontWeight:700}}>✓</span>}
           </div>
           <span style={{fontSize:12,fontWeight:600,color:T.text}}>⚛️ Quantum Resistant</span>
-          <span style={{fontSize:9,color:T.dim}}>(enforces min {pgMode==="random"?"65 chars + all charsets":"5 words"} for 128+ bit entropy)</span>
+          <span style={{fontSize:9,color:T.dim}}>(enforces min {pgMode==="random"?"65 chars + all charsets":"10 words"} for 128+ bit entropy)</span>
         </label>
         {pgQuantumSafe&&<div style={{marginBottom:12,padding:"12px 14px",borderRadius:8,background:T.dark?"rgba(245,158,11,0.06)":"rgba(245,158,11,0.08)",border:"1px solid rgba(245,158,11,0.2)",fontSize:10,lineHeight:1.7,color:T.dim}}>
           <p style={{margin:"0 0 8px"}}><span style={{color:"#f59e0b"}}>⚠️</span> <strong style={{color:T.text}}>Disclaimer:</strong> Quantum resistance estimates model Grover's search algorithm (O(√N) speedup) against symmetric key spaces at 10⁷ logical Grover iterations/sec — an optimistic projection for fault-tolerant quantum hardware. <strong style={{color:T.text}}>No cryptographically relevant quantum computer currently exists.</strong> These are forward-looking theoretical projections, not assessments of present-day risk.</p>
@@ -1785,7 +1785,7 @@ html{scroll-behavior:smooth}`;
                   <label style={{fontSize:12,fontWeight:600,color:T.text}}>Length</label>
                   <span style={{fontSize:13,fontWeight:700,color:T.accent}}>{pgLen}</span>
                 </div>
-                <input type="range" min={pgQuantumSafe?65:8} max={128} value={pgLen} onChange={e=>setPgLen(+e.target.value)}
+                <input type="range" min={pgQuantumSafe?65:8} max={256} value={pgLen} onChange={e=>setPgLen(+e.target.value)}
                   style={{width:"100%",accentColor:T.accent,cursor:"pointer"}}/>
               </div>
               <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
@@ -1805,7 +1805,7 @@ html{scroll-behavior:smooth}`;
                   <label style={{fontSize:12,fontWeight:600,color:T.text}}>Words</label>
                   <span style={{fontSize:13,fontWeight:700,color:T.accent}}>{pgWords}</span>
                 </div>
-                <input type="range" min={pgQuantumSafe?5:3} max={6} value={pgWords} onChange={e=>setPgWords(+e.target.value)}
+                <input type="range" min={pgQuantumSafe?10:3} max={pgQuantumSafe?20:6} value={pgWords} onChange={e=>setPgWords(+e.target.value)}
                   style={{width:"100%",accentColor:T.accent,cursor:"pointer"}}/>
               </div>
               <div style={{display:"flex",gap:12,alignItems:"center",flexWrap:"wrap"}}>
