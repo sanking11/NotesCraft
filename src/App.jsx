@@ -1817,13 +1817,15 @@ html{scroll-behavior:smooth}`;
         </div>
 
         {/* Quantum Resistant toggle */}
-        <label style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer",marginTop:12,marginBottom:pgQuantumSafe?10:12}}>
-          <div onClick={()=>setPgQuantumSafe(!pgQuantumSafe)} style={{width:18,height:18,borderRadius:4,border:`2px solid ${pgQuantumSafe?"#10b981":T.dim+"60"}`,background:pgQuantumSafe?"rgba(16,185,129,0.2)":"transparent",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",cursor:"pointer",flexShrink:0}}>
-            {pgQuantumSafe&&<span style={{color:"#10b981",fontSize:11,fontWeight:700}}>✓</span>}
-          </div>
-          <span style={{fontSize:12,fontWeight:600,color:T.text}}>⚛️ Quantum Resistant</span>
-          <span style={{fontSize:9,color:T.dim}}>(enforces min {pgMode==="random"?"65 chars + all charsets":"10 words"} for 128+ bit entropy)</span>
-        </label>
+        <div style={{marginTop:14,marginBottom:pgQuantumSafe?10:12,padding:"10px 14px",borderRadius:8,background:pgQuantumSafe?"rgba(16,185,129,0.08)":T.dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.03)",border:`1px solid ${pgQuantumSafe?"rgba(16,185,129,0.3)":T.bdr}`,transition:"all 0.3s"}}>
+          <label style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer"}}>
+            <div onClick={()=>setPgQuantumSafe(!pgQuantumSafe)} style={{width:20,height:20,borderRadius:4,border:`2px solid ${pgQuantumSafe?"#10b981":T.dim+"60"}`,background:pgQuantumSafe?"rgba(16,185,129,0.25)":"transparent",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",cursor:"pointer",flexShrink:0}}>
+              {pgQuantumSafe&&<span style={{color:"#10b981",fontSize:12,fontWeight:700}}>✓</span>}
+            </div>
+            <span style={{fontSize:13,fontWeight:700,color:pgQuantumSafe?"#10b981":T.text}}>⚛️ Quantum Resistant</span>
+            <span style={{fontSize:9,color:T.dim,marginLeft:"auto"}}>(enforces min {pgMode==="random"?"65 chars + all charsets":"10 words"} for 128+ bit entropy)</span>
+          </label>
+        </div>
         {pgQuantumSafe&&<div style={{marginBottom:12,padding:"12px 14px",borderRadius:8,background:T.dark?"rgba(245,158,11,0.06)":"rgba(245,158,11,0.08)",border:"1px solid rgba(245,158,11,0.2)",fontSize:10,lineHeight:1.7,color:T.dim}}>
           <p style={{margin:"0 0 8px"}}><span style={{color:"#f59e0b"}}>⚠️</span> <strong style={{color:T.text}}>Disclaimer:</strong> Quantum resistance estimates model Grover's search algorithm (O(√N) speedup) against symmetric key spaces at 10⁷ logical Grover iterations/sec — an optimistic projection for fault-tolerant quantum hardware. <strong style={{color:T.text}}>No cryptographically relevant quantum computer currently exists.</strong> These are forward-looking theoretical projections, not assessments of present-day risk.</p>
           <p style={{margin:"0 0 8px"}}>Real-world quantum attack feasibility depends on logical qubit count, gate fidelity thresholds, quantum error correction overhead (surface codes), decoherence rates, and circuit depth limitations — variables that remain unsolved at scale. <strong style={{color:T.text}}>No guarantees are made regarding actual post-quantum security.</strong> This model is for entropy planning and threat modeling purposes only.</p>
