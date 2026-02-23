@@ -415,7 +415,9 @@ function NeoFlipCard({w,h,rgb,x,y,r,f,d,dl,title,plain,enc,opacity=1,delay=0}){
 export default function NotesCraft(){
   const[authMode,setAuthMode]=useState("login");
   const[showLanding,setShowLanding]=useState(true);
-  const[infoPage,setInfoPage]=useState(null);
+  const validInfoPages=["about","privacy","terms","password-generator","security-blog"];
+  const[infoPage,setInfoPage]=useState(()=>{const h=window.location.hash.replace("#","");if(h.startsWith("blog/"))return"security-blog";return validInfoPages.includes(h)?h:null});
+  const[blogArticle,setBlogArticle]=useState(()=>{const h=window.location.hash.replace("#","");return h.startsWith("blog/")?h.slice(5):null});
   const[user,setUser]=useState(null);
   const[email,setEmail]=useState("");
   const[pw,setPw]=useState("");
@@ -589,6 +591,21 @@ export default function NotesCraft(){
     if(pgMode==="random"){setPgLen(65);setPgUpper(true);setPgLower(true);setPgDigits(true);setPgSymbols(true)}
     else{setPgWords(10);setPgDigits(true);setPgSymbols(true)}
   },[pgQuantumSafe,pgMode]);
+  // Sync infoPage + blogArticle ↔ URL hash for shareable links
+  useEffect(()=>{
+    if(blogArticle)history.replaceState(null,"","#blog/"+blogArticle);
+    else if(infoPage)history.replaceState(null,"","#"+infoPage);
+    else if(window.location.hash)history.replaceState(null,"",window.location.pathname);
+  },[infoPage,blogArticle]);
+  useEffect(()=>{
+    const onHash=()=>{
+      const h=window.location.hash.replace("#","");
+      if(h.startsWith("blog/")){setInfoPage("security-blog");setBlogArticle(h.slice(5))}
+      else{setBlogArticle(null);setInfoPage(validInfoPages.includes(h)?h:null)}
+    };
+    window.addEventListener("hashchange",onHash);
+    return()=>window.removeEventListener("hashchange",onHash);
+  },[]);
   // Auto-generate password when generator page options change
   useEffect(()=>{
     if(infoPage!=="password-generator")return;
@@ -1832,11 +1849,51 @@ html{scroll-behavior:smooth}`;
         </div>}
 
       </>,
-      "security-blog":<>
-        <h1 style={infoH}>Security Blog</h1>
-        <p style={infoP}>In-depth articles about cryptography, password security, and privacy.</p>
+      "security-blog":<>{(()=>{
+        const blogArticles=[
+          {slug:"csprng-vs-prng",tag:"Security Deep-Dive",title:"Cryptographic vs Normal Password Generators",subtitle:"Why the random numbers behind your passwords matter more than you think — explained with entropy, physics, and a cup of hot coffee.",icon:"🔐",date:"February 2026"}
+        ];
+        const activeArticle=blogArticles.find(a=>a.slug===blogArticle);
+        const shareLink=(slug)=>{const url=window.location.origin+window.location.pathname+"#blog/"+slug;navigator.clipboard.writeText(url).then(()=>{setAuthErr("Link copied!");setTimeout(()=>setAuthErr(""),2000)})};
 
-        {/* Article Header */}
+        // Blog listing
+        if(!activeArticle)return<>
+          <h1 style={infoH}>Security Blog</h1>
+          <p style={infoP}>In-depth articles about cryptography, password security, and privacy.</p>
+          <div style={{display:"flex",flexDirection:"column",gap:16,marginTop:24}}>
+            {blogArticles.map(a=><div key={a.slug} onClick={()=>{setBlogArticle(a.slug);window.scrollTo(0,0)}} style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:16,padding:"24px 22px",cursor:"pointer",transition:"all 0.3s",position:"relative",overflow:"hidden"}}
+              onMouseEnter={e=>{e.currentTarget.style.borderColor=T.accent;e.currentTarget.style.transform="translateY(-2px)"}}
+              onMouseLeave={e=>{e.currentTarget.style.borderColor=T.bdr;e.currentTarget.style.transform="translateY(0)"}}>
+              <div style={{position:"absolute",top:-30,right:-30,width:120,height:120,background:`radial-gradient(circle,rgba(${T.accentRgb},0.08),transparent 70%)`,pointerEvents:"none"}}/>
+              <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}>
+                <span style={{fontSize:28}}>{a.icon}</span>
+                <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"3px 12px",fontSize:10,fontWeight:600,letterSpacing:1.5,textTransform:"uppercase",color:T.accent}}>{a.tag}</span>
+                <span style={{fontSize:10,color:T.dim,marginLeft:"auto"}}>{a.date}</span>
+              </div>
+              <h3 style={{fontSize:18,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",marginBottom:8,lineHeight:1.3}}>{a.title}</h3>
+              <p style={{fontSize:13,color:"#8892a4",lineHeight:1.6,margin:0}}>{a.subtitle}</p>
+              <div style={{display:"flex",alignItems:"center",gap:12,marginTop:16}}>
+                <span style={{fontSize:12,fontWeight:600,color:T.accent}}>Read Article</span>
+                <span style={{color:T.accent}}>&#8594;</span>
+                <button onClick={e=>{e.stopPropagation();shareLink(a.slug)}} style={{marginLeft:"auto",background:`rgba(${T.accentRgb},0.1)`,border:`1px solid rgba(${T.accentRgb},0.3)`,borderRadius:6,padding:"5px 12px",fontSize:11,fontWeight:600,color:T.accent,cursor:"pointer",fontFamily:"inherit",transition:"all 0.2s"}}
+                  onMouseEnter={e=>e.currentTarget.style.background=`rgba(${T.accentRgb},0.2)`}
+                  onMouseLeave={e=>e.currentTarget.style.background=`rgba(${T.accentRgb},0.1)`}>Share Link</button>
+              </div>
+            </div>)}
+          </div>
+        </>;
+
+        // Individual article view
+        return<>
+          <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:24}}>
+            <button onClick={()=>{setBlogArticle(null);window.scrollTo(0,0)}} style={{background:`rgba(${T.accentRgb},0.08)`,border:`1px solid rgba(${T.accentRgb},0.3)`,borderRadius:8,padding:"6px 14px",color:T.accent,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",transition:"all 0.2s"}}>&#8592; All Articles</button>
+            <button onClick={()=>shareLink(activeArticle.slug)} style={{marginLeft:"auto",background:`rgba(${T.accentRgb},0.1)`,border:`1px solid rgba(${T.accentRgb},0.3)`,borderRadius:8,padding:"6px 14px",fontSize:12,fontWeight:600,color:T.accent,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",gap:6,transition:"all 0.2s"}}
+              onMouseEnter={e=>e.currentTarget.style.background=`rgba(${T.accentRgb},0.2)`}
+              onMouseLeave={e=>e.currentTarget.style.background=`rgba(${T.accentRgb},0.1)`}>Share Article</button>
+          </div>
+
+          {/* Article: csprng-vs-prng */}
+          {activeArticle.slug==="csprng-vs-prng"&&<>
         <div style={{textAlign:"center",marginBottom:40}}>
           <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:T.accent,marginBottom:16}}>Security Deep-Dive</span>
           <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>
@@ -1845,13 +1902,11 @@ html{scroll-behavior:smooth}`;
           <p style={{fontSize:14,color:"#8892a4",maxWidth:500,margin:"0 auto",lineHeight:1.6}}>Why the random numbers behind your passwords matter more than you think — explained with entropy, physics, and a cup of hot coffee.</p>
         </div>
 
-        {/* What's Inside */}
         <h2 style={infoH2}>What's Actually Inside a Password Generator?</h2>
         <p style={infoP}>Every password generator has a core engine — a <strong style={{color:T.text}}>random number generator (RNG)</strong>. This engine decides which characters end up in your password. The difference between a cryptographically secure generator and a normal one comes down to one thing: <strong style={{color:T.text}}>how unpredictable that engine truly is</strong>.</p>
         <p style={infoP}>A normal generator uses what's called a <strong style={{color:T.text}}>Pseudo-Random Number Generator (PRNG)</strong>. It's fast, it looks random, and it works great for games and simulations. But if someone knows the algorithm and the starting "seed" value, they can reproduce every single output.</p>
         <p style={infoP}>A cryptographically secure generator uses a <strong style={{color:T.text}}>CSPRNG</strong> — a Cryptographically Secure Pseudo-Random Number Generator. It draws unpredictability from physical noise in your hardware (mouse movements, CPU timing jitter, electrical noise) and is designed so that even if an attacker sees millions of outputs, they cannot predict the next one.</p>
 
-        {/* Comparison Cards */}
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,margin:"24px 0"}}>
           <div style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderTop:`3px solid ${T.accent}`,borderRadius:14,padding:"20px 18px"}}>
             <div style={{width:42,height:42,borderRadius:10,background:`rgba(${T.accentRgb},0.12)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,marginBottom:12}}>🔒</div>
@@ -1865,7 +1920,6 @@ html{scroll-behavior:smooth}`;
           </div>
         </div>
 
-        {/* Example Output */}
         <h3 style={{fontSize:14,fontWeight:600,color:T.accent,margin:"28px 0 12px"}}>Example Output Comparison</h3>
         <div style={{display:"flex",flexDirection:"column",gap:10,margin:"16px 0"}}>
           <div style={{display:"flex",alignItems:"center",gap:12,background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:10,padding:"12px 16px"}}>
@@ -1881,7 +1935,6 @@ html{scroll-behavior:smooth}`;
 
         <div style={{height:1,background:`linear-gradient(90deg,transparent,${T.bdr},transparent)`,margin:"32px 0"}}/>
 
-        {/* Comparison Table */}
         <h2 style={infoH2}>Head-to-Head Comparison</h2>
         <div style={{border:`1px solid ${T.bdr}`,borderRadius:14,overflow:"hidden",margin:"16px 0"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
@@ -1912,7 +1965,6 @@ html{scroll-behavior:smooth}`;
 
         <div style={{height:1,background:`linear-gradient(90deg,transparent,${T.bdr},transparent)`,margin:"32px 0"}}/>
 
-        {/* Visualizing the Difference */}
         <h2 style={infoH2}>Visualizing the Difference</h2>
         <h3 style={{fontSize:14,fontWeight:600,color:T.dark?T.text:"#e2e8f0",margin:"20px 0 10px"}}>Entropy Score (bits)</h3>
         <p style={infoP}>Entropy measures unpredictability. Higher entropy means more combinations an attacker must try. Each extra bit <strong style={{color:T.text}}>doubles</strong> the search space.</p>
@@ -1948,7 +2000,6 @@ html{scroll-behavior:smooth}`;
           </div>
         </div>
 
-        {/* Possible Combinations */}
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,margin:"20px 0"}}>
           <div style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:14,padding:20,textAlign:"center"}}>
             <div style={{fontSize:10,color:"#8892a4",textTransform:"uppercase",letterSpacing:1.5}}>Possible Combinations</div>
@@ -1964,7 +2015,6 @@ html{scroll-behavior:smooth}`;
           </div>
         </div>
 
-        {/* Bar Chart: Time to Crack */}
         <div style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:14,padding:20,margin:"20px 0"}}>
           <div style={{fontSize:13,fontWeight:600,color:T.dark?T.text:"#e2e8f0",marginBottom:16}}>Estimated Time to Brute-Force (10 billion guesses/sec)</div>
           {[
@@ -1981,7 +2031,6 @@ html{scroll-behavior:smooth}`;
           <p style={{fontSize:10,color:"#4a5568",marginTop:8}}>* If attacker exploits the PRNG's limited seed space instead of brute-forcing characters</p>
         </div>
 
-        {/* Attack Vulnerability */}
         <div style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:14,padding:20,margin:"20px 0"}}>
           <div style={{fontSize:13,fontWeight:600,color:T.dark?T.text:"#e2e8f0",marginBottom:16}}>Attack Vulnerability Breakdown</div>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:24}}>
@@ -2004,7 +2053,6 @@ html{scroll-behavior:smooth}`;
 
         <div style={{height:1,background:`linear-gradient(90deg,transparent,${T.bdr},transparent)`,margin:"32px 0"}}/>
 
-        {/* Fun Facts */}
         <h2 style={infoH2}>Entropy Fun Facts From Physics</h2>
         <p style={infoP}>The word "entropy" in cryptography is borrowed directly from physics — specifically thermodynamics. It measures <strong style={{color:T.text}}>disorder and unpredictability</strong> in both worlds.</p>
 
@@ -2025,7 +2073,6 @@ html{scroll-behavior:smooth}`;
 
         <div style={{height:1,background:`linear-gradient(90deg,transparent,${T.bdr},transparent)`,margin:"32px 0"}}/>
 
-        {/* Conclusion */}
         <h2 style={infoH2}>The Bottom Line</h2>
         <p style={infoP}>If you're building an app, writing a script, or choosing a password manager — always check that it uses a <strong style={{color:T.text}}>CSPRNG</strong> under the hood. In Python, use <code style={{background:T.dark?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.06)",padding:"2px 6px",borderRadius:4,fontSize:12}}>secrets</code>. In JavaScript, use <code style={{background:T.dark?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.06)",padding:"2px 6px",borderRadius:4,fontSize:12}}>crypto.getRandomValues()</code>.</p>
         <p style={infoP}>The visual difference between a CSPRNG password and a PRNG password is zero. But the security difference is the gap between <strong style={{color:T.accent}}>"uncrackable for billions of years"</strong> and <strong style={{color:"#f87171"}}>"broken in under a second."</strong></p>
@@ -2033,16 +2080,17 @@ html{scroll-behavior:smooth}`;
 
         <div style={{textAlign:"center",marginTop:32,fontSize:12,color:"#4a5568"}}>Written with entropy and intention.</div>
 
-        {/* CTA to Password Generator */}
         <div style={{marginTop:32,textAlign:"center"}}>
-          <button onClick={()=>{setInfoPage("password-generator");window.scrollTo(0,0)}}
+          <button onClick={()=>{setInfoPage("password-generator");setBlogArticle(null);window.scrollTo(0,0)}}
             style={{background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:10,padding:"14px 32px",color:"#fff",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:1,boxShadow:`0 4px 20px rgba(${T.accentRgb},0.35)`,transition:"all 0.3s"}}
             onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow=`0 6px 25px rgba(${T.accentRgb},0.5)`}}
             onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow=`0 4px 20px rgba(${T.accentRgb},0.35)`}}>
             Try Our Password Generator
           </button>
         </div>
-      </>
+          </>}
+        </>;
+      })()}</>
     };
     return(
       <div style={{width:"100%",height:"100vh",overflowY:"auto",overflowX:"hidden",background:T.dark?T.bg:"#0a0a12",color:T.dark?T.text:"#e2e8f0",fontFamily:`${F.body},sans-serif`,position:"relative"}}>
@@ -2053,11 +2101,11 @@ html{scroll-behavior:smooth}`;
           <div style={{position:"absolute",width:500,height:500,borderRadius:"50%",background:`radial-gradient(circle,rgba(${T.accentRgb},0.18) 0%,transparent 70%)`,filter:"blur(45px)",bottom:"-10%",right:"-5%",animation:"ldOrb2 30s ease-in-out infinite"}}/>
         </div>
         <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:100,padding:"16px 40px",display:"flex",alignItems:"center",justifyContent:"space-between",background:`linear-gradient(180deg,${T.dark?T.bg:"#0a0a12"} 0%,transparent 100%)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)"}}>
-          <div style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer"}} onClick={()=>setInfoPage(null)}>
+          <div style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer"}} onClick={()=>{setBlogArticle(null);setInfoPage(null)}}>
             <ButterflyLogo s={28} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} flap/>
             <span style={{fontSize:18,fontWeight:800,letterSpacing:3,fontFamily:`${F.heading},sans-serif`,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>NOTESCRAFT</span>
           </div>
-          <button onClick={()=>setInfoPage(null)} style={{background:`rgba(${T.accentRgb},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,borderRadius:8,padding:"8px 20px",color:T.dark?T.text:"#e2e8f0",fontSize:13,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1}}>← Back</button>
+          <button onClick={()=>{if(blogArticle){setBlogArticle(null);window.scrollTo(0,0)}else{setInfoPage(null)}}} style={{background:`rgba(${T.accentRgb},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,borderRadius:8,padding:"8px 20px",color:T.dark?T.text:"#e2e8f0",fontSize:13,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1}}>{blogArticle?"← Blog":"← Back"}</button>
         </nav>
         <div style={{position:"relative",zIndex:1,maxWidth:800,margin:"0 auto",padding:"100px 24px 60px"}}>
           <div style={{...infoGlass,padding:"48px 40px"}}>
