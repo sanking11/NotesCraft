@@ -1777,22 +1777,6 @@ html{scroll-behavior:smooth}`;
           </div>)}
         </div>}
 
-        {/* Unique Feature Highlights */}
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16}}>
-          <div style={{background:"linear-gradient(135deg,rgba(16,185,129,0.08),rgba(16,185,129,0.03))",border:"1px solid rgba(16,185,129,0.25)",borderRadius:10,padding:"12px 14px",position:"relative",overflow:"hidden"}}>
-            <div style={{position:"absolute",top:-20,right:-20,width:80,height:80,background:"radial-gradient(circle,rgba(16,185,129,0.12),transparent 70%)",pointerEvents:"none"}}/>
-            <div style={{fontSize:16,marginBottom:6}}>⚛️</div>
-            <div style={{fontSize:11,fontWeight:700,color:"#10b981",marginBottom:4,letterSpacing:0.3}}>Quantum-Safe Entropy</div>
-            <div style={{fontSize:10,color:T.dim,lineHeight:1.5}}>The only free tool with <strong style={{color:T.text}}>Grover-aware effective bits</strong> calculation — models real quantum attack cost, not just classical brute-force.</div>
-          </div>
-          <div style={{background:`linear-gradient(135deg,rgba(${T.accentRgb},0.08),rgba(${T.accentRgb},0.03))`,border:`1px solid rgba(${T.accentRgb},0.25)`,borderRadius:10,padding:"12px 14px",position:"relative",overflow:"hidden"}}>
-            <div style={{position:"absolute",top:-20,right:-20,width:80,height:80,background:`radial-gradient(circle,rgba(${T.accentRgb},0.12),transparent 70%)`,pointerEvents:"none"}}/>
-            <div style={{fontSize:16,marginBottom:6}}>🔑</div>
-            <div style={{fontSize:11,fontWeight:700,color:T.accent,marginBottom:4,letterSpacing:0.3}}>Up to 256 Characters</div>
-            <div style={{fontSize:10,color:T.dim,lineHeight:1.5}}>Most generators cap at 64–128. Generate <strong style={{color:T.text}}>ultra-long 256-char passwords</strong> for maximum entropy and future-proof security.</div>
-          </div>
-        </div>
-
         {/* Mode Toggle + Options — two-column layout */}
         <div style={{display:"grid",gridTemplateColumns:"130px 1fr",gap:16,alignItems:"start"}}>
           {/* Left: Mode Toggle (vertical) */}
@@ -2133,6 +2117,20 @@ html{scroll-behavior:smooth}`;
           <div style={{...infoGlass,padding:"48px 40px"}}>
             {infoPages[infoPage]}
           </div>
+          {infoPage==="password-generator"&&<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginTop:24}}>
+            <div style={{background:"linear-gradient(135deg,rgba(16,185,129,0.1),rgba(16,185,129,0.03))",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:"1px solid rgba(16,185,129,0.3)",borderRadius:14,padding:"20px 20px",position:"relative",overflow:"hidden",boxShadow:"0 4px 24px rgba(0,0,0,0.15)"}}>
+              <div style={{position:"absolute",top:-30,right:-30,width:100,height:100,background:"radial-gradient(circle,rgba(16,185,129,0.15),transparent 70%)",pointerEvents:"none"}}/>
+              <div style={{fontSize:24,marginBottom:10}}>⚛️</div>
+              <div style={{fontSize:14,fontWeight:800,color:"#10b981",marginBottom:6,letterSpacing:0.3}}>Quantum-Safe Entropy</div>
+              <div style={{fontSize:12,color:T.dark?"#b0bec9":"#94a3b8",lineHeight:1.7}}>The only free tool with <strong style={{color:T.dark?T.text:"#e2e8f0"}}>Grover-aware effective bits</strong> calculation — models real quantum attack cost, not just classical brute-force.</div>
+            </div>
+            <div style={{background:`linear-gradient(135deg,rgba(${T.accentRgb},0.1),rgba(${T.accentRgb},0.03))`,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid rgba(${T.accentRgb},0.3)`,borderRadius:14,padding:"20px 20px",position:"relative",overflow:"hidden",boxShadow:"0 4px 24px rgba(0,0,0,0.15)"}}>
+              <div style={{position:"absolute",top:-30,right:-30,width:100,height:100,background:`radial-gradient(circle,rgba(${T.accentRgb},0.15),transparent 70%)`,pointerEvents:"none"}}/>
+              <div style={{fontSize:24,marginBottom:10}}>🔑</div>
+              <div style={{fontSize:14,fontWeight:800,color:T.accent,marginBottom:6,letterSpacing:0.3}}>Up to 256 Characters</div>
+              <div style={{fontSize:12,color:T.dark?"#b0bec9":"#94a3b8",lineHeight:1.7}}>Most generators cap at 64–128. Generate <strong style={{color:T.dark?T.text:"#e2e8f0"}}>ultra-long 256-char passwords</strong> for maximum entropy and future-proof security.</div>
+            </div>
+          </div>}
           {infoPage==="password-generator"&&<div onClick={()=>{setInfoPage("security-blog");window.scrollTo(0,0)}} style={{marginTop:32,borderRadius:16,overflow:"hidden",cursor:"pointer",border:`1px solid rgba(${T.accentRgb},0.2)`,background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.06)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",transition:"all 0.3s",boxShadow:`0 4px 24px rgba(0,0,0,0.2)`}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.boxShadow=`0 8px 32px rgba(${T.accentRgb},0.25)`}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="0 4px 24px rgba(0,0,0,0.2)"}}>
             <div style={{height:160,background:`linear-gradient(135deg,rgba(${T.accentRgb},0.3) 0%,rgba(${T.accentRgb},0.05) 50%,rgba(139,92,246,0.2) 100%)`,display:"flex",alignItems:"center",justifyContent:"center",position:"relative",overflow:"hidden"}}>
               <div style={{position:"absolute",inset:0,background:"repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(255,255,255,0.02) 20px,rgba(255,255,255,0.02) 40px)"}}/>
