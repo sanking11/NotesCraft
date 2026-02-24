@@ -1777,6 +1777,22 @@ html{scroll-behavior:smooth}`;
           </div>)}
         </div>}
 
+        {/* Unique Feature Highlights */}
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16}}>
+          <div style={{background:"linear-gradient(135deg,rgba(16,185,129,0.08),rgba(16,185,129,0.03))",border:"1px solid rgba(16,185,129,0.25)",borderRadius:10,padding:"12px 14px",position:"relative",overflow:"hidden"}}>
+            <div style={{position:"absolute",top:-20,right:-20,width:80,height:80,background:"radial-gradient(circle,rgba(16,185,129,0.12),transparent 70%)",pointerEvents:"none"}}/>
+            <div style={{fontSize:16,marginBottom:6}}>⚛️</div>
+            <div style={{fontSize:11,fontWeight:700,color:"#10b981",marginBottom:4,letterSpacing:0.3}}>Quantum-Safe Entropy</div>
+            <div style={{fontSize:10,color:T.dim,lineHeight:1.5}}>The only free tool with <strong style={{color:T.text}}>Grover-aware effective bits</strong> calculation — models real quantum attack cost, not just classical brute-force.</div>
+          </div>
+          <div style={{background:`linear-gradient(135deg,rgba(${T.accentRgb},0.08),rgba(${T.accentRgb},0.03))`,border:`1px solid rgba(${T.accentRgb},0.25)`,borderRadius:10,padding:"12px 14px",position:"relative",overflow:"hidden"}}>
+            <div style={{position:"absolute",top:-20,right:-20,width:80,height:80,background:`radial-gradient(circle,rgba(${T.accentRgb},0.12),transparent 70%)`,pointerEvents:"none"}}/>
+            <div style={{fontSize:16,marginBottom:6}}>🔑</div>
+            <div style={{fontSize:11,fontWeight:700,color:T.accent,marginBottom:4,letterSpacing:0.3}}>Up to 256 Characters</div>
+            <div style={{fontSize:10,color:T.dim,lineHeight:1.5}}>Most generators cap at 64–128. Generate <strong style={{color:T.text}}>ultra-long 256-char passwords</strong> for maximum entropy and future-proof security.</div>
+          </div>
+        </div>
+
         {/* Mode Toggle + Options — two-column layout */}
         <div style={{display:"grid",gridTemplateColumns:"130px 1fr",gap:16,alignItems:"start"}}>
           {/* Left: Mode Toggle (vertical) */}
