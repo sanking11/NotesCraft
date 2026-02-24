@@ -2119,16 +2119,16 @@ html{scroll-behavior:smooth}`;
           </div>
           {/* Floating neon side cards */}
           {infoPage==="password-generator"&&<>
-            <div style={{position:"absolute",left:-190,top:140,width:170,height:130,pointerEvents:"none",animation:"neoFloat1 6s ease-in-out infinite",zIndex:2}}>
-              <div style={{width:"100%",height:"100%",borderRadius:4,padding:"10px 12px",border:"2px solid rgba(16,185,129,0.7)",background:"rgba(16,185,129,0.06)",boxShadow:"0 0 15px rgba(16,185,129,0.3),0 0 30px rgba(16,185,129,0.15),inset 0 0 15px rgba(16,185,129,0.06)",transform:"rotate(-8deg)",display:"flex",flexDirection:"column",overflow:"hidden"}}>
-                <div style={{fontSize:9,fontWeight:700,color:"rgba(16,185,129,0.9)",marginBottom:3,fontFamily:"monospace",letterSpacing:1}}>⚛️ Quantum-Safe</div>
-                <div style={{fontSize:7,color:"rgba(255,255,255,0.5)",lineHeight:1.5,fontFamily:"monospace",flex:1,overflow:"hidden"}}>Grover-aware effective{"\n"}bits calculation —{"\n"}models real quantum{"\n"}attack cost, not just{"\n"}classical brute-force</div>
+            <div style={{position:"absolute",left:-210,top:140,width:195,height:150,pointerEvents:"none",animation:"neoFloat1 6s ease-in-out infinite",zIndex:2}}>
+              <div style={{width:"100%",height:"100%",borderRadius:4,padding:"12px 14px",border:"2px solid rgba(16,185,129,0.8)",background:"rgba(16,185,129,0.1)",boxShadow:"0 0 15px rgba(16,185,129,0.35),0 0 30px rgba(16,185,129,0.18),inset 0 0 15px rgba(16,185,129,0.08)",transform:"rotate(-8deg)",display:"flex",flexDirection:"column",overflow:"hidden"}}>
+                <div style={{fontSize:11,fontWeight:700,color:"#10b981",marginBottom:5,fontFamily:"monospace",letterSpacing:1}}>⚛️ Quantum-Safe</div>
+                <div style={{fontSize:9.5,color:"rgba(255,255,255,0.85)",lineHeight:1.6,fontFamily:"monospace",flex:1,overflow:"hidden"}}>Grover-aware effective{"\n"}bits calculation —{"\n"}models real quantum{"\n"}attack cost, not just{"\n"}classical brute-force</div>
               </div>
             </div>
-            <div style={{position:"absolute",right:-185,top:320,width:165,height:120,pointerEvents:"none",animation:"neoFloat2 7s ease-in-out infinite 1s",zIndex:2}}>
-              <div style={{width:"100%",height:"100%",borderRadius:4,padding:"10px 12px",border:`2px solid rgba(${T.accentRgb},0.7)`,background:`rgba(${T.accentRgb},0.06)`,boxShadow:`0 0 15px rgba(${T.accentRgb},0.3),0 0 30px rgba(${T.accentRgb},0.15),inset 0 0 15px rgba(${T.accentRgb},0.06)`,transform:"rotate(6deg)",display:"flex",flexDirection:"column",overflow:"hidden"}}>
-                <div style={{fontSize:9,fontWeight:700,color:`rgba(${T.accentRgb},0.9)`,marginBottom:3,fontFamily:"monospace",letterSpacing:1}}>🔑 256-Char Max</div>
-                <div style={{fontSize:7,color:"rgba(255,255,255,0.5)",lineHeight:1.5,fontFamily:"monospace",flex:1,overflow:"hidden"}}>Most generators cap{"\n"}at 64-128 chars.{"\n"}Generate ultra-long{"\n"}passwords for max{"\n"}entropy & future-proof</div>
+            <div style={{position:"absolute",right:-205,top:320,width:190,height:140,pointerEvents:"none",animation:"neoFloat2 7s ease-in-out infinite 1s",zIndex:2}}>
+              <div style={{width:"100%",height:"100%",borderRadius:4,padding:"12px 14px",border:`2px solid rgba(${T.accentRgb},0.8)`,background:`rgba(${T.accentRgb},0.1)`,boxShadow:`0 0 15px rgba(${T.accentRgb},0.35),0 0 30px rgba(${T.accentRgb},0.18),inset 0 0 15px rgba(${T.accentRgb},0.08)`,transform:"rotate(6deg)",display:"flex",flexDirection:"column",overflow:"hidden"}}>
+                <div style={{fontSize:11,fontWeight:700,color:T.accent,marginBottom:5,fontFamily:"monospace",letterSpacing:1}}>🔑 256-Char Max</div>
+                <div style={{fontSize:9.5,color:"rgba(255,255,255,0.85)",lineHeight:1.6,fontFamily:"monospace",flex:1,overflow:"hidden"}}>Most generators cap{"\n"}at 64-128 chars.{"\n"}Generate ultra-long{"\n"}passwords for max{"\n"}entropy & future-proof</div>
               </div>
             </div>
           </>}
