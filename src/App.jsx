@@ -304,10 +304,16 @@ function generateMemorablePw(wordCount,addDigit,addSymbol,sepKey="hyphens",custo
 
 function calcPwStrength(pw){
   if(!pw)return{label:"",color:"#666",percent:0,time:"",qTime:"",qColor:"#666",bits:0,qBits:0,qResist:false};
-  // Use zxcvbn for pattern detection (dictionary words, sequences, keyboard patterns, l33t, dates)
-  const z=zxcvbn(pw);
-  // zxcvbn gives guesses — convert to entropy bits
-  const entropy=Math.log2(z.guesses||1);
+  // For long passwords, skip zxcvbn (it freezes on 100+ chars) — calculate entropy from charset
+  let entropy;
+  if(pw.length>100){
+    let pool=0;
+    if(/[a-z]/.test(pw))pool+=26;if(/[A-Z]/.test(pw))pool+=26;if(/[0-9]/.test(pw))pool+=10;if(/[^A-Za-z0-9]/.test(pw))pool+=32;
+    entropy=pw.length*Math.log2(pool||1);
+  }else{
+    const z=zxcvbn(pw);
+    entropy=Math.log2(z.guesses||1);
+  }
   const fmtTime=s=>{
     if(s<1)return"Instantly";if(s<60)return Math.round(s)+" seconds";if(s<3600)return Math.round(s/60)+" minutes";if(s<86400)return Math.round(s/3600)+" hours";if(s<31536000)return Math.round(s/86400)+" days";
     const y=s/31536000;if(!isFinite(y))return"∞ years";
@@ -315,7 +321,7 @@ function calcPwStrength(pw){
     for(const[v,n]of names){if(y>=v){const r=y/v;if(!isFinite(r))return"∞ years";if(r>=1e6)return r.toExponential(2)+" "+n+" years";return(r>=1e3?Math.round(r).toLocaleString():r>=100?Math.round(r).toLocaleString():r.toFixed(1).replace(/\.0$/,""))+" "+n+" years"}}
     return Math.round(y).toLocaleString()+" years";
   };
-  const secs=z.guesses/1e9;// 10^9 attempts/sec (modern GPU)
+  const secs=Math.pow(2,entropy)/1e9;// 10^9 attempts/sec (modern GPU)
   const qEffBits=entropy/2;// Grover's halves entropy
   const qSecs=Math.pow(2,qEffBits)/1e7;// 10^7 Grover iterations/sec (optimistic future quantum)
   const time=fmtTime(secs);
