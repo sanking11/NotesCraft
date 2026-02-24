@@ -2117,20 +2117,18 @@ html{scroll-behavior:smooth}`;
           <div style={{...infoGlass,padding:"48px 40px"}}>
             {infoPages[infoPage]}
           </div>
-          {/* Floating side feature cards — only on wider screens */}
+          {/* Floating neon side cards */}
           {infoPage==="password-generator"&&<>
-            <div style={{position:"absolute",left:-200,top:160,width:180,pointerEvents:"none",animation:"neoFloat1 6s ease-in-out infinite",zIndex:2}}>
-              <div style={{background:"linear-gradient(135deg,rgba(16,185,129,0.12),rgba(16,185,129,0.04))",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:"1px solid rgba(16,185,129,0.35)",borderRadius:12,padding:"16px 14px",boxShadow:"0 8px 32px rgba(0,0,0,0.2),0 0 20px rgba(16,185,129,0.1)",pointerEvents:"auto",transform:"rotate(-2deg)"}}>
-                <div style={{fontSize:20,marginBottom:8}}>⚛️</div>
-                <div style={{fontSize:12,fontWeight:800,color:"#10b981",marginBottom:5,letterSpacing:0.3}}>Quantum-Safe Entropy</div>
-                <div style={{fontSize:10,color:"#8892a4",lineHeight:1.6}}>The only free tool with <strong style={{color:T.dark?T.text:"#e2e8f0"}}>Grover-aware effective bits</strong> — models real quantum attack cost.</div>
+            <div style={{position:"absolute",left:-190,top:140,width:170,height:130,pointerEvents:"none",animation:"neoFloat1 6s ease-in-out infinite",zIndex:2}}>
+              <div style={{width:"100%",height:"100%",borderRadius:4,padding:"10px 12px",border:"2px solid rgba(16,185,129,0.7)",background:"rgba(16,185,129,0.06)",boxShadow:"0 0 15px rgba(16,185,129,0.3),0 0 30px rgba(16,185,129,0.15),inset 0 0 15px rgba(16,185,129,0.06)",transform:"rotate(-8deg)",display:"flex",flexDirection:"column",overflow:"hidden"}}>
+                <div style={{fontSize:9,fontWeight:700,color:"rgba(16,185,129,0.9)",marginBottom:3,fontFamily:"monospace",letterSpacing:1}}>⚛️ Quantum-Safe</div>
+                <div style={{fontSize:7,color:"rgba(255,255,255,0.5)",lineHeight:1.5,fontFamily:"monospace",flex:1,overflow:"hidden"}}>Grover-aware effective{"\n"}bits calculation —{"\n"}models real quantum{"\n"}attack cost, not just{"\n"}classical brute-force</div>
               </div>
             </div>
-            <div style={{position:"absolute",right:-200,top:280,width:180,pointerEvents:"none",animation:"neoFloat2 7s ease-in-out infinite 1s",zIndex:2}}>
-              <div style={{background:`linear-gradient(135deg,rgba(${T.accentRgb},0.12),rgba(${T.accentRgb},0.04))`,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid rgba(${T.accentRgb},0.35)`,borderRadius:12,padding:"16px 14px",boxShadow:`0 8px 32px rgba(0,0,0,0.2),0 0 20px rgba(${T.accentRgb},0.1)`,pointerEvents:"auto",transform:"rotate(2deg)"}}>
-                <div style={{fontSize:20,marginBottom:8}}>🔑</div>
-                <div style={{fontSize:12,fontWeight:800,color:T.accent,marginBottom:5,letterSpacing:0.3}}>Up to 256 Characters</div>
-                <div style={{fontSize:10,color:"#8892a4",lineHeight:1.6}}>Most generators cap at 128. Generate <strong style={{color:T.dark?T.text:"#e2e8f0"}}>ultra-long 256-char passwords</strong> for future-proof security.</div>
+            <div style={{position:"absolute",right:-185,top:320,width:165,height:120,pointerEvents:"none",animation:"neoFloat2 7s ease-in-out infinite 1s",zIndex:2}}>
+              <div style={{width:"100%",height:"100%",borderRadius:4,padding:"10px 12px",border:`2px solid rgba(${T.accentRgb},0.7)`,background:`rgba(${T.accentRgb},0.06)`,boxShadow:`0 0 15px rgba(${T.accentRgb},0.3),0 0 30px rgba(${T.accentRgb},0.15),inset 0 0 15px rgba(${T.accentRgb},0.06)`,transform:"rotate(6deg)",display:"flex",flexDirection:"column",overflow:"hidden"}}>
+                <div style={{fontSize:9,fontWeight:700,color:`rgba(${T.accentRgb},0.9)`,marginBottom:3,fontFamily:"monospace",letterSpacing:1}}>🔑 256-Char Max</div>
+                <div style={{fontSize:7,color:"rgba(255,255,255,0.5)",lineHeight:1.5,fontFamily:"monospace",flex:1,overflow:"hidden"}}>Most generators cap{"\n"}at 64-128 chars.{"\n"}Generate ultra-long{"\n"}passwords for max{"\n"}entropy & future-proof</div>
               </div>
             </div>
           </>}
