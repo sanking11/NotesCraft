@@ -1648,14 +1648,15 @@ input:focus,textarea:focus{border-color:rgba(${T.accentRgb},0.4)!important;box-s
 .ld-particle:nth-child(6){left:68%;width:2px;height:2px;animation-duration:12s;animation-delay:4s;opacity:0.3}
 .ld-particle:nth-child(7){left:78%;width:3px;height:3px;animation-duration:8s;animation-delay:1s;opacity:0.4}
 .ld-particle:nth-child(8){left:90%;width:4px;height:4px;animation-duration:6s;animation-delay:2.5s;opacity:0.5}
-html{scroll-behavior:smooth}`;
+html{scroll-behavior:smooth}
+@keyframes qrPulse{0%,100%{box-shadow:0 0 20px rgba(16,185,129,0.15),0 0 40px rgba(16,185,129,0.06),inset 0 0 20px rgba(16,185,129,0.04)}50%{box-shadow:0 0 25px rgba(16,185,129,0.25),0 0 50px rgba(16,185,129,0.1),inset 0 0 25px rgba(16,185,129,0.06)}}`;
 
   const inp={background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.5)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid rgba(${T.accentRgb},0.15)`,borderRadius:10,color:T.text,fontSize:14,fontFamily:`${F.body},sans-serif`,outline:"none",boxSizing:"border-box",transition:"all 0.3s",boxShadow:`0 2px 10px rgba(0,0,0,0.1), inset 0 0 10px rgba(${T.accentRgb},0.02)`};
   const glass={background:T.dark?"rgba(255,255,255,0.03)":"rgba(255,255,255,0.4)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid rgba(${T.accentRgb},0.12)`,boxShadow:`0 8px 32px rgba(0,0,0,0.15), inset 0 0 0 1px rgba(255,255,255,${T.dark?0.03:0.2})`};
 
   /* ═══════════ INFO PAGES (About / Privacy / Terms) ═══════════ */
   if(infoPage&&authMode!=="app"){
-    const infoGlass={background:T.dark?"rgba(255,255,255,0.03)":"rgba(255,255,255,0.06)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1px solid rgba(${T.accentRgb},0.12)`,borderRadius:20};
+    const infoGlass={background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.06)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:`1px solid rgba(${T.accentRgb},0.18)`,borderRadius:20,boxShadow:`0 8px 40px rgba(0,0,0,0.3),0 0 60px rgba(${T.accentRgb},0.06),inset 0 1px 0 rgba(255,255,255,0.06)`};
     const infoH={fontSize:28,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",marginBottom:24,letterSpacing:2};
     const infoH2={fontSize:18,fontWeight:700,fontFamily:`${F.heading},sans-serif`,color:T.accent,margin:"28px 0 12px",letterSpacing:1};
     const infoP={fontSize:14,lineHeight:1.9,color:"#b0bec9",margin:"0 0 12px"};
@@ -1840,13 +1841,13 @@ html{scroll-behavior:smooth}`;
         </div>
 
         {/* Quantum Resistant toggle */}
-        <div style={{marginTop:14,marginBottom:pgQuantumSafe?10:12,padding:"10px 14px",borderRadius:8,background:pgQuantumSafe?"rgba(16,185,129,0.08)":T.dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.03)",border:`1px solid ${pgQuantumSafe?"rgba(16,185,129,0.3)":T.bdr}`,transition:"all 0.3s"}}>
+        <div style={{marginTop:14,marginBottom:pgQuantumSafe?10:12,padding:"12px 16px",borderRadius:10,background:pgQuantumSafe?"rgba(16,185,129,0.06)":T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1.5px solid ${pgQuantumSafe?"rgba(16,185,129,0.5)":T.bdr}`,transition:"all 0.4s",boxShadow:pgQuantumSafe?"0 0 20px rgba(16,185,129,0.15),0 0 40px rgba(16,185,129,0.06),inset 0 0 20px rgba(16,185,129,0.04)":"none",animation:pgQuantumSafe?"qrPulse 3s ease-in-out infinite":"none"}}>
           <label style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer"}}>
-            <div onClick={()=>setPgQuantumSafe(!pgQuantumSafe)} style={{width:20,height:20,borderRadius:4,border:`2px solid ${pgQuantumSafe?"#10b981":T.dim+"60"}`,background:pgQuantumSafe?"rgba(16,185,129,0.25)":"transparent",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",cursor:"pointer",flexShrink:0}}>
-              {pgQuantumSafe&&<span style={{color:"#10b981",fontSize:12,fontWeight:700}}>✓</span>}
+            <div onClick={()=>setPgQuantumSafe(!pgQuantumSafe)} style={{width:22,height:22,borderRadius:5,border:`2px solid ${pgQuantumSafe?"#10b981":T.dim+"60"}`,background:pgQuantumSafe?"rgba(16,185,129,0.3)":"transparent",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.3s",cursor:"pointer",flexShrink:0,boxShadow:pgQuantumSafe?"0 0 8px rgba(16,185,129,0.4),0 0 16px rgba(16,185,129,0.2)":"none"}}>
+              {pgQuantumSafe&&<span style={{color:"#10b981",fontSize:13,fontWeight:700,textShadow:"0 0 6px rgba(16,185,129,0.6)"}}>✓</span>}
             </div>
-            <span style={{fontSize:13,fontWeight:700,color:pgQuantumSafe?"#10b981":T.text}}>⚛️ Quantum Resistant</span>
-            <span style={{fontSize:9,color:T.dim,marginLeft:"auto"}}>(enforces min {pgMode==="random"?"65 chars + all charsets":"10 words"} for 128+ bit entropy)</span>
+            <span style={{fontSize:13,fontWeight:700,color:pgQuantumSafe?"#10b981":T.text,textShadow:pgQuantumSafe?"0 0 10px rgba(16,185,129,0.4)":"none",transition:"all 0.3s"}}>⚛️ Quantum Resistant</span>
+            <span style={{fontSize:9,color:pgQuantumSafe?"rgba(16,185,129,0.6)":T.dim,marginLeft:"auto",transition:"color 0.3s"}}>(enforces min {pgMode==="random"?"65 chars + all charsets":"10 words"} for 128+ bit entropy)</span>
           </label>
         </div>
         {pgQuantumSafe&&<div style={{marginBottom:12,padding:"12px 14px",borderRadius:8,background:T.dark?"rgba(245,158,11,0.06)":"rgba(245,158,11,0.08)",border:"1px solid rgba(245,158,11,0.2)",fontSize:10,lineHeight:1.7,color:T.dim}}>
@@ -2121,14 +2122,14 @@ html{scroll-behavior:smooth}`;
           {infoPage==="password-generator"&&<>
             <div style={{position:"absolute",left:-210,top:140,width:195,height:150,pointerEvents:"none",animation:"neoFloat1 6s ease-in-out infinite",zIndex:2}}>
               <div style={{width:"100%",height:"100%",borderRadius:4,padding:"12px 14px",border:"2px solid rgba(16,185,129,0.8)",background:"rgba(16,185,129,0.1)",boxShadow:"0 0 15px rgba(16,185,129,0.35),0 0 30px rgba(16,185,129,0.18),inset 0 0 15px rgba(16,185,129,0.08)",transform:"rotate(-8deg)",display:"flex",flexDirection:"column",overflow:"hidden"}}>
-                <div style={{fontSize:11,fontWeight:700,color:"#10b981",marginBottom:5,fontFamily:"monospace",letterSpacing:1}}>⚛️ Quantum-Safe</div>
-                <div style={{fontSize:9.5,color:"rgba(255,255,255,0.85)",lineHeight:1.6,fontFamily:"monospace",flex:1,overflow:"hidden"}}>Grover-aware effective{"\n"}bits calculation —{"\n"}models real quantum{"\n"}attack cost, not just{"\n"}classical brute-force</div>
+                <div style={{fontSize:14,fontWeight:900,color:"#10b981",marginBottom:5,fontFamily:"monospace",letterSpacing:1}}>⚛️ Quantum-Safe</div>
+                <div style={{fontSize:12,color:"rgba(255,255,255,0.85)",lineHeight:1.6,fontFamily:"monospace",flex:1,overflow:"hidden"}}>Grover-aware effective{"\n"}bits calculation —{"\n"}models real quantum{"\n"}attack cost, not just{"\n"}classical brute-force</div>
               </div>
             </div>
             <div style={{position:"absolute",right:-205,top:320,width:190,height:140,pointerEvents:"none",animation:"neoFloat2 7s ease-in-out infinite 1s",zIndex:2}}>
               <div style={{width:"100%",height:"100%",borderRadius:4,padding:"12px 14px",border:`2px solid rgba(${T.accentRgb},0.8)`,background:`rgba(${T.accentRgb},0.1)`,boxShadow:`0 0 15px rgba(${T.accentRgb},0.35),0 0 30px rgba(${T.accentRgb},0.18),inset 0 0 15px rgba(${T.accentRgb},0.08)`,transform:"rotate(6deg)",display:"flex",flexDirection:"column",overflow:"hidden"}}>
-                <div style={{fontSize:11,fontWeight:700,color:T.accent,marginBottom:5,fontFamily:"monospace",letterSpacing:1}}>🔑 256-Char Max</div>
-                <div style={{fontSize:9.5,color:"rgba(255,255,255,0.85)",lineHeight:1.6,fontFamily:"monospace",flex:1,overflow:"hidden"}}>Most generators cap{"\n"}at 64-128 chars.{"\n"}Generate ultra-long{"\n"}passwords for max{"\n"}entropy & future-proof</div>
+                <div style={{fontSize:14,fontWeight:900,color:T.accent,marginBottom:5,fontFamily:"monospace",letterSpacing:1}}>🔑 256-Char Max</div>
+                <div style={{fontSize:12,color:"rgba(255,255,255,0.85)",lineHeight:1.6,fontFamily:"monospace",flex:1,overflow:"hidden"}}>Most generators cap{"\n"}at 64-128 chars.{"\n"}Only password genrator which will allow ultra-long{"\n"}passwords for max{"\n"}entropy & future-proof (MAX 256 chars)</div>
               </div>
             </div>
           </>}
