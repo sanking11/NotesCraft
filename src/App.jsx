@@ -1650,19 +1650,20 @@ input:focus,textarea:focus{border-color:rgba(${T.accentRgb},0.4)!important;box-s
 .ld-particle:nth-child(8){left:90%;width:4px;height:4px;animation-duration:6s;animation-delay:2.5s;opacity:0.5}
 html{scroll-behavior:smooth}
 @keyframes qrPulse{0%,100%{box-shadow:0 0 20px rgba(16,185,129,0.15),0 0 40px rgba(16,185,129,0.06),inset 0 0 20px rgba(16,185,129,0.04)}50%{box-shadow:0 0 25px rgba(16,185,129,0.25),0 0 50px rgba(16,185,129,0.1),inset 0 0 25px rgba(16,185,129,0.06)}}
-@keyframes pgGlowPulse{0%,100%{opacity:0.6}50%{opacity:1}}
-.pg-slider{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;background:linear-gradient(90deg,rgba(${T.accentRgb},0.15),rgba(${T.accentRgb},0.4));outline:none;cursor:pointer;position:relative}
-.pg-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,${T.accent},${T.accent2||T.accent});box-shadow:0 0 12px rgba(${T.accentRgb},0.6),0 0 24px rgba(${T.accentRgb},0.3);border:2px solid rgba(255,255,255,0.3);cursor:pointer;transition:box-shadow 0.2s}
-.pg-slider::-webkit-slider-thumb:hover{box-shadow:0 0 18px rgba(${T.accentRgb},0.8),0 0 36px rgba(${T.accentRgb},0.4)}
-.pg-slider::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,${T.accent},${T.accent2||T.accent});box-shadow:0 0 12px rgba(${T.accentRgb},0.6),0 0 24px rgba(${T.accentRgb},0.3);border:2px solid rgba(255,255,255,0.3);cursor:pointer}
-.pg-slider::-moz-range-track{height:6px;border-radius:3px;background:linear-gradient(90deg,rgba(${T.accentRgb},0.15),rgba(${T.accentRgb},0.4))}
-.pg-chk{width:18px;height:18px;border-radius:4px;display:flex;align-items:center;justify-content:center;transition:all 0.3s;cursor:pointer;flex-shrink:0}
-.pg-chk-on{background:rgba(${T.accentRgb},0.25);border:2px solid ${T.accent};box-shadow:0 0 8px rgba(${T.accentRgb},0.4),inset 0 0 6px rgba(${T.accentRgb},0.15)}
-.pg-chk-off{background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.15)}
-.pg-mode-btn{padding:10px 0;border-radius:6px;border:none;font-size:12px;cursor:pointer;font-family:inherit;transition:all 0.3s;letter-spacing:0.5px;position:relative;overflow:hidden}
-.pg-mode-active{background:rgba(${T.accentRgb},0.15);color:${T.accent};font-weight:700;box-shadow:0 0 12px rgba(${T.accentRgb},0.2),inset 0 0 8px rgba(${T.accentRgb},0.08);border:1px solid rgba(${T.accentRgb},0.3)}
-.pg-mode-inactive{background:transparent;color:${T.dim};font-weight:500;border:1px solid transparent}
-.pg-mode-inactive:hover{background:rgba(${T.accentRgb},0.06);color:rgba(${T.accentRgb},0.8)}`;
+@keyframes pgGlowPulse{0%,100%{opacity:0.5}50%{opacity:1}}
+@keyframes pgBorderGlow{0%,100%{border-color:rgba(${T.accentRgb},0.3)}50%{border-color:rgba(${T.accentRgb},0.5)}}
+.pg-slider{-webkit-appearance:none!important;appearance:none!important;width:100%;height:10px;border-radius:5px;background:linear-gradient(90deg,rgba(${T.accentRgb},0.2),${T.accent}80)!important;outline:none;cursor:pointer;position:relative;box-shadow:0 0 12px rgba(${T.accentRgb},0.3),inset 0 1px 2px rgba(0,0,0,0.3)}
+.pg-slider::-webkit-slider-thumb{-webkit-appearance:none!important;appearance:none!important;width:24px;height:24px;border-radius:50%;background:${T.accent};box-shadow:0 0 16px rgba(${T.accentRgb},0.8),0 0 32px rgba(${T.accentRgb},0.4),0 0 48px rgba(${T.accentRgb},0.2);border:3px solid rgba(255,255,255,0.5);cursor:pointer;transition:all 0.2s;position:relative;z-index:2}
+.pg-slider::-webkit-slider-thumb:hover{transform:scale(1.15);box-shadow:0 0 24px rgba(${T.accentRgb},1),0 0 48px rgba(${T.accentRgb},0.5),0 0 64px rgba(${T.accentRgb},0.25)}
+.pg-slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:${T.accent};box-shadow:0 0 16px rgba(${T.accentRgb},0.8),0 0 32px rgba(${T.accentRgb},0.4);border:3px solid rgba(255,255,255,0.5);cursor:pointer}
+.pg-slider::-moz-range-track{height:10px;border-radius:5px;background:linear-gradient(90deg,rgba(${T.accentRgb},0.2),${T.accent}80);box-shadow:0 0 12px rgba(${T.accentRgb},0.3)}
+.pg-chk{width:20px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;transition:all 0.3s;cursor:pointer;flex-shrink:0}
+.pg-chk-on{background:rgba(${T.accentRgb},0.3);border:2px solid ${T.accent};box-shadow:0 0 12px rgba(${T.accentRgb},0.5),0 0 24px rgba(${T.accentRgb},0.15),inset 0 0 8px rgba(${T.accentRgb},0.2)}
+.pg-chk-off{background:rgba(255,255,255,0.05);border:2px solid rgba(255,255,255,0.2);box-shadow:inset 0 1px 3px rgba(0,0,0,0.2)}
+.pg-mode-btn{padding:11px 0;border-radius:8px;border:none;font-size:12px;cursor:pointer;font-family:inherit;transition:all 0.3s;letter-spacing:0.5px;position:relative;overflow:hidden}
+.pg-mode-active{background:rgba(${T.accentRgb},0.2);color:${T.accent};font-weight:700;box-shadow:0 0 16px rgba(${T.accentRgb},0.3),inset 0 0 12px rgba(${T.accentRgb},0.1);border:1.5px solid rgba(${T.accentRgb},0.45);text-shadow:0 0 8px rgba(${T.accentRgb},0.4)}
+.pg-mode-inactive{background:rgba(255,255,255,0.02);color:${T.dim};font-weight:500;border:1.5px solid transparent}
+.pg-mode-inactive:hover{background:rgba(${T.accentRgb},0.08);color:${T.accent};border-color:rgba(${T.accentRgb},0.2)}`;
 
   const inp={background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.5)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid rgba(${T.accentRgb},0.15)`,borderRadius:10,color:T.text,fontSize:14,fontFamily:`${F.body},sans-serif`,outline:"none",boxSizing:"border-box",transition:"all 0.3s",boxShadow:`0 2px 10px rgba(0,0,0,0.1), inset 0 0 10px rgba(${T.accentRgb},0.02)`};
   const glass={background:T.dark?"rgba(255,255,255,0.03)":"rgba(255,255,255,0.4)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid rgba(${T.accentRgb},0.12)`,boxShadow:`0 8px 32px rgba(0,0,0,0.15), inset 0 0 0 1px rgba(255,255,255,${T.dark?0.03:0.2})`};
@@ -1729,7 +1730,7 @@ html{scroll-behavior:smooth}
         <p style={{...infoP,color:"rgba(176,190,201,0.8)"}}>Generate strong, unique passwords using cryptographically secure randomness.</p>
 
         {/* Password Display */}
-        <div style={{background:"rgba(255,255,255,0.03)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1.5px solid ${pgScrambling?T.accent:`rgba(${T.accentRgb},0.25)`}`,borderRadius:14,padding:"22px 26px",marginBottom:20,position:"relative",transition:"all 0.4s",boxShadow:`0 4px 24px rgba(0,0,0,0.2),0 0 ${pgScrambling?30:15}px rgba(${T.accentRgb},${pgScrambling?0.25:0.08}),inset 0 1px 0 rgba(255,255,255,0.06)`}}>
+        <div style={{background:"rgba(255,255,255,0.06)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:`1.5px solid ${pgScrambling?T.accent:`rgba(${T.accentRgb},0.35)`}`,borderRadius:16,padding:"22px 26px",marginBottom:20,position:"relative",transition:"all 0.4s",boxShadow:`0 6px 30px rgba(0,0,0,0.25),0 0 ${pgScrambling?40:20}px rgba(${T.accentRgb},${pgScrambling?0.35:0.12}),inset 0 1px 0 rgba(255,255,255,0.1),inset 0 0 20px rgba(${T.accentRgb},0.03)`}}>
           <div style={{fontSize:(pgDisplay||pgResult).length>30?14:18,fontFamily:"monospace",fontWeight:600,color:pgScrambling?T.accent:T.text,wordBreak:"break-all",lineHeight:1.6,letterSpacing:0.5,minHeight:28,paddingRight:44,transition:"color 0.2s",textShadow:pgScrambling?`0 0 10px rgba(${T.accentRgb},0.5)`:"none"}}>{pgDisplay||pgResult}</div>
           <button onClick={e=>{const btn=e.currentTarget;btn.style.animation="pgSpin 0.4s ease-out";setTimeout(()=>{btn.style.animation=""},400);const cw=pgUseCustom?pgCustomWords:"";if(cw){const err=validateCustomWords(cw);setPgCustomErr(err);if(err)return}else{setPgCustomErr("")}const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep,cw);setPgResult(pw);setPgStrength(calcPwStrength(pw));setPgCopied(false)}}
             style={{position:"absolute",top:14,right:14,width:40,height:40,borderRadius:"50%",background:`linear-gradient(135deg,rgba(${T.accentRgb},0.2),rgba(${T.accentRgb},0.08))`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,color:T.accent,fontSize:20,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.3s",boxShadow:`0 0 14px rgba(${T.accentRgb},0.25),inset 0 0 8px rgba(${T.accentRgb},0.1)`}} title="Regenerate"
@@ -1762,8 +1763,8 @@ html{scroll-behavior:smooth}
             </div>
             <span style={{fontSize:12,fontWeight:700,color:pgStrength.color}}>{pgStrength.label}</span>
           </div>
-          <div style={{height:7,borderRadius:4,background:"rgba(255,255,255,0.06)",overflow:"hidden",marginBottom:6,position:"relative"}}>
-            <div style={{height:"100%",borderRadius:4,background:`linear-gradient(90deg,${pgStrength.color},${pgStrength.color}dd)`,width:pgStrength.percent+"%",transition:"width 0.4s ease",boxShadow:`0 0 12px ${pgStrength.color}50,0 0 4px ${pgStrength.color}30`}}/>
+          <div style={{height:8,borderRadius:4,background:"rgba(255,255,255,0.08)",overflow:"hidden",marginBottom:6,position:"relative",boxShadow:"inset 0 1px 3px rgba(0,0,0,0.3)"}}>
+            <div style={{height:"100%",borderRadius:4,background:`linear-gradient(90deg,${pgStrength.color}90,${pgStrength.color})`,width:pgStrength.percent+"%",transition:"width 0.4s ease",boxShadow:`0 0 16px ${pgStrength.color}60,0 0 6px ${pgStrength.color}40,0 0 30px ${pgStrength.color}20`}}/>
           </div>
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:3}}>
             <span style={{fontSize:10,color:T.dim}}>{pgStrength.bits} bits of entropy · Effective Bits: <span style={{fontWeight:600}}>{pgStrength.qBits}</span></span>
@@ -1779,13 +1780,13 @@ html{scroll-behavior:smooth}
         </div>}
 
         {/* Quantum Resistant details card */}
-        {pgQuantumSafe&&pgStrength&&<div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:2,marginBottom:16,borderRadius:12,overflow:"hidden",border:`1px solid rgba(${T.accentRgb},0.15)`}}>
+        {pgQuantumSafe&&pgStrength&&<div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:2,marginBottom:16,borderRadius:14,overflow:"hidden",border:`1.5px solid rgba(${T.accentRgb},0.2)`,boxShadow:`0 4px 20px rgba(0,0,0,0.2),0 0 20px rgba(${T.accentRgb},0.05)`}}>
           {[
             {label:"Length",value:pgResult.length+" chars",icon:"📏"},
             {label:"Entropy",value:pgStrength.bits+" bits",icon:"🎲"},
             {label:"Classical",value:pgStrength.time,icon:"🖥️",color:pgStrength.color},
             {label:"Quantum",value:pgStrength.qTime,icon:"⚛️",color:pgStrength.qColor}
-          ].map((s,i)=><div key={i} style={{padding:"14px 12px",background:"rgba(255,255,255,0.03)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",borderLeft:i>0?`1px solid rgba(${T.accentRgb},0.1)`:"none"}}>
+          ].map((s,i)=><div key={i} style={{padding:"14px 12px",background:"rgba(255,255,255,0.05)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",borderLeft:i>0?`1px solid rgba(${T.accentRgb},0.12)`:"none"}}>
             <div style={{fontSize:10,color:T.dim,fontWeight:600,letterSpacing:0.5,marginBottom:6}}>{s.icon} {s.label}</div>
             <div style={{fontSize:13,fontWeight:700,color:s.color||T.text,lineHeight:1.3,wordBreak:"break-word",textShadow:s.color?`0 0 8px ${s.color}40`:"none"}}>{s.value}</div>
           </div>)}
@@ -1794,7 +1795,7 @@ html{scroll-behavior:smooth}
         {/* Mode Toggle + Options — two-column layout */}
         <div style={{display:"grid",gridTemplateColumns:"130px 1fr",gap:16,alignItems:"start"}}>
           {/* Left: Mode Toggle (vertical) */}
-          <div style={{display:"flex",flexDirection:"column",gap:3,background:"rgba(255,255,255,0.03)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",borderRadius:10,padding:4,border:`1px solid rgba(${T.accentRgb},0.1)`}}>
+          <div style={{display:"flex",flexDirection:"column",gap:3,background:"rgba(255,255,255,0.06)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",borderRadius:12,padding:5,border:`1.5px solid rgba(${T.accentRgb},0.2)`,boxShadow:`0 4px 20px rgba(0,0,0,0.2),inset 0 1px 0 rgba(255,255,255,0.08)`}}>
             {["random","memorable"].map(m=><button key={m} onClick={()=>setPgMode(m)}
               className={`pg-mode-btn ${pgMode===m?"pg-mode-active":"pg-mode-inactive"}`}>
               {m==="random"?"Random":"Memorable"}
@@ -1854,7 +1855,7 @@ html{scroll-behavior:smooth}
         </div>
 
         {/* Quantum Resistant toggle */}
-        <div style={{marginTop:14,marginBottom:pgQuantumSafe?10:12,padding:"14px 18px",borderRadius:12,background:pgQuantumSafe?"rgba(16,185,129,0.06)":"rgba(255,255,255,0.03)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1.5px solid ${pgQuantumSafe?"rgba(16,185,129,0.5)":`rgba(${T.accentRgb},0.12)`}`,transition:"all 0.4s",boxShadow:pgQuantumSafe?"0 0 20px rgba(16,185,129,0.15),0 0 40px rgba(16,185,129,0.06),inset 0 0 20px rgba(16,185,129,0.04)":`0 2px 12px rgba(0,0,0,0.1),inset 0 1px 0 rgba(255,255,255,0.04)`,animation:pgQuantumSafe?"qrPulse 3s ease-in-out infinite":"none"}}>
+        <div style={{marginTop:14,marginBottom:pgQuantumSafe?10:12,padding:"14px 18px",borderRadius:14,background:pgQuantumSafe?"rgba(16,185,129,0.08)":"rgba(255,255,255,0.05)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1.5px solid ${pgQuantumSafe?"rgba(16,185,129,0.6)":`rgba(${T.accentRgb},0.2)`}`,transition:"all 0.4s",boxShadow:pgQuantumSafe?"0 0 25px rgba(16,185,129,0.2),0 0 50px rgba(16,185,129,0.08),inset 0 0 25px rgba(16,185,129,0.06)":`0 4px 16px rgba(0,0,0,0.15),inset 0 1px 0 rgba(255,255,255,0.06)`,animation:pgQuantumSafe?"qrPulse 3s ease-in-out infinite":"none"}}>
           <label style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer"}}>
             <div onClick={()=>setPgQuantumSafe(!pgQuantumSafe)} style={{width:22,height:22,borderRadius:5,border:`2px solid ${pgQuantumSafe?"#10b981":T.dim+"60"}`,background:pgQuantumSafe?"rgba(16,185,129,0.3)":"transparent",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.3s",cursor:"pointer",flexShrink:0,boxShadow:pgQuantumSafe?"0 0 8px rgba(16,185,129,0.4),0 0 16px rgba(16,185,129,0.2)":"none"}}>
               {pgQuantumSafe&&<span style={{color:"#10b981",fontSize:13,fontWeight:700,textShadow:"0 0 6px rgba(16,185,129,0.6)"}}>✓</span>}
@@ -2129,12 +2130,18 @@ html{scroll-behavior:smooth}
         </nav>
         <div style={{position:"relative",zIndex:1,maxWidth:800,margin:"0 auto",padding:"100px 24px 60px"}}>
           {infoPage==="password-generator"&&<>
-            <div style={{position:"absolute",width:400,height:400,borderRadius:"50%",background:`radial-gradient(circle,rgba(${T.accentRgb},0.15) 0%,transparent 70%)`,filter:"blur(80px)",top:"5%",left:"-15%",pointerEvents:"none",animation:"ldOrb1 20s ease-in-out infinite"}}/>
-            <div style={{position:"absolute",width:350,height:350,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.12) 0%,transparent 70%)",filter:"blur(60px)",bottom:"10%",right:"-10%",pointerEvents:"none",animation:"ldOrb2 25s ease-in-out infinite"}}/>
-            <div style={{position:"absolute",width:200,height:200,borderRadius:"50%",background:`radial-gradient(circle,rgba(${T.accentRgb},0.1) 0%,transparent 70%)`,filter:"blur(50px)",top:"40%",left:"50%",transform:"translateX(-50%)",pointerEvents:"none",animation:"pgGlowPulse 4s ease-in-out infinite"}}/>
+            <div style={{position:"absolute",width:600,height:600,borderRadius:"50%",background:`radial-gradient(circle,rgba(${T.accentRgb},0.25) 0%,rgba(${T.accentRgb},0.08) 40%,transparent 70%)`,filter:"blur(60px)",top:"-5%",left:"-20%",pointerEvents:"none",animation:"ldOrb1 20s ease-in-out infinite"}}/>
+            <div style={{position:"absolute",width:500,height:500,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.22) 0%,rgba(139,92,246,0.06) 40%,transparent 70%)",filter:"blur(50px)",bottom:"5%",right:"-15%",pointerEvents:"none",animation:"ldOrb2 25s ease-in-out infinite"}}/>
+            <div style={{position:"absolute",width:350,height:350,borderRadius:"50%",background:`radial-gradient(circle,rgba(${T.accentRgb},0.18) 0%,transparent 60%)`,filter:"blur(40px)",top:"35%",left:"50%",transform:"translateX(-50%)",pointerEvents:"none",animation:"pgGlowPulse 4s ease-in-out infinite"}}/>
+            <div style={{position:"absolute",width:250,height:250,borderRadius:"50%",background:"radial-gradient(circle,rgba(236,72,153,0.12) 0%,transparent 70%)",filter:"blur(45px)",top:"15%",right:"5%",pointerEvents:"none",animation:"pgGlowPulse 6s ease-in-out infinite 2s"}}/>
           </>}
-          <div style={{...(infoPage==="password-generator"?{background:"rgba(255,255,255,0.035)",backdropFilter:"blur(28px)",WebkitBackdropFilter:"blur(28px)",border:`1px solid rgba(${T.accentRgb},0.18)`,borderRadius:22,boxShadow:`0 8px 48px rgba(0,0,0,0.3),0 0 80px rgba(${T.accentRgb},0.05),inset 0 1px 0 rgba(255,255,255,0.07),inset 0 -1px 0 rgba(255,255,255,0.02)`}:infoGlass),padding:"48px 40px",position:"relative",overflow:"hidden"}}>
-            {infoPage==="password-generator"&&<div style={{position:"absolute",top:0,left:0,right:0,height:1,background:`linear-gradient(90deg,transparent,rgba(${T.accentRgb},0.3),transparent)`,pointerEvents:"none"}}/>}
+          <div style={{...(infoPage==="password-generator"?{background:"rgba(255,255,255,0.05)",backdropFilter:"blur(32px)",WebkitBackdropFilter:"blur(32px)",border:`1.5px solid rgba(${T.accentRgb},0.3)`,borderRadius:24,boxShadow:`0 12px 60px rgba(0,0,0,0.4),0 0 100px rgba(${T.accentRgb},0.08),0 0 40px rgba(${T.accentRgb},0.04),inset 0 1px 0 rgba(255,255,255,0.1),inset 0 -1px 0 rgba(255,255,255,0.03)`,animation:"pgBorderGlow 4s ease-in-out infinite"}:infoGlass),padding:"48px 40px",position:"relative",overflow:"hidden"}}>
+            {infoPage==="password-generator"&&<>
+              <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:`linear-gradient(90deg,transparent 10%,rgba(${T.accentRgb},0.5) 50%,transparent 90%)`,pointerEvents:"none"}}/>
+              <div style={{position:"absolute",bottom:0,left:0,right:0,height:1,background:`linear-gradient(90deg,transparent 20%,rgba(139,92,246,0.2) 50%,transparent 80%)`,pointerEvents:"none"}}/>
+              <div style={{position:"absolute",top:0,left:0,bottom:0,width:1,background:`linear-gradient(180deg,rgba(${T.accentRgb},0.4),transparent 30%,transparent 70%,rgba(139,92,246,0.15))`,pointerEvents:"none"}}/>
+              <div style={{position:"absolute",top:0,right:0,bottom:0,width:1,background:`linear-gradient(180deg,rgba(${T.accentRgb},0.4),transparent 30%,transparent 70%,rgba(139,92,246,0.15))`,pointerEvents:"none"}}/>
+            </>}
             {infoPages[infoPage]}
           </div>
           {/* Floating neon side cards */}
@@ -2142,7 +2149,7 @@ html{scroll-behavior:smooth}
             <div style={{position:"absolute",left:-260,top:130,width:245,height:190,pointerEvents:"none",animation:"neoFloat1 6s ease-in-out infinite",zIndex:2}}>
               <div style={{width:"100%",height:"100%",borderRadius:6,padding:"18px 18px",border:"2px solid rgba(16,185,129,0.8)",background:"rgba(16,185,129,0.1)",boxShadow:"0 0 15px rgba(16,185,129,0.35),0 0 30px rgba(16,185,129,0.18),inset 0 0 15px rgba(16,185,129,0.08)",transform:"rotate(-8deg)",display:"flex",flexDirection:"column",overflow:"hidden"}}>
                 <div style={{fontSize:17,fontWeight:900,color:"#10b981",marginBottom:8,fontFamily:"monospace",letterSpacing:1}}>⚛️ Quantum-Safe</div>
-                <div style={{fontSize:13.5,color:"rgba(255,255,255,0.88)",lineHeight:1.65,fontFamily:"monospace",flex:1,overflow:"hidden"}}>Grover-aware effective{"\n"}bits calculation —{"\n"}models real quantum{"\n"}attack cost, not just{"\n"}classical brute-force</div>
+                <div style={{fontSize:13.5,color:"rgba(255,255,255,0.88)",lineHeight:1.65,fontFamily:"monospace",flex:1,overflow:"hidden"}}>Only password genrator with Grover-aware effective{"\n"}bits calculation —{"\n"}models real quantum{"\n"}attack cost, not just{"\n"}classical brute-force</div>
               </div>
             </div>
             <div style={{position:"absolute",right:-255,top:310,width:240,height:180,pointerEvents:"none",animation:"neoFloat2 7s ease-in-out infinite 1s",zIndex:2}}>
