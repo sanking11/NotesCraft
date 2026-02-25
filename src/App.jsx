@@ -1651,7 +1651,7 @@ input:focus,textarea:focus{border-color:rgba(${T.accentRgb},0.4)!important;box-s
 html{scroll-behavior:smooth}
 @keyframes qrPulse{0%,100%{box-shadow:0 0 20px rgba(16,185,129,0.15),0 0 40px rgba(16,185,129,0.06),inset 0 0 20px rgba(16,185,129,0.04)}50%{box-shadow:0 0 25px rgba(16,185,129,0.25),0 0 50px rgba(16,185,129,0.1),inset 0 0 25px rgba(16,185,129,0.06)}}
 @keyframes pgGlowPulse{0%,100%{opacity:0.5}50%{opacity:1}}
-@keyframes pgStripeMove{0%{background-position:0 0}100%{background-position:56px 56px}}
+@keyframes pgStripeMove{0%{background-position:0 0}100%{background-position:56px -56px}}
 @keyframes pgBorderGlow{0%,100%{border-color:rgba(${T.accentRgb},0.3)}50%{border-color:rgba(${T.accentRgb},0.5)}}
 @keyframes qmBorderGlow{0%,100%{border-color:rgba(16,185,129,0.5);box-shadow:0 12px 60px rgba(0,0,0,0.4),0 0 80px rgba(16,185,129,0.15),0 0 150px rgba(16,185,129,0.08),inset 0 0 50px rgba(16,185,129,0.05)}50%{border-color:rgba(16,185,129,0.8);box-shadow:0 12px 60px rgba(0,0,0,0.4),0 0 100px rgba(16,185,129,0.25),0 0 200px rgba(16,185,129,0.12),inset 0 0 60px rgba(16,185,129,0.08)}}
 @keyframes qmCornerPulse{0%,100%{opacity:0.7;box-shadow:0 0 10px rgba(16,185,129,0.4)}50%{opacity:1;box-shadow:0 0 20px rgba(16,185,129,0.7),0 0 40px rgba(16,185,129,0.3)}}
@@ -2158,8 +2158,6 @@ html{scroll-behavior:smooth}
               <div style={{position:"absolute",top:0,right:0,bottom:0,width:1,background:`linear-gradient(180deg,rgba(${T.accentRgb},0.4),transparent 30%,transparent 70%,rgba(139,92,246,0.15))`,pointerEvents:"none"}}/>
             </>}
             {infoPage==="password-generator"&&pgQuantumSafe&&<>
-              {/* Diagonal stripes overlay */}
-              <div style={{position:"absolute",inset:0,background:"repeating-linear-gradient(45deg,transparent,transparent 18px,rgba(16,185,129,0.04) 18px,rgba(16,185,129,0.04) 36px)",pointerEvents:"none",borderRadius:22}}/>
               {/* Corner brackets — animated + glowing */}
               <div style={{position:"absolute",top:14,left:14,width:32,height:32,borderTop:"3px solid rgba(16,185,129,0.9)",borderLeft:"3px solid rgba(16,185,129,0.9)",borderRadius:"4px 0 0 0",pointerEvents:"none",animation:"qmCornerPulse 2s ease-in-out infinite"}}/>
               <div style={{position:"absolute",top:14,right:14,width:32,height:32,borderTop:"3px solid rgba(16,185,129,0.9)",borderRight:"3px solid rgba(16,185,129,0.9)",borderRadius:"0 4px 0 0",pointerEvents:"none",animation:"qmCornerPulse 2s ease-in-out infinite 0.5s"}}/>
