@@ -1649,7 +1649,20 @@ input:focus,textarea:focus{border-color:rgba(${T.accentRgb},0.4)!important;box-s
 .ld-particle:nth-child(7){left:78%;width:3px;height:3px;animation-duration:8s;animation-delay:1s;opacity:0.4}
 .ld-particle:nth-child(8){left:90%;width:4px;height:4px;animation-duration:6s;animation-delay:2.5s;opacity:0.5}
 html{scroll-behavior:smooth}
-@keyframes qrPulse{0%,100%{box-shadow:0 0 20px rgba(16,185,129,0.15),0 0 40px rgba(16,185,129,0.06),inset 0 0 20px rgba(16,185,129,0.04)}50%{box-shadow:0 0 25px rgba(16,185,129,0.25),0 0 50px rgba(16,185,129,0.1),inset 0 0 25px rgba(16,185,129,0.06)}}`;
+@keyframes qrPulse{0%,100%{box-shadow:0 0 20px rgba(16,185,129,0.15),0 0 40px rgba(16,185,129,0.06),inset 0 0 20px rgba(16,185,129,0.04)}50%{box-shadow:0 0 25px rgba(16,185,129,0.25),0 0 50px rgba(16,185,129,0.1),inset 0 0 25px rgba(16,185,129,0.06)}}
+@keyframes pgGlowPulse{0%,100%{opacity:0.6}50%{opacity:1}}
+.pg-slider{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;background:linear-gradient(90deg,rgba(${T.accentRgb},0.15),rgba(${T.accentRgb},0.4));outline:none;cursor:pointer;position:relative}
+.pg-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,${T.accent},${T.accent2||T.accent});box-shadow:0 0 12px rgba(${T.accentRgb},0.6),0 0 24px rgba(${T.accentRgb},0.3);border:2px solid rgba(255,255,255,0.3);cursor:pointer;transition:box-shadow 0.2s}
+.pg-slider::-webkit-slider-thumb:hover{box-shadow:0 0 18px rgba(${T.accentRgb},0.8),0 0 36px rgba(${T.accentRgb},0.4)}
+.pg-slider::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,${T.accent},${T.accent2||T.accent});box-shadow:0 0 12px rgba(${T.accentRgb},0.6),0 0 24px rgba(${T.accentRgb},0.3);border:2px solid rgba(255,255,255,0.3);cursor:pointer}
+.pg-slider::-moz-range-track{height:6px;border-radius:3px;background:linear-gradient(90deg,rgba(${T.accentRgb},0.15),rgba(${T.accentRgb},0.4))}
+.pg-chk{width:18px;height:18px;border-radius:4px;display:flex;align-items:center;justify-content:center;transition:all 0.3s;cursor:pointer;flex-shrink:0}
+.pg-chk-on{background:rgba(${T.accentRgb},0.25);border:2px solid ${T.accent};box-shadow:0 0 8px rgba(${T.accentRgb},0.4),inset 0 0 6px rgba(${T.accentRgb},0.15)}
+.pg-chk-off{background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.15)}
+.pg-mode-btn{padding:10px 0;border-radius:6px;border:none;font-size:12px;cursor:pointer;font-family:inherit;transition:all 0.3s;letter-spacing:0.5px;position:relative;overflow:hidden}
+.pg-mode-active{background:rgba(${T.accentRgb},0.15);color:${T.accent};font-weight:700;box-shadow:0 0 12px rgba(${T.accentRgb},0.2),inset 0 0 8px rgba(${T.accentRgb},0.08);border:1px solid rgba(${T.accentRgb},0.3)}
+.pg-mode-inactive{background:transparent;color:${T.dim};font-weight:500;border:1px solid transparent}
+.pg-mode-inactive:hover{background:rgba(${T.accentRgb},0.06);color:rgba(${T.accentRgb},0.8)}`;
 
   const inp={background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.5)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid rgba(${T.accentRgb},0.15)`,borderRadius:10,color:T.text,fontSize:14,fontFamily:`${F.body},sans-serif`,outline:"none",boxSizing:"border-box",transition:"all 0.3s",boxShadow:`0 2px 10px rgba(0,0,0,0.1), inset 0 0 10px rgba(${T.accentRgb},0.02)`};
   const glass={background:T.dark?"rgba(255,255,255,0.03)":"rgba(255,255,255,0.4)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid rgba(${T.accentRgb},0.12)`,boxShadow:`0 8px 32px rgba(0,0,0,0.15), inset 0 0 0 1px rgba(255,255,255,${T.dark?0.03:0.2})`};
@@ -1712,30 +1725,30 @@ html{scroll-behavior:smooth}
         <p style={infoP}>We reserve the right to update these terms at any time. Continued use of NotesCraft after changes constitutes acceptance of the updated terms.</p>
       </>,
       "password-generator":<>
-        <h1 style={infoH}>Password Generator</h1>
-        <p style={infoP}>Generate strong, unique passwords using cryptographically secure randomness.</p>
+        <h1 style={{...infoH,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",textShadow:"none"}}>Password Generator</h1>
+        <p style={{...infoP,color:"rgba(176,190,201,0.8)"}}>Generate strong, unique passwords using cryptographically secure randomness.</p>
 
         {/* Password Display */}
-        <div style={{background:T.dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.04)",border:`1px solid ${pgScrambling?T.accent:T.bdr}`,borderRadius:12,padding:"20px 24px",marginBottom:20,position:"relative",transition:"border-color 0.3s",boxShadow:pgScrambling?`0 0 15px rgba(${T.accentRgb},0.15)`:"none"}}>
-          <div style={{fontSize:(pgDisplay||pgResult).length>30?14:18,fontFamily:"monospace",fontWeight:600,color:pgScrambling?T.accent:T.text,wordBreak:"break-all",lineHeight:1.6,letterSpacing:0.5,minHeight:28,paddingRight:40,transition:"color 0.2s",textShadow:pgScrambling?`0 0 8px rgba(${T.accentRgb},0.4)`:"none"}}>{pgDisplay||pgResult}</div>
+        <div style={{background:"rgba(255,255,255,0.03)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:`1.5px solid ${pgScrambling?T.accent:`rgba(${T.accentRgb},0.25)`}`,borderRadius:14,padding:"22px 26px",marginBottom:20,position:"relative",transition:"all 0.4s",boxShadow:`0 4px 24px rgba(0,0,0,0.2),0 0 ${pgScrambling?30:15}px rgba(${T.accentRgb},${pgScrambling?0.25:0.08}),inset 0 1px 0 rgba(255,255,255,0.06)`}}>
+          <div style={{fontSize:(pgDisplay||pgResult).length>30?14:18,fontFamily:"monospace",fontWeight:600,color:pgScrambling?T.accent:T.text,wordBreak:"break-all",lineHeight:1.6,letterSpacing:0.5,minHeight:28,paddingRight:44,transition:"color 0.2s",textShadow:pgScrambling?`0 0 10px rgba(${T.accentRgb},0.5)`:"none"}}>{pgDisplay||pgResult}</div>
           <button onClick={e=>{const btn=e.currentTarget;btn.style.animation="pgSpin 0.4s ease-out";setTimeout(()=>{btn.style.animation=""},400);const cw=pgUseCustom?pgCustomWords:"";if(cw){const err=validateCustomWords(cw);setPgCustomErr(err);if(err)return}else{setPgCustomErr("")}const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep,cw);setPgResult(pw);setPgStrength(calcPwStrength(pw));setPgCopied(false)}}
-            style={{position:"absolute",top:12,right:12,width:38,height:38,borderRadius:"50%",background:`linear-gradient(135deg,rgba(${T.accentRgb},0.2),rgba(${T.accentRgb},0.1))`,border:`2px solid rgba(${T.accentRgb},0.4)`,color:T.accent,fontSize:20,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",boxShadow:`0 0 12px rgba(${T.accentRgb},0.2)`}} title="Regenerate"
-            onMouseEnter={e=>{e.currentTarget.style.boxShadow=`0 0 20px rgba(${T.accentRgb},0.5)`;e.currentTarget.style.transform="scale(1.1)"}}
-            onMouseLeave={e=>{e.currentTarget.style.boxShadow=`0 0 12px rgba(${T.accentRgb},0.2)`;e.currentTarget.style.transform="scale(1)"}}>&#x21bb;</button>
+            style={{position:"absolute",top:14,right:14,width:40,height:40,borderRadius:"50%",background:`linear-gradient(135deg,rgba(${T.accentRgb},0.2),rgba(${T.accentRgb},0.08))`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,color:T.accent,fontSize:20,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.3s",boxShadow:`0 0 14px rgba(${T.accentRgb},0.25),inset 0 0 8px rgba(${T.accentRgb},0.1)`}} title="Regenerate"
+            onMouseEnter={e=>{e.currentTarget.style.boxShadow=`0 0 24px rgba(${T.accentRgb},0.6),inset 0 0 12px rgba(${T.accentRgb},0.15)`;e.currentTarget.style.transform="scale(1.12)"}}
+            onMouseLeave={e=>{e.currentTarget.style.boxShadow=`0 0 14px rgba(${T.accentRgb},0.25),inset 0 0 8px rgba(${T.accentRgb},0.1)`;e.currentTarget.style.transform="scale(1)"}}>&#x21bb;</button>
         </div>
 
         {/* Copy + Download Row */}
         <div style={{display:"flex",gap:12,marginBottom:16}}>
           <button onClick={e=>{const btn=e.currentTarget;btn.style.animation="pgCopySuccess 0.3s ease-out";setTimeout(()=>{btn.style.animation=""},300);navigator.clipboard.writeText(pgResult).then(()=>{setPgCopied(true);setTimeout(()=>setPgCopied(false),2000)})}}
-            style={{flex:2,padding:"12px 0",background:pgCopied?T.ok:`linear-gradient(135deg,${T.accent},${T.accent2})`,border:"none",borderRadius:10,color:"#fff",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:1.5,transition:"all 0.3s",boxShadow:pgCopied?`0 0 25px ${T.ok}40`:`0 4px 20px rgba(${T.accentRgb},0.35)`,backgroundSize:"200% auto"}}
-            onMouseEnter={e=>{if(!pgCopied){e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow=`0 6px 25px rgba(${T.accentRgb},0.5)`}}}
-            onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow=pgCopied?`0 0 25px ${T.ok}40`:`0 4px 20px rgba(${T.accentRgb},0.35)`}}>
+            style={{flex:2,padding:"13px 0",background:pgCopied?T.ok:`linear-gradient(135deg,${T.accent},${T.accent2})`,border:"none",borderRadius:12,color:"#fff",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:1.5,transition:"all 0.3s",boxShadow:pgCopied?`0 0 25px ${T.ok}40`:`0 4px 24px rgba(${T.accentRgb},0.35),0 0 40px rgba(${T.accentRgb},0.12)`,backgroundSize:"200% auto",position:"relative",overflow:"hidden"}}
+            onMouseEnter={e=>{if(!pgCopied){e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow=`0 6px 30px rgba(${T.accentRgb},0.55),0 0 50px rgba(${T.accentRgb},0.2)`}}}
+            onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow=pgCopied?`0 0 25px ${T.ok}40`:`0 4px 24px rgba(${T.accentRgb},0.35),0 0 40px rgba(${T.accentRgb},0.12)`}}>
             {pgCopied?"✓ Copied!":"Copy Password"}
           </button>
           <button onClick={()=>{if(!pgResult)return;const blob=new Blob([pgResult],{type:"text/plain"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="password.txt";document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url)}}
-            style={{flex:1,padding:"12px 0",background:`rgba(${T.accentRgb},${T.dark?0.08:0.15})`,border:`1px solid rgba(${T.accentRgb},${T.dark?0.2:0.35})`,borderRadius:10,color:T.dark?T.accent:T.text,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5,transition:"all 0.3s"}}
-            onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.background=`rgba(${T.accentRgb},${T.dark?0.15:0.25})`}}
-            onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.background=`rgba(${T.accentRgb},${T.dark?0.08:0.15})`}}>
+            style={{flex:1,padding:"13px 0",background:"rgba(255,255,255,0.04)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1.5px solid rgba(${T.accentRgb},0.25)`,borderRadius:12,color:T.accent,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5,transition:"all 0.3s",boxShadow:`0 2px 12px rgba(0,0,0,0.15),inset 0 1px 0 rgba(255,255,255,0.05)`}}
+            onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.background="rgba(255,255,255,0.08)";e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.5)`;e.currentTarget.style.boxShadow=`0 4px 20px rgba(${T.accentRgb},0.2),inset 0 1px 0 rgba(255,255,255,0.08)`}}
+            onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.background="rgba(255,255,255,0.04)";e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.25)`;e.currentTarget.style.boxShadow=`0 2px 12px rgba(0,0,0,0.15),inset 0 1px 0 rgba(255,255,255,0.05)`}}>
             ↓ Download .txt
           </button>
         </div>
@@ -1749,8 +1762,8 @@ html{scroll-behavior:smooth}
             </div>
             <span style={{fontSize:12,fontWeight:700,color:pgStrength.color}}>{pgStrength.label}</span>
           </div>
-          <div style={{height:6,borderRadius:3,background:T.dark?"rgba(255,255,255,0.08)":"rgba(0,0,0,0.08)",overflow:"hidden",marginBottom:6}}>
-            <div style={{height:"100%",borderRadius:3,background:pgStrength.color,width:pgStrength.percent+"%",transition:"width 0.4s ease"}}/>
+          <div style={{height:7,borderRadius:4,background:"rgba(255,255,255,0.06)",overflow:"hidden",marginBottom:6,position:"relative"}}>
+            <div style={{height:"100%",borderRadius:4,background:`linear-gradient(90deg,${pgStrength.color},${pgStrength.color}dd)`,width:pgStrength.percent+"%",transition:"width 0.4s ease",boxShadow:`0 0 12px ${pgStrength.color}50,0 0 4px ${pgStrength.color}30`}}/>
           </div>
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:3}}>
             <span style={{fontSize:10,color:T.dim}}>{pgStrength.bits} bits of entropy · Effective Bits: <span style={{fontWeight:600}}>{pgStrength.qBits}</span></span>
@@ -1766,24 +1779,24 @@ html{scroll-behavior:smooth}
         </div>}
 
         {/* Quantum Resistant details card */}
-        {pgQuantumSafe&&pgStrength&&<div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:1,marginBottom:16,borderRadius:10,overflow:"hidden",border:`1px solid ${T.bdr}`}}>
+        {pgQuantumSafe&&pgStrength&&<div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:2,marginBottom:16,borderRadius:12,overflow:"hidden",border:`1px solid rgba(${T.accentRgb},0.15)`}}>
           {[
             {label:"Length",value:pgResult.length+" chars",icon:"📏"},
             {label:"Entropy",value:pgStrength.bits+" bits",icon:"🎲"},
             {label:"Classical",value:pgStrength.time,icon:"🖥️",color:pgStrength.color},
             {label:"Quantum",value:pgStrength.qTime,icon:"⚛️",color:pgStrength.qColor}
-          ].map((s,i)=><div key={i} style={{padding:"14px 12px",background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.02)",borderLeft:i>0?`1px solid ${T.bdr}`:"none"}}>
+          ].map((s,i)=><div key={i} style={{padding:"14px 12px",background:"rgba(255,255,255,0.03)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",borderLeft:i>0?`1px solid rgba(${T.accentRgb},0.1)`:"none"}}>
             <div style={{fontSize:10,color:T.dim,fontWeight:600,letterSpacing:0.5,marginBottom:6}}>{s.icon} {s.label}</div>
-            <div style={{fontSize:13,fontWeight:700,color:s.color||T.text,lineHeight:1.3,wordBreak:"break-word"}}>{s.value}</div>
+            <div style={{fontSize:13,fontWeight:700,color:s.color||T.text,lineHeight:1.3,wordBreak:"break-word",textShadow:s.color?`0 0 8px ${s.color}40`:"none"}}>{s.value}</div>
           </div>)}
         </div>}
 
         {/* Mode Toggle + Options — two-column layout */}
         <div style={{display:"grid",gridTemplateColumns:"130px 1fr",gap:16,alignItems:"start"}}>
           {/* Left: Mode Toggle (vertical) */}
-          <div style={{display:"flex",flexDirection:"column",gap:0,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",borderRadius:8,padding:3}}>
+          <div style={{display:"flex",flexDirection:"column",gap:3,background:"rgba(255,255,255,0.03)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",borderRadius:10,padding:4,border:`1px solid rgba(${T.accentRgb},0.1)`}}>
             {["random","memorable"].map(m=><button key={m} onClick={()=>setPgMode(m)}
-              style={{padding:"10px 0",borderRadius:6,border:"none",background:pgMode===m?`rgba(${T.accentRgb},0.2)`:"transparent",color:pgMode===m?T.accent:(T.dark?T.dim:T.dim),fontSize:12,fontWeight:pgMode===m?700:500,cursor:"pointer",fontFamily:"inherit",transition:"all 0.2s"}}>
+              className={`pg-mode-btn ${pgMode===m?"pg-mode-active":"pg-mode-inactive"}`}>
               {m==="random"?"Random":"Memorable"}
             </button>)}
           </div>
@@ -1796,13 +1809,13 @@ html{scroll-behavior:smooth}
                   <span style={{fontSize:13,fontWeight:700,color:T.accent}}>{pgLen}</span>
                 </div>
                 <input type="range" min={pgQuantumSafe?65:8} max={256} value={pgLen} onChange={e=>setPgLen(+e.target.value)}
-                  style={{width:"100%",accentColor:T.accent,cursor:"pointer"}}/>
+                  className="pg-slider"/>
               </div>
-              <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
+              <div style={{display:"flex",flexWrap:"wrap",gap:10}}>
                 {[{label:"Uppercase",val:pgUpper,set:setPgUpper,lock:pgQuantumSafe},{label:"Lowercase",val:pgLower,set:setPgLower,lock:pgQuantumSafe},{label:"Digits",val:pgDigits,set:setPgDigits,lock:pgQuantumSafe},{label:"Symbols",val:pgSymbols,set:setPgSymbols,lock:pgQuantumSafe},{label:"No ambiguous",val:pgNoAmbig,set:setPgNoAmbig}].map((o,i)=>
-                  <label key={i} style={{display:"flex",alignItems:"center",gap:5,fontSize:11,color:o.lock&&o.val?T.accent:T.text,cursor:o.lock&&o.val?"not-allowed":"pointer",opacity:o.lock&&o.val?0.7:1}}>
-                    <div onClick={()=>{if(o.lock&&o.val)return;o.set(!o.val)}} style={{width:16,height:16,borderRadius:3,border:`2px solid ${o.val?T.accent:T.dim+"60"}`,background:o.val?`rgba(${T.accentRgb},0.2)`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",cursor:o.lock&&o.val?"not-allowed":"pointer",flexShrink:0}}>
-                      {o.val&&<span style={{color:T.accent,fontSize:10,fontWeight:700}}>{o.lock?"🔒":"✓"}</span>}
+                  <label key={i} style={{display:"flex",alignItems:"center",gap:6,fontSize:11,color:o.lock&&o.val?T.accent:T.text,cursor:o.lock&&o.val?"not-allowed":"pointer",opacity:o.lock&&o.val?0.8:1,letterSpacing:0.3}}>
+                    <div onClick={()=>{if(o.lock&&o.val)return;o.set(!o.val)}} className={`pg-chk ${o.val?"pg-chk-on":"pg-chk-off"}`} style={{cursor:o.lock&&o.val?"not-allowed":"pointer"}}>
+                      {o.val&&<span style={{color:T.accent,fontSize:10,fontWeight:700,textShadow:`0 0 6px rgba(${T.accentRgb},0.5)`}}>{o.lock?"🔒":"✓"}</span>}
                     </div>
                     {o.label}
                   </label>
@@ -1816,24 +1829,24 @@ html{scroll-behavior:smooth}
                   <span style={{fontSize:13,fontWeight:700,color:T.accent}}>{pgWords}</span>
                 </div>
                 <input type="range" min={pgQuantumSafe?10:3} max={pgQuantumSafe?20:6} value={pgWords} onChange={e=>setPgWords(+e.target.value)}
-                  style={{width:"100%",accentColor:T.accent,cursor:"pointer"}}/>
+                  className="pg-slider"/>
               </div>
               <div style={{display:"flex",gap:12,alignItems:"center",flexWrap:"wrap"}}>
                 {[{label:"Number",val:pgDigits,set:setPgDigits,lock:pgQuantumSafe},{label:"Symbol",val:pgSymbols,set:setPgSymbols,lock:pgQuantumSafe},{label:"Your Words",val:pgUseCustom,set:v=>{setPgUseCustom(v);if(!v){setPgCustomWords("");setPgCustomErr("")}}}].map((o,i)=>
-                  <label key={i} style={{display:"flex",alignItems:"center",gap:5,fontSize:11,color:o.lock&&o.val?T.accent:T.text,cursor:o.lock&&o.val?"not-allowed":"pointer",opacity:o.lock&&o.val?0.7:1}}>
-                    <div onClick={()=>{if(o.lock&&o.val)return;o.set(!o.val)}} style={{width:16,height:16,borderRadius:3,border:`2px solid ${o.val?T.accent:T.dim+"60"}`,background:o.val?`rgba(${T.accentRgb},0.2)`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",cursor:o.lock&&o.val?"not-allowed":"pointer",flexShrink:0}}>
-                      {o.val&&<span style={{color:T.accent,fontSize:10,fontWeight:700}}>{o.lock?"🔒":"✓"}</span>}
+                  <label key={i} style={{display:"flex",alignItems:"center",gap:6,fontSize:11,color:o.lock&&o.val?T.accent:T.text,cursor:o.lock&&o.val?"not-allowed":"pointer",opacity:o.lock&&o.val?0.8:1,letterSpacing:0.3}}>
+                    <div onClick={()=>{if(o.lock&&o.val)return;o.set(!o.val)}} className={`pg-chk ${o.val?"pg-chk-on":"pg-chk-off"}`} style={{cursor:o.lock&&o.val?"not-allowed":"pointer"}}>
+                      {o.val&&<span style={{color:T.accent,fontSize:10,fontWeight:700,textShadow:`0 0 6px rgba(${T.accentRgb},0.5)`}}>{o.lock?"🔒":"✓"}</span>}
                     </div>
                     {o.label}
                   </label>
                 )}
                 <select value={pgSep} onChange={e=>setPgSep(e.target.value)}
-                  style={{flex:1,padding:"7px 10px",borderRadius:6,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.04)",border:`1px solid ${T.bdr}`,color:T.text,fontSize:11,fontFamily:"inherit",outline:"none",cursor:"pointer",appearance:"auto"}}>
+                  style={{flex:1,padding:"7px 10px",borderRadius:8,background:"rgba(255,255,255,0.04)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid rgba(${T.accentRgb},0.15)`,color:T.text,fontSize:11,fontFamily:"inherit",outline:"none",cursor:"pointer",appearance:"auto",transition:"border-color 0.3s"}}>
                   {[{v:"hyphens",l:"Hyphens"},{v:"spaces",l:"Spaces"},{v:"periods",l:"Periods"},{v:"commas",l:"Commas"},{v:"underscores",l:"Underscores"},{v:"numbers",l:"Numbers"},{v:"numbersSymbols",l:"Num+Sym"}].map(o=><option key={o.v} value={o.v}>{o.l}</option>)}
                 </select>
               </div>
               {pgUseCustom&&<div>
-                <input type="text" value={pgCustomWords} onChange={e=>{setPgCustomWords(e.target.value);const err=validateCustomWords(e.target.value);setPgCustomErr(err)}} placeholder="e.g. sun moon star — separate with spaces or commas" style={{width:"100%",padding:"8px 10px",borderRadius:6,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.04)",border:`1.5px solid ${pgCustomErr?T.err||"#ef4444":T.bdr}`,color:T.text,fontSize:12,fontFamily:"inherit",outline:"none",boxSizing:"border-box",letterSpacing:0.3,transition:"border-color 0.2s"}} onFocus={e=>{if(!pgCustomErr)e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{if(!pgCustomErr)e.currentTarget.style.borderColor=T.bdr}}/>
+                <input type="text" value={pgCustomWords} onChange={e=>{setPgCustomWords(e.target.value);const err=validateCustomWords(e.target.value);setPgCustomErr(err)}} placeholder="e.g. sun moon star — separate with spaces or commas" style={{width:"100%",padding:"9px 12px",borderRadius:8,background:"rgba(255,255,255,0.04)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid ${pgCustomErr?T.err||"#ef4444":`rgba(${T.accentRgb},0.15)`}`,color:T.text,fontSize:12,fontFamily:"inherit",outline:"none",boxSizing:"border-box",letterSpacing:0.3,transition:"all 0.3s",boxShadow:`inset 0 1px 0 rgba(255,255,255,0.03)`}} onFocus={e=>{if(!pgCustomErr){e.currentTarget.style.borderColor=T.accent;e.currentTarget.style.boxShadow=`0 0 12px rgba(${T.accentRgb},0.15),inset 0 1px 0 rgba(255,255,255,0.03)`}}} onBlur={e=>{if(!pgCustomErr){e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.15)`;e.currentTarget.style.boxShadow=`inset 0 1px 0 rgba(255,255,255,0.03)`}}}/>
                 {pgCustomErr&&<p style={{fontSize:10,color:T.err||"#ef4444",margin:"4px 0 0",fontWeight:500}}>{pgCustomErr}</p>}
               </div>}
             </div>}
@@ -1841,7 +1854,7 @@ html{scroll-behavior:smooth}
         </div>
 
         {/* Quantum Resistant toggle */}
-        <div style={{marginTop:14,marginBottom:pgQuantumSafe?10:12,padding:"12px 16px",borderRadius:10,background:pgQuantumSafe?"rgba(16,185,129,0.06)":T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1.5px solid ${pgQuantumSafe?"rgba(16,185,129,0.5)":T.bdr}`,transition:"all 0.4s",boxShadow:pgQuantumSafe?"0 0 20px rgba(16,185,129,0.15),0 0 40px rgba(16,185,129,0.06),inset 0 0 20px rgba(16,185,129,0.04)":"none",animation:pgQuantumSafe?"qrPulse 3s ease-in-out infinite":"none"}}>
+        <div style={{marginTop:14,marginBottom:pgQuantumSafe?10:12,padding:"14px 18px",borderRadius:12,background:pgQuantumSafe?"rgba(16,185,129,0.06)":"rgba(255,255,255,0.03)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1.5px solid ${pgQuantumSafe?"rgba(16,185,129,0.5)":`rgba(${T.accentRgb},0.12)`}`,transition:"all 0.4s",boxShadow:pgQuantumSafe?"0 0 20px rgba(16,185,129,0.15),0 0 40px rgba(16,185,129,0.06),inset 0 0 20px rgba(16,185,129,0.04)":`0 2px 12px rgba(0,0,0,0.1),inset 0 1px 0 rgba(255,255,255,0.04)`,animation:pgQuantumSafe?"qrPulse 3s ease-in-out infinite":"none"}}>
           <label style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer"}}>
             <div onClick={()=>setPgQuantumSafe(!pgQuantumSafe)} style={{width:22,height:22,borderRadius:5,border:`2px solid ${pgQuantumSafe?"#10b981":T.dim+"60"}`,background:pgQuantumSafe?"rgba(16,185,129,0.3)":"transparent",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.3s",cursor:"pointer",flexShrink:0,boxShadow:pgQuantumSafe?"0 0 8px rgba(16,185,129,0.4),0 0 16px rgba(16,185,129,0.2)":"none"}}>
               {pgQuantumSafe&&<span style={{color:"#10b981",fontSize:13,fontWeight:700,textShadow:"0 0 6px rgba(16,185,129,0.6)"}}>✓</span>}
@@ -1850,7 +1863,7 @@ html{scroll-behavior:smooth}
             <span style={{fontSize:9,color:pgQuantumSafe?"rgba(16,185,129,0.6)":T.dim,marginLeft:"auto",transition:"color 0.3s"}}>(enforces min {pgMode==="random"?"65 chars + all charsets":"10 words"} for 128+ bit entropy)</span>
           </label>
         </div>
-        {pgQuantumSafe&&<div style={{marginBottom:12,padding:"12px 14px",borderRadius:8,background:T.dark?"rgba(245,158,11,0.06)":"rgba(245,158,11,0.08)",border:"1px solid rgba(245,158,11,0.2)",fontSize:10,lineHeight:1.7,color:T.dim}}>
+        {pgQuantumSafe&&<div style={{marginBottom:12,padding:"14px 16px",borderRadius:10,background:"rgba(245,158,11,0.05)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:"1px solid rgba(245,158,11,0.18)",fontSize:10,lineHeight:1.7,color:T.dim,boxShadow:"0 2px 12px rgba(0,0,0,0.1),inset 0 0 12px rgba(245,158,11,0.03)"}}>
           <p style={{margin:"0 0 8px"}}><span style={{color:"#f59e0b"}}>⚠️</span> <strong style={{color:T.text}}>Disclaimer:</strong> Quantum resistance estimates model Grover's search algorithm (O(√N) speedup) against symmetric key spaces at 10⁷ logical Grover iterations/sec — an optimistic projection for fault-tolerant quantum hardware. <strong style={{color:T.text}}>No cryptographically relevant quantum computer currently exists.</strong> These are forward-looking theoretical projections, not assessments of present-day risk.</p>
           <p style={{margin:0}}>Real-world quantum attack feasibility depends on logical qubit count, gate fidelity thresholds, quantum error correction overhead (surface codes), decoherence rates, and circuit depth limitations — variables that remain unsolved at scale. <strong style={{color:T.text}}>No guarantees are made regarding actual post-quantum security.</strong> This model is for entropy planning and threat modeling purposes only.</p>
         </div>}
@@ -2115,21 +2128,27 @@ html{scroll-behavior:smooth}
           <button onClick={()=>{if(blogArticle){setBlogArticle(null);window.scrollTo(0,0)}else{setInfoPage(null)}}} style={{background:`rgba(${T.accentRgb},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,borderRadius:8,padding:"8px 20px",color:T.dark?T.text:"#e2e8f0",fontSize:13,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1}}>{blogArticle?"← Blog":"← Back"}</button>
         </nav>
         <div style={{position:"relative",zIndex:1,maxWidth:800,margin:"0 auto",padding:"100px 24px 60px"}}>
-          <div style={{...infoGlass,padding:"48px 40px"}}>
+          {infoPage==="password-generator"&&<>
+            <div style={{position:"absolute",width:400,height:400,borderRadius:"50%",background:`radial-gradient(circle,rgba(${T.accentRgb},0.15) 0%,transparent 70%)`,filter:"blur(80px)",top:"5%",left:"-15%",pointerEvents:"none",animation:"ldOrb1 20s ease-in-out infinite"}}/>
+            <div style={{position:"absolute",width:350,height:350,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.12) 0%,transparent 70%)",filter:"blur(60px)",bottom:"10%",right:"-10%",pointerEvents:"none",animation:"ldOrb2 25s ease-in-out infinite"}}/>
+            <div style={{position:"absolute",width:200,height:200,borderRadius:"50%",background:`radial-gradient(circle,rgba(${T.accentRgb},0.1) 0%,transparent 70%)`,filter:"blur(50px)",top:"40%",left:"50%",transform:"translateX(-50%)",pointerEvents:"none",animation:"pgGlowPulse 4s ease-in-out infinite"}}/>
+          </>}
+          <div style={{...(infoPage==="password-generator"?{background:"rgba(255,255,255,0.035)",backdropFilter:"blur(28px)",WebkitBackdropFilter:"blur(28px)",border:`1px solid rgba(${T.accentRgb},0.18)`,borderRadius:22,boxShadow:`0 8px 48px rgba(0,0,0,0.3),0 0 80px rgba(${T.accentRgb},0.05),inset 0 1px 0 rgba(255,255,255,0.07),inset 0 -1px 0 rgba(255,255,255,0.02)`}:infoGlass),padding:"48px 40px",position:"relative",overflow:"hidden"}}>
+            {infoPage==="password-generator"&&<div style={{position:"absolute",top:0,left:0,right:0,height:1,background:`linear-gradient(90deg,transparent,rgba(${T.accentRgb},0.3),transparent)`,pointerEvents:"none"}}/>}
             {infoPages[infoPage]}
           </div>
           {/* Floating neon side cards */}
           {infoPage==="password-generator"&&<>
-            <div style={{position:"absolute",left:-210,top:140,width:195,height:150,pointerEvents:"none",animation:"neoFloat1 6s ease-in-out infinite",zIndex:2}}>
-              <div style={{width:"100%",height:"100%",borderRadius:4,padding:"12px 14px",border:"2px solid rgba(16,185,129,0.8)",background:"rgba(16,185,129,0.1)",boxShadow:"0 0 15px rgba(16,185,129,0.35),0 0 30px rgba(16,185,129,0.18),inset 0 0 15px rgba(16,185,129,0.08)",transform:"rotate(-8deg)",display:"flex",flexDirection:"column",overflow:"hidden"}}>
-                <div style={{fontSize:14,fontWeight:900,color:"#10b981",marginBottom:5,fontFamily:"monospace",letterSpacing:1}}>⚛️ Quantum-Safe</div>
-                <div style={{fontSize:12,color:"rgba(255,255,255,0.85)",lineHeight:1.6,fontFamily:"monospace",flex:1,overflow:"hidden"}}>Grover-aware effective{"\n"}bits calculation —{"\n"}models real quantum{"\n"}attack cost, not just{"\n"}classical brute-force</div>
+            <div style={{position:"absolute",left:-260,top:130,width:245,height:190,pointerEvents:"none",animation:"neoFloat1 6s ease-in-out infinite",zIndex:2}}>
+              <div style={{width:"100%",height:"100%",borderRadius:6,padding:"18px 18px",border:"2px solid rgba(16,185,129,0.8)",background:"rgba(16,185,129,0.1)",boxShadow:"0 0 15px rgba(16,185,129,0.35),0 0 30px rgba(16,185,129,0.18),inset 0 0 15px rgba(16,185,129,0.08)",transform:"rotate(-8deg)",display:"flex",flexDirection:"column",overflow:"hidden"}}>
+                <div style={{fontSize:17,fontWeight:900,color:"#10b981",marginBottom:8,fontFamily:"monospace",letterSpacing:1}}>⚛️ Quantum-Safe</div>
+                <div style={{fontSize:13.5,color:"rgba(255,255,255,0.88)",lineHeight:1.65,fontFamily:"monospace",flex:1,overflow:"hidden"}}>Grover-aware effective{"\n"}bits calculation —{"\n"}models real quantum{"\n"}attack cost, not just{"\n"}classical brute-force</div>
               </div>
             </div>
-            <div style={{position:"absolute",right:-205,top:320,width:190,height:140,pointerEvents:"none",animation:"neoFloat2 7s ease-in-out infinite 1s",zIndex:2}}>
-              <div style={{width:"100%",height:"100%",borderRadius:4,padding:"12px 14px",border:`2px solid rgba(${T.accentRgb},0.8)`,background:`rgba(${T.accentRgb},0.1)`,boxShadow:`0 0 15px rgba(${T.accentRgb},0.35),0 0 30px rgba(${T.accentRgb},0.18),inset 0 0 15px rgba(${T.accentRgb},0.08)`,transform:"rotate(6deg)",display:"flex",flexDirection:"column",overflow:"hidden"}}>
-                <div style={{fontSize:14,fontWeight:900,color:T.accent,marginBottom:5,fontFamily:"monospace",letterSpacing:1}}>🔑 256-Char Max</div>
-                <div style={{fontSize:12,color:"rgba(255,255,255,0.85)",lineHeight:1.6,fontFamily:"monospace",flex:1,overflow:"hidden"}}>Most generators cap{"\n"}at 64-128 chars.{"\n"}Only password genrator which will allow ultra-long{"\n"}passwords for max{"\n"}entropy & future-proof (MAX 256 chars)</div>
+            <div style={{position:"absolute",right:-255,top:310,width:240,height:180,pointerEvents:"none",animation:"neoFloat2 7s ease-in-out infinite 1s",zIndex:2}}>
+              <div style={{width:"100%",height:"100%",borderRadius:6,padding:"18px 18px",border:`2px solid rgba(${T.accentRgb},0.8)`,background:`rgba(${T.accentRgb},0.1)`,boxShadow:`0 0 15px rgba(${T.accentRgb},0.35),0 0 30px rgba(${T.accentRgb},0.18),inset 0 0 15px rgba(${T.accentRgb},0.08)`,transform:"rotate(6deg)",display:"flex",flexDirection:"column",overflow:"hidden"}}>
+                <div style={{fontSize:17,fontWeight:900,color:T.accent,marginBottom:8,fontFamily:"monospace",letterSpacing:1}}>🔑 256-Char Max</div>
+                <div style={{fontSize:13.5,color:"rgba(255,255,255,0.88)",lineHeight:1.65,fontFamily:"monospace",flex:1,overflow:"hidden"}}>Most generators cap{"\n"}at 64-128 chars.{"\n"}Only password generator{"\n"}allowing ultra-long{"\n"}passwords for max{"\n"}entropy & future-proof</div>
               </div>
             </div>
           </>}
