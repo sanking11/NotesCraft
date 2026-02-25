@@ -1652,6 +1652,8 @@ html{scroll-behavior:smooth}
 @keyframes qrPulse{0%,100%{box-shadow:0 0 20px rgba(16,185,129,0.15),0 0 40px rgba(16,185,129,0.06),inset 0 0 20px rgba(16,185,129,0.04)}50%{box-shadow:0 0 25px rgba(16,185,129,0.25),0 0 50px rgba(16,185,129,0.1),inset 0 0 25px rgba(16,185,129,0.06)}}
 @keyframes pgGlowPulse{0%,100%{opacity:0.5}50%{opacity:1}}
 @keyframes pgBorderGlow{0%,100%{border-color:rgba(${T.accentRgb},0.3)}50%{border-color:rgba(${T.accentRgb},0.5)}}
+@keyframes qmBorderGlow{0%,100%{border-color:rgba(16,185,129,0.35);box-shadow:0 12px 60px rgba(0,0,0,0.4),0 0 80px rgba(16,185,129,0.1),inset 0 0 30px rgba(16,185,129,0.04)}50%{border-color:rgba(16,185,129,0.6);box-shadow:0 12px 60px rgba(0,0,0,0.4),0 0 100px rgba(16,185,129,0.18),inset 0 0 40px rgba(16,185,129,0.06)}}
+@keyframes qmScan{0%{top:-2px}100%{top:calc(100% - 2px)}}
 .pg-slider{-webkit-appearance:none!important;appearance:none!important;width:100%;height:10px;border-radius:5px;background:linear-gradient(90deg,rgba(${T.accentRgb},0.2),${T.accent}80)!important;outline:none;cursor:pointer;position:relative;box-shadow:0 0 12px rgba(${T.accentRgb},0.3),inset 0 1px 2px rgba(0,0,0,0.3)}
 .pg-slider::-webkit-slider-thumb{-webkit-appearance:none!important;appearance:none!important;width:24px;height:24px;border-radius:50%;background:${T.accent};box-shadow:0 0 16px rgba(${T.accentRgb},0.8),0 0 32px rgba(${T.accentRgb},0.4),0 0 48px rgba(${T.accentRgb},0.2);border:3px solid rgba(255,255,255,0.5);cursor:pointer;transition:all 0.2s;position:relative;z-index:2}
 .pg-slider::-webkit-slider-thumb:hover{transform:scale(1.15);box-shadow:0 0 24px rgba(${T.accentRgb},1),0 0 48px rgba(${T.accentRgb},0.5),0 0 64px rgba(${T.accentRgb},0.25)}
@@ -2130,17 +2132,31 @@ html{scroll-behavior:smooth}
         </nav>
         <div style={{position:"relative",zIndex:1,maxWidth:800,margin:"0 auto",padding:"100px 24px 60px"}}>
           {infoPage==="password-generator"&&<>
-            <div style={{position:"absolute",width:600,height:600,borderRadius:"50%",background:`radial-gradient(circle,rgba(${T.accentRgb},0.25) 0%,rgba(${T.accentRgb},0.08) 40%,transparent 70%)`,filter:"blur(60px)",top:"-5%",left:"-20%",pointerEvents:"none",animation:"ldOrb1 20s ease-in-out infinite"}}/>
-            <div style={{position:"absolute",width:500,height:500,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.22) 0%,rgba(139,92,246,0.06) 40%,transparent 70%)",filter:"blur(50px)",bottom:"5%",right:"-15%",pointerEvents:"none",animation:"ldOrb2 25s ease-in-out infinite"}}/>
-            <div style={{position:"absolute",width:350,height:350,borderRadius:"50%",background:`radial-gradient(circle,rgba(${T.accentRgb},0.18) 0%,transparent 60%)`,filter:"blur(40px)",top:"35%",left:"50%",transform:"translateX(-50%)",pointerEvents:"none",animation:"pgGlowPulse 4s ease-in-out infinite"}}/>
-            <div style={{position:"absolute",width:250,height:250,borderRadius:"50%",background:"radial-gradient(circle,rgba(236,72,153,0.12) 0%,transparent 70%)",filter:"blur(45px)",top:"15%",right:"5%",pointerEvents:"none",animation:"pgGlowPulse 6s ease-in-out infinite 2s"}}/>
+            <div style={{position:"absolute",width:600,height:600,borderRadius:"50%",background:pgQuantumSafe?"radial-gradient(circle,rgba(16,185,129,0.25) 0%,rgba(16,185,129,0.08) 40%,transparent 70%)":`radial-gradient(circle,rgba(${T.accentRgb},0.25) 0%,rgba(${T.accentRgb},0.08) 40%,transparent 70%)`,filter:"blur(60px)",top:"-5%",left:"-20%",pointerEvents:"none",animation:"ldOrb1 20s ease-in-out infinite",transition:"background 0.8s"}}/>
+            <div style={{position:"absolute",width:500,height:500,borderRadius:"50%",background:pgQuantumSafe?"radial-gradient(circle,rgba(16,185,129,0.2) 0%,rgba(16,185,129,0.05) 40%,transparent 70%)":"radial-gradient(circle,rgba(139,92,246,0.22) 0%,rgba(139,92,246,0.06) 40%,transparent 70%)",filter:"blur(50px)",bottom:"5%",right:"-15%",pointerEvents:"none",animation:"ldOrb2 25s ease-in-out infinite",transition:"background 0.8s"}}/>
+            <div style={{position:"absolute",width:350,height:350,borderRadius:"50%",background:pgQuantumSafe?"radial-gradient(circle,rgba(16,185,129,0.18) 0%,transparent 60%)":`radial-gradient(circle,rgba(${T.accentRgb},0.18) 0%,transparent 60%)`,filter:"blur(40px)",top:"35%",left:"50%",transform:"translateX(-50%)",pointerEvents:"none",animation:"pgGlowPulse 4s ease-in-out infinite",transition:"background 0.8s"}}/>
+            <div style={{position:"absolute",width:250,height:250,borderRadius:"50%",background:pgQuantumSafe?"radial-gradient(circle,rgba(16,185,129,0.15) 0%,transparent 70%)":"radial-gradient(circle,rgba(236,72,153,0.12) 0%,transparent 70%)",filter:"blur(45px)",top:"15%",right:"5%",pointerEvents:"none",animation:"pgGlowPulse 6s ease-in-out infinite 2s",transition:"background 0.8s"}}/>
           </>}
-          <div style={{...(infoPage==="password-generator"?{background:"rgba(255,255,255,0.05)",backdropFilter:"blur(32px)",WebkitBackdropFilter:"blur(32px)",border:`1.5px solid rgba(${T.accentRgb},0.3)`,borderRadius:24,boxShadow:`0 12px 60px rgba(0,0,0,0.4),0 0 100px rgba(${T.accentRgb},0.08),0 0 40px rgba(${T.accentRgb},0.04),inset 0 1px 0 rgba(255,255,255,0.1),inset 0 -1px 0 rgba(255,255,255,0.03)`,animation:"pgBorderGlow 4s ease-in-out infinite"}:infoGlass),padding:"48px 40px",position:"relative",overflow:"hidden"}}>
-            {infoPage==="password-generator"&&<>
+          <div style={{...(infoPage==="password-generator"?(pgQuantumSafe?{background:"rgba(16,185,129,0.04)",backdropFilter:"blur(32px)",WebkitBackdropFilter:"blur(32px)",border:"2px dashed rgba(16,185,129,0.5)",borderRadius:24,boxShadow:"0 12px 60px rgba(0,0,0,0.4),0 0 80px rgba(16,185,129,0.1),inset 0 0 30px rgba(16,185,129,0.04)",animation:"qmBorderGlow 3s ease-in-out infinite",transition:"all 0.6s"}:{background:"rgba(255,255,255,0.05)",backdropFilter:"blur(32px)",WebkitBackdropFilter:"blur(32px)",border:`1.5px solid rgba(${T.accentRgb},0.3)`,borderRadius:24,boxShadow:`0 12px 60px rgba(0,0,0,0.4),0 0 100px rgba(${T.accentRgb},0.08),0 0 40px rgba(${T.accentRgb},0.04),inset 0 1px 0 rgba(255,255,255,0.1),inset 0 -1px 0 rgba(255,255,255,0.03)`,animation:"pgBorderGlow 4s ease-in-out infinite",transition:"all 0.6s"}):infoGlass),padding:"48px 40px",position:"relative",overflow:"hidden"}}>
+            {infoPage==="password-generator"&&!pgQuantumSafe&&<>
               <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:`linear-gradient(90deg,transparent 10%,rgba(${T.accentRgb},0.5) 50%,transparent 90%)`,pointerEvents:"none"}}/>
               <div style={{position:"absolute",bottom:0,left:0,right:0,height:1,background:`linear-gradient(90deg,transparent 20%,rgba(139,92,246,0.2) 50%,transparent 80%)`,pointerEvents:"none"}}/>
               <div style={{position:"absolute",top:0,left:0,bottom:0,width:1,background:`linear-gradient(180deg,rgba(${T.accentRgb},0.4),transparent 30%,transparent 70%,rgba(139,92,246,0.15))`,pointerEvents:"none"}}/>
               <div style={{position:"absolute",top:0,right:0,bottom:0,width:1,background:`linear-gradient(180deg,rgba(${T.accentRgb},0.4),transparent 30%,transparent 70%,rgba(139,92,246,0.15))`,pointerEvents:"none"}}/>
+            </>}
+            {infoPage==="password-generator"&&pgQuantumSafe&&<>
+              {/* Diagonal stripes overlay */}
+              <div style={{position:"absolute",inset:0,background:"repeating-linear-gradient(45deg,transparent,transparent 18px,rgba(16,185,129,0.04) 18px,rgba(16,185,129,0.04) 36px)",pointerEvents:"none",borderRadius:22}}/>
+              {/* Scanning line */}
+              <div style={{position:"absolute",left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,rgba(16,185,129,0.5),rgba(16,185,129,0.8),rgba(16,185,129,0.5),transparent)",pointerEvents:"none",animation:"qmScan 4s ease-in-out infinite alternate",filter:"blur(1px)"}}/>
+              {/* Corner brackets — top-left */}
+              <div style={{position:"absolute",top:12,left:12,width:28,height:28,borderTop:"2.5px solid rgba(16,185,129,0.8)",borderLeft:"2.5px solid rgba(16,185,129,0.8)",borderRadius:"3px 0 0 0",pointerEvents:"none"}}/>
+              {/* Corner brackets — top-right */}
+              <div style={{position:"absolute",top:12,right:12,width:28,height:28,borderTop:"2.5px solid rgba(16,185,129,0.8)",borderRight:"2.5px solid rgba(16,185,129,0.8)",borderRadius:"0 3px 0 0",pointerEvents:"none"}}/>
+              {/* Corner brackets — bottom-left */}
+              <div style={{position:"absolute",bottom:12,left:12,width:28,height:28,borderBottom:"2.5px solid rgba(16,185,129,0.8)",borderLeft:"2.5px solid rgba(16,185,129,0.8)",borderRadius:"0 0 0 3px",pointerEvents:"none"}}/>
+              {/* Corner brackets — bottom-right */}
+              <div style={{position:"absolute",bottom:12,right:12,width:28,height:28,borderBottom:"2.5px solid rgba(16,185,129,0.8)",borderRight:"2.5px solid rgba(16,185,129,0.8)",borderRadius:"0 0 3px 0",pointerEvents:"none"}}/>
             </>}
             {infoPages[infoPage]}
           </div>
@@ -2156,6 +2172,12 @@ html{scroll-behavior:smooth}
               <div style={{width:"100%",height:"100%",borderRadius:6,padding:"18px 18px",border:`2px solid rgba(${T.accentRgb},0.8)`,background:`rgba(${T.accentRgb},0.1)`,boxShadow:`0 0 15px rgba(${T.accentRgb},0.35),0 0 30px rgba(${T.accentRgb},0.18),inset 0 0 15px rgba(${T.accentRgb},0.08)`,transform:"rotate(6deg)",display:"flex",flexDirection:"column",overflow:"hidden"}}>
                 <div style={{fontSize:17,fontWeight:900,color:T.accent,marginBottom:8,fontFamily:"monospace",letterSpacing:1}}>🔑 256-Char Max</div>
                 <div style={{fontSize:13.5,color:"rgba(255,255,255,0.88)",lineHeight:1.65,fontFamily:"monospace",flex:1,overflow:"hidden"}}>Most generators cap{"\n"}at 64-128 chars.{"\n"}Only password generator{"\n"}allowing ultra-long{"\n"}passwords for max{"\n"}entropy & future-proof</div>
+              </div>
+            </div>
+            <div style={{position:"absolute",left:-250,top:400,width:240,height:175,pointerEvents:"none",animation:"neoFloat3 8s ease-in-out infinite 0.5s",zIndex:2}}>
+              <div style={{width:"100%",height:"100%",borderRadius:6,padding:"18px 18px",border:"2px solid rgba(245,158,11,0.8)",background:"rgba(245,158,11,0.1)",boxShadow:"0 0 15px rgba(245,158,11,0.35),0 0 30px rgba(245,158,11,0.18),inset 0 0 15px rgba(245,158,11,0.08)",transform:"rotate(5deg)",display:"flex",flexDirection:"column",overflow:"hidden"}}>
+                <div style={{fontSize:17,fontWeight:900,color:"#f59e0b",marginBottom:8,fontFamily:"monospace",letterSpacing:1}}>🛡️ 100% Free</div>
+                <div style={{fontSize:13.5,color:"rgba(255,255,255,0.88)",lineHeight:1.65,fontFamily:"monospace",flex:1,overflow:"hidden"}}>One and only free{"\n"}Quantum Resistant{"\n"}password generator{"\n"}tool — no signup,{"\n"}no limits, no ads</div>
               </div>
             </div>
           </>}
