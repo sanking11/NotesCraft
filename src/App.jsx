@@ -1652,8 +1652,16 @@ html{scroll-behavior:smooth}
 @keyframes qrPulse{0%,100%{box-shadow:0 0 20px rgba(16,185,129,0.15),0 0 40px rgba(16,185,129,0.06),inset 0 0 20px rgba(16,185,129,0.04)}50%{box-shadow:0 0 25px rgba(16,185,129,0.25),0 0 50px rgba(16,185,129,0.1),inset 0 0 25px rgba(16,185,129,0.06)}}
 @keyframes pgGlowPulse{0%,100%{opacity:0.5}50%{opacity:1}}
 @keyframes pgBorderGlow{0%,100%{border-color:rgba(${T.accentRgb},0.3)}50%{border-color:rgba(${T.accentRgb},0.5)}}
-@keyframes qmBorderGlow{0%,100%{border-color:rgba(16,185,129,0.4);box-shadow:0 12px 60px rgba(0,0,0,0.4),0 0 60px rgba(16,185,129,0.12),0 0 120px rgba(16,185,129,0.06),inset 0 0 40px rgba(16,185,129,0.04)}50%{border-color:rgba(16,185,129,0.7);box-shadow:0 12px 60px rgba(0,0,0,0.4),0 0 80px rgba(16,185,129,0.2),0 0 150px rgba(16,185,129,0.1),inset 0 0 50px rgba(16,185,129,0.07)}}
-@keyframes qmCornerPulse{0%,100%{opacity:0.7;box-shadow:0 0 8px rgba(16,185,129,0.3)}50%{opacity:1;box-shadow:0 0 16px rgba(16,185,129,0.6),0 0 30px rgba(16,185,129,0.2)}}
+@keyframes qmBorderGlow{0%,100%{border-color:rgba(16,185,129,0.5);box-shadow:0 12px 60px rgba(0,0,0,0.4),0 0 80px rgba(16,185,129,0.15),0 0 150px rgba(16,185,129,0.08),inset 0 0 50px rgba(16,185,129,0.05)}50%{border-color:rgba(16,185,129,0.8);box-shadow:0 12px 60px rgba(0,0,0,0.4),0 0 100px rgba(16,185,129,0.25),0 0 200px rgba(16,185,129,0.12),inset 0 0 60px rgba(16,185,129,0.08)}}
+@keyframes qmCornerPulse{0%,100%{opacity:0.7;box-shadow:0 0 10px rgba(16,185,129,0.4)}50%{opacity:1;box-shadow:0 0 20px rgba(16,185,129,0.7),0 0 40px rgba(16,185,129,0.3)}}
+.pg-slider-qm{-webkit-appearance:none!important;appearance:none!important;width:100%;height:10px;border-radius:5px;background:linear-gradient(90deg,rgba(16,185,129,0.2),rgba(16,185,129,0.6))!important;outline:none;cursor:pointer;position:relative;box-shadow:0 0 14px rgba(16,185,129,0.35),inset 0 1px 2px rgba(0,0,0,0.3)}
+.pg-slider-qm::-webkit-slider-thumb{-webkit-appearance:none!important;appearance:none!important;width:24px;height:24px;border-radius:50%;background:#10b981;box-shadow:0 0 16px rgba(16,185,129,0.8),0 0 32px rgba(16,185,129,0.4),0 0 48px rgba(16,185,129,0.2);border:3px solid rgba(255,255,255,0.5);cursor:pointer;transition:all 0.2s;position:relative;z-index:2}
+.pg-slider-qm::-webkit-slider-thumb:hover{transform:scale(1.15);box-shadow:0 0 24px rgba(16,185,129,1),0 0 48px rgba(16,185,129,0.5),0 0 64px rgba(16,185,129,0.25)}
+.pg-slider-qm::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#10b981;box-shadow:0 0 16px rgba(16,185,129,0.8),0 0 32px rgba(16,185,129,0.4);border:3px solid rgba(255,255,255,0.5);cursor:pointer}
+.pg-slider-qm::-moz-range-track{height:10px;border-radius:5px;background:linear-gradient(90deg,rgba(16,185,129,0.2),rgba(16,185,129,0.6));box-shadow:0 0 14px rgba(16,185,129,0.35)}
+.pg-chk-on-qm{background:rgba(16,185,129,0.3);border:2px solid #10b981;box-shadow:0 0 12px rgba(16,185,129,0.5),0 0 24px rgba(16,185,129,0.15),inset 0 0 8px rgba(16,185,129,0.2)}
+.pg-mode-active-qm{background:rgba(16,185,129,0.2);color:#10b981;font-weight:700;box-shadow:0 0 16px rgba(16,185,129,0.3),inset 0 0 12px rgba(16,185,129,0.1);border:1.5px solid rgba(16,185,129,0.45);text-shadow:0 0 8px rgba(16,185,129,0.4)}
+.pg-mode-inactive-qm:hover{background:rgba(16,185,129,0.08);color:#10b981;border-color:rgba(16,185,129,0.2)}
 .pg-slider{-webkit-appearance:none!important;appearance:none!important;width:100%;height:10px;border-radius:5px;background:linear-gradient(90deg,rgba(${T.accentRgb},0.2),${T.accent}80)!important;outline:none;cursor:pointer;position:relative;box-shadow:0 0 12px rgba(${T.accentRgb},0.3),inset 0 1px 2px rgba(0,0,0,0.3)}
 .pg-slider::-webkit-slider-thumb{-webkit-appearance:none!important;appearance:none!important;width:24px;height:24px;border-radius:50%;background:${T.accent};box-shadow:0 0 16px rgba(${T.accentRgb},0.8),0 0 32px rgba(${T.accentRgb},0.4),0 0 48px rgba(${T.accentRgb},0.2);border:3px solid rgba(255,255,255,0.5);cursor:pointer;transition:all 0.2s;position:relative;z-index:2}
 .pg-slider::-webkit-slider-thumb:hover{transform:scale(1.15);box-shadow:0 0 24px rgba(${T.accentRgb},1),0 0 48px rgba(${T.accentRgb},0.5),0 0 64px rgba(${T.accentRgb},0.25)}
@@ -1732,28 +1740,28 @@ html{scroll-behavior:smooth}
         <p style={{...infoP,color:"rgba(176,190,201,0.8)"}}>Generate strong, unique passwords using cryptographically secure randomness.</p>
 
         {/* Password Display */}
-        <div style={{background:"rgba(255,255,255,0.06)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:`1.5px solid ${pgScrambling?T.accent:`rgba(${T.accentRgb},0.35)`}`,borderRadius:16,padding:"22px 26px",marginBottom:20,position:"relative",transition:"all 0.4s",boxShadow:`0 6px 30px rgba(0,0,0,0.25),0 0 ${pgScrambling?40:20}px rgba(${T.accentRgb},${pgScrambling?0.35:0.12}),inset 0 1px 0 rgba(255,255,255,0.1),inset 0 0 20px rgba(${T.accentRgb},0.03)`,overflow:"hidden"}}>
+        <div style={{background:pgQuantumSafe?"rgba(16,185,129,0.05)":"rgba(255,255,255,0.06)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:pgQuantumSafe?`1.5px solid rgba(16,185,129,${pgScrambling?0.8:0.4})`:`1.5px solid ${pgScrambling?T.accent:`rgba(${T.accentRgb},0.35)`}`,borderRadius:16,padding:"22px 26px",marginBottom:20,position:"relative",transition:"all 0.4s",boxShadow:pgQuantumSafe?`0 6px 30px rgba(0,0,0,0.25),0 0 ${pgScrambling?40:20}px rgba(16,185,129,${pgScrambling?0.4:0.15}),inset 0 1px 0 rgba(255,255,255,0.1),inset 0 0 20px rgba(16,185,129,0.04)`:`0 6px 30px rgba(0,0,0,0.25),0 0 ${pgScrambling?40:20}px rgba(${T.accentRgb},${pgScrambling?0.35:0.12}),inset 0 1px 0 rgba(255,255,255,0.1),inset 0 0 20px rgba(${T.accentRgb},0.03)`,overflow:"hidden"}}>
           {/* Diagonal stripe pattern background */}
-          <div style={{position:"absolute",inset:0,background:`repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(${T.accentRgb},0.03) 20px,rgba(${T.accentRgb},0.03) 40px)`,pointerEvents:"none",borderRadius:14}}/>
+          <div style={{position:"absolute",inset:0,background:pgQuantumSafe?"repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(16,185,129,0.04) 20px,rgba(16,185,129,0.04) 40px)":`repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(${T.accentRgb},0.03) 20px,rgba(${T.accentRgb},0.03) 40px)`,pointerEvents:"none",borderRadius:14}}/>
           <div style={{position:"relative",zIndex:1,fontSize:(pgDisplay||pgResult).length>30?14:18,fontFamily:"monospace",fontWeight:600,color:pgScrambling?T.accent:T.text,wordBreak:"break-all",lineHeight:1.6,letterSpacing:0.5,minHeight:28,paddingRight:44,transition:"color 0.2s",textShadow:pgScrambling?`0 0 10px rgba(${T.accentRgb},0.5)`:"none"}}>{pgDisplay||pgResult}</div>
           <button onClick={e=>{const btn=e.currentTarget;btn.style.animation="pgSpin 0.4s ease-out";setTimeout(()=>{btn.style.animation=""},400);const cw=pgUseCustom?pgCustomWords:"";if(cw){const err=validateCustomWords(cw);setPgCustomErr(err);if(err)return}else{setPgCustomErr("")}const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep,cw);setPgResult(pw);setPgStrength(calcPwStrength(pw));setPgCopied(false)}}
-            style={{position:"absolute",top:14,right:14,zIndex:2,width:40,height:40,borderRadius:"50%",background:`linear-gradient(135deg,rgba(${T.accentRgb},0.2),rgba(${T.accentRgb},0.08))`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,color:T.accent,fontSize:20,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.3s",boxShadow:`0 0 14px rgba(${T.accentRgb},0.25),inset 0 0 8px rgba(${T.accentRgb},0.1)`}} title="Regenerate"
-            onMouseEnter={e=>{e.currentTarget.style.boxShadow=`0 0 24px rgba(${T.accentRgb},0.6),inset 0 0 12px rgba(${T.accentRgb},0.15)`;e.currentTarget.style.transform="scale(1.12)"}}
-            onMouseLeave={e=>{e.currentTarget.style.boxShadow=`0 0 14px rgba(${T.accentRgb},0.25),inset 0 0 8px rgba(${T.accentRgb},0.1)`;e.currentTarget.style.transform="scale(1)"}}>&#x21bb;</button>
+            style={{position:"absolute",top:14,right:14,zIndex:2,width:40,height:40,borderRadius:"50%",background:pgQuantumSafe?"linear-gradient(135deg,rgba(16,185,129,0.2),rgba(16,185,129,0.08))":`linear-gradient(135deg,rgba(${T.accentRgb},0.2),rgba(${T.accentRgb},0.08))`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:pgQuantumSafe?"1.5px solid rgba(16,185,129,0.5)":`1.5px solid rgba(${T.accentRgb},0.4)`,color:pgQuantumSafe?"#10b981":T.accent,fontSize:20,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.3s",boxShadow:pgQuantumSafe?"0 0 14px rgba(16,185,129,0.3),inset 0 0 8px rgba(16,185,129,0.12)":`0 0 14px rgba(${T.accentRgb},0.25),inset 0 0 8px rgba(${T.accentRgb},0.1)`}} title="Regenerate"
+            onMouseEnter={e=>{const g=pgQuantumSafe;e.currentTarget.style.boxShadow=g?"0 0 24px rgba(16,185,129,0.7),inset 0 0 12px rgba(16,185,129,0.2)":`0 0 24px rgba(${T.accentRgb},0.6),inset 0 0 12px rgba(${T.accentRgb},0.15)`;e.currentTarget.style.transform="scale(1.12)"}}
+            onMouseLeave={e=>{const g=pgQuantumSafe;e.currentTarget.style.boxShadow=g?"0 0 14px rgba(16,185,129,0.3),inset 0 0 8px rgba(16,185,129,0.12)":`0 0 14px rgba(${T.accentRgb},0.25),inset 0 0 8px rgba(${T.accentRgb},0.1)`;e.currentTarget.style.transform="scale(1)"}}>&#x21bb;</button>
         </div>
 
         {/* Copy + Download Row */}
         <div style={{display:"flex",gap:12,marginBottom:16}}>
           <button onClick={e=>{const btn=e.currentTarget;btn.style.animation="pgCopySuccess 0.3s ease-out";setTimeout(()=>{btn.style.animation=""},300);navigator.clipboard.writeText(pgResult).then(()=>{setPgCopied(true);setTimeout(()=>setPgCopied(false),2000)})}}
-            style={{flex:2,padding:"13px 0",background:pgCopied?T.ok:`linear-gradient(135deg,${T.accent},${T.accent2})`,border:"none",borderRadius:12,color:"#fff",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:1.5,transition:"all 0.3s",boxShadow:pgCopied?`0 0 25px ${T.ok}40`:`0 4px 24px rgba(${T.accentRgb},0.35),0 0 40px rgba(${T.accentRgb},0.12)`,backgroundSize:"200% auto",position:"relative",overflow:"hidden"}}
-            onMouseEnter={e=>{if(!pgCopied){e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow=`0 6px 30px rgba(${T.accentRgb},0.55),0 0 50px rgba(${T.accentRgb},0.2)`}}}
-            onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow=pgCopied?`0 0 25px ${T.ok}40`:`0 4px 24px rgba(${T.accentRgb},0.35),0 0 40px rgba(${T.accentRgb},0.12)`}}>
+            style={{flex:2,padding:"13px 0",background:pgCopied?T.ok:pgQuantumSafe?"linear-gradient(135deg,#10b981,#059669)":`linear-gradient(135deg,${T.accent},${T.accent2})`,border:"none",borderRadius:12,color:"#fff",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:1.5,transition:"all 0.3s",boxShadow:pgCopied?`0 0 25px ${T.ok}40`:pgQuantumSafe?"0 4px 24px rgba(16,185,129,0.4),0 0 40px rgba(16,185,129,0.15)":`0 4px 24px rgba(${T.accentRgb},0.35),0 0 40px rgba(${T.accentRgb},0.12)`,backgroundSize:"200% auto",position:"relative",overflow:"hidden"}}
+            onMouseEnter={e=>{if(!pgCopied){e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow=pgQuantumSafe?"0 6px 30px rgba(16,185,129,0.6),0 0 50px rgba(16,185,129,0.25)":`0 6px 30px rgba(${T.accentRgb},0.55),0 0 50px rgba(${T.accentRgb},0.2)`}}}
+            onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow=pgCopied?`0 0 25px ${T.ok}40`:pgQuantumSafe?"0 4px 24px rgba(16,185,129,0.4),0 0 40px rgba(16,185,129,0.15)":`0 4px 24px rgba(${T.accentRgb},0.35),0 0 40px rgba(${T.accentRgb},0.12)`}}>
             {pgCopied?"✓ Copied!":"Copy Password"}
           </button>
           <button onClick={()=>{if(!pgResult)return;const blob=new Blob([pgResult],{type:"text/plain"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="password.txt";document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url)}}
-            style={{flex:1,padding:"13px 0",background:"rgba(255,255,255,0.04)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1.5px solid rgba(${T.accentRgb},0.25)`,borderRadius:12,color:T.accent,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5,transition:"all 0.3s",boxShadow:`0 2px 12px rgba(0,0,0,0.15),inset 0 1px 0 rgba(255,255,255,0.05)`}}
-            onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.background="rgba(255,255,255,0.08)";e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.5)`;e.currentTarget.style.boxShadow=`0 4px 20px rgba(${T.accentRgb},0.2),inset 0 1px 0 rgba(255,255,255,0.08)`}}
-            onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.background="rgba(255,255,255,0.04)";e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.25)`;e.currentTarget.style.boxShadow=`0 2px 12px rgba(0,0,0,0.15),inset 0 1px 0 rgba(255,255,255,0.05)`}}>
+            style={{flex:1,padding:"13px 0",background:"rgba(255,255,255,0.04)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:pgQuantumSafe?"1.5px solid rgba(16,185,129,0.3)":`1.5px solid rgba(${T.accentRgb},0.25)`,borderRadius:12,color:pgQuantumSafe?"#10b981":T.accent,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5,transition:"all 0.3s",boxShadow:`0 2px 12px rgba(0,0,0,0.15),inset 0 1px 0 rgba(255,255,255,0.05)`}}
+            onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.background="rgba(255,255,255,0.08)";e.currentTarget.style.borderColor=pgQuantumSafe?"rgba(16,185,129,0.6)":`rgba(${T.accentRgb},0.5)`;e.currentTarget.style.boxShadow=pgQuantumSafe?"0 4px 20px rgba(16,185,129,0.25),inset 0 1px 0 rgba(255,255,255,0.08)":`0 4px 20px rgba(${T.accentRgb},0.2),inset 0 1px 0 rgba(255,255,255,0.08)`}}
+            onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.background="rgba(255,255,255,0.04)";e.currentTarget.style.borderColor=pgQuantumSafe?"rgba(16,185,129,0.3)":`rgba(${T.accentRgb},0.25)`;e.currentTarget.style.boxShadow=`0 2px 12px rgba(0,0,0,0.15),inset 0 1px 0 rgba(255,255,255,0.05)`}}>
             ↓ Download .txt
           </button>
         </div>
@@ -1784,13 +1792,13 @@ html{scroll-behavior:smooth}
         </div>}
 
         {/* Quantum Resistant details card */}
-        {pgQuantumSafe&&pgStrength&&<div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:2,marginBottom:16,borderRadius:14,overflow:"hidden",border:`1.5px solid rgba(${T.accentRgb},0.2)`,boxShadow:`0 4px 20px rgba(0,0,0,0.2),0 0 20px rgba(${T.accentRgb},0.05)`}}>
+        {pgQuantumSafe&&pgStrength&&<div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:2,marginBottom:16,borderRadius:14,overflow:"hidden",border:"1.5px solid rgba(16,185,129,0.25)",boxShadow:"0 4px 20px rgba(0,0,0,0.2),0 0 20px rgba(16,185,129,0.08)"}}>
           {[
             {label:"Length",value:pgResult.length+" chars",icon:"📏"},
             {label:"Entropy",value:pgStrength.bits+" bits",icon:"🎲"},
             {label:"Classical",value:pgStrength.time,icon:"🖥️",color:pgStrength.color},
             {label:"Quantum",value:pgStrength.qTime,icon:"⚛️",color:pgStrength.qColor}
-          ].map((s,i)=><div key={i} style={{padding:"14px 12px",background:"rgba(255,255,255,0.05)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",borderLeft:i>0?`1px solid rgba(${T.accentRgb},0.12)`:"none"}}>
+          ].map((s,i)=><div key={i} style={{padding:"14px 12px",background:"rgba(16,185,129,0.04)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",borderLeft:i>0?"1px solid rgba(16,185,129,0.12)":"none"}}>
             <div style={{fontSize:10,color:T.dim,fontWeight:600,letterSpacing:0.5,marginBottom:6}}>{s.icon} {s.label}</div>
             <div style={{fontSize:13,fontWeight:700,color:s.color||T.text,lineHeight:1.3,wordBreak:"break-word",textShadow:s.color?`0 0 8px ${s.color}40`:"none"}}>{s.value}</div>
           </div>)}
@@ -1799,9 +1807,9 @@ html{scroll-behavior:smooth}
         {/* Mode Toggle + Options — two-column layout */}
         <div style={{display:"grid",gridTemplateColumns:"130px 1fr",gap:16,alignItems:"start"}}>
           {/* Left: Mode Toggle (vertical) */}
-          <div style={{display:"flex",flexDirection:"column",gap:3,background:"rgba(255,255,255,0.06)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",borderRadius:12,padding:5,border:`1.5px solid rgba(${T.accentRgb},0.2)`,boxShadow:`0 4px 20px rgba(0,0,0,0.2),inset 0 1px 0 rgba(255,255,255,0.08)`}}>
+          <div style={{display:"flex",flexDirection:"column",gap:3,background:pgQuantumSafe?"rgba(16,185,129,0.04)":"rgba(255,255,255,0.06)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",borderRadius:12,padding:5,border:pgQuantumSafe?"1.5px solid rgba(16,185,129,0.25)":`1.5px solid rgba(${T.accentRgb},0.2)`,boxShadow:pgQuantumSafe?"0 4px 20px rgba(0,0,0,0.2),0 0 12px rgba(16,185,129,0.06),inset 0 1px 0 rgba(255,255,255,0.08)":`0 4px 20px rgba(0,0,0,0.2),inset 0 1px 0 rgba(255,255,255,0.08)`,transition:"all 0.4s"}}>
             {["random","memorable"].map(m=><button key={m} onClick={()=>setPgMode(m)}
-              className={`pg-mode-btn ${pgMode===m?"pg-mode-active":"pg-mode-inactive"}`}>
+              className={`pg-mode-btn ${pgMode===m?(pgQuantumSafe?"pg-mode-active-qm":"pg-mode-active"):(pgQuantumSafe?"pg-mode-inactive pg-mode-inactive-qm":"pg-mode-inactive")}`}>
               {m==="random"?"Random":"Memorable"}
             </button>)}
           </div>
@@ -1811,16 +1819,16 @@ html{scroll-behavior:smooth}
               <div>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
                   <label style={{fontSize:12,fontWeight:600,color:T.text}}>Length</label>
-                  <span style={{fontSize:13,fontWeight:700,color:T.accent}}>{pgLen}</span>
+                  <span style={{fontSize:13,fontWeight:700,color:pgQuantumSafe?"#10b981":T.accent}}>{pgLen}</span>
                 </div>
                 <input type="range" min={pgQuantumSafe?65:8} max={256} value={pgLen} onChange={e=>setPgLen(+e.target.value)}
-                  className="pg-slider"/>
+                  className={pgQuantumSafe?"pg-slider-qm":"pg-slider"}/>
               </div>
               <div style={{display:"flex",flexWrap:"wrap",gap:10}}>
                 {[{label:"Uppercase",val:pgUpper,set:setPgUpper,lock:pgQuantumSafe},{label:"Lowercase",val:pgLower,set:setPgLower,lock:pgQuantumSafe},{label:"Digits",val:pgDigits,set:setPgDigits,lock:pgQuantumSafe},{label:"Symbols",val:pgSymbols,set:setPgSymbols,lock:pgQuantumSafe},{label:"No ambiguous",val:pgNoAmbig,set:setPgNoAmbig}].map((o,i)=>
-                  <label key={i} style={{display:"flex",alignItems:"center",gap:6,fontSize:11,color:o.lock&&o.val?T.accent:T.text,cursor:o.lock&&o.val?"not-allowed":"pointer",opacity:o.lock&&o.val?0.8:1,letterSpacing:0.3}}>
-                    <div onClick={()=>{if(o.lock&&o.val)return;o.set(!o.val)}} className={`pg-chk ${o.val?"pg-chk-on":"pg-chk-off"}`} style={{cursor:o.lock&&o.val?"not-allowed":"pointer"}}>
-                      {o.val&&<span style={{color:T.accent,fontSize:10,fontWeight:700,textShadow:`0 0 6px rgba(${T.accentRgb},0.5)`}}>{o.lock?"🔒":"✓"}</span>}
+                  <label key={i} style={{display:"flex",alignItems:"center",gap:6,fontSize:11,color:o.lock&&o.val?(pgQuantumSafe?"#10b981":T.accent):T.text,cursor:o.lock&&o.val?"not-allowed":"pointer",opacity:o.lock&&o.val?0.8:1,letterSpacing:0.3}}>
+                    <div onClick={()=>{if(o.lock&&o.val)return;o.set(!o.val)}} className={`pg-chk ${o.val?(pgQuantumSafe?"pg-chk-on-qm":"pg-chk-on"):"pg-chk-off"}`} style={{cursor:o.lock&&o.val?"not-allowed":"pointer"}}>
+                      {o.val&&<span style={{color:pgQuantumSafe?"#10b981":T.accent,fontSize:10,fontWeight:700,textShadow:pgQuantumSafe?"0 0 6px rgba(16,185,129,0.5)":`0 0 6px rgba(${T.accentRgb},0.5)`}}>{o.lock?"🔒":"✓"}</span>}
                     </div>
                     {o.label}
                   </label>
@@ -1831,22 +1839,22 @@ html{scroll-behavior:smooth}
               <div>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
                   <label style={{fontSize:12,fontWeight:600,color:T.text}}>Words</label>
-                  <span style={{fontSize:13,fontWeight:700,color:T.accent}}>{pgWords}</span>
+                  <span style={{fontSize:13,fontWeight:700,color:pgQuantumSafe?"#10b981":T.accent}}>{pgWords}</span>
                 </div>
                 <input type="range" min={pgQuantumSafe?10:3} max={pgQuantumSafe?20:6} value={pgWords} onChange={e=>setPgWords(+e.target.value)}
-                  className="pg-slider"/>
+                  className={pgQuantumSafe?"pg-slider-qm":"pg-slider"}/>
               </div>
               <div style={{display:"flex",gap:12,alignItems:"center",flexWrap:"wrap"}}>
                 {[{label:"Number",val:pgDigits,set:setPgDigits,lock:pgQuantumSafe},{label:"Symbol",val:pgSymbols,set:setPgSymbols,lock:pgQuantumSafe},{label:"Your Words",val:pgUseCustom,set:v=>{setPgUseCustom(v);if(!v){setPgCustomWords("");setPgCustomErr("")}}}].map((o,i)=>
-                  <label key={i} style={{display:"flex",alignItems:"center",gap:6,fontSize:11,color:o.lock&&o.val?T.accent:T.text,cursor:o.lock&&o.val?"not-allowed":"pointer",opacity:o.lock&&o.val?0.8:1,letterSpacing:0.3}}>
-                    <div onClick={()=>{if(o.lock&&o.val)return;o.set(!o.val)}} className={`pg-chk ${o.val?"pg-chk-on":"pg-chk-off"}`} style={{cursor:o.lock&&o.val?"not-allowed":"pointer"}}>
-                      {o.val&&<span style={{color:T.accent,fontSize:10,fontWeight:700,textShadow:`0 0 6px rgba(${T.accentRgb},0.5)`}}>{o.lock?"🔒":"✓"}</span>}
+                  <label key={i} style={{display:"flex",alignItems:"center",gap:6,fontSize:11,color:o.lock&&o.val?(pgQuantumSafe?"#10b981":T.accent):T.text,cursor:o.lock&&o.val?"not-allowed":"pointer",opacity:o.lock&&o.val?0.8:1,letterSpacing:0.3}}>
+                    <div onClick={()=>{if(o.lock&&o.val)return;o.set(!o.val)}} className={`pg-chk ${o.val?(pgQuantumSafe?"pg-chk-on-qm":"pg-chk-on"):"pg-chk-off"}`} style={{cursor:o.lock&&o.val?"not-allowed":"pointer"}}>
+                      {o.val&&<span style={{color:pgQuantumSafe?"#10b981":T.accent,fontSize:10,fontWeight:700,textShadow:pgQuantumSafe?"0 0 6px rgba(16,185,129,0.5)":`0 0 6px rgba(${T.accentRgb},0.5)`}}>{o.lock?"🔒":"✓"}</span>}
                     </div>
                     {o.label}
                   </label>
                 )}
                 <select value={pgSep} onChange={e=>setPgSep(e.target.value)}
-                  style={{flex:1,padding:"7px 10px",borderRadius:8,background:"rgba(255,255,255,0.04)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid rgba(${T.accentRgb},0.15)`,color:T.text,fontSize:11,fontFamily:"inherit",outline:"none",cursor:"pointer",appearance:"auto",transition:"border-color 0.3s"}}>
+                  style={{flex:1,padding:"7px 10px",borderRadius:8,background:"rgba(255,255,255,0.04)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:pgQuantumSafe?"1px solid rgba(16,185,129,0.2)":`1px solid rgba(${T.accentRgb},0.15)`,color:T.text,fontSize:11,fontFamily:"inherit",outline:"none",cursor:"pointer",appearance:"auto",transition:"border-color 0.3s"}}>
                   {[{v:"hyphens",l:"Hyphens"},{v:"spaces",l:"Spaces"},{v:"periods",l:"Periods"},{v:"commas",l:"Commas"},{v:"underscores",l:"Underscores"},{v:"numbers",l:"Numbers"},{v:"numbersSymbols",l:"Num+Sym"}].map(o=><option key={o.v} value={o.v}>{o.l}</option>)}
                 </select>
               </div>
@@ -2139,7 +2147,7 @@ html{scroll-behavior:smooth}
             <div style={{position:"absolute",width:350,height:350,borderRadius:"50%",background:pgQuantumSafe?"radial-gradient(circle,rgba(16,185,129,0.18) 0%,transparent 60%)":`radial-gradient(circle,rgba(${T.accentRgb},0.18) 0%,transparent 60%)`,filter:"blur(40px)",top:"35%",left:"50%",transform:"translateX(-50%)",pointerEvents:"none",animation:"pgGlowPulse 4s ease-in-out infinite",transition:"background 0.8s"}}/>
             <div style={{position:"absolute",width:250,height:250,borderRadius:"50%",background:pgQuantumSafe?"radial-gradient(circle,rgba(16,185,129,0.15) 0%,transparent 70%)":"radial-gradient(circle,rgba(236,72,153,0.12) 0%,transparent 70%)",filter:"blur(45px)",top:"15%",right:"5%",pointerEvents:"none",animation:"pgGlowPulse 6s ease-in-out infinite 2s",transition:"background 0.8s"}}/>
           </>}
-          <div style={{...(infoPage==="password-generator"?(pgQuantumSafe?{background:"rgba(16,185,129,0.04)",backdropFilter:"blur(32px)",WebkitBackdropFilter:"blur(32px)",border:"2.5px dashed rgba(16,185,129,0.6)",borderRadius:24,boxShadow:"0 12px 60px rgba(0,0,0,0.4),0 0 60px rgba(16,185,129,0.12),0 0 120px rgba(16,185,129,0.06),inset 0 0 40px rgba(16,185,129,0.04)",animation:"qmBorderGlow 3s ease-in-out infinite",transition:"all 0.6s"}:{background:"rgba(255,255,255,0.05)",backdropFilter:"blur(32px)",WebkitBackdropFilter:"blur(32px)",border:`1.5px solid rgba(${T.accentRgb},0.3)`,borderRadius:24,boxShadow:`0 12px 60px rgba(0,0,0,0.4),0 0 100px rgba(${T.accentRgb},0.08),0 0 40px rgba(${T.accentRgb},0.04),inset 0 1px 0 rgba(255,255,255,0.1),inset 0 -1px 0 rgba(255,255,255,0.03)`,animation:"pgBorderGlow 4s ease-in-out infinite",transition:"all 0.6s"}):infoGlass),padding:"48px 40px",position:"relative",overflow:"hidden"}}>
+          <div style={{...(infoPage==="password-generator"?(pgQuantumSafe?{background:"rgba(16,185,129,0.04)",backdropFilter:"blur(32px)",WebkitBackdropFilter:"blur(32px)",border:"2.5px dashed rgba(16,185,129,0.7)",borderRadius:24,boxShadow:"0 12px 60px rgba(0,0,0,0.4),0 0 80px rgba(16,185,129,0.15),0 0 150px rgba(16,185,129,0.08),inset 0 0 50px rgba(16,185,129,0.05)",animation:"qmBorderGlow 3s ease-in-out infinite",transition:"all 0.6s"}:{background:"rgba(255,255,255,0.05)",backdropFilter:"blur(32px)",WebkitBackdropFilter:"blur(32px)",border:`1.5px solid rgba(${T.accentRgb},0.3)`,borderRadius:24,boxShadow:`0 12px 60px rgba(0,0,0,0.4),0 0 100px rgba(${T.accentRgb},0.08),0 0 40px rgba(${T.accentRgb},0.04),inset 0 1px 0 rgba(255,255,255,0.1),inset 0 -1px 0 rgba(255,255,255,0.03)`,animation:"pgBorderGlow 4s ease-in-out infinite",transition:"all 0.6s"}):infoGlass),padding:"48px 40px",position:"relative",overflow:"hidden"}}>
             {infoPage==="password-generator"&&!pgQuantumSafe&&<>
               <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:`linear-gradient(90deg,transparent 10%,rgba(${T.accentRgb},0.5) 50%,transparent 90%)`,pointerEvents:"none"}}/>
               <div style={{position:"absolute",bottom:0,left:0,right:0,height:1,background:`linear-gradient(90deg,transparent 20%,rgba(139,92,246,0.2) 50%,transparent 80%)`,pointerEvents:"none"}}/>
