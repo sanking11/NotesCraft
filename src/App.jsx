@@ -1945,9 +1945,9 @@ html{scroll-behavior:smooth}
 
       {/* ═══ LEFT SIDEBAR ═══ */}
       <div style={{width:260,minWidth:260,height:"100%",background:T.dark?"rgba(255,255,255,0.015)":"rgba(0,0,0,0.02)",borderRight:`1px solid ${T.bdr}`,display:"flex",flexDirection:"column"}}>
-        <div style={{padding:"14px 16px",display:"flex",flexDirection:"column",alignItems:"center",gap:6}}>
-          <ShieldLogo s={90} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} uid="scSb"/>
-          <span style={{fontSize:15,fontWeight:700,fontFamily:`${F.heading},sans-serif`,letterSpacing:1.5}}>ShieldCraft</span>
+        <div style={{padding:"16px 16px 12px",display:"flex",alignItems:"center",gap:10}}>
+          <ShieldLogo s={36} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} uid="scSb"/>
+          <span style={{fontSize:16,fontWeight:700,fontFamily:`${F.heading},sans-serif`,letterSpacing:1}}>ShieldCraft</span>
         </div>
 
         <div style={{flex:1,overflowY:"auto",padding:"0 10px"}}>
