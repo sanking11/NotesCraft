@@ -179,61 +179,34 @@ const IC = {
 
 /* Butterfly logo — geometric origami, exact match to reference */
 const ShieldLogo=({s=48,accentRgb,accent,accent2,text,warn,pulse,uid})=>{
-  const sw=s>=30?1.8:s>=18?1.2:0.8;
-  const id=uid||'sh';
-  const pAnim=pulse?{animation:'shieldPulse 3s ease-in-out infinite'}:{};
-  return<svg width={s} height={s*(60/48)} viewBox="0 0 48 60" fill="none" draggable={false} onContextMenu={e=>e.preventDefault()} style={{overflow:'visible',userSelect:'none',WebkitUserDrag:'none',msUserSelect:'none',...pAnim}}>
+  const id=uid||'sh';const a2=accent2||accent;
+  return<svg width={s} height={s*1.1} viewBox="0 0 200 220" fill="none" draggable={false} onContextMenu={e=>e.preventDefault()} style={{overflow:'visible',userSelect:'none',WebkitUserDrag:'none',msUserSelect:'none'}}>
     <defs>
-      <linearGradient id={`${id}G1`} x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor={accent} stopOpacity="0.7"/><stop offset="100%" stopColor={accent2||accent} stopOpacity="0.25"/></linearGradient>
-      <linearGradient id={`${id}G2`} x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor={accent} stopOpacity="0.45"/><stop offset="100%" stopColor={accent2||accent} stopOpacity="0.15"/></linearGradient>
-      <linearGradient id={`${id}G3`} x1="50%" y1="0%" x2="50%" y2="100%"><stop offset="0%" stopColor="#fff" stopOpacity="0.2"/><stop offset="60%" stopColor="#fff" stopOpacity="0"/></linearGradient>
-      <radialGradient id={`${id}Glow`} cx="50%" cy="35%" r="55%"><stop offset="0%" stopColor={accent} stopOpacity="0.35"/><stop offset="100%" stopColor={accent} stopOpacity="0"/></radialGradient>
-      <filter id={`${id}Blur`}><feGaussianBlur stdDeviation="2"/></filter>
-      <clipPath id={`${id}Clip`}><path d="M24 3L5 13V30C5 43 14 52 24 56C34 52 43 43 43 30V13L24 3Z"/></clipPath>
+      <linearGradient id={`${id}SG`} x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor={accent}/><stop offset="50%" stopColor={a2}/><stop offset="100%" stopColor={a2}/></linearGradient>
+      <linearGradient id={`${id}SF`} x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor={accent} stopOpacity="0.12"/><stop offset="100%" stopColor={a2} stopOpacity="0.03"/></linearGradient>
+      <filter id={`${id}Gl`}><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id={`${id}GlS`}><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     </defs>
-    {/* Background glow */}
-    {pulse&&<ellipse cx="24" cy="30" rx="26" ry="30" fill={`url(#${id}Glow)`} style={{animation:'shieldGlow 3s ease-in-out infinite'}}/>}
-    {/* Outer shield - sharp futuristic edges */}
-    <path d="M24 3L5 13V30C5 43 14 52 24 56C34 52 43 43 43 30V13L24 3Z" fill={`url(#${id}G1)`} stroke={`rgba(${accentRgb},0.6)`} strokeWidth={sw} strokeLinejoin="round"/>
-    {/* Inner shield with gap */}
-    <path d="M24 9L10 17V30C10 40 17 47 24 50C31 47 38 40 38 30V17L24 9Z" fill={`url(#${id}G2)`} stroke={`rgba(${accentRgb},0.35)`} strokeWidth={sw*0.6} strokeLinejoin="round"/>
-    {/* Top glass highlight */}
-    <path d="M24 3L5 13V20C12 17 18 11 24 3Z" fill={`url(#${id}G3)`}/>
-    <path d="M24 3L43 13V20C36 17 30 11 24 3Z" fill={`url(#${id}G3)`} opacity="0.6"/>
-    {/* Circuit-board lines (futuristic detail) */}
-    <g clipPath={`url(#${id}Clip)`} opacity="0.4" style={pulse?{animation:'shieldCircuit 4s linear infinite'}:{}}>
-      <line x1="12" y1="20" x2="12" y2="38" stroke={accent} strokeWidth="0.5" strokeDasharray="2 3"/>
-      <line x1="18" y1="14" x2="18" y2="44" stroke={accent} strokeWidth="0.5" strokeDasharray="3 4"/>
-      <line x1="30" y1="14" x2="30" y2="44" stroke={accent} strokeWidth="0.5" strokeDasharray="3 4"/>
-      <line x1="36" y1="20" x2="36" y2="38" stroke={accent} strokeWidth="0.5" strokeDasharray="2 3"/>
-      <line x1="8" y1="25" x2="40" y2="25" stroke={accent} strokeWidth="0.4" strokeDasharray="2 5"/>
-      <line x1="8" y1="35" x2="40" y2="35" stroke={accent} strokeWidth="0.4" strokeDasharray="2 5"/>
-      {/* Circuit nodes */}
-      <circle cx="18" cy="25" r="1.2" fill={accent} opacity="0.7"/>
-      <circle cx="30" cy="25" r="1.2" fill={accent} opacity="0.7"/>
-      <circle cx="18" cy="35" r="1.2" fill={accent} opacity="0.5"/>
-      <circle cx="30" cy="35" r="1.2" fill={accent} opacity="0.5"/>
-      <circle cx="12" cy="30" r="1" fill={accent} opacity="0.4"/>
-      <circle cx="36" cy="30" r="1" fill={accent} opacity="0.4"/>
+    <style>{`@keyframes ${id}D{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-600}}@keyframes ${id}N{0%,100%{opacity:.3}50%{opacity:1}}@keyframes ${id}S{0%,60%{transform:translateY(0) rotate(0)}70%,90%{transform:translateY(-6px) rotate(-15deg)}100%{transform:translateY(0) rotate(0)}}@keyframes ${id}R{0%{r:16;opacity:.5}100%{r:32;opacity:0}}@keyframes ${id}B{0%,60%{fill:rgba(${accentRgb},0.15)}70%,90%{fill:rgba(${accentRgb},0.25)}100%{fill:rgba(${accentRgb},0.15)}}`}</style>
+    <path d="M100 12 L34 46 L34 122 C34 162 62 184 100 200 C138 184 166 162 166 122 L166 46 Z" fill="none" stroke={`rgba(${accentRgb},0.25)`} strokeWidth="1.5" strokeDasharray="10 6" style={{animation:`${id}D 8s linear infinite`}}/>
+    <path d="M100 24 L44 54 L44 118 C44 154 68 176 100 190 C132 176 156 154 156 118 L156 54 Z" fill={`url(#${id}SF)`} stroke={`url(#${id}SG)`} strokeWidth="3" strokeLinejoin="round"/>
+    <g stroke={accent} strokeWidth="1.2" opacity="0.4">
+      <line x1="65" y1="70" x2="84" y2="70"/><line x1="116" y1="70" x2="135" y2="70"/>
+      <line x1="60" y1="90" x2="78" y2="90"/><line x1="122" y1="90" x2="142" y2="90"/>
+      <line x1="58" y1="115" x2="76" y2="115"/><line x1="124" y1="115" x2="148" y2="115"/>
+      <line x1="65" y1="140" x2="82" y2="140"/><line x1="118" y1="140" x2="140" y2="140"/>
+      <line x1="76" y1="70" x2="76" y2="90"/><line x1="124" y1="70" x2="124" y2="90"/>
+      <line x1="68" y1="115" x2="68" y2="140"/><line x1="132" y1="115" x2="132" y2="140"/>
     </g>
-    {/* Hexagonal lock / checkmark center piece */}
-    <g style={pulse?{animation:'shieldCheckPop 3s ease-in-out infinite',transformOrigin:'24px 30px'}:{}}>
-      {/* Hex background */}
-      <path d="M24 21L31 25V33L24 37L17 33V25Z" fill={`rgba(${accentRgb},0.12)`} stroke={accent} strokeWidth={sw*0.7} strokeLinejoin="round"/>
-      {/* Checkmark inside hex */}
-      <path d="M19 29L23 33L30 25" stroke={warn||accent} strokeWidth={sw*1.5} strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+    <g fill={accent} filter={`url(#${id}GlS)`}>
+      {[[65,70,0],[135,70,.23],[60,90,.45],[142,90,.68],[58,115,.3],[148,115,.75],[65,140,1.05],[140,140,1.2],[76,80,.6],[124,80,.9],[68,128,1.35],[132,128,1.5]].map(([cx,cy,d],i)=><circle key={i} cx={cx} cy={cy} r="2.5" style={{animation:`${id}N 1.8s ease-in-out ${d}s infinite`}}/>)}
     </g>
-    {/* Scanning line effect */}
-    {pulse&&<rect x="5" y="0" width="38" height="2" rx="1" fill={`url(#${id}G3)`} clipPath={`url(#${id}Clip)`} style={{animation:'shieldScan 3s ease-in-out infinite'}}/>}
-    {/* Corner accents */}
-    <path d="M24 3L20 5" stroke={accent} strokeWidth={sw*0.8} strokeLinecap="round" opacity="0.6"/>
-    <path d="M24 3L28 5" stroke={accent} strokeWidth={sw*0.8} strokeLinecap="round" opacity="0.6"/>
-    <circle cx="24" cy="3" r="1.5" fill={accent} opacity="0.5" style={pulse?{animation:'shieldDot 2s ease-in-out infinite'}:{}}/>
-    {/* Bottom accent */}
-    <circle cx="24" cy="56" r="1" fill={accent} opacity="0.4" style={pulse?{animation:'shieldDot 2s ease-in-out infinite 1s'}:{}}/>
-    {/* Side energy bars */}
-    <path d="M5 18V24" stroke={accent} strokeWidth={sw} strokeLinecap="round" opacity="0.3" style={pulse?{animation:'shieldEnergy 2s ease-in-out infinite'}:{}}/>
-    <path d="M43 18V24" stroke={accent} strokeWidth={sw} strokeLinecap="round" opacity="0.3" style={pulse?{animation:'shieldEnergy 2s ease-in-out infinite 0.5s'}:{}}/>
+    {pulse&&<><circle cx="100" cy="105" r="16" fill="none" stroke={accent} strokeWidth="1" style={{animation:`${id}R 4s ease-out infinite`}}/><circle cx="100" cy="105" r="16" fill="none" stroke={accent} strokeWidth="1" style={{animation:`${id}R 4s ease-out 2s infinite`}}/></>}
+    <g filter={`url(#${id}Gl)`}>
+      <rect x="86" y="100" width="28" height="22" rx="4" stroke={`url(#${id}SG)`} strokeWidth="2.5" style={{animation:`${id}B 4s ease-in-out infinite`}}/>
+      <path d="M92 100 L92 88 C92 81 96 77 100 77 C104 77 108 81 108 88 L108 100" fill="none" stroke={`url(#${id}SG)`} strokeWidth="3" strokeLinecap="round" style={{transformOrigin:'100px 88px',animation:`${id}S 4s ease-in-out infinite`}}/>
+      <circle cx="100" cy="110" r="3" fill={accent}/><rect x="98.5" y="112" width="3" height="5" rx="1" fill={accent}/>
+    </g>
   </svg>;
 };
 const ButterflyLogo=({s=48,accentRgb,accent,accent2,text,warn,flap})=>{
@@ -1749,13 +1722,6 @@ select option{background:${T.bg};color:${T.text}}
 @keyframes logoPulse{0%,100%{box-shadow:0 0 20px rgba(${T.accentRgb},0.15),0 0 40px rgba(${T.accentRgb},0.08)}50%{box-shadow:0 0 30px rgba(${T.accentRgb},0.4),0 0 60px rgba(${T.accentRgb},0.2),0 0 80px rgba(${T.accentRgb},0.1)}}
 @keyframes logoShimmer{0%{left:-100%}100%{left:200%}}
 @keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-@keyframes shieldPulse{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.04);filter:brightness(1.15)}}
-@keyframes shieldGlow{0%,100%{opacity:0.4;transform:scale(0.95)}50%{opacity:1;transform:scale(1.05)}}
-@keyframes shieldCheckPop{0%,100%{transform:scale(1)}40%{transform:scale(1)}50%{transform:scale(1.12)}60%{transform:scale(0.95)}70%{transform:scale(1)}}
-@keyframes shieldScan{0%{transform:translateY(10px);opacity:0}20%{opacity:0.8}80%{opacity:0.8}100%{transform:translateY(50px);opacity:0}}
-@keyframes shieldCircuit{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-20}}
-@keyframes shieldDot{0%,100%{opacity:0.3;transform:scale(1)}50%{opacity:1;transform:scale(1.5)}}
-@keyframes shieldEnergy{0%,100%{opacity:0.2;stroke-dashoffset:0}50%{opacity:0.8;stroke-dashoffset:4}}
 @keyframes shieldFloat{0%{transform:translateY(0px) rotate(0deg)}20%{transform:translateY(-6px) rotate(1.5deg)}40%{transform:translateY(-2px) rotate(-0.5deg)}60%{transform:translateY(-8px) rotate(-1.5deg)}80%{transform:translateY(-3px) rotate(0.5deg)}100%{transform:translateY(0px) rotate(0deg)}}
 @keyframes shieldEntrance{0%{transform:scale(0) rotate(-20deg);opacity:0;filter:blur(8px)}30%{transform:scale(1.15) rotate(4deg);opacity:1;filter:blur(0)}55%{transform:scale(0.92) rotate(-2deg)}75%{transform:scale(1.03) rotate(1deg)}100%{transform:scale(1) rotate(0deg);opacity:1;filter:blur(0)}}
 @keyframes flapWing{0%{transform:scaleX(1)}15%{transform:scaleX(0.6)}30%{transform:scaleX(1)}45%{transform:scaleX(0.55)}60%{transform:scaleX(1)}80%{transform:scaleX(0.7)}100%{transform:scaleX(1)}}
