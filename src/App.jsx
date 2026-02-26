@@ -2519,8 +2519,8 @@ html{scroll-behavior:smooth}
         <p style={infoP}>We reserve the right to update these terms at any time. Continued use of NotesCraft after changes constitutes acceptance of the updated terms.</p>
       </>,
       "password-manager":<>
-        <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:0,marginTop:-20}}>
-          <div style={{animation:"shieldEntrance 0.8s ease-out",filter:`drop-shadow(0 4px 12px rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.3))`}}>
+        <div style={{display:"flex",alignItems:"center",gap:2,marginBottom:0,marginTop:-28}}>
+          <div style={{animation:"shieldEntrance 0.8s ease-out",filter:`drop-shadow(0 4px 12px rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.3))`,marginRight:-2}}>
             <ShieldLogo s={80} accentRgb={pgQuantumSafe?"16,185,129":T.accentRgb} accent={pgQuantumSafe?"#10b981":T.accent} accent2={pgQuantumSafe?"#059669":T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} pulse uid="scPub"/>
           </div>
           <div>
