@@ -184,8 +184,8 @@ const ShieldLogo=({s=60,accentRgb,accent,accent2,text,warn,pulse,uid})=>{
     <defs>
       <linearGradient id={`${id}SG`} x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor={accent}/><stop offset="50%" stopColor={a2}/><stop offset="100%" stopColor={a2}/></linearGradient>
       <linearGradient id={`${id}SF`} x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor={accent} stopOpacity="0.14"/><stop offset="100%" stopColor={a2} stopOpacity="0.04"/></linearGradient>
-      <filter id={`${id}Gl`}><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-      <filter id={`${id}GlS`}><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id={`${id}Gl`}><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id={`${id}GlS`}><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     </defs>
     <style>{`@keyframes ${id}D{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-600}}@keyframes ${id}N{0%,100%{opacity:.35}50%{opacity:1}}@keyframes ${id}S{0%,60%{transform:translateY(0) rotate(0)}70%,90%{transform:translateY(-6px) rotate(-15deg)}100%{transform:translateY(0) rotate(0)}}@keyframes ${id}R{0%{r:18;opacity:.45}100%{r:36;opacity:0}}@keyframes ${id}B{0%,60%{fill:rgba(${accentRgb},0.18)}70%,90%{fill:rgba(${accentRgb},0.3)}100%{fill:rgba(${accentRgb},0.18)}}`}</style>
     <path d="M100 12 L34 46 L34 122 C34 162 62 184 100 200 C138 184 166 162 166 122 L166 46 Z" fill="none" stroke={`rgba(${accentRgb},0.3)`} strokeWidth="3" strokeDasharray="12 8" style={{animation:`${id}D 8s linear infinite`}}/>
@@ -2486,13 +2486,13 @@ html{scroll-behavior:smooth}
         <p style={infoP}>We reserve the right to update these terms at any time. Continued use of NotesCraft after changes constitutes acceptance of the updated terms.</p>
       </>,
       "password-manager":<>
-        <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:8}}>
-          <div style={{animation:"shieldEntrance 0.8s ease-out, shieldFloat 8s ease-in-out infinite 0.8s",filter:`drop-shadow(0 6px 20px rgba(${T.accentRgb},0.5)) drop-shadow(0 0 40px rgba(${T.accentRgb},0.15))`}}>
+        <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:4,marginTop:-8}}>
+          <div style={{animation:"shieldEntrance 0.8s ease-out, shieldFloat 8s ease-in-out infinite 0.8s",filter:`drop-shadow(0 4px 12px rgba(${T.accentRgb},0.3))`}}>
             <ShieldLogo s={80} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} pulse uid="scPub"/>
           </div>
           <div>
             <h1 style={{...infoH,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${T.accent} 70%,${T.accent2||T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",textShadow:"none",margin:0,fontSize:32}}>ShieldCraft</h1>
-            <p style={{fontSize:12,color:T.dim,margin:"2px 0 0",letterSpacing:1.5,fontWeight:500}}>by NotesCraft</p>
+            <p style={{fontSize:12,color:T.dim,margin:"2px 0 0",letterSpacing:1.5,fontWeight:500}}>Password Generator Tool by NotesCraft</p>
           </div>
         </div>
         <p style={{...infoP,color:"rgba(176,190,201,0.8)"}}>Generate strong passwords and securely store your credentials with end-to-end encryption.</p>
