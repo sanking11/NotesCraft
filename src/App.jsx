@@ -2487,19 +2487,19 @@ html{scroll-behavior:smooth}
       </>,
       "password-manager":<>
         <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:4,marginTop:-8}}>
-          <div style={{animation:"shieldEntrance 0.8s ease-out, shieldFloat 8s ease-in-out infinite 0.8s",filter:`drop-shadow(0 4px 12px rgba(${T.accentRgb},0.3))`}}>
-            <ShieldLogo s={80} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} pulse uid="scPub"/>
+          <div style={{animation:"shieldEntrance 0.8s ease-out",filter:`drop-shadow(0 4px 12px rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.3))`}}>
+            <ShieldLogo s={80} accentRgb={pgQuantumSafe?"16,185,129":T.accentRgb} accent={pgQuantumSafe?"#10b981":T.accent} accent2={pgQuantumSafe?"#059669":T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} pulse uid="scPub"/>
           </div>
           <div>
-            <h1 style={{...infoH,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${T.accent} 70%,${T.accent2||T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",textShadow:"none",margin:0,fontSize:32}}>ShieldCraft</h1>
-            <p style={{fontSize:12,color:T.dim,margin:"2px 0 0",letterSpacing:1.5,fontWeight:500}}>Password Generator Tool by NotesCraft</p>
+            <h1 style={{...infoH,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${pgQuantumSafe?"#10b981":T.accent} 70%,${pgQuantumSafe?"#059669":T.accent2||T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",textShadow:"none",margin:0,fontSize:32}}>ShieldCraft</h1>
+            <p style={{fontSize:10,color:pgQuantumSafe?"rgba(16,185,129,0.6)":T.dim,margin:"2px 0 0",letterSpacing:1.2,fontWeight:500}}>Password Generator Tool by NotesCraft</p>
           </div>
         </div>
         <p style={{...infoP,color:"rgba(176,190,201,0.8)"}}>Generate strong passwords and securely store your credentials with end-to-end encryption.</p>
 
         {/* Top-right Login button */}
         <div style={{position:"absolute",top:20,right:24,zIndex:10}}>
-          <button onClick={()=>{setPmShowLogin(true);setPmLoginErr("");setPmLogin2FA(false);setPmLogin2FACode("");setPmLogin2FAErr("");setPmSignupMode(false)}} style={{padding:"8px 20px",background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:10,color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5,boxShadow:`0 4px 16px rgba(${T.accentRgb},0.35)`,transition:"all 0.3s"}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-1px)"}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)"}}>Login</button>
+          <button onClick={()=>{setPmShowLogin(true);setPmLoginErr("");setPmLogin2FA(false);setPmLogin2FACode("");setPmLogin2FAErr("");setPmSignupMode(false)}} style={{padding:"8px 20px",background:pgQuantumSafe?"linear-gradient(135deg,#10b981,#059669)":`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:10,color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5,boxShadow:pgQuantumSafe?"0 4px 16px rgba(16,185,129,0.35)":`0 4px 16px rgba(${T.accentRgb},0.35)`,transition:"all 0.3s"}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-1px)"}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)"}}>Login</button>
         </div>
 
         {/* ═══════ GHOST SHIELD UNLOCK MODAL ═══════ */}
