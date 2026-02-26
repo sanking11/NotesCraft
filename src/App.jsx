@@ -463,6 +463,10 @@ export default function NotesCraft(){
   const[pmCredentials,setPmCredentials]=useState([]);
   const[pmSearch,setPmSearch]=useState("");
   const[pmView,setPmView]=useState("list"); // "list"|"add"|"edit"|"generator"
+  const[pmShowLogin,setPmShowLogin]=useState(false);
+  const[pmSignupMode,setPmSignupMode]=useState(false);
+  const[pmSignupName,setPmSignupName]=useState("");
+  const[pmFolderFilter,setPmFolderFilter]=useState(null);
   const[pmSelectedId,setPmSelectedId]=useState(null);
   const[pmFormSite,setPmFormSite]=useState("");
   const[pmFormUrl,setPmFormUrl]=useState("");
@@ -665,14 +669,40 @@ export default function NotesCraft(){
         setPmLogin2FA(true);setPmLoginLoad(false);return
       }
       if(u.twoFactorEnabled&&pmLogin2FA){
-        const ok=await verifyTOTP(u.twoFactorSecret,pmLogin2FACode);
+        const twofaData=await es.getTwoFA(em);
+        if(!twofaData){setPmLogin2FAErr("2FA data not found");setPmLoginLoad(false);return}
+        const ok=await verifyTOTP(twofaData.secret,pmLogin2FACode);
         if(!ok){setPmLogin2FAErr("Invalid code");setPmLoginLoad(false);return}
       }
       pmStorageRef.current=es;pmUserRef.current=em;
       await pmLoadVault(es,em);
       await es.subscribe(em,()=>{},()=>{},()=>{},(newPw)=>{if(newPw)setPmCredentials(newPw)});
-      setPmLoginPw("");setPmLogin2FACode("")
+      setPmLoginPw("");setPmLogin2FACode("");setPmShowLogin(false);setPmLogin2FA(false)
     }catch(e){setPmLoginErr("Login failed: "+e.message)}
+    setPmLoginLoad(false)
+  };
+  const pmDoSignup=async()=>{
+    setPmLoginErr("");
+    if(!pmLoginEmail||!pmLoginPw||!pmSignupName){setPmLoginErr("All fields required");return}
+    if(pmLoginPw.length<12){setPmLoginErr("Password must be at least 12 characters");return}
+    setPmLoginLoad(true);
+    try{
+      const adapter=await createSyncAdapter();
+      const em=pmLoginEmail.toLowerCase();
+      const salt=generateSalt();
+      const key=await deriveKey(pmLoginPw,salt);
+      const pwHash=await hashPassword(pmLoginPw,salt);
+      const es=new EncryptedStorage(adapter,key);
+      const existing=await es.getUser(em);
+      if(existing){setPmLoginErr("Account exists — sign in instead");setPmLoginLoad(false);return}
+      const u={email:em,name:pmSignupName,pwHash,salt,quotaGB:10};
+      await es.setUser(em,u);
+      await es.setNotes(em,[]);await es.setPrefs(em,{theme:"midnight",tags:[],folderColors:{}});
+      await es.setCalendar(em,[]);await es.setPasswords(em,[]);
+      pmStorageRef.current=es;pmUserRef.current=em;
+      setPmCredentials([]);setPmIsLoggedIn(true);setPmShowLogin(false);setPmSignupMode(false);
+      setPmLoginPw("");setPmSignupName("")
+    }catch(e){setPmLoginErr("Signup failed: "+e.message)}
     setPmLoginLoad(false)
   };
   // Auto-login to PM when already logged in to main app
@@ -1839,74 +1869,117 @@ html{scroll-behavior:smooth}
         <h1 style={{...infoH,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",textShadow:"none"}}>Password Manager</h1>
         <p style={{...infoP,color:"rgba(176,190,201,0.8)"}}>Generate strong passwords and securely store your credentials with end-to-end encryption.</p>
 
-        {/* ═══════ PASSWORD VAULT ═══════ */}
-        {pmIsLoggedIn&&pmView==="list"&&<>
-          {/* Vault Header */}
-          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16,flexWrap:"wrap",gap:10}}>
-            <h2 style={{fontSize:20,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.text,margin:0,letterSpacing:1,textShadow:`0 0 12px rgba(${T.accentRgb},0.3)`}}>Password Vault</h2>
-            <div style={{display:"flex",gap:8}}>
-              <button onClick={()=>{pmClearForm();setPmView("add")}} style={{padding:"8px 16px",background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:10,color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5,boxShadow:`0 4px 16px rgba(${T.accentRgb},0.35)`,transition:"all 0.3s"}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-1px)"}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)"}}>+ Add</button>
-              <button onClick={()=>setPmView("generator")} style={{padding:"8px 16px",background:"rgba(255,255,255,0.06)",border:`1px solid rgba(${T.accentRgb},0.3)`,borderRadius:10,color:T.accent,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",transition:"all 0.3s"}} onMouseEnter={e=>{e.currentTarget.style.background="rgba(255,255,255,0.1)"}} onMouseLeave={e=>{e.currentTarget.style.background="rgba(255,255,255,0.06)"}}>Generate</button>
-              <button onClick={()=>{setPmIsLoggedIn(false);setPmCredentials([]);pmStorageRef.current=null;pmUserRef.current=null}} style={{padding:"8px 12px",background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.15)`,borderRadius:10,color:T.dim,fontSize:11,fontWeight:500,cursor:"pointer",fontFamily:"inherit",transition:"all 0.3s"}}>Logout</button>
+        {/* Top-right Login/User button */}
+        <div style={{position:"absolute",top:20,right:24,zIndex:10}}>
+          {pmIsLoggedIn?<div style={{display:"flex",alignItems:"center",gap:10}}>
+            <span style={{fontSize:11,color:T.dim}}>{pmUserRef.current||email}</span>
+            <button onClick={()=>{setPmIsLoggedIn(false);setPmCredentials([]);pmStorageRef.current=null;pmUserRef.current=null}} style={{padding:"6px 14px",background:"rgba(255,255,255,0.06)",border:`1px solid rgba(${T.accentRgb},0.2)`,borderRadius:8,color:T.dim,fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:"inherit",transition:"all 0.3s"}}>Logout</button>
+          </div>
+          :<button onClick={()=>{setPmShowLogin(true);setPmLoginErr("");setPmLogin2FA(false);setPmLogin2FACode("");setPmLogin2FAErr("");setPmSignupMode(false)}} style={{padding:"8px 20px",background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:10,color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5,boxShadow:`0 4px 16px rgba(${T.accentRgb},0.35)`,transition:"all 0.3s"}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-1px)"}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)"}}>Login</button>}
+        </div>
+
+        {/* ═══════ LOGIN / SIGNUP MODAL ═══════ */}
+        {pmShowLogin&&<div style={{position:"fixed",inset:0,zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.6)",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)"}} onClick={e=>{if(e.target===e.currentTarget)setPmShowLogin(false)}}>
+          <div style={{width:380,maxWidth:"90vw",background:T.dark?"rgba(16,18,27,0.95)":"rgba(30,32,44,0.95)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:`1px solid rgba(${T.accentRgb},0.2)`,borderRadius:20,padding:"32px 28px",boxShadow:`0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(${T.accentRgb},0.08)`,position:"relative"}}>
+            <button onClick={()=>setPmShowLogin(false)} style={{position:"absolute",top:12,right:14,background:"none",border:"none",color:T.dim,fontSize:20,cursor:"pointer",padding:"4px 8px",lineHeight:1}}>x</button>
+            <h2 style={{fontSize:20,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.text,margin:"0 0 4px",letterSpacing:1,textAlign:"center"}}>{pmSignupMode?"Create Account":"Login"}</h2>
+            <p style={{fontSize:11,color:T.dim,margin:"0 0 20px",textAlign:"center"}}>{pmSignupMode?"Create a NotesCraft account to store passwords":"Use your NotesCraft credentials"}</p>
+            {!pmLogin2FA?<div style={{display:"flex",flexDirection:"column",gap:10}}>
+              {pmSignupMode&&<input type="text" value={pmSignupName} onChange={e=>setPmSignupName(e.target.value)} placeholder="Full Name" style={{padding:"11px 14px",borderRadius:10,background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.15)`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box",transition:"border-color 0.3s"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.15)`}}/>}
+              <input type="email" value={pmLoginEmail} onChange={e=>setPmLoginEmail(e.target.value)} placeholder="Email" style={{padding:"11px 14px",borderRadius:10,background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.15)`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box",transition:"border-color 0.3s"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.15)`}} onKeyDown={e=>{if(e.key==="Enter"){pmSignupMode?pmDoSignup():pmDoLogin()}}}/>
+              <input type="password" value={pmLoginPw} onChange={e=>setPmLoginPw(e.target.value)} placeholder="Password" style={{padding:"11px 14px",borderRadius:10,background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.15)`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box",transition:"border-color 0.3s"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.15)`}} onKeyDown={e=>{if(e.key==="Enter"){pmSignupMode?pmDoSignup():pmDoLogin()}}}/>
+              {pmLoginErr&&<p style={{fontSize:11,color:T.err||"#ef4444",margin:0,fontWeight:500}}>{pmLoginErr}</p>}
+              <button onClick={pmSignupMode?pmDoSignup:pmDoLogin} disabled={pmLoginLoad} style={{padding:"12px 0",background:pmLoginLoad?"rgba(255,255,255,0.06)":`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:10,color:pmLoginLoad?T.dim:"#fff",fontSize:14,fontWeight:700,cursor:pmLoginLoad?"not-allowed":"pointer",fontFamily:"inherit",letterSpacing:1,transition:"all 0.3s",boxShadow:pmLoginLoad?"none":`0 4px 16px rgba(${T.accentRgb},0.3)`}}>{pmLoginLoad?"Please wait...":(pmSignupMode?"Create Account":"Login")}</button>
+              <p style={{fontSize:11,color:T.dim,textAlign:"center",margin:"4px 0 0"}}>{pmSignupMode?"Already have an account?":"Don't have an account?"} <button onClick={()=>{setPmSignupMode(!pmSignupMode);setPmLoginErr("")}} style={{background:"none",border:"none",color:T.accent,fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:"inherit",textDecoration:"underline"}}>{pmSignupMode?"Login":"Sign Up"}</button></p>
             </div>
+            :<div style={{display:"flex",flexDirection:"column",gap:10}}>
+              <p style={{fontSize:12,color:T.text,margin:0,textAlign:"center"}}>Enter your 2FA code</p>
+              <input type="text" value={pmLogin2FACode} onChange={e=>setPmLogin2FACode(e.target.value.replace(/\D/g,"").slice(0,6))} placeholder="000000" maxLength={6} style={{padding:"12px 14px",borderRadius:10,background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.15)`,color:T.text,fontSize:22,fontFamily:"monospace",fontWeight:700,outline:"none",boxSizing:"border-box",textAlign:"center",letterSpacing:8,transition:"border-color 0.3s"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.15)`}} onKeyDown={e=>{if(e.key==="Enter")pmDoLogin()}} autoFocus/>
+              {pmLogin2FAErr&&<p style={{fontSize:11,color:T.err||"#ef4444",margin:0,fontWeight:500,textAlign:"center"}}>{pmLogin2FAErr}</p>}
+              <div style={{display:"flex",gap:8}}>
+                <button onClick={pmDoLogin} disabled={pmLoginLoad||pmLogin2FACode.length!==6} style={{flex:1,padding:"12px 0",background:(pmLoginLoad||pmLogin2FACode.length!==6)?"rgba(255,255,255,0.06)":`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:10,color:(pmLoginLoad||pmLogin2FACode.length!==6)?T.dim:"#fff",fontSize:14,fontWeight:700,cursor:(pmLoginLoad||pmLogin2FACode.length!==6)?"not-allowed":"pointer",fontFamily:"inherit",transition:"all 0.3s"}}>{pmLoginLoad?"Verifying...":"Verify"}</button>
+                <button onClick={()=>{setPmLogin2FA(false);setPmLogin2FACode("");setPmLogin2FAErr("")}} style={{padding:"12px 16px",background:"rgba(255,255,255,0.06)",border:`1px solid rgba(${T.accentRgb},0.15)`,borderRadius:10,color:T.dim,fontSize:12,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>Back</button>
+              </div>
+            </div>}
           </div>
-          {/* Search */}
-          <input value={pmSearch} onChange={e=>setPmSearch(e.target.value)} placeholder="Search credentials..." style={{width:"100%",padding:"11px 16px",borderRadius:12,background:"rgba(255,255,255,0.04)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid rgba(${T.accentRgb},0.15)`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box",marginBottom:16,transition:"all 0.3s",boxShadow:`inset 0 1px 4px rgba(0,0,0,0.1)`}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent;e.currentTarget.style.boxShadow=`0 0 12px rgba(${T.accentRgb},0.15)`}} onBlur={e=>{e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.15)`;e.currentTarget.style.boxShadow=`inset 0 1px 4px rgba(0,0,0,0.1)`}}/>
-          {/* Credential Cards */}
-          {(()=>{
-            const q=pmSearch.toLowerCase();
-            const filtered=pmCredentials.filter(c=>{
-              if(!q)return true;
-              return(c.siteName||"").toLowerCase().includes(q)||(c.username||"").toLowerCase().includes(q)||(c.siteUrl||"").toLowerCase().includes(q)||(c.folder||"").toLowerCase().includes(q)
-            }).sort((a,b)=>(b.starred?1:0)-(a.starred?1:0)||a.siteName.localeCompare(b.siteName));
-            if(!filtered.length)return<div style={{textAlign:"center",padding:"40px 0",color:T.dim,fontSize:13}}>{pmCredentials.length?`No results for "${pmSearch}"`:"No saved credentials yet. Click + Add to get started."}</div>;
-            return filtered.map(c=><div key={c.id} style={{...infoGlass,padding:"16px 18px",borderRadius:14,marginBottom:10,position:"relative",transition:"all 0.3s",borderLeft:c.starred?`3px solid ${T.accent}`:"3px solid transparent"}} onMouseEnter={e=>{e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.4)`;e.currentTarget.style.boxShadow=`0 6px 24px rgba(0,0,0,0.25),0 0 20px rgba(${T.accentRgb},0.08)`}} onMouseLeave={e=>{e.currentTarget.style.borderColor=c.starred?T.accent:"transparent";e.currentTarget.style.boxShadow=infoGlass.boxShadow}}>
-              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
-                <div style={{display:"flex",alignItems:"center",gap:10}}>
-                  <div style={{width:32,height:32,borderRadius:8,background:`linear-gradient(135deg,rgba(${T.accentRgb},0.2),rgba(${T.accentRgb},0.08))`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:700,color:T.accent,border:`1px solid rgba(${T.accentRgb},0.2)`}}>{(c.siteName||"?")[0].toUpperCase()}</div>
-                  <div>
-                    <div style={{fontSize:14,fontWeight:700,color:T.text,letterSpacing:0.3}}>{c.siteName||"Untitled"}{c.starred&&<span style={{marginLeft:6,fontSize:11,color:T.accent}}>★</span>}</div>
-                    <div style={{fontSize:11,color:T.dim,marginTop:1}}>{c.username}</div>
-                  </div>
-                </div>
-                {c.folder&&<span style={{fontSize:9,fontWeight:600,color:T.dim,background:"rgba(255,255,255,0.06)",padding:"3px 8px",borderRadius:6,letterSpacing:0.5}}>{c.folder}</span>}
-              </div>
-              {/* Password row */}
-              <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:c.totpSecret?8:4}}>
-                <span style={{fontSize:12,fontFamily:"monospace",color:T.dim,letterSpacing:1,flex:1}}>{pmShowPw[c.id]?c.password:"•".repeat(Math.min(c.password.length,20))}</span>
-                <button onClick={()=>setPmShowPw(p=>({...p,[c.id]:!p[c.id]}))} style={{background:"none",border:"none",cursor:"pointer",fontSize:12,color:T.dim,padding:"2px 4px"}} title={pmShowPw[c.id]?"Hide":"Show"}>{pmShowPw[c.id]?"🙈":"👁"}</button>
-                <button onClick={()=>{navigator.clipboard.writeText(c.password);setPmCopied(c.id+"pw");setTimeout(()=>setPmCopied(""),1500)}} style={{background:"none",border:"none",cursor:"pointer",fontSize:10,color:pmCopied===c.id+"pw"?T.accent:T.dim,padding:"2px 4px",fontFamily:"inherit",fontWeight:600}}>{pmCopied===c.id+"pw"?"Copied!":"Copy"}</button>
-              </div>
-              {/* TOTP display */}
-              {c.totpSecret&&pmTotpCodes[c.id]&&<div style={{display:"flex",alignItems:"center",gap:10,marginBottom:8,padding:"8px 12px",borderRadius:8,background:"rgba(255,255,255,0.03)",border:`1px solid rgba(${T.accentRgb},0.1)`}}>
-                <span style={{fontSize:18,fontFamily:"monospace",fontWeight:700,color:T.accent,letterSpacing:3,textShadow:`0 0 8px rgba(${T.accentRgb},0.4)`}}>{pmTotpCodes[c.id]}</span>
-                <div style={{width:24,height:24,position:"relative"}}>
-                  <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke={`rgba(${T.accentRgb},0.15)`} strokeWidth="2"/><circle cx="12" cy="12" r="10" fill="none" stroke={T.accent} strokeWidth="2" strokeDasharray={`${(pmTotpRemaining/30)*62.8} 62.8`} strokeLinecap="round" transform="rotate(-90 12 12)" style={{transition:"stroke-dasharray 0.3s"}}/></svg>
-                  <span style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:8,fontWeight:700,color:T.dim}}>{pmTotpRemaining}</span>
-                </div>
-                <button onClick={()=>{navigator.clipboard.writeText(pmTotpCodes[c.id]);setPmCopied(c.id+"totp");setTimeout(()=>setPmCopied(""),1500)}} style={{background:"none",border:"none",cursor:"pointer",fontSize:10,color:pmCopied===c.id+"totp"?T.accent:T.dim,padding:"2px 4px",fontFamily:"inherit",fontWeight:600,marginLeft:"auto"}}>{pmCopied===c.id+"totp"?"Copied!":"Copy"}</button>
-              </div>}
-              {/* Actions */}
-              <div style={{display:"flex",gap:6,marginTop:4}}>
-                <button onClick={()=>{navigator.clipboard.writeText(c.username);setPmCopied(c.id+"user");setTimeout(()=>setPmCopied(""),1500)}} style={{padding:"4px 10px",background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.12)`,borderRadius:6,color:pmCopied===c.id+"user"?T.accent:T.dim,fontSize:10,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>{pmCopied===c.id+"user"?"Copied!":"Copy User"}</button>
-                <button onClick={()=>pmEditCredential(c)} style={{padding:"4px 10px",background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.12)`,borderRadius:6,color:T.dim,fontSize:10,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>Edit</button>
-                {pmDelConfirm===c.id?<>
-                  <button onClick={()=>pmDeleteCredential(c.id)} style={{padding:"4px 10px",background:"rgba(239,68,68,0.15)",border:"1px solid rgba(239,68,68,0.3)",borderRadius:6,color:"#ef4444",fontSize:10,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Confirm</button>
-                  <button onClick={()=>setPmDelConfirm(null)} style={{padding:"4px 10px",background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.12)`,borderRadius:6,color:T.dim,fontSize:10,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>Cancel</button>
-                </>:<button onClick={()=>setPmDelConfirm(c.id)} style={{padding:"4px 10px",background:"rgba(255,255,255,0.04)",border:"1px solid rgba(239,68,68,0.12)",borderRadius:6,color:"rgba(239,68,68,0.6)",fontSize:10,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>Delete</button>}
-              </div>
-            </div>)
-          })()}
-          <div style={{borderTop:`1px solid rgba(${T.accentRgb},0.1)`,margin:"20px 0",padding:"16px 0 0"}}>
-            <p style={{fontSize:12,color:T.dim,textAlign:"center",margin:"0 0 14px"}}>Password Generator</p>
+        </div>}
+
+        {/* ═══════ PASSWORD VAULT (logged in) ═══════ */}
+        {pmIsLoggedIn&&pmView==="list"&&(()=>{
+          const q=pmSearch.toLowerCase();
+          const allFolders=[...new Set(pmCredentials.filter(c=>c.folder).map(c=>c.folder))].sort();
+          const filtered=pmCredentials.filter(c=>{
+            if(pmFolderFilter&&c.folder!==pmFolderFilter)return false;
+            if(!q)return true;
+            return(c.siteName||"").toLowerCase().includes(q)||(c.username||"").toLowerCase().includes(q)||(c.siteUrl||"").toLowerCase().includes(q)
+          }).sort((a,b)=>(b.starred?1:0)-(a.starred?1:0)||a.siteName.localeCompare(b.siteName));
+          const starred=filtered.filter(c=>c.starred);
+          const unstarred=filtered.filter(c=>!c.starred);
+          return<>
+          {/* Vault Top Bar */}
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16,flexWrap:"wrap"}}>
+            <div style={{flex:1,minWidth:200,position:"relative"}}>
+              <span style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",color:T.dim,fontSize:14,pointerEvents:"none"}}>🔍</span>
+              <input value={pmSearch} onChange={e=>setPmSearch(e.target.value)} placeholder="Search passwords..." style={{width:"100%",padding:"10px 12px 10px 34px",borderRadius:10,background:"rgba(255,255,255,0.04)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid rgba(${T.accentRgb},0.12)`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box",transition:"all 0.3s"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.12)`}}/>
+            </div>
+            <button onClick={()=>{pmClearForm();setPmView("add")}} style={{padding:"9px 18px",background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:10,color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5,boxShadow:`0 4px 16px rgba(${T.accentRgb},0.35)`,transition:"all 0.3s"}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-1px)"}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)"}}>+ Add</button>
+            <button onClick={()=>setPmView("generator")} style={{padding:"9px 14px",background:"rgba(255,255,255,0.06)",border:`1px solid rgba(${T.accentRgb},0.25)`,borderRadius:10,color:T.accent,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",transition:"all 0.3s"}} onMouseEnter={e=>{e.currentTarget.style.background="rgba(255,255,255,0.1)"}} onMouseLeave={e=>{e.currentTarget.style.background="rgba(255,255,255,0.06)"}}>Generate</button>
           </div>
-        </>}
+
+          {/* Stats Bar */}
+          <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginBottom:18}}>
+            {[{label:"Total",val:pmCredentials.length,icon:"🔑"},{label:"Starred",val:pmCredentials.filter(c=>c.starred).length,icon:"★"},{label:"Folders",val:allFolders.length,icon:"📁"},{label:"With TOTP",val:pmCredentials.filter(c=>c.totpSecret).length,icon:"🔐"}].map((s,i)=><div key={i} style={{...infoGlass,padding:"12px",borderRadius:12,textAlign:"center"}}>
+              <div style={{fontSize:16,marginBottom:2}}>{s.icon}</div>
+              <div style={{fontSize:18,fontWeight:800,color:T.text}}>{s.val}</div>
+              <div style={{fontSize:9,color:T.dim,fontWeight:600,letterSpacing:0.5,textTransform:"uppercase"}}>{s.label}</div>
+            </div>)}
+          </div>
+
+          {/* Folder Filter Tabs */}
+          {allFolders.length>0&&<div style={{display:"flex",gap:6,marginBottom:14,flexWrap:"wrap"}}>
+            <button onClick={()=>setPmFolderFilter(null)} style={{padding:"5px 12px",borderRadius:8,background:!pmFolderFilter?`rgba(${T.accentRgb},0.15)`:"rgba(255,255,255,0.04)",border:`1px solid ${!pmFolderFilter?T.accent:`rgba(${T.accentRgb},0.1)`}`,color:!pmFolderFilter?T.accent:T.dim,fontSize:10,fontWeight:600,cursor:"pointer",fontFamily:"inherit",transition:"all 0.2s"}}>All</button>
+            {allFolders.map(f=><button key={f} onClick={()=>setPmFolderFilter(pmFolderFilter===f?null:f)} style={{padding:"5px 12px",borderRadius:8,background:pmFolderFilter===f?`rgba(${T.accentRgb},0.15)`:"rgba(255,255,255,0.04)",border:`1px solid ${pmFolderFilter===f?T.accent:`rgba(${T.accentRgb},0.1)`}`,color:pmFolderFilter===f?T.accent:T.dim,fontSize:10,fontWeight:600,cursor:"pointer",fontFamily:"inherit",transition:"all 0.2s"}}>{f}</button>)}
+          </div>}
+
+          {/* Starred Section */}
+          {starred.length>0&&!pmSearch&&<>
+            <div style={{fontSize:11,fontWeight:700,color:T.dim,letterSpacing:1,textTransform:"uppercase",marginBottom:10}}>Favorites ({starred.length})</div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(150px,1fr))",gap:10,marginBottom:20}}>
+              {starred.map(c=><div key={c.id} style={{...infoGlass,padding:"16px 14px",borderRadius:14,cursor:"pointer",transition:"all 0.3s",textAlign:"center",borderBottom:`2px solid ${T.accent}`,position:"relative"}} onClick={()=>pmEditCredential(c)} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow=`0 8px 28px rgba(0,0,0,0.3),0 0 20px rgba(${T.accentRgb},0.1)`}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow=infoGlass.boxShadow}}>
+                <div style={{width:44,height:44,borderRadius:12,background:`linear-gradient(135deg,rgba(${T.accentRgb},0.25),rgba(${T.accentRgb},0.08))`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,fontWeight:700,color:T.accent,border:`1px solid rgba(${T.accentRgb},0.2)`,margin:"0 auto 8px"}}>{c.siteUrl?<img src={`https://www.google.com/s2/favicons?domain=${encodeURIComponent(c.siteUrl)}&sz=32`} width="24" height="24" style={{borderRadius:4}} onError={e=>{e.currentTarget.style.display="none";e.currentTarget.parentElement.textContent=(c.siteName||"?")[0].toUpperCase()}}/>:(c.siteName||"?")[0].toUpperCase()}</div>
+                <div style={{fontSize:12,fontWeight:700,color:T.text,marginBottom:2,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{c.siteName}</div>
+                <div style={{fontSize:10,color:T.dim,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{c.username}</div>
+                <span style={{position:"absolute",top:8,right:10,fontSize:11,color:T.accent}}>★</span>
+              </div>)}
+            </div>
+          </>}
+
+          {/* All Passwords Grid */}
+          <div style={{fontSize:11,fontWeight:700,color:T.dim,letterSpacing:1,textTransform:"uppercase",marginBottom:10}}>{pmSearch?`Results (${filtered.length})`:`All Passwords (${unstarred.length})`}</div>
+          {!filtered.length&&<div style={{textAlign:"center",padding:"40px 0",color:T.dim,fontSize:13}}>{pmCredentials.length?`No results for "${pmSearch}"`:"No saved credentials yet. Click + Add to get started."}</div>}
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(150px,1fr))",gap:10,marginBottom:20}}>
+            {(pmSearch?filtered:unstarred).map(c=><div key={c.id} style={{...infoGlass,padding:"16px 14px",borderRadius:14,cursor:"pointer",transition:"all 0.3s",textAlign:"center",position:"relative"}} onClick={()=>pmEditCredential(c)} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow=`0 8px 28px rgba(0,0,0,0.3),0 0 20px rgba(${T.accentRgb},0.1)`}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow=infoGlass.boxShadow}}>
+              <div style={{width:44,height:44,borderRadius:12,background:`linear-gradient(135deg,rgba(${T.accentRgb},0.2),rgba(${T.accentRgb},0.08))`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,fontWeight:700,color:T.accent,border:`1px solid rgba(${T.accentRgb},0.15)`,margin:"0 auto 8px"}}>{c.siteUrl?<img src={`https://www.google.com/s2/favicons?domain=${encodeURIComponent(c.siteUrl)}&sz=32`} width="24" height="24" style={{borderRadius:4}} onError={e=>{e.currentTarget.style.display="none";e.currentTarget.parentElement.textContent=(c.siteName||"?")[0].toUpperCase()}}/>:(c.siteName||"?")[0].toUpperCase()}</div>
+              <div style={{fontSize:12,fontWeight:700,color:T.text,marginBottom:2,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{c.siteName||"Untitled"}</div>
+              <div style={{fontSize:10,color:T.dim,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{c.username}</div>
+              {c.starred&&<span style={{position:"absolute",top:8,right:10,fontSize:11,color:T.accent}}>★</span>}
+              {c.totpSecret&&<span style={{position:"absolute",top:8,left:10,fontSize:9,color:T.accent,background:`rgba(${T.accentRgb},0.1)`,padding:"1px 5px",borderRadius:4,fontWeight:600}}>2FA</span>}
+            </div>)}
+          </div>
+
+          <div style={{borderTop:`1px solid rgba(${T.accentRgb},0.1)`,margin:"10px 0",padding:"14px 0 0"}}>
+            <p style={{fontSize:12,color:T.dim,textAlign:"center",margin:"0 0 12px"}}>Password Generator</p>
+          </div>
+        </>})()}
 
         {/* ═══════ ADD / EDIT CREDENTIAL FORM ═══════ */}
         {pmIsLoggedIn&&(pmView==="add"||pmView==="edit")&&<>
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
             <h2 style={{fontSize:18,fontWeight:700,fontFamily:`${F.heading},sans-serif`,color:T.text,margin:0,letterSpacing:1}}>{pmView==="add"?"Add Credential":"Edit Credential"}</h2>
-            <button onClick={()=>{pmClearForm();setPmSelectedId(null);setPmView("list")}} style={{padding:"6px 14px",background:"rgba(255,255,255,0.06)",border:`1px solid rgba(${T.accentRgb},0.2)`,borderRadius:8,color:T.dim,fontSize:11,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>Cancel</button>
+            <div style={{display:"flex",gap:8}}>
+              {pmView==="edit"&&<button onClick={()=>{if(pmDelConfirm===pmSelectedId){pmDeleteCredential(pmSelectedId);pmClearForm();setPmSelectedId(null);setPmView("list")}else{setPmDelConfirm(pmSelectedId)}}} style={{padding:"6px 14px",background:pmDelConfirm===pmSelectedId?"rgba(239,68,68,0.2)":"rgba(255,255,255,0.06)",border:pmDelConfirm===pmSelectedId?"1px solid rgba(239,68,68,0.4)":`1px solid rgba(239,68,68,0.15)`,borderRadius:8,color:"#ef4444",fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>{pmDelConfirm===pmSelectedId?"Confirm Delete":"Delete"}</button>}
+              <button onClick={()=>{pmClearForm();setPmSelectedId(null);setPmView("list");setPmDelConfirm(null)}} style={{padding:"6px 14px",background:"rgba(255,255,255,0.06)",border:`1px solid rgba(${T.accentRgb},0.2)`,borderRadius:8,color:T.dim,fontSize:11,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>Cancel</button>
+            </div>
           </div>
           <div style={{display:"flex",flexDirection:"column",gap:12}}>
             {[{label:"Site Name",val:pmFormSite,set:setPmFormSite,ph:"GitHub"},
@@ -1928,10 +2001,17 @@ html{scroll-behavior:smooth}
               <div onClick={()=>setPmFormStarred(!pmFormStarred)} style={{width:18,height:18,borderRadius:4,border:`1.5px solid ${pmFormStarred?T.accent:`rgba(${T.accentRgb},0.3)`}`,background:pmFormStarred?`rgba(${T.accentRgb},0.15)`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",transition:"all 0.2s"}}>{pmFormStarred&&<span style={{color:T.accent,fontSize:11}}>★</span>}</div>
               Mark as starred
             </label>
+            {/* TOTP display when editing */}
+            {pmView==="edit"&&pmFormTotp&&pmTotpCodes[pmSelectedId]&&<div style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",borderRadius:10,background:"rgba(255,255,255,0.03)",border:`1px solid rgba(${T.accentRgb},0.1)`}}>
+              <span style={{fontSize:11,color:T.dim,fontWeight:600}}>TOTP:</span>
+              <span style={{fontSize:20,fontFamily:"monospace",fontWeight:700,color:T.accent,letterSpacing:3,textShadow:`0 0 8px rgba(${T.accentRgb},0.4)`}}>{pmTotpCodes[pmSelectedId]}</span>
+              <div style={{width:24,height:24,position:"relative"}}>
+                <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke={`rgba(${T.accentRgb},0.15)`} strokeWidth="2"/><circle cx="12" cy="12" r="10" fill="none" stroke={T.accent} strokeWidth="2" strokeDasharray={`${(pmTotpRemaining/30)*62.8} 62.8`} strokeLinecap="round" transform="rotate(-90 12 12)" style={{transition:"stroke-dasharray 0.3s"}}/></svg>
+                <span style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:8,fontWeight:700,color:T.dim}}>{pmTotpRemaining}</span>
+              </div>
+              <button onClick={()=>{navigator.clipboard.writeText(pmTotpCodes[pmSelectedId]);setPmCopied("totp");setTimeout(()=>setPmCopied(""),1500)}} style={{marginLeft:"auto",background:"none",border:"none",color:pmCopied==="totp"?T.accent:T.dim,fontSize:10,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>{pmCopied==="totp"?"Copied!":"Copy"}</button>
+            </div>}
             <button onClick={pmView==="add"?pmAddCredential:pmUpdateCredential} disabled={!pmFormSite||!pmFormPw} style={{padding:"12px 0",background:(!pmFormSite||!pmFormPw)?"rgba(255,255,255,0.06)":`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:12,color:(!pmFormSite||!pmFormPw)?T.dim:"#fff",fontSize:14,fontWeight:700,cursor:(!pmFormSite||!pmFormPw)?"not-allowed":"pointer",fontFamily:"inherit",letterSpacing:1,transition:"all 0.3s",boxShadow:(!pmFormSite||!pmFormPw)?"none":`0 4px 20px rgba(${T.accentRgb},0.35)`,marginTop:4}}>{pmView==="add"?"Save Credential":"Update Credential"}</button>
-          </div>
-          <div style={{borderTop:`1px solid rgba(${T.accentRgb},0.1)`,margin:"24px 0 16px",padding:"16px 0 0"}}>
-            <p style={{fontSize:12,color:T.dim,textAlign:"center",margin:"0 0 14px"}}>Password Generator</p>
           </div>
         </>}
 
@@ -1940,34 +2020,6 @@ html{scroll-behavior:smooth}
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
             <h2 style={{fontSize:18,fontWeight:700,fontFamily:`${F.heading},sans-serif`,color:T.text,margin:0,letterSpacing:1}}>Password Generator</h2>
             <button onClick={()=>setPmView("list")} style={{padding:"6px 14px",background:"rgba(255,255,255,0.06)",border:`1px solid rgba(${T.accentRgb},0.2)`,borderRadius:8,color:T.dim,fontSize:11,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>Back to Vault</button>
-          </div>
-        </>}
-
-        {/* ═══════ PM LOGIN FORM (standalone) ═══════ */}
-        {!pmIsLoggedIn&&<>
-          <div style={{...infoGlass,padding:"24px",borderRadius:16,marginBottom:20}}>
-            <h2 style={{fontSize:16,fontWeight:700,fontFamily:`${F.heading},sans-serif`,color:T.text,margin:"0 0 4px",letterSpacing:0.5}}>Login to Password Vault</h2>
-            <p style={{fontSize:11,color:T.dim,margin:"0 0 16px"}}>Use your NotesCraft account to access your encrypted credential vault.</p>
-            {!pmLogin2FA?<div style={{display:"flex",flexDirection:"column",gap:10}}>
-              <input type="email" value={pmLoginEmail} onChange={e=>setPmLoginEmail(e.target.value)} placeholder="Email" style={{padding:"10px 14px",borderRadius:10,background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.15)`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box",transition:"border-color 0.3s"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.15)`}} onKeyDown={e=>{if(e.key==="Enter")pmDoLogin()}}/>
-              <input type="password" value={pmLoginPw} onChange={e=>setPmLoginPw(e.target.value)} placeholder="Password" style={{padding:"10px 14px",borderRadius:10,background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.15)`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box",transition:"border-color 0.3s"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.15)`}} onKeyDown={e=>{if(e.key==="Enter")pmDoLogin()}}/>
-              {pmLoginErr&&<p style={{fontSize:11,color:T.err||"#ef4444",margin:0,fontWeight:500}}>{pmLoginErr}</p>}
-              <button onClick={pmDoLogin} disabled={pmLoginLoad} style={{padding:"11px 0",background:pmLoginLoad?"rgba(255,255,255,0.06)":`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:10,color:pmLoginLoad?T.dim:"#fff",fontSize:13,fontWeight:700,cursor:pmLoginLoad?"not-allowed":"pointer",fontFamily:"inherit",letterSpacing:1,transition:"all 0.3s",boxShadow:pmLoginLoad?"none":`0 4px 16px rgba(${T.accentRgb},0.3)`}}>{pmLoginLoad?"Authenticating...":"Login"}</button>
-            </div>
-            :<div style={{display:"flex",flexDirection:"column",gap:10}}>
-              <p style={{fontSize:12,color:T.text,margin:0}}>Enter your 2FA code:</p>
-              <input type="text" value={pmLogin2FACode} onChange={e=>setPmLogin2FACode(e.target.value.replace(/\D/g,"").slice(0,6))} placeholder="000000" maxLength={6} style={{padding:"10px 14px",borderRadius:10,background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.15)`,color:T.text,fontSize:18,fontFamily:"monospace",fontWeight:700,outline:"none",boxSizing:"border-box",textAlign:"center",letterSpacing:6,transition:"border-color 0.3s"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.15)`}} onKeyDown={e=>{if(e.key==="Enter")pmDoLogin()}}/>
-              {pmLogin2FAErr&&<p style={{fontSize:11,color:T.err||"#ef4444",margin:0,fontWeight:500}}>{pmLogin2FAErr}</p>}
-              <div style={{display:"flex",gap:8}}>
-                <button onClick={pmDoLogin} disabled={pmLoginLoad||pmLogin2FACode.length!==6} style={{flex:1,padding:"11px 0",background:(pmLoginLoad||pmLogin2FACode.length!==6)?"rgba(255,255,255,0.06)":`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:10,color:(pmLoginLoad||pmLogin2FACode.length!==6)?T.dim:"#fff",fontSize:13,fontWeight:700,cursor:(pmLoginLoad||pmLogin2FACode.length!==6)?"not-allowed":"pointer",fontFamily:"inherit",transition:"all 0.3s"}}>{pmLoginLoad?"Verifying...":"Verify"}</button>
-                <button onClick={()=>{setPmLogin2FA(false);setPmLogin2FACode("");setPmLogin2FAErr("")}} style={{padding:"11px 16px",background:"rgba(255,255,255,0.06)",border:`1px solid rgba(${T.accentRgb},0.15)`,borderRadius:10,color:T.dim,fontSize:12,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>Back</button>
-              </div>
-            </div>}
-          </div>
-          <div style={{display:"flex",alignItems:"center",gap:12,margin:"10px 0 18px"}}>
-            <div style={{flex:1,height:1,background:`rgba(${T.accentRgb},0.1)`}}/>
-            <span style={{fontSize:11,color:T.dim,letterSpacing:0.5}}>Or use the free Password Generator</span>
-            <div style={{flex:1,height:1,background:`rgba(${T.accentRgb},0.1)`}}/>
           </div>
         </>}
 
