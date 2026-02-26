@@ -1934,6 +1934,8 @@ html{scroll-behavior:smooth}
 .sc-dd button{width:100%;display:flex;align-items:center;gap:10px;padding:8px 12px;background:transparent;border:none;border-radius:6px;color:${T.text};font-size:13px;font-family:inherit;cursor:pointer;text-align:left;transition:all 0.15s}
 .sc-dd button:hover{background:rgba(${T.accentRgb},0.08)}
 `;
+    const rpActive=pmSelectedId||pmView==="add"||pmView==="edit"||pmView==="generator";
+    const gridWide=pmViewMode==="grid"&&!rpActive;
     return(<div style={{width:"100vw",height:"100vh",display:"flex",background:T.bg,fontFamily:`${F.body},sans-serif`,color:T.text,overflow:"hidden"}}>
       <style>{css}{vCss}</style>
 
@@ -2033,7 +2035,7 @@ html{scroll-behavior:smooth}
       </div>
 
       {/* ═══ MIDDLE COLUMN ═══ */}
-      <div style={{width:350,minWidth:350,height:"100%",borderRight:`1px solid ${T.bdr}`,display:"flex",flexDirection:"column",background:T.dark?"rgba(255,255,255,0.008)":"rgba(0,0,0,0.01)"}}>
+      <div style={{...(gridWide?{flex:1,minWidth:350}:{width:350,minWidth:350}),height:"100%",borderRight:gridWide?"none":`1px solid ${T.bdr}`,display:"flex",flexDirection:"column",background:T.dark?"rgba(255,255,255,0.008)":"rgba(0,0,0,0.01)"}}>
         <div style={{padding:"14px 16px 0"}}>
           <div style={{position:"relative",marginBottom:12}}>
             <span style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",color:T.dim,fontSize:14,pointerEvents:"none"}}>🔍</span>
@@ -2106,7 +2108,7 @@ html{scroll-behavior:smooth}
       </div>
 
       {/* ═══ RIGHT PANEL ═══ */}
-      <div style={{flex:1,height:"100%",display:"flex",flexDirection:"column",overflow:"hidden",position:"relative"}}>
+      <div style={{...(gridWide?{display:"none"}:{flex:1}),height:"100%",display:gridWide?"none":"flex",flexDirection:"column",overflow:"hidden",position:"relative"}}>
 
         {/* ─── THEME PICKER OVERLAY ─── */}
         {pmShowThemes&&<div style={{position:"absolute",inset:0,zIndex:100,background:"rgba(0,0,0,0.5)",display:"flex",alignItems:"center",justifyContent:"center",backdropFilter:"blur(4px)"}} onClick={()=>setPmShowThemes(false)}>
