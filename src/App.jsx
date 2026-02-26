@@ -2697,8 +2697,8 @@ html{scroll-behavior:smooth}
             {label:"Entropy",value:pgStrength.bits+" bits",icon:"🎲"},
             {label:"Classical",value:pgStrength.time,icon:"🖥️",color:pgStrength.color},
             {label:"Quantum",value:pgStrength.qTime,icon:"⚛️",color:pgStrength.qColor}
-          ].map((s,i)=><div key={i} style={{padding:"14px 12px",background:"rgba(16,185,129,0.04)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",borderLeft:i>0?"1px solid rgba(16,185,129,0.12)":"none"}}>
-            <div style={{fontSize:10,color:T.dim,fontWeight:600,letterSpacing:0.5,marginBottom:6}}>{s.icon} {s.label}</div>
+          ].map((s,i)=><div key={i} style={{padding:"6px 12px",background:"rgba(16,185,129,0.04)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",borderLeft:i>0?"1px solid rgba(16,185,129,0.12)":"none"}}>
+            <div style={{fontSize:10,color:T.dim,fontWeight:600,letterSpacing:0.5,marginBottom:2}}>{s.icon} {s.label}</div>
             <div style={{fontSize:13,fontWeight:700,color:s.color||T.text,lineHeight:1.3,wordBreak:"break-word",textShadow:s.color?`0 0 8px ${s.color}40`:"none"}}>{s.value}</div>
           </div>)}
         </div>}
