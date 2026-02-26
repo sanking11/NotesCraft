@@ -707,7 +707,27 @@ export default function NotesCraft(){
   const pmDeleteCredential=(id)=>{pmSave(pmCredentials.filter(c=>c.id!==id));setPmDelConfirm(null)};
   const pmEditCredential=(c)=>{setPmFormSite(c.siteName);setPmFormUrl(c.siteUrl);setPmFormUser(c.username);setPmFormPw(c.password);setPmFormNotes(c.notes||"");setPmFormTotp(c.totpSecret||"");setPmFormFolder(c.folder||"");setPmFormStarred(c.starred||false);setPmSelectedId(c.id);setPmView("edit")};
   const pmLoadVault=async(stRef,em)=>{
-    try{const creds=await stRef.getPasswords(em);setPmCredentials(creds||[]);setPmIsLoggedIn(true)}catch(e){console.error("PM load failed",e)}
+    try{
+      let creds=await stRef.getPasswords(em);
+      if(!creds||!creds.length){
+        creds=[
+          {id:"pm_demo_1",siteName:"GitHub",siteUrl:"https://github.com",username:"dev@notecraft.app",password:"Gh$ecure2026!xK9",notes:"Personal development account",totpSecret:"JBSWY3DPEHPK3PXP",folder:"Development",starred:true,created:"2026-01-15T10:30:00Z",modified:"2026-02-20T14:22:00Z"},
+          {id:"pm_demo_2",siteName:"Google",siteUrl:"https://google.com",username:"user@gmail.com",password:"G00gl3P@ss!Str0ng",notes:"Main Google account",totpSecret:"NBSWY3DPEHPK3PXQ",folder:"Personal",starred:true,created:"2026-01-10T08:00:00Z",modified:"2026-02-18T09:15:00Z"},
+          {id:"pm_demo_3",siteName:"Netflix",siteUrl:"https://netflix.com",username:"chill@email.com",password:"N3tfl!x_Str3am#42",notes:"Family plan",totpSecret:"",folder:"Entertainment",starred:false,created:"2026-02-01T12:00:00Z",modified:"2026-02-25T16:30:00Z"},
+          {id:"pm_demo_4",siteName:"AWS Console",siteUrl:"https://aws.amazon.com",username:"admin@notecraft.app",password:"Aws!R00t_2026$Sec",notes:"Production infrastructure",totpSecret:"HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ",folder:"Development",starred:true,created:"2026-01-20T09:00:00Z",modified:"2026-02-22T11:45:00Z"},
+          {id:"pm_demo_5",siteName:"Spotify",siteUrl:"https://spotify.com",username:"music@email.com",password:"Sp0t!fy_Beats#99",notes:"Premium individual",totpSecret:"",folder:"Entertainment",starred:false,created:"2026-02-05T14:00:00Z",modified:"2026-02-24T10:00:00Z"},
+          {id:"pm_demo_6",siteName:"Discord",siteUrl:"https://discord.com",username:"gamer#1337",password:"D!sc0rd_Ch@t$2026",notes:"Gaming communities",totpSecret:"",folder:"Social",starred:false,created:"2026-01-25T16:00:00Z",modified:"2026-02-19T20:30:00Z"},
+          {id:"pm_demo_7",siteName:"Vercel",siteUrl:"https://vercel.com",username:"deploy@notecraft.app",password:"V3rc3l!D3pl0y#Pr0",notes:"NotesCraft hosting",totpSecret:"GEZDGNBVGY3TQOJQ",folder:"Development",starred:true,created:"2026-01-18T11:00:00Z",modified:"2026-02-21T13:00:00Z"},
+          {id:"pm_demo_8",siteName:"Twitter / X",siteUrl:"https://x.com",username:"@notecraft_app",password:"Tw!tt3r_X$Post#26",notes:"Official brand account",totpSecret:"",folder:"Social",starred:false,created:"2026-02-10T10:00:00Z",modified:"2026-02-26T08:45:00Z"},
+          {id:"pm_demo_9",siteName:"Figma",siteUrl:"https://figma.com",username:"design@notecraft.app",password:"F!gm@_Des1gn#2026",notes:"UI/UX design files",totpSecret:"",folder:"Development",starred:false,created:"2026-02-08T09:30:00Z",modified:"2026-02-23T15:20:00Z"},
+          {id:"pm_demo_10",siteName:"ChatGPT",siteUrl:"https://chat.openai.com",username:"ai@email.com",password:"Ch@tGPT!Pr0mpt$42",notes:"Plus subscription",totpSecret:"",folder:"Personal",starred:false,created:"2026-02-12T13:00:00Z",modified:"2026-02-27T07:00:00Z"},
+          {id:"pm_demo_11",siteName:"Stripe",siteUrl:"https://stripe.com",username:"payments@notecraft.app",password:"Str!pe_P@y$2026!Kx",notes:"Payment processing",totpSecret:"MFRGGZDFMY4TQMJSHEZDQNBVGY3TQOJQ",folder:"Development",starred:true,created:"2026-01-22T10:15:00Z",modified:"2026-02-20T17:00:00Z"},
+          {id:"pm_demo_12",siteName:"LinkedIn",siteUrl:"https://linkedin.com",username:"professional@email.com",password:"L!nk3d_Pr0f!le#26",notes:"Professional networking",totpSecret:"",folder:"Social",starred:false,created:"2026-02-03T11:00:00Z",modified:"2026-02-25T09:30:00Z"}
+        ];
+        await stRef.setPasswords(em,creds);
+      }
+      setPmCredentials(creds);setPmIsLoggedIn(true);
+    }catch(e){console.error("PM load failed",e)}
   };
   const pmDoLogin=async()=>{
     setPmLoginErr("");setPmLoginLoad(true);
