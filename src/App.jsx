@@ -1945,11 +1945,11 @@ html{scroll-behavior:smooth}
 
       {/* ═══ LEFT SIDEBAR ═══ */}
       <div style={{width:260,minWidth:260,height:"100%",background:T.dark?"rgba(255,255,255,0.015)":"rgba(0,0,0,0.02)",borderRight:`1px solid ${T.bdr}`,display:"flex",flexDirection:"column"}}>
-        <div style={{padding:"18px 16px 14px",display:"flex",alignItems:"center",gap:10}}>
-          <div style={{width:42,height:42,borderRadius:12,background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-            <ShieldLogo s={30} accentRgb="255,255,255" accent="#fff" accent2="#fff" text="rgba(255,255,255,0.9)" warn="rgba(255,255,255,0.95)" uid="scSb"/>
+        <div style={{padding:"14px 16px",display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
+          <div style={{width:90,height:90,borderRadius:20,background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:`0 4px 20px rgba(${T.accentRgb},0.3)`}}>
+            <ShieldLogo s={62} accentRgb="255,255,255" accent="#fff" accent2="#fff" text="rgba(255,255,255,0.9)" warn="rgba(255,255,255,0.95)" uid="scSb"/>
           </div>
-          <span style={{fontSize:16,fontWeight:700,fontFamily:`${F.heading},sans-serif`,letterSpacing:1}}>ShieldCraft</span>
+          <span style={{fontSize:15,fontWeight:700,fontFamily:`${F.heading},sans-serif`,letterSpacing:1.5}}>ShieldCraft</span>
         </div>
 
         <div style={{flex:1,overflowY:"auto",padding:"0 10px"}}>
