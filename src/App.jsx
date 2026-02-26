@@ -1,6 +1,6 @@
 import React,{ useState, useEffect, useRef, useCallback, useMemo } from "react";
 import zxcvbn from "zxcvbn";
-import { generateSalt, deriveKey, hashPassword, exportKey, importKey, generateTOTPSecret, verifyTOTP, generateRecoveryCodes } from "./crypto.js";
+import { generateSalt, deriveKey, hashPassword, exportKey, importKey, generateTOTPSecret, verifyTOTP, generateTOTP, getTOTPRemaining, generateRecoveryCodes } from "./crypto.js";
 import { createSyncAdapter } from "./sync.js";
 import { EncryptedStorage } from "./storage.js";
 
@@ -421,7 +421,7 @@ function NeoFlipCard({w,h,rgb,x,y,r,f,d,dl,title,plain,enc,opacity=1,delay=0}){
 export default function NotesCraft(){
   const[authMode,setAuthMode]=useState("login");
   const[showLanding,setShowLanding]=useState(true);
-  const validInfoPages=["about","privacy","terms","password-generator","security-blog"];
+  const validInfoPages=["about","privacy","terms","password-manager","security-blog"];
   const[infoPage,setInfoPage]=useState(()=>{const h=window.location.hash.replace("#","");if(h.startsWith("blog/"))return"security-blog";return validInfoPages.includes(h)?h:null});
   const[blogArticle,setBlogArticle]=useState(()=>{const h=window.location.hash.replace("#","");return h.startsWith("blog/")?h.slice(5):null});
   const[user,setUser]=useState(null);
@@ -438,7 +438,7 @@ export default function NotesCraft(){
   const[genScrambling,setGenScrambling]=useState(false);
   const genScrambleRef=React.useRef(null);
   const[genCopied,setGenCopied]=useState(false);
-  // Password Generator page state
+  // Password Generator state
   const[pgMode,setPgMode]=useState("memorable");
   const[pgLen,setPgLen]=useState(20);
   const[pgWords,setPgWords]=useState(4);
@@ -459,6 +459,34 @@ export default function NotesCraft(){
   const[pgHidden,setPgHidden]=useState(false);
   const[pgStrength,setPgStrength]=useState(null);
   const pgScrambleRef=React.useRef(null);
+  // Password Manager state
+  const[pmCredentials,setPmCredentials]=useState([]);
+  const[pmSearch,setPmSearch]=useState("");
+  const[pmView,setPmView]=useState("list"); // "list"|"add"|"edit"|"generator"
+  const[pmSelectedId,setPmSelectedId]=useState(null);
+  const[pmFormSite,setPmFormSite]=useState("");
+  const[pmFormUrl,setPmFormUrl]=useState("");
+  const[pmFormUser,setPmFormUser]=useState("");
+  const[pmFormPw,setPmFormPw]=useState("");
+  const[pmFormNotes,setPmFormNotes]=useState("");
+  const[pmFormTotp,setPmFormTotp]=useState("");
+  const[pmFormFolder,setPmFormFolder]=useState("");
+  const[pmFormStarred,setPmFormStarred]=useState(false);
+  const[pmShowPw,setPmShowPw]=useState({});
+  const[pmCopied,setPmCopied]=useState("");
+  const[pmTotpCodes,setPmTotpCodes]=useState({});
+  const[pmTotpRemaining,setPmTotpRemaining]=useState(30);
+  const[pmDelConfirm,setPmDelConfirm]=useState(null);
+  const[pmIsLoggedIn,setPmIsLoggedIn]=useState(false);
+  const[pmLoginEmail,setPmLoginEmail]=useState("");
+  const[pmLoginPw,setPmLoginPw]=useState("");
+  const[pmLoginErr,setPmLoginErr]=useState("");
+  const[pmLoginLoad,setPmLoginLoad]=useState(false);
+  const[pmLogin2FA,setPmLogin2FA]=useState(false);
+  const[pmLogin2FACode,setPmLogin2FACode]=useState("");
+  const[pmLogin2FAErr,setPmLogin2FAErr]=useState("");
+  const pmStorageRef=useRef(null);
+  const pmUserRef=useRef(null);
   // 2FA state
   const[twoFASetup,setTwoFASetup]=useState(null);
   const[twoFAStep,setTwoFAStep]=useState(1);
@@ -598,6 +626,76 @@ export default function NotesCraft(){
     if(pgMode==="random"){setPgLen(65);setPgUpper(true);setPgLower(true);setPgDigits(true);setPgSymbols(true)}
     else{setPgWords(10);setPgDigits(true);setPgSymbols(true)}
   },[pgQuantumSafe,pgMode]);
+  // Password Manager — CRUD helpers
+  const pmClearForm=()=>{setPmFormSite("");setPmFormUrl("");setPmFormUser("");setPmFormPw("");setPmFormNotes("");setPmFormTotp("");setPmFormFolder("");setPmFormStarred(false)};
+  const pmSave=async(creds)=>{
+    setPmCredentials(creds);
+    const stRef=pmStorageRef.current||storageRef.current;
+    const uRef=pmUserRef.current||(user&&email);
+    if(stRef&&uRef){try{await stRef.setPasswords(typeof uRef==="string"?uRef:uRef.email||email,creds)}catch(e){console.error("PM save failed",e)}}
+  };
+  const pmAddCredential=()=>{
+    const cred={id:"pm_"+crypto.randomUUID(),siteName:pmFormSite,siteUrl:pmFormUrl,username:pmFormUser,password:pmFormPw,notes:pmFormNotes,totpSecret:pmFormTotp,folder:pmFormFolder,starred:pmFormStarred,created:new Date().toISOString(),modified:new Date().toISOString()};
+    pmSave([...pmCredentials,cred]);pmClearForm();setPmView("list")
+  };
+  const pmUpdateCredential=()=>{
+    const updated=pmCredentials.map(c=>c.id===pmSelectedId?{...c,siteName:pmFormSite,siteUrl:pmFormUrl,username:pmFormUser,password:pmFormPw,notes:pmFormNotes,totpSecret:pmFormTotp,folder:pmFormFolder,starred:pmFormStarred,modified:new Date().toISOString()}:c);
+    pmSave(updated);pmClearForm();setPmSelectedId(null);setPmView("list")
+  };
+  const pmDeleteCredential=(id)=>{pmSave(pmCredentials.filter(c=>c.id!==id));setPmDelConfirm(null)};
+  const pmEditCredential=(c)=>{setPmFormSite(c.siteName);setPmFormUrl(c.siteUrl);setPmFormUser(c.username);setPmFormPw(c.password);setPmFormNotes(c.notes||"");setPmFormTotp(c.totpSecret||"");setPmFormFolder(c.folder||"");setPmFormStarred(c.starred||false);setPmSelectedId(c.id);setPmView("edit")};
+  const pmLoadVault=async(stRef,em)=>{
+    try{const creds=await stRef.getPasswords(em);setPmCredentials(creds||[]);setPmIsLoggedIn(true)}catch(e){console.error("PM load failed",e)}
+  };
+  const pmDoLogin=async()=>{
+    setPmLoginErr("");setPmLoginLoad(true);
+    try{
+      const adapter=await createSyncAdapter();
+      const em=pmLoginEmail.toLowerCase();
+      const tempEs=new EncryptedStorage(adapter,null);
+      const u=await tempEs.getUser(em);
+      if(!u){setPmLoginErr("No account found");setPmLoginLoad(false);return}
+      if(!u.salt){setPmLoginErr("Please login via main app first to migrate your account");setPmLoginLoad(false);return}
+      const key=await deriveKey(pmLoginPw,u.salt);
+      const pwHash=await hashPassword(pmLoginPw,u.salt);
+      if(pwHash!==u.pwHash){setPmLoginErr("Wrong password");setPmLoginLoad(false);return}
+      const es=new EncryptedStorage(adapter,key);
+      if(u.twoFactorEnabled&&!pmLogin2FA){
+        pmStorageRef.current=es;pmUserRef.current=em;
+        setPmLogin2FA(true);setPmLoginLoad(false);return
+      }
+      if(u.twoFactorEnabled&&pmLogin2FA){
+        const ok=await verifyTOTP(u.twoFactorSecret,pmLogin2FACode);
+        if(!ok){setPmLogin2FAErr("Invalid code");setPmLoginLoad(false);return}
+      }
+      pmStorageRef.current=es;pmUserRef.current=em;
+      await pmLoadVault(es,em);
+      await es.subscribe(em,()=>{},()=>{},()=>{},(newPw)=>{if(newPw)setPmCredentials(newPw)});
+      setPmLoginPw("");setPmLogin2FACode("")
+    }catch(e){setPmLoginErr("Login failed: "+e.message)}
+    setPmLoginLoad(false)
+  };
+  // Auto-login to PM when already logged in to main app
+  useEffect(()=>{
+    if(infoPage==="password-manager"&&authMode==="app"&&storageRef.current&&!pmIsLoggedIn){
+      pmStorageRef.current=storageRef.current;pmUserRef.current=email;
+      pmLoadVault(storageRef.current,email)
+    }
+  },[infoPage,authMode]);
+  // TOTP code rotation (1s interval)
+  useEffect(()=>{
+    if(!pmIsLoggedIn)return;
+    const credsWithTotp=pmCredentials.filter(c=>c.totpSecret);
+    if(!credsWithTotp.length)return;
+    const tick=async()=>{
+      const codes={};
+      for(const c of credsWithTotp){try{codes[c.id]=await generateTOTP(c.totpSecret)}catch{codes[c.id]="------"}}
+      setPmTotpCodes(codes);setPmTotpRemaining(getTOTPRemaining())
+    };
+    tick();
+    const iv=setInterval(tick,1000);
+    return()=>clearInterval(iv)
+  },[pmIsLoggedIn,pmCredentials]);
   // Sync infoPage + blogArticle ↔ URL hash for shareable links
   useEffect(()=>{
     if(blogArticle)history.replaceState(null,"","#blog/"+blogArticle);
@@ -615,7 +713,7 @@ export default function NotesCraft(){
   },[]);
   // Auto-generate password when generator page options change
   useEffect(()=>{
-    if(infoPage!=="password-generator")return;
+    if(infoPage!=="password-manager")return;
     const cw=pgUseCustom?pgCustomWords:"";
     if(cw){const err=validateCustomWords(cw);setPgCustomErr(err);if(err)return;}else{setPgCustomErr("")}
     const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep,cw);
@@ -647,11 +745,11 @@ export default function NotesCraft(){
         setNotes(ln);
         setStorageBytes(measureNotesBytes(ln));
         if(sp){setThemeId(sp.theme||"midnight");setTags(sp.tags||DEF_TAGS);setFolderColors(sp.folderColors||{})}
-        const sc=await es.getCalendar(em);setCalEvents(sc||[]);
+        const sc=await es.getCalendar(em);setCalEvents(sc||[]);const spw=await es.getPasswords(em);setPmCredentials(spw||[]);
         const first=ln.find(n=>!n.deleted&&!n.archived);
         if(first){setSelId(first.id);setETitle(first.title);setEBlocks(getBlocks(first))}
         setAuthMode("app");
-        await es.subscribe(em,(newNotes)=>{remoteSyncRef.current=true;setNotes(newNotes)},(newCal)=>setCalEvents(newCal),(newPrefs)=>{if(newPrefs){setThemeId(newPrefs.theme||"midnight");setTags(newPrefs.tags||DEF_TAGS);setFolderColors(newPrefs.folderColors||{})}});
+        await es.subscribe(em,(newNotes)=>{remoteSyncRef.current=true;setNotes(newNotes)},(newCal)=>setCalEvents(newCal),(newPrefs)=>{if(newPrefs){setThemeId(newPrefs.theme||"midnight");setTags(newPrefs.tags||DEF_TAGS);setFolderColors(newPrefs.folderColors||{})}},(newPw)=>{if(newPw)setPmCredentials(newPw)});
       }catch(e){clearSession()}
     })();
   },[]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -756,13 +854,13 @@ export default function NotesCraft(){
         setUser(u);setNotes(ln);
         setQuotaGB(100);setStorageBytes(measureNotesBytes(ln));
         if(lp){setThemeId(lp.theme||"midnight");setTags(lp.tags||DEF_TAGS)}
-        const sc=await es.getCalendar(em);setCalEvents(sc||[]);
+        const sc=await es.getCalendar(em);setCalEvents(sc||[]);const spw=await es.getPasswords(em);setPmCredentials(spw||[]);
         const first=ln.find(n=>!n.deleted&&!n.archived);
         if(first){setSelId(first.id);setETitle(first.title);setEBlocks(getBlocks(first))}
         setAuthMode("app");setAuthLoad(false);
         saveSession(em,key);
         // Subscribe for real-time sync
-        await es.subscribe(em,(newNotes)=>{remoteSyncRef.current=true;setNotes(newNotes)},(newCal)=>setCalEvents(newCal),(newPrefs)=>{if(newPrefs){setThemeId(newPrefs.theme||"midnight");setTags(newPrefs.tags||DEF_TAGS);setFolderColors(newPrefs.folderColors||{})}});
+        await es.subscribe(em,(newNotes)=>{remoteSyncRef.current=true;setNotes(newNotes)},(newCal)=>setCalEvents(newCal),(newPrefs)=>{if(newPrefs){setThemeId(newPrefs.theme||"midnight");setTags(newPrefs.tags||DEF_TAGS);setFolderColors(newPrefs.folderColors||{})}},(newPw)=>{if(newPw)setPmCredentials(newPw)});
         return;
       }
 
@@ -786,13 +884,13 @@ export default function NotesCraft(){
       setNotes(ln);
       setStorageBytes(measureNotesBytes(ln));
       if(sp){setThemeId(sp.theme||"midnight");setTags(sp.tags||DEF_TAGS);setFolderColors(sp.folderColors||{})}
-      const sc=await es.getCalendar(em);setCalEvents(sc||[]);
+      const sc=await es.getCalendar(em);setCalEvents(sc||[]);const spw=await es.getPasswords(em);setPmCredentials(spw||[]);
       const first=ln.find(n=>!n.deleted&&!n.archived);
       if(first){setSelId(first.id);setETitle(first.title);setEBlocks(getBlocks(first))}
       setAuthMode("app");
       saveSession(em,key);
       // Subscribe for real-time sync
-      await es.subscribe(em,(newNotes)=>{remoteSyncRef.current=true;setNotes(newNotes)},(newCal)=>setCalEvents(newCal),(newPrefs)=>{if(newPrefs){setThemeId(newPrefs.theme||"midnight");setTags(newPrefs.tags||DEF_TAGS);setFolderColors(newPrefs.folderColors||{})}});
+      await es.subscribe(em,(newNotes)=>{remoteSyncRef.current=true;setNotes(newNotes)},(newCal)=>setCalEvents(newCal),(newPrefs)=>{if(newPrefs){setThemeId(newPrefs.theme||"midnight");setTags(newPrefs.tags||DEF_TAGS);setFolderColors(newPrefs.folderColors||{})}},(newPw)=>{if(newPw)setPmCredentials(newPw)});
     }catch(e){setAuthErr("Login failed: "+e.message);doShake()}
     setAuthLoad(false);
   };
@@ -835,12 +933,12 @@ export default function NotesCraft(){
       const sn=await es.getNotes(em);const sp=await es.getPrefs(em);
       const ln=sn||DEF_NOTES;setNotes(ln);setStorageBytes(measureNotesBytes(ln));
       if(sp){setThemeId(sp.theme||"midnight");setTags(sp.tags||DEF_TAGS);setFolderColors(sp.folderColors||{})}
-      const sc=await es.getCalendar(em);setCalEvents(sc||[]);
+      const sc=await es.getCalendar(em);setCalEvents(sc||[]);const spw=await es.getPasswords(em);setPmCredentials(spw||[]);
       const first=ln.find(n=>!n.deleted&&!n.archived);
       if(first){setSelId(first.id);setETitle(first.title);setEBlocks(getBlocks(first))}
       setAuthMode("app");saveSession(em,key);
       setPending2FA(null);setTwoFACode("");setUseRecoveryCode(false);
-      await es.subscribe(em,(newNotes)=>{remoteSyncRef.current=true;setNotes(newNotes)},(newCal)=>setCalEvents(newCal),(newPrefs)=>{if(newPrefs){setThemeId(newPrefs.theme||"midnight");setTags(newPrefs.tags||DEF_TAGS);setFolderColors(newPrefs.folderColors||{})}});
+      await es.subscribe(em,(newNotes)=>{remoteSyncRef.current=true;setNotes(newNotes)},(newCal)=>setCalEvents(newCal),(newPrefs)=>{if(newPrefs){setThemeId(newPrefs.theme||"midnight");setTags(newPrefs.tags||DEF_TAGS);setFolderColors(newPrefs.folderColors||{})}},(newPw)=>{if(newPw)setPmCredentials(newPw)});
     }catch(e){setTwoFAErr("Verification failed: "+e.message)}
     setTwoFALoad(false);
   };
@@ -1681,7 +1779,7 @@ html{scroll-behavior:smooth}
   const glass={background:T.dark?"rgba(255,255,255,0.03)":"rgba(255,255,255,0.4)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid rgba(${T.accentRgb},0.12)`,boxShadow:`0 8px 32px rgba(0,0,0,0.15), inset 0 0 0 1px rgba(255,255,255,${T.dark?0.03:0.2})`};
 
   /* ═══════════ INFO PAGES (About / Privacy / Terms) ═══════════ */
-  if(infoPage&&authMode!=="app"){
+  if(infoPage&&(authMode!=="app"||infoPage==="password-manager")){
     const infoGlass={background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.06)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:`1px solid rgba(${T.accentRgb},0.18)`,borderRadius:20,boxShadow:`0 8px 40px rgba(0,0,0,0.3),0 0 60px rgba(${T.accentRgb},0.06),inset 0 1px 0 rgba(255,255,255,0.06)`};
     const infoH={fontSize:28,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",marginBottom:24,letterSpacing:2};
     const infoH2={fontSize:18,fontWeight:700,fontFamily:`${F.heading},sans-serif`,color:T.accent,margin:"28px 0 12px",letterSpacing:1};
@@ -1737,9 +1835,141 @@ html{scroll-behavior:smooth}
         <h2 style={infoH2}>7. Changes to Terms</h2>
         <p style={infoP}>We reserve the right to update these terms at any time. Continued use of NotesCraft after changes constitutes acceptance of the updated terms.</p>
       </>,
-      "password-generator":<>
-        <h1 style={{...infoH,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",textShadow:"none"}}>Password Generator</h1>
-        <p style={{...infoP,color:"rgba(176,190,201,0.8)"}}>Generate strong, unique passwords using cryptographically secure randomness.</p>
+      "password-manager":<>
+        <h1 style={{...infoH,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",textShadow:"none"}}>Password Manager</h1>
+        <p style={{...infoP,color:"rgba(176,190,201,0.8)"}}>Generate strong passwords and securely store your credentials with end-to-end encryption.</p>
+
+        {/* ═══════ PASSWORD VAULT ═══════ */}
+        {pmIsLoggedIn&&pmView==="list"&&<>
+          {/* Vault Header */}
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16,flexWrap:"wrap",gap:10}}>
+            <h2 style={{fontSize:20,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.text,margin:0,letterSpacing:1,textShadow:`0 0 12px rgba(${T.accentRgb},0.3)`}}>Password Vault</h2>
+            <div style={{display:"flex",gap:8}}>
+              <button onClick={()=>{pmClearForm();setPmView("add")}} style={{padding:"8px 16px",background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:10,color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5,boxShadow:`0 4px 16px rgba(${T.accentRgb},0.35)`,transition:"all 0.3s"}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-1px)"}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)"}}>+ Add</button>
+              <button onClick={()=>setPmView("generator")} style={{padding:"8px 16px",background:"rgba(255,255,255,0.06)",border:`1px solid rgba(${T.accentRgb},0.3)`,borderRadius:10,color:T.accent,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",transition:"all 0.3s"}} onMouseEnter={e=>{e.currentTarget.style.background="rgba(255,255,255,0.1)"}} onMouseLeave={e=>{e.currentTarget.style.background="rgba(255,255,255,0.06)"}}>Generate</button>
+              <button onClick={()=>{setPmIsLoggedIn(false);setPmCredentials([]);pmStorageRef.current=null;pmUserRef.current=null}} style={{padding:"8px 12px",background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.15)`,borderRadius:10,color:T.dim,fontSize:11,fontWeight:500,cursor:"pointer",fontFamily:"inherit",transition:"all 0.3s"}}>Logout</button>
+            </div>
+          </div>
+          {/* Search */}
+          <input value={pmSearch} onChange={e=>setPmSearch(e.target.value)} placeholder="Search credentials..." style={{width:"100%",padding:"11px 16px",borderRadius:12,background:"rgba(255,255,255,0.04)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid rgba(${T.accentRgb},0.15)`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box",marginBottom:16,transition:"all 0.3s",boxShadow:`inset 0 1px 4px rgba(0,0,0,0.1)`}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent;e.currentTarget.style.boxShadow=`0 0 12px rgba(${T.accentRgb},0.15)`}} onBlur={e=>{e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.15)`;e.currentTarget.style.boxShadow=`inset 0 1px 4px rgba(0,0,0,0.1)`}}/>
+          {/* Credential Cards */}
+          {(()=>{
+            const q=pmSearch.toLowerCase();
+            const filtered=pmCredentials.filter(c=>{
+              if(!q)return true;
+              return(c.siteName||"").toLowerCase().includes(q)||(c.username||"").toLowerCase().includes(q)||(c.siteUrl||"").toLowerCase().includes(q)||(c.folder||"").toLowerCase().includes(q)
+            }).sort((a,b)=>(b.starred?1:0)-(a.starred?1:0)||a.siteName.localeCompare(b.siteName));
+            if(!filtered.length)return<div style={{textAlign:"center",padding:"40px 0",color:T.dim,fontSize:13}}>{pmCredentials.length?`No results for "${pmSearch}"`:"No saved credentials yet. Click + Add to get started."}</div>;
+            return filtered.map(c=><div key={c.id} style={{...infoGlass,padding:"16px 18px",borderRadius:14,marginBottom:10,position:"relative",transition:"all 0.3s",borderLeft:c.starred?`3px solid ${T.accent}`:"3px solid transparent"}} onMouseEnter={e=>{e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.4)`;e.currentTarget.style.boxShadow=`0 6px 24px rgba(0,0,0,0.25),0 0 20px rgba(${T.accentRgb},0.08)`}} onMouseLeave={e=>{e.currentTarget.style.borderColor=c.starred?T.accent:"transparent";e.currentTarget.style.boxShadow=infoGlass.boxShadow}}>
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
+                <div style={{display:"flex",alignItems:"center",gap:10}}>
+                  <div style={{width:32,height:32,borderRadius:8,background:`linear-gradient(135deg,rgba(${T.accentRgb},0.2),rgba(${T.accentRgb},0.08))`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:700,color:T.accent,border:`1px solid rgba(${T.accentRgb},0.2)`}}>{(c.siteName||"?")[0].toUpperCase()}</div>
+                  <div>
+                    <div style={{fontSize:14,fontWeight:700,color:T.text,letterSpacing:0.3}}>{c.siteName||"Untitled"}{c.starred&&<span style={{marginLeft:6,fontSize:11,color:T.accent}}>★</span>}</div>
+                    <div style={{fontSize:11,color:T.dim,marginTop:1}}>{c.username}</div>
+                  </div>
+                </div>
+                {c.folder&&<span style={{fontSize:9,fontWeight:600,color:T.dim,background:"rgba(255,255,255,0.06)",padding:"3px 8px",borderRadius:6,letterSpacing:0.5}}>{c.folder}</span>}
+              </div>
+              {/* Password row */}
+              <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:c.totpSecret?8:4}}>
+                <span style={{fontSize:12,fontFamily:"monospace",color:T.dim,letterSpacing:1,flex:1}}>{pmShowPw[c.id]?c.password:"•".repeat(Math.min(c.password.length,20))}</span>
+                <button onClick={()=>setPmShowPw(p=>({...p,[c.id]:!p[c.id]}))} style={{background:"none",border:"none",cursor:"pointer",fontSize:12,color:T.dim,padding:"2px 4px"}} title={pmShowPw[c.id]?"Hide":"Show"}>{pmShowPw[c.id]?"🙈":"👁"}</button>
+                <button onClick={()=>{navigator.clipboard.writeText(c.password);setPmCopied(c.id+"pw");setTimeout(()=>setPmCopied(""),1500)}} style={{background:"none",border:"none",cursor:"pointer",fontSize:10,color:pmCopied===c.id+"pw"?T.accent:T.dim,padding:"2px 4px",fontFamily:"inherit",fontWeight:600}}>{pmCopied===c.id+"pw"?"Copied!":"Copy"}</button>
+              </div>
+              {/* TOTP display */}
+              {c.totpSecret&&pmTotpCodes[c.id]&&<div style={{display:"flex",alignItems:"center",gap:10,marginBottom:8,padding:"8px 12px",borderRadius:8,background:"rgba(255,255,255,0.03)",border:`1px solid rgba(${T.accentRgb},0.1)`}}>
+                <span style={{fontSize:18,fontFamily:"monospace",fontWeight:700,color:T.accent,letterSpacing:3,textShadow:`0 0 8px rgba(${T.accentRgb},0.4)`}}>{pmTotpCodes[c.id]}</span>
+                <div style={{width:24,height:24,position:"relative"}}>
+                  <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke={`rgba(${T.accentRgb},0.15)`} strokeWidth="2"/><circle cx="12" cy="12" r="10" fill="none" stroke={T.accent} strokeWidth="2" strokeDasharray={`${(pmTotpRemaining/30)*62.8} 62.8`} strokeLinecap="round" transform="rotate(-90 12 12)" style={{transition:"stroke-dasharray 0.3s"}}/></svg>
+                  <span style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:8,fontWeight:700,color:T.dim}}>{pmTotpRemaining}</span>
+                </div>
+                <button onClick={()=>{navigator.clipboard.writeText(pmTotpCodes[c.id]);setPmCopied(c.id+"totp");setTimeout(()=>setPmCopied(""),1500)}} style={{background:"none",border:"none",cursor:"pointer",fontSize:10,color:pmCopied===c.id+"totp"?T.accent:T.dim,padding:"2px 4px",fontFamily:"inherit",fontWeight:600,marginLeft:"auto"}}>{pmCopied===c.id+"totp"?"Copied!":"Copy"}</button>
+              </div>}
+              {/* Actions */}
+              <div style={{display:"flex",gap:6,marginTop:4}}>
+                <button onClick={()=>{navigator.clipboard.writeText(c.username);setPmCopied(c.id+"user");setTimeout(()=>setPmCopied(""),1500)}} style={{padding:"4px 10px",background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.12)`,borderRadius:6,color:pmCopied===c.id+"user"?T.accent:T.dim,fontSize:10,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>{pmCopied===c.id+"user"?"Copied!":"Copy User"}</button>
+                <button onClick={()=>pmEditCredential(c)} style={{padding:"4px 10px",background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.12)`,borderRadius:6,color:T.dim,fontSize:10,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>Edit</button>
+                {pmDelConfirm===c.id?<>
+                  <button onClick={()=>pmDeleteCredential(c.id)} style={{padding:"4px 10px",background:"rgba(239,68,68,0.15)",border:"1px solid rgba(239,68,68,0.3)",borderRadius:6,color:"#ef4444",fontSize:10,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Confirm</button>
+                  <button onClick={()=>setPmDelConfirm(null)} style={{padding:"4px 10px",background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.12)`,borderRadius:6,color:T.dim,fontSize:10,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>Cancel</button>
+                </>:<button onClick={()=>setPmDelConfirm(c.id)} style={{padding:"4px 10px",background:"rgba(255,255,255,0.04)",border:"1px solid rgba(239,68,68,0.12)",borderRadius:6,color:"rgba(239,68,68,0.6)",fontSize:10,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>Delete</button>}
+              </div>
+            </div>)
+          })()}
+          <div style={{borderTop:`1px solid rgba(${T.accentRgb},0.1)`,margin:"20px 0",padding:"16px 0 0"}}>
+            <p style={{fontSize:12,color:T.dim,textAlign:"center",margin:"0 0 14px"}}>Password Generator</p>
+          </div>
+        </>}
+
+        {/* ═══════ ADD / EDIT CREDENTIAL FORM ═══════ */}
+        {pmIsLoggedIn&&(pmView==="add"||pmView==="edit")&&<>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
+            <h2 style={{fontSize:18,fontWeight:700,fontFamily:`${F.heading},sans-serif`,color:T.text,margin:0,letterSpacing:1}}>{pmView==="add"?"Add Credential":"Edit Credential"}</h2>
+            <button onClick={()=>{pmClearForm();setPmSelectedId(null);setPmView("list")}} style={{padding:"6px 14px",background:"rgba(255,255,255,0.06)",border:`1px solid rgba(${T.accentRgb},0.2)`,borderRadius:8,color:T.dim,fontSize:11,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>Cancel</button>
+          </div>
+          <div style={{display:"flex",flexDirection:"column",gap:12}}>
+            {[{label:"Site Name",val:pmFormSite,set:setPmFormSite,ph:"GitHub"},
+              {label:"URL",val:pmFormUrl,set:setPmFormUrl,ph:"https://github.com"},
+              {label:"Username / Email",val:pmFormUser,set:setPmFormUser,ph:"user@example.com"},
+              {label:"Password",val:pmFormPw,set:setPmFormPw,ph:"Enter password",type:"password"},
+              {label:"TOTP Secret (Base32)",val:pmFormTotp,set:setPmFormTotp,ph:"JBSWY3DPEHPK3PXP (optional)"},
+              {label:"Folder",val:pmFormFolder,set:setPmFormFolder,ph:"Development (optional)"},
+              {label:"Notes",val:pmFormNotes,set:setPmFormNotes,ph:"Additional notes (optional)",multi:true}
+            ].map((f,i)=><div key={i}>
+              <label style={{fontSize:11,fontWeight:600,color:T.dim,display:"block",marginBottom:4,letterSpacing:0.5}}>{f.label}</label>
+              {f.multi?<textarea value={f.val} onChange={e=>f.set(e.target.value)} placeholder={f.ph} rows={3} style={{width:"100%",padding:"10px 14px",borderRadius:10,background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.15)`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box",resize:"vertical",transition:"border-color 0.3s"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.15)`}}/>
+              :<div style={{display:"flex",gap:8}}>
+                <input type={f.type||"text"} value={f.val} onChange={e=>f.set(e.target.value)} placeholder={f.ph} style={{flex:1,padding:"10px 14px",borderRadius:10,background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.15)`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box",transition:"border-color 0.3s"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.15)`}}/>
+                {f.label==="Password"&&<button onClick={()=>{const g=generateRandomPw(20,true,true,true,true,false);setPmFormPw(g)}} style={{padding:"8px 12px",background:`rgba(${T.accentRgb},0.1)`,border:`1px solid rgba(${T.accentRgb},0.25)`,borderRadius:10,color:T.accent,fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>Generate</button>}
+              </div>}
+            </div>)}
+            <label style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer",fontSize:12,color:T.text}}>
+              <div onClick={()=>setPmFormStarred(!pmFormStarred)} style={{width:18,height:18,borderRadius:4,border:`1.5px solid ${pmFormStarred?T.accent:`rgba(${T.accentRgb},0.3)`}`,background:pmFormStarred?`rgba(${T.accentRgb},0.15)`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",transition:"all 0.2s"}}>{pmFormStarred&&<span style={{color:T.accent,fontSize:11}}>★</span>}</div>
+              Mark as starred
+            </label>
+            <button onClick={pmView==="add"?pmAddCredential:pmUpdateCredential} disabled={!pmFormSite||!pmFormPw} style={{padding:"12px 0",background:(!pmFormSite||!pmFormPw)?"rgba(255,255,255,0.06)":`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:12,color:(!pmFormSite||!pmFormPw)?T.dim:"#fff",fontSize:14,fontWeight:700,cursor:(!pmFormSite||!pmFormPw)?"not-allowed":"pointer",fontFamily:"inherit",letterSpacing:1,transition:"all 0.3s",boxShadow:(!pmFormSite||!pmFormPw)?"none":`0 4px 20px rgba(${T.accentRgb},0.35)`,marginTop:4}}>{pmView==="add"?"Save Credential":"Update Credential"}</button>
+          </div>
+          <div style={{borderTop:`1px solid rgba(${T.accentRgb},0.1)`,margin:"24px 0 16px",padding:"16px 0 0"}}>
+            <p style={{fontSize:12,color:T.dim,textAlign:"center",margin:"0 0 14px"}}>Password Generator</p>
+          </div>
+        </>}
+
+        {/* ═══════ GENERATOR VIEW FROM VAULT ═══════ */}
+        {pmIsLoggedIn&&pmView==="generator"&&<>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
+            <h2 style={{fontSize:18,fontWeight:700,fontFamily:`${F.heading},sans-serif`,color:T.text,margin:0,letterSpacing:1}}>Password Generator</h2>
+            <button onClick={()=>setPmView("list")} style={{padding:"6px 14px",background:"rgba(255,255,255,0.06)",border:`1px solid rgba(${T.accentRgb},0.2)`,borderRadius:8,color:T.dim,fontSize:11,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>Back to Vault</button>
+          </div>
+        </>}
+
+        {/* ═══════ PM LOGIN FORM (standalone) ═══════ */}
+        {!pmIsLoggedIn&&<>
+          <div style={{...infoGlass,padding:"24px",borderRadius:16,marginBottom:20}}>
+            <h2 style={{fontSize:16,fontWeight:700,fontFamily:`${F.heading},sans-serif`,color:T.text,margin:"0 0 4px",letterSpacing:0.5}}>Login to Password Vault</h2>
+            <p style={{fontSize:11,color:T.dim,margin:"0 0 16px"}}>Use your NotesCraft account to access your encrypted credential vault.</p>
+            {!pmLogin2FA?<div style={{display:"flex",flexDirection:"column",gap:10}}>
+              <input type="email" value={pmLoginEmail} onChange={e=>setPmLoginEmail(e.target.value)} placeholder="Email" style={{padding:"10px 14px",borderRadius:10,background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.15)`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box",transition:"border-color 0.3s"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.15)`}} onKeyDown={e=>{if(e.key==="Enter")pmDoLogin()}}/>
+              <input type="password" value={pmLoginPw} onChange={e=>setPmLoginPw(e.target.value)} placeholder="Password" style={{padding:"10px 14px",borderRadius:10,background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.15)`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box",transition:"border-color 0.3s"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.15)`}} onKeyDown={e=>{if(e.key==="Enter")pmDoLogin()}}/>
+              {pmLoginErr&&<p style={{fontSize:11,color:T.err||"#ef4444",margin:0,fontWeight:500}}>{pmLoginErr}</p>}
+              <button onClick={pmDoLogin} disabled={pmLoginLoad} style={{padding:"11px 0",background:pmLoginLoad?"rgba(255,255,255,0.06)":`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:10,color:pmLoginLoad?T.dim:"#fff",fontSize:13,fontWeight:700,cursor:pmLoginLoad?"not-allowed":"pointer",fontFamily:"inherit",letterSpacing:1,transition:"all 0.3s",boxShadow:pmLoginLoad?"none":`0 4px 16px rgba(${T.accentRgb},0.3)`}}>{pmLoginLoad?"Authenticating...":"Login"}</button>
+            </div>
+            :<div style={{display:"flex",flexDirection:"column",gap:10}}>
+              <p style={{fontSize:12,color:T.text,margin:0}}>Enter your 2FA code:</p>
+              <input type="text" value={pmLogin2FACode} onChange={e=>setPmLogin2FACode(e.target.value.replace(/\D/g,"").slice(0,6))} placeholder="000000" maxLength={6} style={{padding:"10px 14px",borderRadius:10,background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.15)`,color:T.text,fontSize:18,fontFamily:"monospace",fontWeight:700,outline:"none",boxSizing:"border-box",textAlign:"center",letterSpacing:6,transition:"border-color 0.3s"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.15)`}} onKeyDown={e=>{if(e.key==="Enter")pmDoLogin()}}/>
+              {pmLogin2FAErr&&<p style={{fontSize:11,color:T.err||"#ef4444",margin:0,fontWeight:500}}>{pmLogin2FAErr}</p>}
+              <div style={{display:"flex",gap:8}}>
+                <button onClick={pmDoLogin} disabled={pmLoginLoad||pmLogin2FACode.length!==6} style={{flex:1,padding:"11px 0",background:(pmLoginLoad||pmLogin2FACode.length!==6)?"rgba(255,255,255,0.06)":`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:10,color:(pmLoginLoad||pmLogin2FACode.length!==6)?T.dim:"#fff",fontSize:13,fontWeight:700,cursor:(pmLoginLoad||pmLogin2FACode.length!==6)?"not-allowed":"pointer",fontFamily:"inherit",transition:"all 0.3s"}}>{pmLoginLoad?"Verifying...":"Verify"}</button>
+                <button onClick={()=>{setPmLogin2FA(false);setPmLogin2FACode("");setPmLogin2FAErr("")}} style={{padding:"11px 16px",background:"rgba(255,255,255,0.06)",border:`1px solid rgba(${T.accentRgb},0.15)`,borderRadius:10,color:T.dim,fontSize:12,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>Back</button>
+              </div>
+            </div>}
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:12,margin:"10px 0 18px"}}>
+            <div style={{flex:1,height:1,background:`rgba(${T.accentRgb},0.1)`}}/>
+            <span style={{fontSize:11,color:T.dim,letterSpacing:0.5}}>Or use the free Password Generator</span>
+            <div style={{flex:1,height:1,background:`rgba(${T.accentRgb},0.1)`}}/>
+          </div>
+        </>}
 
         {/* Password Display */}
         <div style={{background:pgQuantumSafe?"rgba(16,185,129,0.05)":"rgba(255,255,255,0.06)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:pgQuantumSafe?`2px solid rgba(16,185,129,${pgScrambling?0.9:0.5})`:`2px solid ${pgScrambling?T.accent:`rgba(${T.accentRgb},0.45)`}`,borderRadius:16,padding:"22px 26px",marginBottom:20,position:"relative",transition:"all 0.4s",boxShadow:pgQuantumSafe?`0 6px 30px rgba(0,0,0,0.25),0 0 ${pgScrambling?40:18}px rgba(16,185,129,${pgScrambling?0.45:0.2}),0 0 ${pgScrambling?60:35}px rgba(16,185,129,${pgScrambling?0.2:0.08}),inset 0 1px 0 rgba(255,255,255,0.1),inset 0 0 20px rgba(16,185,129,0.05)`:`0 6px 30px rgba(0,0,0,0.25),0 0 ${pgScrambling?40:18}px rgba(${T.accentRgb},${pgScrambling?0.4:0.18}),0 0 ${pgScrambling?60:35}px rgba(${T.accentRgb},${pgScrambling?0.15:0.06}),inset 0 1px 0 rgba(255,255,255,0.1),inset 0 0 20px rgba(${T.accentRgb},0.04)`,overflow:"hidden"}}>
@@ -1876,7 +2106,7 @@ html{scroll-behavior:smooth}
             <div onClick={()=>setPgQuantumSafe(!pgQuantumSafe)} style={{width:44,height:24,borderRadius:12,background:pgQuantumSafe?"rgba(16,185,129,0.35)":`rgba(${T.accentRgb},0.15)`,border:pgQuantumSafe?"1.5px solid rgba(16,185,129,0.6)":`1.5px solid rgba(${T.accentRgb},0.4)`,position:"relative",cursor:"pointer",transition:"all 0.4s",flexShrink:0,boxShadow:pgQuantumSafe?"0 0 16px rgba(16,185,129,0.4),0 0 30px rgba(16,185,129,0.15),inset 0 0 10px rgba(16,185,129,0.1)":`0 0 10px rgba(${T.accentRgb},0.15),inset 0 1px 3px rgba(0,0,0,0.2)`}}>
               <div style={{width:18,height:18,borderRadius:"50%",background:pgQuantumSafe?"#10b981":T.accent,position:"absolute",top:2,left:pgQuantumSafe?23:2,transition:"all 0.3s cubic-bezier(0.4,0,0.2,1)",boxShadow:pgQuantumSafe?"0 0 10px rgba(16,185,129,0.8),0 0 20px rgba(16,185,129,0.4)":`0 0 8px rgba(${T.accentRgb},0.4),0 1px 3px rgba(0,0,0,0.3)`,opacity:pgQuantumSafe?1:0.7}}/>
             </div>
-            <span style={{fontSize:13,fontWeight:700,color:pgQuantumSafe?"#10b981":T.text,textShadow:pgQuantumSafe?"0 0 10px rgba(16,185,129,0.4)":"none",transition:"all 0.3s"}}>⚛️ Quantum Resistant</span>
+            <span style={{fontSize:13,fontWeight:700,color:pgQuantumSafe?"#10b981":T.text,textShadow:pgQuantumSafe?"0 0 10px rgba(16,185,129,0.4)":"none",transition:"all 0.3s"}}>⚛️ Turn On Quantum Resistant Mode</span>
             <span style={{fontSize:9,color:pgQuantumSafe?"rgba(16,185,129,0.6)":T.dim,marginLeft:"auto",transition:"color 0.3s"}}>(enforces min {pgMode==="random"?"65 chars + all charsets":"10 words"} for 128+ bit entropy)</span>
           </label>
         </div>
@@ -2118,11 +2348,11 @@ html{scroll-behavior:smooth}
         <div style={{textAlign:"center",marginTop:32,fontSize:12,color:"#4a5568"}}>Written with entropy and intention.</div>
 
         <div style={{marginTop:32,textAlign:"center"}}>
-          <button onClick={()=>{setInfoPage("password-generator");setBlogArticle(null);window.scrollTo(0,0)}}
+          <button onClick={()=>{setInfoPage("password-manager");setBlogArticle(null);window.scrollTo(0,0)}}
             style={{background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:10,padding:"14px 32px",color:"#fff",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:1,boxShadow:`0 4px 20px rgba(${T.accentRgb},0.35)`,transition:"all 0.3s"}}
             onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow=`0 6px 25px rgba(${T.accentRgb},0.5)`}}
             onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow=`0 4px 20px rgba(${T.accentRgb},0.35)`}}>
-            Try Our Password Generator
+            Try Our Password Manager
           </button>
         </div>
           </>}
@@ -2145,20 +2375,20 @@ html{scroll-behavior:smooth}
           <button onClick={()=>{if(blogArticle){setBlogArticle(null);window.scrollTo(0,0)}else{setInfoPage(null)}}} style={{background:`rgba(${T.accentRgb},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,borderRadius:8,padding:"8px 20px",color:T.dark?T.text:"#e2e8f0",fontSize:13,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1}}>{blogArticle?"← Blog":"← Back"}</button>
         </nav>
         <div style={{position:"relative",zIndex:1,maxWidth:800,margin:"0 auto",padding:"100px 24px 60px"}}>
-          {infoPage==="password-generator"&&<>
+          {infoPage==="password-manager"&&<>
             <div style={{position:"absolute",width:600,height:600,borderRadius:"50%",background:pgQuantumSafe?"radial-gradient(circle,rgba(16,185,129,0.25) 0%,rgba(16,185,129,0.08) 40%,transparent 70%)":`radial-gradient(circle,rgba(${T.accentRgb},0.25) 0%,rgba(${T.accentRgb},0.08) 40%,transparent 70%)`,filter:"blur(60px)",top:"-5%",left:"-20%",pointerEvents:"none",animation:"ldOrb1 20s ease-in-out infinite",transition:"background 0.8s"}}/>
             <div style={{position:"absolute",width:500,height:500,borderRadius:"50%",background:pgQuantumSafe?"radial-gradient(circle,rgba(16,185,129,0.2) 0%,rgba(16,185,129,0.05) 40%,transparent 70%)":"radial-gradient(circle,rgba(139,92,246,0.22) 0%,rgba(139,92,246,0.06) 40%,transparent 70%)",filter:"blur(50px)",bottom:"5%",right:"-15%",pointerEvents:"none",animation:"ldOrb2 25s ease-in-out infinite",transition:"background 0.8s"}}/>
             <div style={{position:"absolute",width:350,height:350,borderRadius:"50%",background:pgQuantumSafe?"radial-gradient(circle,rgba(16,185,129,0.18) 0%,transparent 60%)":`radial-gradient(circle,rgba(${T.accentRgb},0.18) 0%,transparent 60%)`,filter:"blur(40px)",top:"35%",left:"50%",transform:"translateX(-50%)",pointerEvents:"none",animation:"pgGlowPulse 4s ease-in-out infinite",transition:"background 0.8s"}}/>
             <div style={{position:"absolute",width:250,height:250,borderRadius:"50%",background:pgQuantumSafe?"radial-gradient(circle,rgba(16,185,129,0.15) 0%,transparent 70%)":"radial-gradient(circle,rgba(236,72,153,0.12) 0%,transparent 70%)",filter:"blur(45px)",top:"15%",right:"5%",pointerEvents:"none",animation:"pgGlowPulse 6s ease-in-out infinite 2s",transition:"background 0.8s"}}/>
           </>}
-          <div style={{...(infoPage==="password-generator"?(pgQuantumSafe?{background:"rgba(16,185,129,0.04)",backdropFilter:"blur(32px)",WebkitBackdropFilter:"blur(32px)",border:"2.5px dashed rgba(16,185,129,0.7)",borderRadius:24,boxShadow:"0 12px 60px rgba(0,0,0,0.4),0 0 25px rgba(16,185,129,0.4),0 0 60px rgba(16,185,129,0.25),0 0 120px rgba(16,185,129,0.12),inset 0 0 30px rgba(16,185,129,0.06)",animation:"qmBorderGlow 3s ease-in-out infinite",transition:"all 0.6s"}:{background:"rgba(255,255,255,0.05)",backdropFilter:"blur(32px)",WebkitBackdropFilter:"blur(32px)",border:`2px solid rgba(${T.accentRgb},0.6)`,borderRadius:24,boxShadow:`0 12px 60px rgba(0,0,0,0.4),0 0 25px rgba(${T.accentRgb},0.35),0 0 50px rgba(${T.accentRgb},0.2),0 0 100px rgba(${T.accentRgb},0.1),inset 0 0 25px rgba(${T.accentRgb},0.06),inset 0 1px 0 rgba(255,255,255,0.1)`,animation:"pgBorderGlow 4s ease-in-out infinite",transition:"all 0.6s"}):infoGlass),padding:"48px 40px",position:"relative",overflow:"hidden"}}>
-            {infoPage==="password-generator"&&!pgQuantumSafe&&<>
+          <div style={{...(infoPage==="password-manager"?(pgQuantumSafe?{background:"rgba(16,185,129,0.04)",backdropFilter:"blur(32px)",WebkitBackdropFilter:"blur(32px)",border:"2.5px dashed rgba(16,185,129,0.7)",borderRadius:24,boxShadow:"0 12px 60px rgba(0,0,0,0.4),0 0 25px rgba(16,185,129,0.4),0 0 60px rgba(16,185,129,0.25),0 0 120px rgba(16,185,129,0.12),inset 0 0 30px rgba(16,185,129,0.06)",animation:"qmBorderGlow 3s ease-in-out infinite",transition:"all 0.6s"}:{background:"rgba(255,255,255,0.05)",backdropFilter:"blur(32px)",WebkitBackdropFilter:"blur(32px)",border:`2px solid rgba(${T.accentRgb},0.6)`,borderRadius:24,boxShadow:`0 12px 60px rgba(0,0,0,0.4),0 0 25px rgba(${T.accentRgb},0.35),0 0 50px rgba(${T.accentRgb},0.2),0 0 100px rgba(${T.accentRgb},0.1),inset 0 0 25px rgba(${T.accentRgb},0.06),inset 0 1px 0 rgba(255,255,255,0.1)`,animation:"pgBorderGlow 4s ease-in-out infinite",transition:"all 0.6s"}):infoGlass),padding:"48px 40px",position:"relative",overflow:"hidden"}}>
+            {infoPage==="password-manager"&&!pgQuantumSafe&&<>
               <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:`linear-gradient(90deg,transparent 10%,rgba(${T.accentRgb},0.5) 50%,transparent 90%)`,pointerEvents:"none"}}/>
               <div style={{position:"absolute",bottom:0,left:0,right:0,height:1,background:`linear-gradient(90deg,transparent 20%,rgba(139,92,246,0.2) 50%,transparent 80%)`,pointerEvents:"none"}}/>
               <div style={{position:"absolute",top:0,left:0,bottom:0,width:1,background:`linear-gradient(180deg,rgba(${T.accentRgb},0.4),transparent 30%,transparent 70%,rgba(139,92,246,0.15))`,pointerEvents:"none"}}/>
               <div style={{position:"absolute",top:0,right:0,bottom:0,width:1,background:`linear-gradient(180deg,rgba(${T.accentRgb},0.4),transparent 30%,transparent 70%,rgba(139,92,246,0.15))`,pointerEvents:"none"}}/>
             </>}
-            {infoPage==="password-generator"&&pgQuantumSafe&&<>
+            {infoPage==="password-manager"&&pgQuantumSafe&&<>
               {/* Corner brackets — animated + glowing */}
               <div style={{position:"absolute",top:14,left:14,width:32,height:32,borderTop:"3px solid rgba(16,185,129,0.9)",borderLeft:"3px solid rgba(16,185,129,0.9)",borderRadius:"4px 0 0 0",pointerEvents:"none",animation:"qmCornerPulse 2s ease-in-out infinite"}}/>
               <div style={{position:"absolute",top:14,right:14,width:32,height:32,borderTop:"3px solid rgba(16,185,129,0.9)",borderRight:"3px solid rgba(16,185,129,0.9)",borderRadius:"0 4px 0 0",pointerEvents:"none",animation:"qmCornerPulse 2s ease-in-out infinite 0.5s"}}/>
@@ -2168,7 +2398,7 @@ html{scroll-behavior:smooth}
             {infoPages[infoPage]}
           </div>
           {/* Floating neon side cards */}
-          {infoPage==="password-generator"&&<>
+          {infoPage==="password-manager"&&<>
             <div style={{position:"absolute",left:-260,top:130,width:245,height:190,pointerEvents:"none",animation:"neoFloat1 6s ease-in-out infinite",zIndex:2}}>
               <div style={{width:"100%",height:"100%",borderRadius:6,padding:"18px 18px",border:"2px solid rgba(16,185,129,0.8)",background:"rgba(16,185,129,0.1)",boxShadow:"0 0 15px rgba(16,185,129,0.35),0 0 30px rgba(16,185,129,0.18),inset 0 0 15px rgba(16,185,129,0.08)",transform:"rotate(-8deg)",display:"flex",flexDirection:"column",overflow:"hidden"}}>
                 <div style={{fontSize:17,fontWeight:900,color:"#10b981",marginBottom:8,fontFamily:"monospace",letterSpacing:1}}>⚛️ Quantum-Safe</div>
@@ -2188,7 +2418,7 @@ html{scroll-behavior:smooth}
               </div>
             </div>
           </>}
-          {infoPage==="password-generator"&&<div onClick={()=>{setInfoPage("security-blog");window.scrollTo(0,0)}} style={{marginTop:32,borderRadius:16,overflow:"hidden",cursor:"pointer",border:`1px solid rgba(${T.accentRgb},0.2)`,background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.06)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",transition:"all 0.3s",boxShadow:`0 4px 24px rgba(0,0,0,0.2)`}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.boxShadow=`0 8px 32px rgba(${T.accentRgb},0.25)`}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="0 4px 24px rgba(0,0,0,0.2)"}}>
+          {infoPage==="password-manager"&&<div onClick={()=>{setInfoPage("security-blog");window.scrollTo(0,0)}} style={{marginTop:32,borderRadius:16,overflow:"hidden",cursor:"pointer",border:`1px solid rgba(${T.accentRgb},0.2)`,background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.06)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",transition:"all 0.3s",boxShadow:`0 4px 24px rgba(0,0,0,0.2)`}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.boxShadow=`0 8px 32px rgba(${T.accentRgb},0.25)`}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="0 4px 24px rgba(0,0,0,0.2)"}}>
             <div style={{height:160,background:`linear-gradient(135deg,rgba(${T.accentRgb},0.3) 0%,rgba(${T.accentRgb},0.05) 50%,rgba(139,92,246,0.2) 100%)`,display:"flex",alignItems:"center",justifyContent:"center",position:"relative",overflow:"hidden"}}>
               <div style={{position:"absolute",inset:0,background:"repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(255,255,255,0.02) 20px,rgba(255,255,255,0.02) 40px)"}}/>
               <div style={{fontSize:56,filter:"drop-shadow(0 4px 12px rgba(0,0,0,0.3))",zIndex:1}}>🔐</div>
@@ -2203,7 +2433,7 @@ html{scroll-behavior:smooth}
         </div>
         <footer style={{position:"relative",zIndex:1,padding:"30px 24px 24px",borderTop:`1px solid rgba(${T.accentRgb},0.15)`,textAlign:"center",background:`rgba(${T.dark?"0,0,0":"10,10,18"},0.12)`,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)"}}>
           <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:20,flexWrap:"wrap",marginBottom:16}}>
-            {["about","privacy","terms","password-generator","security-blog"].map(p=><button key={p} onClick={()=>{setInfoPage(p);window.scrollTo(0,0)}} style={{fontSize:12,color:infoPage===p?T.accent:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:infoPage===p?700:400,letterSpacing:1}}>{p==="terms"?"Terms of Service":p==="privacy"?"Privacy Policy":p==="password-generator"?"Password Generator":p==="security-blog"?"Blog":p.charAt(0).toUpperCase()+p.slice(1)}</button>)}
+            {["about","privacy","terms","password-manager","security-blog"].map(p=><button key={p} onClick={()=>{setInfoPage(p);window.scrollTo(0,0)}} style={{fontSize:12,color:infoPage===p?T.accent:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:infoPage===p?700:400,letterSpacing:1}}>{p==="terms"?"Terms of Service":p==="privacy"?"Privacy Policy":p==="password-manager"?"Password Manager":p==="security-blog"?"Blog":p.charAt(0).toUpperCase()+p.slice(1)}</button>)}
           </div>
           <p style={{fontSize:11,color:"#7a8898",letterSpacing:0.8,display:"flex",alignItems:"center",justifyContent:"center",gap:6,flexWrap:"wrap",lineHeight:2,margin:0}}>
             <span style={{fontStyle:"italic"}}>Designed and Developed by</span>
@@ -2267,7 +2497,7 @@ html{scroll-behavior:smooth}
           <div style={{display:"flex",alignItems:"center",gap:20}}>
             <a href="#features" className="ld-nav-btn" style={{color:"rgba(226,232,240,0.8)",fontSize:13,fontWeight:500,textDecoration:"none",fontFamily:"inherit"}}>Features</a>
             <a href="#pricing" className="ld-nav-btn" style={{color:"rgba(226,232,240,0.8)",fontSize:13,fontWeight:500,textDecoration:"none",fontFamily:"inherit"}}>Pricing</a>
-            <button onClick={()=>setInfoPage("password-generator")} className="ld-nav-btn" style={{color:"rgba(226,232,240,0.8)",fontSize:13,fontWeight:500,background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Password Generator</button>
+            <button onClick={()=>setInfoPage("password-manager")} className="ld-nav-btn" style={{color:"rgba(226,232,240,0.8)",fontSize:13,fontWeight:500,background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Password Manager</button>
             <button onClick={()=>setInfoPage("security-blog")} className="ld-nav-btn" style={{color:"rgba(226,232,240,0.8)",fontSize:13,fontWeight:500,background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Blog</button>
             <button onClick={()=>goAuth("login")} className="ld-nav-btn" style={{background:`rgba(${T.accentRgb},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,borderRadius:8,padding:"8px 20px",color:T.dark?T.text:"#e2e8f0",fontSize:13,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1}}>Sign In</button>
           </div>
@@ -2450,7 +2680,7 @@ html{scroll-behavior:smooth}
             <button onClick={()=>setInfoPage("about")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>About</button>
             <button onClick={()=>setInfoPage("privacy")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Privacy</button>
             <button onClick={()=>setInfoPage("terms")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Terms</button>
-            <button onClick={()=>setInfoPage("password-generator")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Password Generator</button>
+            <button onClick={()=>setInfoPage("password-manager")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Password Manager</button>
             <button onClick={()=>setInfoPage("security-blog")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Blog</button>
           </div>
           <p style={{fontSize:11,color:"#7a8898",letterSpacing:0.8,display:"flex",alignItems:"center",justifyContent:"center",gap:6,flexWrap:"wrap",lineHeight:2,margin:0}}>
@@ -2645,7 +2875,7 @@ html{scroll-behavior:smooth}
                 <button onClick={()=>{const g=generateStrongPw();setGenPw(g);setGenCopied(false)}} style={{padding:"6px 10px",background:`rgba(${T.accentRgb},0.1)`,border:`1px solid rgba(${T.accentRgb},0.25)`,borderRadius:6,color:T.accent,fontSize:9,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>🔄</button>
               </div>
             </div>}
-            <button onClick={()=>{setInfoPage("password-generator");setShowLanding(true)}} style={{width:"100%",marginTop:10,padding:"7px 0",background:`linear-gradient(135deg,rgba(${T.accentRgb},0.15),rgba(${T.accentRgb},0.08))`,border:`1px solid rgba(${T.accentRgb},0.35)`,borderRadius:8,color:T.accent,fontSize:10,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5}}>Full Tool →</button>
+            <button onClick={()=>{setInfoPage("password-manager");setShowLanding(true)}} style={{width:"100%",marginTop:10,padding:"7px 0",background:`linear-gradient(135deg,rgba(${T.accentRgb},0.15),rgba(${T.accentRgb},0.08))`,border:`1px solid rgba(${T.accentRgb},0.35)`,borderRadius:8,color:T.accent,fontSize:10,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5}}>Full Tool →</button>
           </div>
 
         </div>}
@@ -2656,7 +2886,7 @@ html{scroll-behavior:smooth}
             <button onClick={()=>{setInfoPage("about");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>About</button>
             <button onClick={()=>{setInfoPage("privacy");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Privacy</button>
             <button onClick={()=>{setInfoPage("terms");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Terms</button>
-            <button onClick={()=>{setInfoPage("password-generator");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Password Generator</button>
+            <button onClick={()=>{setInfoPage("password-manager");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Password Manager</button>
             <button onClick={()=>{setInfoPage("security-blog");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Blog</button>
           </div>
           <p style={{fontSize:11,color:T.dim,fontFamily:`${F.body},sans-serif`,letterSpacing:0.8,display:"flex",alignItems:"center",justifyContent:"center",gap:6,flexWrap:"wrap",lineHeight:2,margin:0}}>
@@ -2695,6 +2925,8 @@ html{scroll-behavior:smooth}
     {n:"In Progress",i:<IC.Clock/>},
     {n:"Planned",i:<IC.Tag/>},
     {n:"Untagged",i:<IC.TagOff/>},
+    {d:true},
+    {n:"Passwords",i:<IC.Shield/>,c:pmCredentials.length,action:()=>{setInfoPage("password-manager");setShowLanding(true)}},
   ];
 
   return(
@@ -3269,7 +3501,7 @@ html{scroll-behavior:smooth}
         <div style={{padding:sidebarOpen?"10px 6px 0":"6px 4px 0",overflowY:"auto",flex:1}}>
           {sidebarOpen&&<div style={{fontSize:10,fontWeight:700,letterSpacing:1.5,color:T.faint,padding:"0 8px 6px",textTransform:"uppercase"}}>Views</div>}
           {VIEWS.map((v,i)=>v.d?<div key={i} style={{height:1,background:T.bdr,margin:sidebarOpen?"6px 8px":"4px 4px"}}/>:(
-            <button key={v.n} className="sb-view-btn" onClick={()=>{flushSave();setView(v.n);setFolder(null);if(v.n!=="Calendar"){setCalSelDate(null);setCalSelEvent(null)}}} title={sidebarOpen?undefined:v.n}
+            <button key={v.n} className="sb-view-btn" onClick={()=>{if(v.action){v.action();return}flushSave();setView(v.n);setFolder(null);if(v.n!=="Calendar"){setCalSelDate(null);setCalSelEvent(null)}}} title={sidebarOpen?undefined:v.n}
               style={{width:"100%",display:"flex",alignItems:"center",justifyContent:sidebarOpen?"flex-start":"center",gap:9,padding:sidebarOpen?"7px 10px":"7px 0",marginBottom:2,background:view===v.n&&!folder?T.surfH:"transparent",border:"none",borderRadius:6,color:view===v.n&&!folder?T.accent:T.dim,fontSize:14,fontFamily:"inherit",cursor:"pointer",textAlign:"left"}}>
               <span className="sb-view-ic" style={{opacity:.7,flexShrink:0,display:"inline-flex",transition:"all 0.2s ease"}}>{v.i}</span>
               {sidebarOpen&&<><span style={{flex:1}}>{v.n}</span>{v.c!==undefined&&<span style={{fontSize:12,color:T.faint}}>{v.c}</span>}</>}
