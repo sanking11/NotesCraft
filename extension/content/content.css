@@ -1,0 +1,6 @@
+/* NotesCraft Content Script — minimal CSS (main styling is in Shadow DOM) */
+#nc-autofill-host, #nc-save-host {
+  all: initial;
+  position: fixed;
+  z-index: 2147483647;
+}

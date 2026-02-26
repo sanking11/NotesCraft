@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head><title>Icon Generator</title></head>
+<body>
+<p>Right-click each canvas and "Save image as..." to create the icons.</p>
+<p>Or use the download links below each icon.</p>
+<script>
+[16, 32, 48, 128].forEach(size => {
+  const c = document.createElement('canvas');
+  c.width = size; c.height = size;
+  const ctx = c.getContext('2d');
+
+  // Background gradient
+  const g = ctx.createLinearGradient(0, 0, size, size);
+  g.addColorStop(0, '#7c3aed');
+  g.addColorStop(1, '#a855f7');
+
+  // Rounded rect
+  const r = size * 0.18;
+  ctx.beginPath();
+  ctx.roundRect(0, 0, size, size, r);
+  ctx.fillStyle = g;
+  ctx.fill();
+
+  // Shield icon
+  ctx.save();
+  ctx.translate(size * 0.5, size * 0.52);
+  const s = size * 0.32;
+  ctx.beginPath();
+  ctx.moveTo(0, -s);
+  ctx.lineTo(s * 0.85, -s * 0.65);
+  ctx.lineTo(s * 0.85, s * 0.15);
+  ctx.quadraticCurveTo(s * 0.85, s * 0.7, 0, s);
+  ctx.quadraticCurveTo(-s * 0.85, s * 0.7, -s * 0.85, s * 0.15);
+  ctx.lineTo(-s * 0.85, -s * 0.65);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(255,255,255,0.2)';
+  ctx.fill();
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = Math.max(1, size * 0.04);
+  ctx.stroke();
+
+  // Lock keyhole
+  const kSize = s * 0.25;
+  ctx.beginPath();
+  ctx.arc(0, -s * 0.1, kSize, 0, Math.PI * 2);
+  ctx.fillStyle = '#fff';
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(-kSize * 0.4, -s * 0.1 + kSize * 0.5);
+  ctx.lineTo(kSize * 0.4, -s * 0.1 + kSize * 0.5);
+  ctx.lineTo(kSize * 0.2, s * 0.35);
+  ctx.lineTo(-kSize * 0.2, s * 0.35);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+
+  // Display
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'display:inline-block;margin:16px;text-align:center';
+  wrap.appendChild(c);
+  const link = document.createElement('a');
+  link.href = c.toDataURL('image/png');
+  link.download = `icon${size}.png`;
+  link.textContent = `Download icon${size}.png`;
+  link.style.cssText = 'display:block;margin-top:4px;font-size:12px';
+  wrap.appendChild(link);
+  document.body.appendChild(wrap);
+});
+</script>
+</body>
+</html>

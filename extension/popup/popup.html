@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NotesCraft Password Manager</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Login View -->
+    <div id="login-view" class="view">
+      <div class="header">
+        <div class="logo">NC</div>
+        <h1>NotesCraft</h1>
+        <p class="subtitle">Password Manager</p>
+      </div>
+      <div class="form">
+        <input type="email" id="login-email" placeholder="Email" autocomplete="email">
+        <input type="password" id="login-pw" placeholder="Password" autocomplete="current-password">
+        <div id="login-2fa-wrap" class="hidden">
+          <input type="text" id="login-2fa" placeholder="2FA Code" maxlength="6" inputmode="numeric">
+        </div>
+        <p id="login-err" class="error"></p>
+        <button id="login-btn" class="btn-primary">Login</button>
+      </div>
+    </div>
+
+    <!-- Vault View -->
+    <div id="vault-view" class="view hidden">
+      <div class="vault-header">
+        <div class="vault-title">
+          <span class="vault-icon">🔐</span>
+          <span id="vault-email" class="vault-email"></span>
+        </div>
+        <div class="vault-actions">
+          <button id="add-btn" class="btn-sm btn-accent" title="Add Credential">+</button>
+          <button id="gen-btn" class="btn-sm" title="Generate Password">⚡</button>
+          <button id="logout-btn" class="btn-sm btn-dim" title="Logout">↩</button>
+        </div>
+      </div>
+      <input type="text" id="vault-search" placeholder="Search credentials..." class="search-input">
+      <div id="vault-list" class="vault-list"></div>
+    </div>
+
+    <!-- Add/Edit View -->
+    <div id="form-view" class="view hidden">
+      <div class="form-header">
+        <h2 id="form-title">Add Credential</h2>
+        <button id="form-cancel" class="btn-sm btn-dim">Cancel</button>
+      </div>
+      <div class="form">
+        <input type="text" id="f-site" placeholder="Site Name">
+        <input type="url" id="f-url" placeholder="URL (https://...)">
+        <input type="text" id="f-user" placeholder="Username / Email">
+        <div class="pw-row">
+          <input type="password" id="f-pw" placeholder="Password">
+          <button id="f-gen-pw" class="btn-sm btn-accent" title="Generate">⚡</button>
+        </div>
+        <input type="text" id="f-totp" placeholder="TOTP Secret (optional)">
+        <input type="text" id="f-folder" placeholder="Folder (optional)">
+        <textarea id="f-notes" placeholder="Notes (optional)" rows="2"></textarea>
+        <label class="star-label"><input type="checkbox" id="f-starred"> Star this credential</label>
+        <button id="f-save" class="btn-primary">Save</button>
+      </div>
+    </div>
+
+    <!-- Generator View -->
+    <div id="gen-view" class="view hidden">
+      <div class="form-header">
+        <h2>Generate Password</h2>
+        <button id="gen-back" class="btn-sm btn-dim">Back</button>
+      </div>
+      <div class="gen-result">
+        <div id="gen-pw-display" class="gen-pw-text">••••••••••••••••••••</div>
+        <div class="gen-actions">
+          <button id="gen-copy" class="btn-sm btn-accent">Copy</button>
+          <button id="gen-regen" class="btn-sm">↻</button>
+        </div>
+      </div>
+      <div class="gen-options">
+        <div class="slider-row">
+          <label>Length</label>
+          <input type="range" id="gen-len" min="8" max="128" value="20">
+          <span id="gen-len-val">20</span>
+        </div>
+        <div class="check-row">
+          <label><input type="checkbox" id="gen-upper" checked> ABC</label>
+          <label><input type="checkbox" id="gen-lower" checked> abc</label>
+          <label><input type="checkbox" id="gen-digits" checked> 123</label>
+          <label><input type="checkbox" id="gen-symbols" checked> !@#</label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../shared/crypto.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
