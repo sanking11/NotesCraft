@@ -180,7 +180,7 @@ const IC = {
 /* Butterfly logo — geometric origami, exact match to reference */
 const ShieldLogo=({s=48,accentRgb,accent,accent2,text,warn,pulse,uid})=>{
   const id=uid||'sh';const a2=accent2||accent;
-  const sm=s<50;const cw=sm?3:1.2;const co=sm?0.7:0.4;const nr=sm?5:2.5;const gs=sm?1:2;const gl=sm?2:5;const sw=sm?5:3;const lw=sm?5:2.5;const shw=sm?6:3;const kr=sm?5:3;const kw=sm?5:3;const kh=sm?8:5;const ow=sm?3:1.5;const isw=sm?5:3;const da=sm?"16 10":"10 6";const sfo=sm?0.25:0.12;
+  const sm=s<50;const cw=sm?3:1.2;const co=sm?0.7:0.4;const nr=sm?5:2.5;const gs=sm?1:2;const gl=sm?2:5;const sw=sm?5:3;const lw=sm?5:2.5;const shw=sm?6:3;const kr=sm?5:3;const kw=sm?5:3;const kh=sm?8:5;const ow=sm?5:1.5;const isw=sm?5:3;const da=sm?"12 8":"10 6";const sfo=sm?0.25:0.12;const dop=sm?0.8:0.25;
   return<svg width={s} height={s*1.1} viewBox="0 0 200 220" fill="none" draggable={false} onContextMenu={e=>e.preventDefault()} style={{overflow:'visible',userSelect:'none',WebkitUserDrag:'none',msUserSelect:'none'}}>
     <defs>
       <linearGradient id={`${id}SG`} x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor={accent}/><stop offset="50%" stopColor={a2}/><stop offset="100%" stopColor={a2}/></linearGradient>
@@ -189,7 +189,7 @@ const ShieldLogo=({s=48,accentRgb,accent,accent2,text,warn,pulse,uid})=>{
       <filter id={`${id}GlS`}><feGaussianBlur stdDeviation={gs} result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     </defs>
     <style>{`@keyframes ${id}D{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-600}}@keyframes ${id}N{0%,100%{opacity:.3}50%{opacity:1}}@keyframes ${id}S{0%,60%{transform:translateY(0) rotate(0)}70%,90%{transform:translateY(-6px) rotate(-15deg)}100%{transform:translateY(0) rotate(0)}}@keyframes ${id}R{0%{r:16;opacity:.5}100%{r:32;opacity:0}}@keyframes ${id}B{0%,60%{fill:rgba(${accentRgb},0.15)}70%,90%{fill:rgba(${accentRgb},0.35)}100%{fill:rgba(${accentRgb},0.15)}}`}</style>
-    <path d="M100 12 L34 46 L34 122 C34 162 62 184 100 200 C138 184 166 162 166 122 L166 46 Z" fill="none" stroke={`rgba(${accentRgb},${sm?0.5:0.25})`} strokeWidth={ow} strokeDasharray={da} style={{animation:`${id}D 8s linear infinite`}}/>
+    <path d="M100 12 L34 46 L34 122 C34 162 62 184 100 200 C138 184 166 162 166 122 L166 46 Z" fill="none" stroke={`rgba(${accentRgb},${dop})`} strokeWidth={ow} strokeDasharray={da} style={{animation:`${id}D 8s linear infinite`}}/>
     <path d="M100 24 L44 54 L44 118 C44 154 68 176 100 190 C132 176 156 154 156 118 L156 54 Z" fill={`url(#${id}SF)`} stroke={`url(#${id}SG)`} strokeWidth={isw} strokeLinejoin="round"/>
     <g stroke={accent} strokeWidth={cw} opacity={co}>
       <line x1="65" y1="70" x2="84" y2="70"/><line x1="116" y1="70" x2="135" y2="70"/>
