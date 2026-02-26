@@ -1908,7 +1908,10 @@ html{scroll-behavior:smooth}
 @keyframes pgStripeMove{0%{background-position:0 0}100%{background-position:50px -50px}}
 @keyframes pgBorderGlow{0%,100%{border-color:rgba(${T.accentRgb},0.5);box-shadow:0 12px 60px rgba(0,0,0,0.4),0 0 25px rgba(${T.accentRgb},0.3),0 0 50px rgba(${T.accentRgb},0.15),0 0 100px rgba(${T.accentRgb},0.08),inset 0 0 25px rgba(${T.accentRgb},0.05)}50%{border-color:rgba(${T.accentRgb},0.8);box-shadow:0 12px 60px rgba(0,0,0,0.4),0 0 30px rgba(${T.accentRgb},0.45),0 0 60px rgba(${T.accentRgb},0.25),0 0 120px rgba(${T.accentRgb},0.12),inset 0 0 30px rgba(${T.accentRgb},0.08)}}
 @keyframes qmBorderGlow{0%,100%{border-color:rgba(16,185,129,0.6);box-shadow:0 12px 60px rgba(0,0,0,0.4),0 0 25px rgba(16,185,129,0.35),0 0 60px rgba(16,185,129,0.2),0 0 120px rgba(16,185,129,0.1),inset 0 0 30px rgba(16,185,129,0.05)}50%{border-color:rgba(16,185,129,0.9);box-shadow:0 12px 60px rgba(0,0,0,0.4),0 0 35px rgba(16,185,129,0.5),0 0 80px rgba(16,185,129,0.3),0 0 150px rgba(16,185,129,0.15),inset 0 0 40px rgba(16,185,129,0.08)}}
-@keyframes qmCornerPulse{0%,100%{opacity:0.7;box-shadow:0 0 10px rgba(16,185,129,0.4)}50%{opacity:1;box-shadow:0 0 20px rgba(16,185,129,0.7),0 0 40px rgba(16,185,129,0.3)}}
+@keyframes qmCornerBounce-tl{0%,100%{transform:translate(0,0);opacity:0.7}50%{transform:translate(-4px,-4px);opacity:1}}
+@keyframes qmCornerBounce-tr{0%,100%{transform:translate(0,0);opacity:0.7}50%{transform:translate(4px,-4px);opacity:1}}
+@keyframes qmCornerBounce-bl{0%,100%{transform:translate(0,0);opacity:0.7}50%{transform:translate(-4px,4px);opacity:1}}
+@keyframes qmCornerBounce-br{0%,100%{transform:translate(0,0);opacity:0.7}50%{transform:translate(4px,4px);opacity:1}}
 .pg-slider-qm{-webkit-appearance:none!important;appearance:none!important;width:100%;height:10px;border-radius:5px;background:linear-gradient(90deg,rgba(16,185,129,0.2),rgba(16,185,129,0.6))!important;outline:none;cursor:pointer;position:relative;box-shadow:0 0 14px rgba(16,185,129,0.35),inset 0 1px 2px rgba(0,0,0,0.3)}
 .pg-slider-qm::-webkit-slider-thumb{-webkit-appearance:none!important;appearance:none!important;width:24px;height:24px;border-radius:50%;background:#10b981;box-shadow:0 0 16px rgba(16,185,129,0.8),0 0 32px rgba(16,185,129,0.4),0 0 48px rgba(16,185,129,0.2);border:3px solid rgba(255,255,255,0.5);cursor:pointer;transition:all 0.2s;position:relative;z-index:2}
 .pg-slider-qm::-webkit-slider-thumb:hover{transform:scale(1.15);box-shadow:0 0 24px rgba(16,185,129,1),0 0 48px rgba(16,185,129,0.5),0 0 64px rgba(16,185,129,0.25)}
@@ -2530,10 +2533,6 @@ html{scroll-behavior:smooth}
         </div>
         <p style={{...infoP,color:"rgba(176,190,201,0.8)",marginTop:-6,fontSize:12}}>Generate strong passwords and securely store your credentials with end-to-end encryption.</p>
 
-        {/* Top-right Login button */}
-        <div style={{position:"absolute",top:20,right:24,zIndex:10}}>
-          <button onClick={()=>{setPmShowLogin(true);setPmLoginErr("");setPmLogin2FA(false);setPmLogin2FACode("");setPmLogin2FAErr("");setPmSignupMode(false)}} style={{padding:"8px 20px",background:pgQuantumSafe?"linear-gradient(135deg,#10b981,#059669)":`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:10,color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5,boxShadow:pgQuantumSafe?"0 4px 16px rgba(16,185,129,0.35)":`0 4px 16px rgba(${T.accentRgb},0.35)`,transition:"all 0.3s"}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-1px)"}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)"}}>Login</button>
-        </div>
 
         {/* ═══════ GHOST SHIELD UNLOCK MODAL ═══════ */}
         {pmGhostInput&&<div style={{position:"fixed",inset:0,zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.6)",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)"}} onClick={e=>{if(e.target===e.currentTarget)setPmGhostInput(false)}}>
@@ -2977,7 +2976,10 @@ html{scroll-behavior:smooth}
             <ButterflyLogo s={28} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} flap/>
             <span style={{fontSize:18,fontWeight:800,letterSpacing:3,fontFamily:`${F.heading},sans-serif`,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>NOTESCRAFT</span>
           </div>
-          <button onClick={()=>{if(blogArticle){setBlogArticle(null);window.scrollTo(0,0)}else{setInfoPage(null)}}} style={{background:`rgba(${T.accentRgb},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,borderRadius:8,padding:"8px 20px",color:T.dark?T.text:"#e2e8f0",fontSize:13,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1}}>{blogArticle?"← Blog":"← Back"}</button>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            {infoPage==="password-manager"&&!pmIsLoggedIn&&<button onClick={()=>{setPmShowLogin(true);setPmLoginErr("");setPmLogin2FA(false);setPmLogin2FACode("");setPmLogin2FAErr("");setPmSignupMode(false)}} style={{padding:"8px 20px",background:pgQuantumSafe?"linear-gradient(135deg,#10b981,#059669)":`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:8,color:"#fff",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5,boxShadow:pgQuantumSafe?"0 4px 16px rgba(16,185,129,0.35)":`0 4px 16px rgba(${T.accentRgb},0.35)`,transition:"all 0.3s"}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-1px)"}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)"}}>Login</button>}
+            <button onClick={()=>{if(blogArticle){setBlogArticle(null);window.scrollTo(0,0)}else{setInfoPage(null)}}} style={{background:`rgba(${T.accentRgb},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,borderRadius:8,padding:"8px 20px",color:T.dark?T.text:"#e2e8f0",fontSize:13,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1}}>{blogArticle?"← Blog":"← Back"}</button>
+          </div>
         </nav>
         <div style={{position:"relative",zIndex:1,maxWidth:800,margin:"0 auto",padding:"100px 24px 60px"}}>
           {infoPage==="password-manager"&&<>
@@ -2994,11 +2996,11 @@ html{scroll-behavior:smooth}
               <div style={{position:"absolute",top:0,right:0,bottom:0,width:1,background:`linear-gradient(180deg,rgba(${T.accentRgb},0.4),transparent 30%,transparent 70%,rgba(139,92,246,0.15))`,pointerEvents:"none"}}/>
             </>}
             {infoPage==="password-manager"&&pgQuantumSafe&&<>
-              {/* Corner brackets — animated + glowing */}
-              <div style={{position:"absolute",top:14,left:14,width:32,height:32,borderTop:"3px solid rgba(16,185,129,0.9)",borderLeft:"3px solid rgba(16,185,129,0.9)",borderRadius:"4px 0 0 0",pointerEvents:"none",animation:"qmCornerPulse 2s ease-in-out infinite"}}/>
-              <div style={{position:"absolute",top:14,right:14,width:32,height:32,borderTop:"3px solid rgba(16,185,129,0.9)",borderRight:"3px solid rgba(16,185,129,0.9)",borderRadius:"0 4px 0 0",pointerEvents:"none",animation:"qmCornerPulse 2s ease-in-out infinite 0.5s"}}/>
-              <div style={{position:"absolute",bottom:14,left:14,width:32,height:32,borderBottom:"3px solid rgba(16,185,129,0.9)",borderLeft:"3px solid rgba(16,185,129,0.9)",borderRadius:"0 0 0 4px",pointerEvents:"none",animation:"qmCornerPulse 2s ease-in-out infinite 1s"}}/>
-              <div style={{position:"absolute",bottom:14,right:14,width:32,height:32,borderBottom:"3px solid rgba(16,185,129,0.9)",borderRight:"3px solid rgba(16,185,129,0.9)",borderRadius:"0 0 4px 0",pointerEvents:"none",animation:"qmCornerPulse 2s ease-in-out infinite 1.5s"}}/>
+              {/* Corner brackets — bounce outward */}
+              <div style={{position:"absolute",top:14,left:14,width:32,height:32,borderTop:"3px solid rgba(16,185,129,0.9)",borderLeft:"3px solid rgba(16,185,129,0.9)",borderRadius:"4px 0 0 0",pointerEvents:"none",animation:"qmCornerBounce-tl 2s ease-in-out infinite",filter:"drop-shadow(0 0 6px rgba(16,185,129,0.5))"}}/>
+              <div style={{position:"absolute",top:14,right:14,width:32,height:32,borderTop:"3px solid rgba(16,185,129,0.9)",borderRight:"3px solid rgba(16,185,129,0.9)",borderRadius:"0 4px 0 0",pointerEvents:"none",animation:"qmCornerBounce-tr 2s ease-in-out infinite 0.5s",filter:"drop-shadow(0 0 6px rgba(16,185,129,0.5))"}}/>
+              <div style={{position:"absolute",bottom:14,left:14,width:32,height:32,borderBottom:"3px solid rgba(16,185,129,0.9)",borderLeft:"3px solid rgba(16,185,129,0.9)",borderRadius:"0 0 0 4px",pointerEvents:"none",animation:"qmCornerBounce-bl 2s ease-in-out infinite 1s",filter:"drop-shadow(0 0 6px rgba(16,185,129,0.5))"}}/>
+              <div style={{position:"absolute",bottom:14,right:14,width:32,height:32,borderBottom:"3px solid rgba(16,185,129,0.9)",borderRight:"3px solid rgba(16,185,129,0.9)",borderRadius:"0 0 4px 0",pointerEvents:"none",animation:"qmCornerBounce-br 2s ease-in-out infinite 1.5s",filter:"drop-shadow(0 0 6px rgba(16,185,129,0.5))"}}/>
             </>}
             {infoPages[infoPage]}
           </div>
