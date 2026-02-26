@@ -178,34 +178,62 @@ const IC = {
 };
 
 /* Butterfly logo — geometric origami, exact match to reference */
-const ShieldLogo=({s=48,accentRgb,accent,accent2,text,warn,pulse})=>{
-  const sw=s>=30?2.2:s>=18?1.6:1;
-  const s1=`rgba(${accentRgb},0.5)`;
-  const s2=`rgba(${accentRgb},0.35)`;
-  const s3=`rgba(${accentRgb},0.18)`;
-  const s4=`rgba(${accentRgb},0.12)`;
-  const pAnim=pulse?{animation:'shieldPulse 2.5s ease-in-out infinite'}:{};
-  const gAnim=pulse?{animation:'shieldGlow 2.5s ease-in-out infinite'}:{};
-  return<svg width={s} height={s} viewBox="0 0 48 56" fill="none" draggable={false} onContextMenu={e=>e.preventDefault()} style={{overflow:'visible',userSelect:'none',WebkitUserDrag:'none',msUserSelect:'none',...pAnim}}>
-    {/* Outer glow */}
+const ShieldLogo=({s=48,accentRgb,accent,accent2,text,warn,pulse,uid})=>{
+  const sw=s>=30?1.8:s>=18?1.2:0.8;
+  const id=uid||'sh';
+  const pAnim=pulse?{animation:'shieldPulse 3s ease-in-out infinite'}:{};
+  return<svg width={s} height={s*(60/48)} viewBox="0 0 48 60" fill="none" draggable={false} onContextMenu={e=>e.preventDefault()} style={{overflow:'visible',userSelect:'none',WebkitUserDrag:'none',msUserSelect:'none',...pAnim}}>
     <defs>
-      <radialGradient id="shGlow" cx="50%" cy="40%" r="60%"><stop offset="0%" stopColor={accent} stopOpacity="0.25"/><stop offset="100%" stopColor={accent} stopOpacity="0"/></radialGradient>
-      <linearGradient id="shGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor={accent} stopOpacity="0.6"/><stop offset="100%" stopColor={accent2||accent} stopOpacity="0.3"/></linearGradient>
+      <linearGradient id={`${id}G1`} x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor={accent} stopOpacity="0.7"/><stop offset="100%" stopColor={accent2||accent} stopOpacity="0.25"/></linearGradient>
+      <linearGradient id={`${id}G2`} x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor={accent} stopOpacity="0.45"/><stop offset="100%" stopColor={accent2||accent} stopOpacity="0.15"/></linearGradient>
+      <linearGradient id={`${id}G3`} x1="50%" y1="0%" x2="50%" y2="100%"><stop offset="0%" stopColor="#fff" stopOpacity="0.2"/><stop offset="60%" stopColor="#fff" stopOpacity="0"/></linearGradient>
+      <radialGradient id={`${id}Glow`} cx="50%" cy="35%" r="55%"><stop offset="0%" stopColor={accent} stopOpacity="0.35"/><stop offset="100%" stopColor={accent} stopOpacity="0"/></radialGradient>
+      <filter id={`${id}Blur`}><feGaussianBlur stdDeviation="2"/></filter>
+      <clipPath id={`${id}Clip`}><path d="M24 3L5 13V30C5 43 14 52 24 56C34 52 43 43 43 30V13L24 3Z"/></clipPath>
     </defs>
-    {pulse&&<ellipse cx="24" cy="28" rx="22" ry="26" fill="url(#shGlow)" style={gAnim}/>}
-    {/* Shield body */}
-    <path d="M24 2L4 12V28C4 40 14 50 24 54C34 50 44 40 44 28V12L24 2Z" fill={s1} stroke={text} strokeWidth={sw} strokeLinejoin="round"/>
-    {/* Inner shield */}
-    <path d="M24 8L10 15V28C10 37 17 45 24 48C31 45 38 37 38 28V15L24 8Z" fill={s2} stroke={text} strokeWidth={sw*0.7} strokeLinejoin="round"/>
-    {/* Shield highlight */}
-    <path d="M24 8L10 15V20C16 18 20 14 24 8Z" fill={s3} opacity="0.8"/>
-    <path d="M24 8L38 15V20C32 18 28 14 24 8Z" fill={s4} opacity="0.6"/>
-    {/* Checkmark / lock icon inside */}
-    <path d="M17 28L22 33L32 22" stroke={warn||accent} strokeWidth={sw*1.2} strokeLinecap="round" strokeLinejoin="round" fill="none" style={pulse?{animation:'shieldCheck 2.5s ease-in-out infinite'}:{}}/>
-    {/* Decorative lines */}
-    <path d="M24 14V18" stroke={`rgba(${accentRgb},0.4)`} strokeWidth={sw*0.5} strokeLinecap="round"/>
-    <path d="M18 17L20 20" stroke={`rgba(${accentRgb},0.3)`} strokeWidth={sw*0.4} strokeLinecap="round"/>
-    <path d="M30 17L28 20" stroke={`rgba(${accentRgb},0.3)`} strokeWidth={sw*0.4} strokeLinecap="round"/>
+    {/* Background glow */}
+    {pulse&&<ellipse cx="24" cy="30" rx="26" ry="30" fill={`url(#${id}Glow)`} style={{animation:'shieldGlow 3s ease-in-out infinite'}}/>}
+    {/* Outer shield - sharp futuristic edges */}
+    <path d="M24 3L5 13V30C5 43 14 52 24 56C34 52 43 43 43 30V13L24 3Z" fill={`url(#${id}G1)`} stroke={`rgba(${accentRgb},0.6)`} strokeWidth={sw} strokeLinejoin="round"/>
+    {/* Inner shield with gap */}
+    <path d="M24 9L10 17V30C10 40 17 47 24 50C31 47 38 40 38 30V17L24 9Z" fill={`url(#${id}G2)`} stroke={`rgba(${accentRgb},0.35)`} strokeWidth={sw*0.6} strokeLinejoin="round"/>
+    {/* Top glass highlight */}
+    <path d="M24 3L5 13V20C12 17 18 11 24 3Z" fill={`url(#${id}G3)`}/>
+    <path d="M24 3L43 13V20C36 17 30 11 24 3Z" fill={`url(#${id}G3)`} opacity="0.6"/>
+    {/* Circuit-board lines (futuristic detail) */}
+    <g clipPath={`url(#${id}Clip)`} opacity="0.4" style={pulse?{animation:'shieldCircuit 4s linear infinite'}:{}}>
+      <line x1="12" y1="20" x2="12" y2="38" stroke={accent} strokeWidth="0.5" strokeDasharray="2 3"/>
+      <line x1="18" y1="14" x2="18" y2="44" stroke={accent} strokeWidth="0.5" strokeDasharray="3 4"/>
+      <line x1="30" y1="14" x2="30" y2="44" stroke={accent} strokeWidth="0.5" strokeDasharray="3 4"/>
+      <line x1="36" y1="20" x2="36" y2="38" stroke={accent} strokeWidth="0.5" strokeDasharray="2 3"/>
+      <line x1="8" y1="25" x2="40" y2="25" stroke={accent} strokeWidth="0.4" strokeDasharray="2 5"/>
+      <line x1="8" y1="35" x2="40" y2="35" stroke={accent} strokeWidth="0.4" strokeDasharray="2 5"/>
+      {/* Circuit nodes */}
+      <circle cx="18" cy="25" r="1.2" fill={accent} opacity="0.7"/>
+      <circle cx="30" cy="25" r="1.2" fill={accent} opacity="0.7"/>
+      <circle cx="18" cy="35" r="1.2" fill={accent} opacity="0.5"/>
+      <circle cx="30" cy="35" r="1.2" fill={accent} opacity="0.5"/>
+      <circle cx="12" cy="30" r="1" fill={accent} opacity="0.4"/>
+      <circle cx="36" cy="30" r="1" fill={accent} opacity="0.4"/>
+    </g>
+    {/* Hexagonal lock / checkmark center piece */}
+    <g style={pulse?{animation:'shieldCheckPop 3s ease-in-out infinite',transformOrigin:'24px 30px'}:{}}>
+      {/* Hex background */}
+      <path d="M24 21L31 25V33L24 37L17 33V25Z" fill={`rgba(${accentRgb},0.12)`} stroke={accent} strokeWidth={sw*0.7} strokeLinejoin="round"/>
+      {/* Checkmark inside hex */}
+      <path d="M19 29L23 33L30 25" stroke={warn||accent} strokeWidth={sw*1.5} strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+    </g>
+    {/* Scanning line effect */}
+    {pulse&&<rect x="5" y="0" width="38" height="2" rx="1" fill={`url(#${id}G3)`} clipPath={`url(#${id}Clip)`} style={{animation:'shieldScan 3s ease-in-out infinite'}}/>}
+    {/* Corner accents */}
+    <path d="M24 3L20 5" stroke={accent} strokeWidth={sw*0.8} strokeLinecap="round" opacity="0.6"/>
+    <path d="M24 3L28 5" stroke={accent} strokeWidth={sw*0.8} strokeLinecap="round" opacity="0.6"/>
+    <circle cx="24" cy="3" r="1.5" fill={accent} opacity="0.5" style={pulse?{animation:'shieldDot 2s ease-in-out infinite'}:{}}/>
+    {/* Bottom accent */}
+    <circle cx="24" cy="56" r="1" fill={accent} opacity="0.4" style={pulse?{animation:'shieldDot 2s ease-in-out infinite 1s'}:{}}/>
+    {/* Side energy bars */}
+    <path d="M5 18V24" stroke={accent} strokeWidth={sw} strokeLinecap="round" opacity="0.3" style={pulse?{animation:'shieldEnergy 2s ease-in-out infinite'}:{}}/>
+    <path d="M43 18V24" stroke={accent} strokeWidth={sw} strokeLinecap="round" opacity="0.3" style={pulse?{animation:'shieldEnergy 2s ease-in-out infinite 0.5s'}:{}}/>
   </svg>;
 };
 const ButterflyLogo=({s=48,accentRgb,accent,accent2,text,warn,flap})=>{
@@ -1683,11 +1711,15 @@ select option{background:${T.bg};color:${T.text}}
 @keyframes logoPulse{0%,100%{box-shadow:0 0 20px rgba(${T.accentRgb},0.15),0 0 40px rgba(${T.accentRgb},0.08)}50%{box-shadow:0 0 30px rgba(${T.accentRgb},0.4),0 0 60px rgba(${T.accentRgb},0.2),0 0 80px rgba(${T.accentRgb},0.1)}}
 @keyframes logoShimmer{0%{left:-100%}100%{left:200%}}
 @keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-@keyframes shieldPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
-@keyframes shieldGlow{0%,100%{opacity:0.5}50%{opacity:1}}
-@keyframes shieldCheck{0%,100%{stroke-dashoffset:0;opacity:1}30%{stroke-dashoffset:0;opacity:0.6}60%{stroke-dashoffset:0;opacity:1}}
-@keyframes shieldFloat{0%{transform:translateY(0px) rotate(0deg)}25%{transform:translateY(-8px) rotate(2deg)}50%{transform:translateY(-4px) rotate(0deg)}75%{transform:translateY(-10px) rotate(-2deg)}100%{transform:translateY(0px) rotate(0deg)}}
-@keyframes shieldEntrance{0%{transform:scale(0.3) rotate(-15deg);opacity:0}40%{transform:scale(1.1) rotate(3deg);opacity:1}70%{transform:scale(0.95) rotate(-1deg)}100%{transform:scale(1) rotate(0deg);opacity:1}}
+@keyframes shieldPulse{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.04);filter:brightness(1.15)}}
+@keyframes shieldGlow{0%,100%{opacity:0.4;transform:scale(0.95)}50%{opacity:1;transform:scale(1.05)}}
+@keyframes shieldCheckPop{0%,100%{transform:scale(1)}40%{transform:scale(1)}50%{transform:scale(1.12)}60%{transform:scale(0.95)}70%{transform:scale(1)}}
+@keyframes shieldScan{0%{transform:translateY(10px);opacity:0}20%{opacity:0.8}80%{opacity:0.8}100%{transform:translateY(50px);opacity:0}}
+@keyframes shieldCircuit{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-20}}
+@keyframes shieldDot{0%,100%{opacity:0.3;transform:scale(1)}50%{opacity:1;transform:scale(1.5)}}
+@keyframes shieldEnergy{0%,100%{opacity:0.2;stroke-dashoffset:0}50%{opacity:0.8;stroke-dashoffset:4}}
+@keyframes shieldFloat{0%{transform:translateY(0px) rotate(0deg)}20%{transform:translateY(-6px) rotate(1.5deg)}40%{transform:translateY(-2px) rotate(-0.5deg)}60%{transform:translateY(-8px) rotate(-1.5deg)}80%{transform:translateY(-3px) rotate(0.5deg)}100%{transform:translateY(0px) rotate(0deg)}}
+@keyframes shieldEntrance{0%{transform:scale(0) rotate(-20deg);opacity:0;filter:blur(8px)}30%{transform:scale(1.15) rotate(4deg);opacity:1;filter:blur(0)}55%{transform:scale(0.92) rotate(-2deg)}75%{transform:scale(1.03) rotate(1deg)}100%{transform:scale(1) rotate(0deg);opacity:1;filter:blur(0)}}
 @keyframes flapWing{0%{transform:scaleX(1)}15%{transform:scaleX(0.6)}30%{transform:scaleX(1)}45%{transform:scaleX(0.55)}60%{transform:scaleX(1)}80%{transform:scaleX(0.7)}100%{transform:scaleX(1)}}
 @keyframes butterflyFly{0%{transform:translate(0,0) scaleX(1) rotate(0deg)}5%{transform:translate(80px,-30px) scaleX(1) rotate(4deg)}10%{transform:translate(180px,-50px) scaleX(1) rotate(7deg)}15%{transform:translate(260px,-25px) scaleX(1) rotate(5deg)}20%{transform:translate(300px,-10px) scaleX(1) rotate(2deg)}24%{transform:translate(280px,-5px) scaleX(-1) rotate(3deg)}30%{transform:translate(150px,-15px) scaleX(-1) rotate(6deg)}35%{transform:translate(50px,-25px) scaleX(-1) rotate(4deg)}40%{transform:translate(-30px,-35px) scaleX(-1) rotate(2deg)}45%{transform:translate(-120px,-50px) scaleX(-1) rotate(6deg)}50%{transform:translate(-220px,-60px) scaleX(-1) rotate(8deg)}55%{transform:translate(-300px,-35px) scaleX(-1) rotate(5deg)}60%{transform:translate(-280px,-20px) scaleX(-1) rotate(2deg)}64%{transform:translate(-240px,-25px) scaleX(1) rotate(-2deg)}70%{transform:translate(-100px,-15px) scaleX(1) rotate(-5deg)}75%{transform:translate(-20px,-10px) scaleX(1) rotate(-3deg)}80%{transform:translate(40px,-15px) scaleX(1) rotate(-2deg)}85%{transform:translate(25px,-10px) scaleX(1) rotate(-1deg)}90%{transform:translate(12px,-5px) scaleX(1) rotate(0deg)}95%{transform:translate(4px,-2px) scaleX(1) rotate(0deg)}100%{transform:translate(0,0) scaleX(1) rotate(0deg)}}
 @keyframes butterflyFly2{0%{transform:translate(0,0) scaleX(-1) rotate(0deg)}4%{transform:translate(-60px,-15px) scaleX(-1) rotate(3deg)}8%{transform:translate(-150px,-30px) scaleX(-1) rotate(6deg)}12%{transform:translate(-240px,-20px) scaleX(-1) rotate(4deg)}18%{transform:translate(-280px,-40px) scaleX(-1) rotate(1deg)}22%{transform:translate(-260px,-50px) scaleX(1) rotate(-3deg)}28%{transform:translate(-150px,-35px) scaleX(1) rotate(-5deg)}34%{transform:translate(-30px,-20px) scaleX(1) rotate(-3deg)}40%{transform:translate(80px,-30px) scaleX(1) rotate(-2deg)}46%{transform:translate(180px,-45px) scaleX(1) rotate(-4deg)}52%{transform:translate(260px,-30px) scaleX(1) rotate(-6deg)}58%{transform:translate(300px,-40px) scaleX(1) rotate(-4deg)}62%{transform:translate(280px,-35px) scaleX(-1) rotate(3deg)}68%{transform:translate(180px,-25px) scaleX(-1) rotate(4deg)}74%{transform:translate(80px,-15px) scaleX(-1) rotate(3deg)}80%{transform:translate(20px,-10px) scaleX(-1) rotate(2deg)}86%{transform:translate(-10px,-8px) scaleX(-1) rotate(1deg)}92%{transform:translate(-5px,-4px) scaleX(1) rotate(0deg)}100%{transform:translate(0,0) scaleX(1) rotate(0deg)}}
@@ -1867,7 +1899,7 @@ html{scroll-behavior:smooth}
         <div style={{padding:"14px 14px 12px",borderBottom:`1px solid ${T.bdr}`}}>
           <div style={{display:"flex",alignItems:"center",gap:8}}>
             <div style={{width:32,height:32,borderRadius:8,background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-              <ShieldLogo s={20} accentRgb="255,255,255" accent="#fff" accent2="#fff" text="rgba(255,255,255,0.9)" warn="rgba(255,255,255,0.95)"/>
+              <ShieldLogo s={20} accentRgb="255,255,255" accent="#fff" accent2="#fff" text="rgba(255,255,255,0.9)" warn="rgba(255,255,255,0.95)" uid="scSb"/>
             </div>
             <span style={{fontSize:15,fontWeight:700,flex:1,letterSpacing:1,fontFamily:`${F.heading},sans-serif`,overflow:"hidden",whiteSpace:"nowrap"}}>ShieldCraft</span>
           </div>
@@ -2145,11 +2177,14 @@ html{scroll-behavior:smooth}
         <p style={infoP}>We reserve the right to update these terms at any time. Continued use of NotesCraft after changes constitutes acceptance of the updated terms.</p>
       </>,
       "password-manager":<>
-        <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:14,marginBottom:4}}>
-          <div style={{animation:"shieldEntrance 0.8s ease-out, shieldFloat 6s ease-in-out infinite 0.8s",filter:`drop-shadow(0 4px 16px rgba(${T.accentRgb},0.4))`}}>
-            <ShieldLogo s={52} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} pulse/>
+        <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:8}}>
+          <div style={{animation:"shieldEntrance 0.8s ease-out, shieldFloat 8s ease-in-out infinite 0.8s",filter:`drop-shadow(0 6px 20px rgba(${T.accentRgb},0.5)) drop-shadow(0 0 40px rgba(${T.accentRgb},0.15))`}}>
+            <ShieldLogo s={56} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} pulse uid="scPub"/>
           </div>
-          <h1 style={{...infoH,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",textShadow:"none",margin:0}}>ShieldCraft</h1>
+          <div>
+            <h1 style={{...infoH,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${T.accent} 70%,${T.accent2||T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",textShadow:"none",margin:0,fontSize:32}}>ShieldCraft</h1>
+            <p style={{fontSize:12,color:T.dim,margin:"2px 0 0",letterSpacing:1.5,fontWeight:500}}>by NotesCraft</p>
+          </div>
         </div>
         <p style={{...infoP,color:"rgba(176,190,201,0.8)"}}>Generate strong passwords and securely store your credentials with end-to-end encryption.</p>
 
@@ -2162,7 +2197,7 @@ html{scroll-behavior:smooth}
         {pmShowLogin&&<div style={{position:"fixed",inset:0,zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.6)",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)"}} onClick={e=>{if(e.target===e.currentTarget)setPmShowLogin(false)}}>
           <div style={{width:380,maxWidth:"90vw",background:T.dark?"rgba(16,18,27,0.95)":"rgba(30,32,44,0.95)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:`1px solid rgba(${T.accentRgb},0.2)`,borderRadius:20,padding:"32px 28px",boxShadow:`0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(${T.accentRgb},0.08)`,position:"relative"}}>
             <button onClick={()=>setPmShowLogin(false)} style={{position:"absolute",top:12,right:14,background:"none",border:"none",color:T.dim,fontSize:20,cursor:"pointer",padding:"4px 8px",lineHeight:1}}>x</button>
-            <div style={{display:"flex",justifyContent:"center",marginBottom:8}}><div style={{animation:"shieldEntrance 0.6s ease-out"}}><ShieldLogo s={36} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn}/></div></div>
+            <div style={{display:"flex",justifyContent:"center",marginBottom:8}}><div style={{animation:"shieldEntrance 0.6s ease-out"}}><ShieldLogo s={36} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} uid="scMdl"/></div></div>
             <h2 style={{fontSize:20,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.text,margin:"0 0 4px",letterSpacing:1,textAlign:"center"}}>{pmSignupMode?"Create Account":"Login to ShieldCraft"}</h2>
             <p style={{fontSize:11,color:T.dim,margin:"0 0 20px",textAlign:"center"}}>{pmSignupMode?"Create a NotesCraft account to store passwords":"Use your NotesCraft credentials"}</p>
             {!pmLogin2FA?<div style={{display:"flex",flexDirection:"column",gap:10}}>
