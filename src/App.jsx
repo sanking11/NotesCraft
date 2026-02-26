@@ -1949,7 +1949,7 @@ html{scroll-behavior:smooth}
             <button onClick={()=>{pmClearForm();setPmView("add");setPmSelectedId(null)}} style={{width:22,height:22,borderRadius:6,background:`rgba(${T.accentRgb},0.12)`,border:"none",color:T.accent,fontSize:14,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}} title="Add credential">+</button>
           </div>
 
-          <button className={`sc-vault-btn${!pmFolderFilter&&pmView!=="starred-view"&&pmView!=="totp-view"?" active":""}`} onClick={()=>{setPmFolderFilter(null);setPmView("list")}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",marginBottom:1,background:"transparent",border:"none",borderRadius:8,color:(!pmFolderFilter&&pmView!=="starred-view"&&pmView!=="totp-view")?T.text:T.dim,fontSize:13,fontFamily:"inherit",cursor:"pointer",textAlign:"left"}}>
+          <button className={`sc-vault-btn${!pmFolderFilter&&pmView!=="starred-view"&&pmView!=="totp-view"&&pmView!=="generator"&&pmView!=="add"&&pmView!=="edit"?" active":""}`} onClick={()=>{setPmFolderFilter(null);setPmView("list")}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",marginBottom:1,background:"transparent",border:"none",borderRadius:8,color:(!pmFolderFilter&&pmView!=="starred-view"&&pmView!=="totp-view")?T.text:T.dim,fontSize:13,fontFamily:"inherit",cursor:"pointer",textAlign:"left"}}>
             <span style={{width:28,height:28,borderRadius:8,background:`rgba(${T.accentRgb},0.12)`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><IC.Shield/></span>
             <span style={{flex:1,fontWeight:500}}>All Items</span>
             <span style={{fontSize:12,color:T.faint}}>{pmCredentials.length} items</span>
@@ -1981,7 +1981,7 @@ html{scroll-behavior:smooth}
 
         {/* Bottom section */}
         <div style={{borderTop:`1px solid ${T.bdr}`,padding:"6px 10px 4px"}}>
-          <button className="sc-bottom-btn" onClick={()=>{setPmView("generator");setPmSelectedId(null)}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",background:"transparent",border:"none",borderRadius:8,color:T.dim,fontSize:13,fontFamily:"inherit",textAlign:"left"}}>
+          <button className={pmView==="generator"?"sc-vault-btn active":"sc-bottom-btn"} onClick={()=>{setPmView("generator");setPmSelectedId(null)}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",background:pmView==="generator"?`rgba(${T.accentRgb},0.1)`:"transparent",border:"none",borderRadius:8,color:pmView==="generator"?T.accent:T.dim,fontSize:13,fontFamily:"inherit",textAlign:"left",cursor:"pointer"}}>
             <span>⚡</span><span>Generator</span>
           </button>
           <button className="sc-bottom-btn" onClick={()=>{setPmIsLoggedIn(false);setPmCredentials([]);pmStorageRef.current=null;pmUserRef.current=null}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",background:"transparent",border:"none",borderRadius:8,color:T.dim,fontSize:13,fontFamily:"inherit",textAlign:"left"}}>
