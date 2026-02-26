@@ -798,7 +798,7 @@ export default function NotesCraft(){
       }
       pmStorageRef.current=es;pmUserRef.current=em;
       await pmLoadVault(es,em);
-      await es.subscribe(em,()=>{},()=>{},()=>{},(newPw)=>{if(newPw)setPmCredentials(newPw)});
+      await es.subscribe(em,()=>{},()=>{},()=>{},(newPw)=>{if(newPw){if(newPw.__v===2){setPmCredentials(newPw.credentials||[]);setPmVaultDefs(newPw.vaultDefs||{})}else if(Array.isArray(newPw)){setPmCredentials(newPw)}}});
       setPmLoginPw("");setPmLogin2FACode("");setPmShowLogin(false);setPmLogin2FA(false)
     }catch(e){setPmLoginErr("Login failed: "+e.message)}
     setPmLoginLoad(false)
@@ -901,7 +901,7 @@ export default function NotesCraft(){
         const first=ln.find(n=>!n.deleted&&!n.archived);
         if(first){setSelId(first.id);setETitle(first.title);setEBlocks(getBlocks(first))}
         setAuthMode("app");
-        await es.subscribe(em,(newNotes)=>{remoteSyncRef.current=true;setNotes(newNotes)},(newCal)=>setCalEvents(newCal),(newPrefs)=>{if(newPrefs){setThemeId(newPrefs.theme||"midnight");setTags(newPrefs.tags||DEF_TAGS);setFolderColors(newPrefs.folderColors||{})}},(newPw)=>{if(newPw)setPmCredentials(newPw)});
+        await es.subscribe(em,(newNotes)=>{remoteSyncRef.current=true;setNotes(newNotes)},(newCal)=>setCalEvents(newCal),(newPrefs)=>{if(newPrefs){setThemeId(newPrefs.theme||"midnight");setTags(newPrefs.tags||DEF_TAGS);setFolderColors(newPrefs.folderColors||{})}},(newPw)=>{if(newPw){if(newPw.__v===2){setPmCredentials(newPw.credentials||[]);setPmVaultDefs(newPw.vaultDefs||{})}else if(Array.isArray(newPw)){setPmCredentials(newPw)}}});
       }catch(e){clearSession()}
     })();
   },[]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -1012,7 +1012,7 @@ export default function NotesCraft(){
         setAuthMode("app");setAuthLoad(false);
         saveSession(em,key);
         // Subscribe for real-time sync
-        await es.subscribe(em,(newNotes)=>{remoteSyncRef.current=true;setNotes(newNotes)},(newCal)=>setCalEvents(newCal),(newPrefs)=>{if(newPrefs){setThemeId(newPrefs.theme||"midnight");setTags(newPrefs.tags||DEF_TAGS);setFolderColors(newPrefs.folderColors||{})}},(newPw)=>{if(newPw)setPmCredentials(newPw)});
+        await es.subscribe(em,(newNotes)=>{remoteSyncRef.current=true;setNotes(newNotes)},(newCal)=>setCalEvents(newCal),(newPrefs)=>{if(newPrefs){setThemeId(newPrefs.theme||"midnight");setTags(newPrefs.tags||DEF_TAGS);setFolderColors(newPrefs.folderColors||{})}},(newPw)=>{if(newPw){if(newPw.__v===2){setPmCredentials(newPw.credentials||[]);setPmVaultDefs(newPw.vaultDefs||{})}else if(Array.isArray(newPw)){setPmCredentials(newPw)}}});
         return;
       }
 
@@ -1042,7 +1042,7 @@ export default function NotesCraft(){
       setAuthMode("app");
       saveSession(em,key);
       // Subscribe for real-time sync
-      await es.subscribe(em,(newNotes)=>{remoteSyncRef.current=true;setNotes(newNotes)},(newCal)=>setCalEvents(newCal),(newPrefs)=>{if(newPrefs){setThemeId(newPrefs.theme||"midnight");setTags(newPrefs.tags||DEF_TAGS);setFolderColors(newPrefs.folderColors||{})}},(newPw)=>{if(newPw)setPmCredentials(newPw)});
+      await es.subscribe(em,(newNotes)=>{remoteSyncRef.current=true;setNotes(newNotes)},(newCal)=>setCalEvents(newCal),(newPrefs)=>{if(newPrefs){setThemeId(newPrefs.theme||"midnight");setTags(newPrefs.tags||DEF_TAGS);setFolderColors(newPrefs.folderColors||{})}},(newPw)=>{if(newPw){if(newPw.__v===2){setPmCredentials(newPw.credentials||[]);setPmVaultDefs(newPw.vaultDefs||{})}else if(Array.isArray(newPw)){setPmCredentials(newPw)}}});
     }catch(e){setAuthErr("Login failed: "+e.message);doShake()}
     setAuthLoad(false);
   };
@@ -1090,7 +1090,7 @@ export default function NotesCraft(){
       if(first){setSelId(first.id);setETitle(first.title);setEBlocks(getBlocks(first))}
       setAuthMode("app");saveSession(em,key);
       setPending2FA(null);setTwoFACode("");setUseRecoveryCode(false);
-      await es.subscribe(em,(newNotes)=>{remoteSyncRef.current=true;setNotes(newNotes)},(newCal)=>setCalEvents(newCal),(newPrefs)=>{if(newPrefs){setThemeId(newPrefs.theme||"midnight");setTags(newPrefs.tags||DEF_TAGS);setFolderColors(newPrefs.folderColors||{})}},(newPw)=>{if(newPw)setPmCredentials(newPw)});
+      await es.subscribe(em,(newNotes)=>{remoteSyncRef.current=true;setNotes(newNotes)},(newCal)=>setCalEvents(newCal),(newPrefs)=>{if(newPrefs){setThemeId(newPrefs.theme||"midnight");setTags(newPrefs.tags||DEF_TAGS);setFolderColors(newPrefs.folderColors||{})}},(newPw)=>{if(newPw){if(newPw.__v===2){setPmCredentials(newPw.credentials||[]);setPmVaultDefs(newPw.vaultDefs||{})}else if(Array.isArray(newPw)){setPmCredentials(newPw)}}});
     }catch(e){setTwoFAErr("Verification failed: "+e.message)}
     setTwoFALoad(false);
   };
