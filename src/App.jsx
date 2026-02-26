@@ -2528,7 +2528,7 @@ html{scroll-behavior:smooth}
             <p style={{fontSize:9,color:pgQuantumSafe?"rgba(16,185,129,0.6)":T.dim,margin:"1px 0 0",letterSpacing:1.2,fontWeight:500}}>Password Generator Tool by NotesCraft</p>
           </div>
         </div>
-        <p style={{...infoP,color:"rgba(176,190,201,0.8)",marginTop:2}}>Generate strong passwords and securely store your credentials with end-to-end encryption.</p>
+        <p style={{...infoP,color:"rgba(176,190,201,0.8)",marginTop:-6,fontSize:12}}>Generate strong passwords and securely store your credentials with end-to-end encryption.</p>
 
         {/* Top-right Login button */}
         <div style={{position:"absolute",top:20,right:24,zIndex:10}}>
