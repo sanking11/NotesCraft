@@ -178,6 +178,36 @@ const IC = {
 };
 
 /* Butterfly logo — geometric origami, exact match to reference */
+const ShieldLogo=({s=48,accentRgb,accent,accent2,text,warn,pulse})=>{
+  const sw=s>=30?2.2:s>=18?1.6:1;
+  const s1=`rgba(${accentRgb},0.5)`;
+  const s2=`rgba(${accentRgb},0.35)`;
+  const s3=`rgba(${accentRgb},0.18)`;
+  const s4=`rgba(${accentRgb},0.12)`;
+  const pAnim=pulse?{animation:'shieldPulse 2.5s ease-in-out infinite'}:{};
+  const gAnim=pulse?{animation:'shieldGlow 2.5s ease-in-out infinite'}:{};
+  return<svg width={s} height={s} viewBox="0 0 48 56" fill="none" draggable={false} onContextMenu={e=>e.preventDefault()} style={{overflow:'visible',userSelect:'none',WebkitUserDrag:'none',msUserSelect:'none',...pAnim}}>
+    {/* Outer glow */}
+    <defs>
+      <radialGradient id="shGlow" cx="50%" cy="40%" r="60%"><stop offset="0%" stopColor={accent} stopOpacity="0.25"/><stop offset="100%" stopColor={accent} stopOpacity="0"/></radialGradient>
+      <linearGradient id="shGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor={accent} stopOpacity="0.6"/><stop offset="100%" stopColor={accent2||accent} stopOpacity="0.3"/></linearGradient>
+    </defs>
+    {pulse&&<ellipse cx="24" cy="28" rx="22" ry="26" fill="url(#shGlow)" style={gAnim}/>}
+    {/* Shield body */}
+    <path d="M24 2L4 12V28C4 40 14 50 24 54C34 50 44 40 44 28V12L24 2Z" fill={s1} stroke={text} strokeWidth={sw} strokeLinejoin="round"/>
+    {/* Inner shield */}
+    <path d="M24 8L10 15V28C10 37 17 45 24 48C31 45 38 37 38 28V15L24 8Z" fill={s2} stroke={text} strokeWidth={sw*0.7} strokeLinejoin="round"/>
+    {/* Shield highlight */}
+    <path d="M24 8L10 15V20C16 18 20 14 24 8Z" fill={s3} opacity="0.8"/>
+    <path d="M24 8L38 15V20C32 18 28 14 24 8Z" fill={s4} opacity="0.6"/>
+    {/* Checkmark / lock icon inside */}
+    <path d="M17 28L22 33L32 22" stroke={warn||accent} strokeWidth={sw*1.2} strokeLinecap="round" strokeLinejoin="round" fill="none" style={pulse?{animation:'shieldCheck 2.5s ease-in-out infinite'}:{}}/>
+    {/* Decorative lines */}
+    <path d="M24 14V18" stroke={`rgba(${accentRgb},0.4)`} strokeWidth={sw*0.5} strokeLinecap="round"/>
+    <path d="M18 17L20 20" stroke={`rgba(${accentRgb},0.3)`} strokeWidth={sw*0.4} strokeLinecap="round"/>
+    <path d="M30 17L28 20" stroke={`rgba(${accentRgb},0.3)`} strokeWidth={sw*0.4} strokeLinecap="round"/>
+  </svg>;
+};
 const ButterflyLogo=({s=48,accentRgb,accent,accent2,text,warn,flap})=>{
   const sw=s>=30?2.5:s>=18?1.8:1.2;
   const w1=`rgba(${accentRgb},0.5)`;
@@ -1653,6 +1683,11 @@ select option{background:${T.bg};color:${T.text}}
 @keyframes logoPulse{0%,100%{box-shadow:0 0 20px rgba(${T.accentRgb},0.15),0 0 40px rgba(${T.accentRgb},0.08)}50%{box-shadow:0 0 30px rgba(${T.accentRgb},0.4),0 0 60px rgba(${T.accentRgb},0.2),0 0 80px rgba(${T.accentRgb},0.1)}}
 @keyframes logoShimmer{0%{left:-100%}100%{left:200%}}
 @keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes shieldPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes shieldGlow{0%,100%{opacity:0.5}50%{opacity:1}}
+@keyframes shieldCheck{0%,100%{stroke-dashoffset:0;opacity:1}30%{stroke-dashoffset:0;opacity:0.6}60%{stroke-dashoffset:0;opacity:1}}
+@keyframes shieldFloat{0%{transform:translateY(0px) rotate(0deg)}25%{transform:translateY(-8px) rotate(2deg)}50%{transform:translateY(-4px) rotate(0deg)}75%{transform:translateY(-10px) rotate(-2deg)}100%{transform:translateY(0px) rotate(0deg)}}
+@keyframes shieldEntrance{0%{transform:scale(0.3) rotate(-15deg);opacity:0}40%{transform:scale(1.1) rotate(3deg);opacity:1}70%{transform:scale(0.95) rotate(-1deg)}100%{transform:scale(1) rotate(0deg);opacity:1}}
 @keyframes flapWing{0%{transform:scaleX(1)}15%{transform:scaleX(0.6)}30%{transform:scaleX(1)}45%{transform:scaleX(0.55)}60%{transform:scaleX(1)}80%{transform:scaleX(0.7)}100%{transform:scaleX(1)}}
 @keyframes butterflyFly{0%{transform:translate(0,0) scaleX(1) rotate(0deg)}5%{transform:translate(80px,-30px) scaleX(1) rotate(4deg)}10%{transform:translate(180px,-50px) scaleX(1) rotate(7deg)}15%{transform:translate(260px,-25px) scaleX(1) rotate(5deg)}20%{transform:translate(300px,-10px) scaleX(1) rotate(2deg)}24%{transform:translate(280px,-5px) scaleX(-1) rotate(3deg)}30%{transform:translate(150px,-15px) scaleX(-1) rotate(6deg)}35%{transform:translate(50px,-25px) scaleX(-1) rotate(4deg)}40%{transform:translate(-30px,-35px) scaleX(-1) rotate(2deg)}45%{transform:translate(-120px,-50px) scaleX(-1) rotate(6deg)}50%{transform:translate(-220px,-60px) scaleX(-1) rotate(8deg)}55%{transform:translate(-300px,-35px) scaleX(-1) rotate(5deg)}60%{transform:translate(-280px,-20px) scaleX(-1) rotate(2deg)}64%{transform:translate(-240px,-25px) scaleX(1) rotate(-2deg)}70%{transform:translate(-100px,-15px) scaleX(1) rotate(-5deg)}75%{transform:translate(-20px,-10px) scaleX(1) rotate(-3deg)}80%{transform:translate(40px,-15px) scaleX(1) rotate(-2deg)}85%{transform:translate(25px,-10px) scaleX(1) rotate(-1deg)}90%{transform:translate(12px,-5px) scaleX(1) rotate(0deg)}95%{transform:translate(4px,-2px) scaleX(1) rotate(0deg)}100%{transform:translate(0,0) scaleX(1) rotate(0deg)}}
 @keyframes butterflyFly2{0%{transform:translate(0,0) scaleX(-1) rotate(0deg)}4%{transform:translate(-60px,-15px) scaleX(-1) rotate(3deg)}8%{transform:translate(-150px,-30px) scaleX(-1) rotate(6deg)}12%{transform:translate(-240px,-20px) scaleX(-1) rotate(4deg)}18%{transform:translate(-280px,-40px) scaleX(-1) rotate(1deg)}22%{transform:translate(-260px,-50px) scaleX(1) rotate(-3deg)}28%{transform:translate(-150px,-35px) scaleX(1) rotate(-5deg)}34%{transform:translate(-30px,-20px) scaleX(1) rotate(-3deg)}40%{transform:translate(80px,-30px) scaleX(1) rotate(-2deg)}46%{transform:translate(180px,-45px) scaleX(1) rotate(-4deg)}52%{transform:translate(260px,-30px) scaleX(1) rotate(-6deg)}58%{transform:translate(300px,-40px) scaleX(1) rotate(-4deg)}62%{transform:translate(280px,-35px) scaleX(-1) rotate(3deg)}68%{transform:translate(180px,-25px) scaleX(-1) rotate(4deg)}74%{transform:translate(80px,-15px) scaleX(-1) rotate(3deg)}80%{transform:translate(20px,-10px) scaleX(-1) rotate(2deg)}86%{transform:translate(-10px,-8px) scaleX(-1) rotate(1deg)}92%{transform:translate(-5px,-4px) scaleX(1) rotate(0deg)}100%{transform:translate(0,0) scaleX(1) rotate(0deg)}}
@@ -1866,7 +1901,12 @@ html{scroll-behavior:smooth}
         <p style={infoP}>We reserve the right to update these terms at any time. Continued use of NotesCraft after changes constitutes acceptance of the updated terms.</p>
       </>,
       "password-manager":<>
-        <h1 style={{...infoH,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",textShadow:"none"}}>Password Manager</h1>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:14,marginBottom:4}}>
+          <div style={{animation:"shieldEntrance 0.8s ease-out, shieldFloat 6s ease-in-out infinite 0.8s",filter:`drop-shadow(0 4px 16px rgba(${T.accentRgb},0.4))`}}>
+            <ShieldLogo s={52} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} pulse/>
+          </div>
+          <h1 style={{...infoH,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",textShadow:"none",margin:0}}>ShieldCraft</h1>
+        </div>
         <p style={{...infoP,color:"rgba(176,190,201,0.8)"}}>Generate strong passwords and securely store your credentials with end-to-end encryption.</p>
 
         {/* Top-right Login/User button */}
@@ -1882,7 +1922,8 @@ html{scroll-behavior:smooth}
         {pmShowLogin&&<div style={{position:"fixed",inset:0,zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.6)",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)"}} onClick={e=>{if(e.target===e.currentTarget)setPmShowLogin(false)}}>
           <div style={{width:380,maxWidth:"90vw",background:T.dark?"rgba(16,18,27,0.95)":"rgba(30,32,44,0.95)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:`1px solid rgba(${T.accentRgb},0.2)`,borderRadius:20,padding:"32px 28px",boxShadow:`0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(${T.accentRgb},0.08)`,position:"relative"}}>
             <button onClick={()=>setPmShowLogin(false)} style={{position:"absolute",top:12,right:14,background:"none",border:"none",color:T.dim,fontSize:20,cursor:"pointer",padding:"4px 8px",lineHeight:1}}>x</button>
-            <h2 style={{fontSize:20,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.text,margin:"0 0 4px",letterSpacing:1,textAlign:"center"}}>{pmSignupMode?"Create Account":"Login"}</h2>
+            <div style={{display:"flex",justifyContent:"center",marginBottom:8}}><div style={{animation:"shieldEntrance 0.6s ease-out"}}><ShieldLogo s={36} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn}/></div></div>
+            <h2 style={{fontSize:20,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.text,margin:"0 0 4px",letterSpacing:1,textAlign:"center"}}>{pmSignupMode?"Create Account":"Login to ShieldCraft"}</h2>
             <p style={{fontSize:11,color:T.dim,margin:"0 0 20px",textAlign:"center"}}>{pmSignupMode?"Create a NotesCraft account to store passwords":"Use your NotesCraft credentials"}</p>
             {!pmLogin2FA?<div style={{display:"flex",flexDirection:"column",gap:10}}>
               {pmSignupMode&&<input type="text" value={pmSignupName} onChange={e=>setPmSignupName(e.target.value)} placeholder="Full Name" style={{padding:"11px 14px",borderRadius:10,background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.15)`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box",transition:"border-color 0.3s"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.15)`}}/>}
@@ -2404,7 +2445,7 @@ html{scroll-behavior:smooth}
             style={{background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:10,padding:"14px 32px",color:"#fff",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:1,boxShadow:`0 4px 20px rgba(${T.accentRgb},0.35)`,transition:"all 0.3s"}}
             onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow=`0 6px 25px rgba(${T.accentRgb},0.5)`}}
             onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow=`0 4px 20px rgba(${T.accentRgb},0.35)`}}>
-            Try Our Password Manager
+            Try ShieldCraft
           </button>
         </div>
           </>}
@@ -2485,7 +2526,7 @@ html{scroll-behavior:smooth}
         </div>
         <footer style={{position:"relative",zIndex:1,padding:"30px 24px 24px",borderTop:`1px solid rgba(${T.accentRgb},0.15)`,textAlign:"center",background:`rgba(${T.dark?"0,0,0":"10,10,18"},0.12)`,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)"}}>
           <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:20,flexWrap:"wrap",marginBottom:16}}>
-            {["about","privacy","terms","password-manager","security-blog"].map(p=><button key={p} onClick={()=>{setInfoPage(p);window.scrollTo(0,0)}} style={{fontSize:12,color:infoPage===p?T.accent:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:infoPage===p?700:400,letterSpacing:1}}>{p==="terms"?"Terms of Service":p==="privacy"?"Privacy Policy":p==="password-manager"?"Password Manager":p==="security-blog"?"Blog":p.charAt(0).toUpperCase()+p.slice(1)}</button>)}
+            {["about","privacy","terms","password-manager","security-blog"].map(p=><button key={p} onClick={()=>{setInfoPage(p);window.scrollTo(0,0)}} style={{fontSize:12,color:infoPage===p?T.accent:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:infoPage===p?700:400,letterSpacing:1}}>{p==="terms"?"Terms of Service":p==="privacy"?"Privacy Policy":p==="password-manager"?"ShieldCraft":p==="security-blog"?"Blog":p.charAt(0).toUpperCase()+p.slice(1)}</button>)}
           </div>
           <p style={{fontSize:11,color:"#7a8898",letterSpacing:0.8,display:"flex",alignItems:"center",justifyContent:"center",gap:6,flexWrap:"wrap",lineHeight:2,margin:0}}>
             <span style={{fontStyle:"italic"}}>Designed and Developed by</span>
@@ -2549,7 +2590,7 @@ html{scroll-behavior:smooth}
           <div style={{display:"flex",alignItems:"center",gap:20}}>
             <a href="#features" className="ld-nav-btn" style={{color:"rgba(226,232,240,0.8)",fontSize:13,fontWeight:500,textDecoration:"none",fontFamily:"inherit"}}>Features</a>
             <a href="#pricing" className="ld-nav-btn" style={{color:"rgba(226,232,240,0.8)",fontSize:13,fontWeight:500,textDecoration:"none",fontFamily:"inherit"}}>Pricing</a>
-            <button onClick={()=>setInfoPage("password-manager")} className="ld-nav-btn" style={{color:"rgba(226,232,240,0.8)",fontSize:13,fontWeight:500,background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Password Manager</button>
+            <button onClick={()=>setInfoPage("password-manager")} className="ld-nav-btn" style={{color:"rgba(226,232,240,0.8)",fontSize:13,fontWeight:500,background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>ShieldCraft</button>
             <button onClick={()=>setInfoPage("security-blog")} className="ld-nav-btn" style={{color:"rgba(226,232,240,0.8)",fontSize:13,fontWeight:500,background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Blog</button>
             <button onClick={()=>goAuth("login")} className="ld-nav-btn" style={{background:`rgba(${T.accentRgb},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,borderRadius:8,padding:"8px 20px",color:T.dark?T.text:"#e2e8f0",fontSize:13,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1}}>Sign In</button>
           </div>
@@ -2732,7 +2773,7 @@ html{scroll-behavior:smooth}
             <button onClick={()=>setInfoPage("about")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>About</button>
             <button onClick={()=>setInfoPage("privacy")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Privacy</button>
             <button onClick={()=>setInfoPage("terms")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Terms</button>
-            <button onClick={()=>setInfoPage("password-manager")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Password Manager</button>
+            <button onClick={()=>setInfoPage("password-manager")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>ShieldCraft</button>
             <button onClick={()=>setInfoPage("security-blog")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Blog</button>
           </div>
           <p style={{fontSize:11,color:"#7a8898",letterSpacing:0.8,display:"flex",alignItems:"center",justifyContent:"center",gap:6,flexWrap:"wrap",lineHeight:2,margin:0}}>
@@ -2938,7 +2979,7 @@ html{scroll-behavior:smooth}
             <button onClick={()=>{setInfoPage("about");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>About</button>
             <button onClick={()=>{setInfoPage("privacy");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Privacy</button>
             <button onClick={()=>{setInfoPage("terms");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Terms</button>
-            <button onClick={()=>{setInfoPage("password-manager");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Password Manager</button>
+            <button onClick={()=>{setInfoPage("password-manager");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>ShieldCraft</button>
             <button onClick={()=>{setInfoPage("security-blog");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Blog</button>
           </div>
           <p style={{fontSize:11,color:T.dim,fontFamily:`${F.body},sans-serif`,letterSpacing:0.8,display:"flex",alignItems:"center",justifyContent:"center",gap:6,flexWrap:"wrap",lineHeight:2,margin:0}}>
@@ -2978,7 +3019,7 @@ html{scroll-behavior:smooth}
     {n:"Planned",i:<IC.Tag/>},
     {n:"Untagged",i:<IC.TagOff/>},
     {d:true},
-    {n:"Passwords",i:<IC.Shield/>,c:pmCredentials.length,action:()=>{setInfoPage("password-manager");setShowLanding(true)}},
+    {n:"ShieldCraft",i:<IC.Shield/>,c:pmCredentials.length,action:()=>{setInfoPage("password-manager");setShowLanding(true)}},
   ];
 
   return(

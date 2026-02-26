@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "NotesCraft Password Manager",
+  "name": "ShieldCraft by NotesCraft",
   "version": "1.0.0",
-  "description": "Securely store, autofill, and generate passwords with end-to-end encryption. Powered by NotesCraft.",
+  "description": "ShieldCraft — Securely store, autofill, and generate passwords with end-to-end encryption. Powered by NotesCraft.",
   "permissions": ["storage", "activeTab", "clipboardWrite"],
   "host_permissions": ["https://relay.notescraft.app/*"],
   "background": {

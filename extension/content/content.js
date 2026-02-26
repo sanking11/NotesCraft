@@ -113,7 +113,7 @@ function showAutofillBanner(creds, userInput, pwInput) {
 
   const title = document.createElement('div');
   title.className = 'nc-title';
-  title.innerHTML = '<span>NotesCraft Autofill</span>';
+  title.innerHTML = '<span>ShieldCraft Autofill</span>';
   const closeBtn = document.createElement('button');
   closeBtn.className = 'nc-close';
   closeBtn.textContent = '×';
@@ -193,7 +193,7 @@ function offerSaveCredential(username, password) {
   el.className = 'nc-save';
   const hostname = window.location.hostname.replace('www.', '');
   el.innerHTML = `
-    <div class="nc-save-title">NotesCraft — Save Password?</div>
+    <div class="nc-save-title">ShieldCraft — Save Password?</div>
     <div class="nc-save-text">Save credential for <strong>${escHtml(hostname)}</strong> (${escHtml(username)})?</div>
     <div class="nc-save-btns">
       <button class="nc-save-btn nc-save-yes">Save</button>
