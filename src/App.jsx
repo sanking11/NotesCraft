@@ -547,6 +547,24 @@ export default function NotesCraft(){
   const[pmLogin2FA,setPmLogin2FA]=useState(false);
   const[pmLogin2FACode,setPmLogin2FACode]=useState("");
   const[pmLogin2FAErr,setPmLogin2FAErr]=useState("");
+  const[pmViewMode,setPmViewMode]=useState("grid");
+  const[pmSortBy,setPmSortBy]=useState("recent");
+  const[pmSortOpen,setPmSortOpen]=useState(false);
+  const[pmCreateMenu,setPmCreateMenu]=useState(false);
+  const[pmFormType,setPmFormType]=useState("login");
+  const[pmShowThemes,setPmShowThemes]=useState(false);
+  const[pmVaultDefs,setPmVaultDefs]=useState({});
+  const[pmShowNewVault,setPmShowNewVault]=useState(false);
+  const[pmNewVaultName,setPmNewVaultName]=useState("");
+  const[pmNewVaultColor,setPmNewVaultColor]=useState("#6366f1");
+  const[pmEditVaultMenu,setPmEditVaultMenu]=useState(null);
+  const[pmFormCardNum,setPmFormCardNum]=useState("");
+  const[pmFormCardExp,setPmFormCardExp]=useState("");
+  const[pmFormCardCvv,setPmFormCardCvv]=useState("");
+  const[pmFormCardHolder,setPmFormCardHolder]=useState("");
+  const[pmFormFullName,setPmFormFullName]=useState("");
+  const[pmFormPhone,setPmFormPhone]=useState("");
+  const[pmFormAddress,setPmFormAddress]=useState("");
   const pmStorageRef=useRef(null);
   const pmUserRef=useRef(null);
   // 2FA state
@@ -689,7 +707,7 @@ export default function NotesCraft(){
     else{setPgWords(10);setPgDigits(true);setPgSymbols(true)}
   },[pgQuantumSafe,pgMode]);
   // Password Manager — CRUD helpers
-  const pmClearForm=()=>{setPmFormSite("");setPmFormUrl("");setPmFormUser("");setPmFormPw("");setPmFormNotes("");setPmFormTotp("");setPmFormFolder("");setPmFormStarred(false)};
+  const pmClearForm=()=>{setPmFormSite("");setPmFormUrl("");setPmFormUser("");setPmFormPw("");setPmFormNotes("");setPmFormTotp("");setPmFormFolder("");setPmFormStarred(false);setPmFormType("login");setPmFormCardNum("");setPmFormCardExp("");setPmFormCardCvv("");setPmFormCardHolder("");setPmFormFullName("");setPmFormPhone("");setPmFormAddress("")};
   const pmSave=async(creds)=>{
     setPmCredentials(creds);
     const stRef=pmStorageRef.current||storageRef.current;
@@ -697,32 +715,32 @@ export default function NotesCraft(){
     if(stRef&&uRef){try{await stRef.setPasswords(typeof uRef==="string"?uRef:uRef.email||email,creds)}catch(e){console.error("PM save failed",e)}}
   };
   const pmAddCredential=()=>{
-    const cred={id:"pm_"+crypto.randomUUID(),siteName:pmFormSite,siteUrl:pmFormUrl,username:pmFormUser,password:pmFormPw,notes:pmFormNotes,totpSecret:pmFormTotp,folder:pmFormFolder,starred:pmFormStarred,created:new Date().toISOString(),modified:new Date().toISOString()};
-    pmSave([...pmCredentials,cred]);pmClearForm();setPmView("list")
+    const cred={id:"pm_"+crypto.randomUUID(),type:pmFormType,siteName:pmFormSite,siteUrl:pmFormUrl,username:pmFormUser,password:pmFormPw,notes:pmFormNotes,totpSecret:pmFormTotp,folder:pmFormFolder,starred:pmFormStarred,cardNumber:pmFormCardNum,cardExpiry:pmFormCardExp,cardCvv:pmFormCardCvv,cardHolder:pmFormCardHolder,fullName:pmFormFullName,phone:pmFormPhone,address:pmFormAddress,created:new Date().toISOString(),modified:new Date().toISOString()};
+    pmSave([...pmCredentials,cred]);pmClearForm();setPmView("list");setPmCreateMenu(false)
   };
   const pmUpdateCredential=()=>{
-    const updated=pmCredentials.map(c=>c.id===pmSelectedId?{...c,siteName:pmFormSite,siteUrl:pmFormUrl,username:pmFormUser,password:pmFormPw,notes:pmFormNotes,totpSecret:pmFormTotp,folder:pmFormFolder,starred:pmFormStarred,modified:new Date().toISOString()}:c);
+    const updated=pmCredentials.map(c=>c.id===pmSelectedId?{...c,type:pmFormType,siteName:pmFormSite,siteUrl:pmFormUrl,username:pmFormUser,password:pmFormPw,notes:pmFormNotes,totpSecret:pmFormTotp,folder:pmFormFolder,starred:pmFormStarred,cardNumber:pmFormCardNum,cardExpiry:pmFormCardExp,cardCvv:pmFormCardCvv,cardHolder:pmFormCardHolder,fullName:pmFormFullName,phone:pmFormPhone,address:pmFormAddress,modified:new Date().toISOString()}:c);
     pmSave(updated);pmClearForm();setPmSelectedId(null);setPmView("list")
   };
   const pmDeleteCredential=(id)=>{pmSave(pmCredentials.filter(c=>c.id!==id));setPmDelConfirm(null)};
-  const pmEditCredential=(c)=>{setPmFormSite(c.siteName);setPmFormUrl(c.siteUrl);setPmFormUser(c.username);setPmFormPw(c.password);setPmFormNotes(c.notes||"");setPmFormTotp(c.totpSecret||"");setPmFormFolder(c.folder||"");setPmFormStarred(c.starred||false);setPmSelectedId(c.id);setPmView("edit")};
+  const pmEditCredential=(c)=>{setPmFormType(c.type||"login");setPmFormSite(c.siteName||"");setPmFormUrl(c.siteUrl||"");setPmFormUser(c.username||"");setPmFormPw(c.password||"");setPmFormNotes(c.notes||"");setPmFormTotp(c.totpSecret||"");setPmFormFolder(c.folder||"");setPmFormStarred(c.starred||false);setPmFormCardNum(c.cardNumber||"");setPmFormCardExp(c.cardExpiry||"");setPmFormCardCvv(c.cardCvv||"");setPmFormCardHolder(c.cardHolder||"");setPmFormFullName(c.fullName||"");setPmFormPhone(c.phone||"");setPmFormAddress(c.address||"");setPmSelectedId(c.id);setPmView("edit")};
   const pmLoadVault=async(stRef,em)=>{
     try{
       let creds=await stRef.getPasswords(em);
       if(!creds||!creds.length){
         creds=[
-          {id:"pm_demo_1",siteName:"GitHub",siteUrl:"https://github.com",username:"dev@notecraft.app",password:"Gh$ecure2026!xK9",notes:"Personal development account",totpSecret:"JBSWY3DPEHPK3PXP",folder:"Development",starred:true,created:"2026-01-15T10:30:00Z",modified:"2026-02-20T14:22:00Z"},
-          {id:"pm_demo_2",siteName:"Google",siteUrl:"https://google.com",username:"user@gmail.com",password:"G00gl3P@ss!Str0ng",notes:"Main Google account",totpSecret:"NBSWY3DPEHPK3PXQ",folder:"Personal",starred:true,created:"2026-01-10T08:00:00Z",modified:"2026-02-18T09:15:00Z"},
-          {id:"pm_demo_3",siteName:"Netflix",siteUrl:"https://netflix.com",username:"chill@email.com",password:"N3tfl!x_Str3am#42",notes:"Family plan",totpSecret:"",folder:"Entertainment",starred:false,created:"2026-02-01T12:00:00Z",modified:"2026-02-25T16:30:00Z"},
-          {id:"pm_demo_4",siteName:"AWS Console",siteUrl:"https://aws.amazon.com",username:"admin@notecraft.app",password:"Aws!R00t_2026$Sec",notes:"Production infrastructure",totpSecret:"HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ",folder:"Development",starred:true,created:"2026-01-20T09:00:00Z",modified:"2026-02-22T11:45:00Z"},
-          {id:"pm_demo_5",siteName:"Spotify",siteUrl:"https://spotify.com",username:"music@email.com",password:"Sp0t!fy_Beats#99",notes:"Premium individual",totpSecret:"",folder:"Entertainment",starred:false,created:"2026-02-05T14:00:00Z",modified:"2026-02-24T10:00:00Z"},
-          {id:"pm_demo_6",siteName:"Discord",siteUrl:"https://discord.com",username:"gamer#1337",password:"D!sc0rd_Ch@t$2026",notes:"Gaming communities",totpSecret:"",folder:"Social",starred:false,created:"2026-01-25T16:00:00Z",modified:"2026-02-19T20:30:00Z"},
-          {id:"pm_demo_7",siteName:"Vercel",siteUrl:"https://vercel.com",username:"deploy@notecraft.app",password:"V3rc3l!D3pl0y#Pr0",notes:"NotesCraft hosting",totpSecret:"GEZDGNBVGY3TQOJQ",folder:"Development",starred:true,created:"2026-01-18T11:00:00Z",modified:"2026-02-21T13:00:00Z"},
-          {id:"pm_demo_8",siteName:"Twitter / X",siteUrl:"https://x.com",username:"@notecraft_app",password:"Tw!tt3r_X$Post#26",notes:"Official brand account",totpSecret:"",folder:"Social",starred:false,created:"2026-02-10T10:00:00Z",modified:"2026-02-26T08:45:00Z"},
-          {id:"pm_demo_9",siteName:"Figma",siteUrl:"https://figma.com",username:"design@notecraft.app",password:"F!gm@_Des1gn#2026",notes:"UI/UX design files",totpSecret:"",folder:"Development",starred:false,created:"2026-02-08T09:30:00Z",modified:"2026-02-23T15:20:00Z"},
-          {id:"pm_demo_10",siteName:"ChatGPT",siteUrl:"https://chat.openai.com",username:"ai@email.com",password:"Ch@tGPT!Pr0mpt$42",notes:"Plus subscription",totpSecret:"",folder:"Personal",starred:false,created:"2026-02-12T13:00:00Z",modified:"2026-02-27T07:00:00Z"},
-          {id:"pm_demo_11",siteName:"Stripe",siteUrl:"https://stripe.com",username:"payments@notecraft.app",password:"Str!pe_P@y$2026!Kx",notes:"Payment processing",totpSecret:"MFRGGZDFMY4TQMJSHEZDQNBVGY3TQOJQ",folder:"Development",starred:true,created:"2026-01-22T10:15:00Z",modified:"2026-02-20T17:00:00Z"},
-          {id:"pm_demo_12",siteName:"LinkedIn",siteUrl:"https://linkedin.com",username:"professional@email.com",password:"L!nk3d_Pr0f!le#26",notes:"Professional networking",totpSecret:"",folder:"Social",starred:false,created:"2026-02-03T11:00:00Z",modified:"2026-02-25T09:30:00Z"}
+          {id:"pm_demo_1",type:"login",siteName:"GitHub",siteUrl:"https://github.com",username:"dev@notecraft.app",password:"Gh$ecure2026!xK9",notes:"Personal development account",totpSecret:"JBSWY3DPEHPK3PXP",folder:"Development",starred:true,created:"2026-01-15T10:30:00Z",modified:"2026-02-20T14:22:00Z"},
+          {id:"pm_demo_2",type:"login",siteName:"Google",siteUrl:"https://google.com",username:"user@gmail.com",password:"G00gl3P@ss!Str0ng",notes:"Main Google account",totpSecret:"NBSWY3DPEHPK3PXQ",folder:"Personal",starred:true,created:"2026-01-10T08:00:00Z",modified:"2026-02-18T09:15:00Z"},
+          {id:"pm_demo_3",type:"login",siteName:"Netflix",siteUrl:"https://netflix.com",username:"chill@email.com",password:"N3tfl!x_Str3am#42",notes:"Family plan",folder:"Entertainment",starred:false,created:"2026-02-01T12:00:00Z",modified:"2026-02-25T16:30:00Z"},
+          {id:"pm_demo_4",type:"login",siteName:"AWS Console",siteUrl:"https://aws.amazon.com",username:"admin@notecraft.app",password:"Aws!R00t_2026$Sec",notes:"Production infrastructure",totpSecret:"HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ",folder:"Development",starred:true,created:"2026-01-20T09:00:00Z",modified:"2026-02-22T11:45:00Z"},
+          {id:"pm_demo_5",type:"login",siteName:"Spotify",siteUrl:"https://spotify.com",username:"music@email.com",password:"Sp0t!fy_Beats#99",notes:"Premium individual",folder:"Entertainment",starred:false,created:"2026-02-05T14:00:00Z",modified:"2026-02-24T10:00:00Z"},
+          {id:"pm_demo_6",type:"login",siteName:"Discord",siteUrl:"https://discord.com",username:"gamer#1337",password:"D!sc0rd_Ch@t$2026",notes:"Gaming communities",folder:"Social",starred:false,created:"2026-01-25T16:00:00Z",modified:"2026-02-19T20:30:00Z"},
+          {id:"pm_demo_7",type:"login",siteName:"Vercel",siteUrl:"https://vercel.com",username:"deploy@notecraft.app",password:"V3rc3l!D3pl0y#Pr0",notes:"NotesCraft hosting",totpSecret:"GEZDGNBVGY3TQOJQ",folder:"Development",starred:true,created:"2026-01-18T11:00:00Z",modified:"2026-02-21T13:00:00Z"},
+          {id:"pm_demo_8",type:"login",siteName:"Stripe",siteUrl:"https://stripe.com",username:"payments@notecraft.app",password:"Str!pe_P@y$2026!Kx",notes:"Payment processing",totpSecret:"MFRGGZDFMY4TQMJSHEZDQNBVGY3TQOJQ",folder:"Development",starred:true,created:"2026-01-22T10:15:00Z",modified:"2026-02-20T17:00:00Z"},
+          {id:"pm_demo_9",type:"card",siteName:"Personal Visa",folder:"Personal",starred:false,cardNumber:"4532015112830366",cardExpiry:"12/28",cardCvv:"847",cardHolder:"Sunny Tailor",notes:"Primary debit card",created:"2026-01-05T08:00:00Z",modified:"2026-02-15T10:00:00Z"},
+          {id:"pm_demo_10",type:"card",siteName:"Work Mastercard",folder:"Work",starred:true,cardNumber:"5425233430109903",cardExpiry:"06/27",cardCvv:"392",cardHolder:"Sunny Tailor",notes:"Business expenses only",created:"2026-01-08T09:00:00Z",modified:"2026-02-10T14:00:00Z"},
+          {id:"pm_demo_11",type:"note",siteName:"Server Config",folder:"Development",starred:false,notes:"Production: 192.168.1.100\\nStaging: 192.168.1.101\\nSSH key: ~/.ssh/prod_key\\nDB port: 5432",created:"2026-02-01T11:00:00Z",modified:"2026-02-22T16:00:00Z"},
+          {id:"pm_demo_12",type:"identity",siteName:"Primary Identity",folder:"Personal",starred:false,fullName:"Sunny Tailor",username:"sunny@email.com",phone:"+64 21 123 4567",address:"123 Main St, Auckland, New Zealand",notes:"Main identity",created:"2026-01-01T08:00:00Z",modified:"2026-02-18T12:00:00Z"}
         ];
         await stRef.setPasswords(em,creds);
       }
@@ -1898,43 +1916,63 @@ html{scroll-behavior:smooth}
   /* ═══════════ SHIELDCRAFT VAULT APP (full-screen when logged in) ═══════════ */
   if(infoPage==="password-manager"&&pmIsLoggedIn){
     const q=pmSearch.toLowerCase();
-    const allFolders=[...new Set(pmCredentials.filter(c=>c.folder).map(c=>c.folder))].sort();
+    const defVC=["#6366f1","#f59e0b","#10b981","#ef4444","#ec4899","#8b5cf6","#06b6d4","#f97316","#84cc16","#a855f7","#14b8a6","#e11d48"];
+    const PM_TYPES=[{id:"login",name:"Login",icon:"🔑"},{id:"card",name:"Card",icon:"💳"},{id:"note",name:"Note",icon:"📝"},{id:"identity",name:"Identity",icon:"👤"}];
+    const PM_SORTS=[{id:"recent",name:"Most Recent"},{id:"name-az",name:"Name (a-z)"},{id:"name-za",name:"Name (z-a)"},{id:"folder-az",name:"Vault (a-z)"},{id:"folder-za",name:"Vault (z-a)"}];
+    const existingFolders=[...new Set(pmCredentials.filter(c=>c.folder).map(c=>c.folder))].sort();
+    const allVaults=[...new Set([...Object.keys(pmVaultDefs),...existingFolders])].sort();
+    const gvc=(name)=>(pmVaultDefs[name]&&pmVaultDefs[name].color)||defVC[allVaults.indexOf(name)%defVC.length];
+    const typeIcon=(t)=>(PM_TYPES.find(x=>x.id===t)||PM_TYPES[0]).icon;
     const filtered=pmCredentials.filter(c=>{
       if(pmFolderFilter&&c.folder!==pmFolderFilter)return false;
       if(pmView==="starred-view")return c.starred;
       if(pmView==="totp-view")return!!c.totpSecret;
       if(!q)return true;
-      return(c.siteName||"").toLowerCase().includes(q)||(c.username||"").toLowerCase().includes(q)||(c.siteUrl||"").toLowerCase().includes(q)
-    }).sort((a,b)=>new Date(b.modified)-new Date(a.modified));
+      return(c.siteName||"").toLowerCase().includes(q)||(c.username||"").toLowerCase().includes(q)||(c.siteUrl||"").toLowerCase().includes(q)||(c.fullName||"").toLowerCase().includes(q)||(c.cardHolder||"").toLowerCase().includes(q)
+    }).sort((a,b)=>{
+      if(pmSortBy==="name-az")return(a.siteName||"").localeCompare(b.siteName||"");
+      if(pmSortBy==="name-za")return(b.siteName||"").localeCompare(a.siteName||"");
+      if(pmSortBy==="folder-az")return(a.folder||"").localeCompare(b.folder||"");
+      if(pmSortBy==="folder-za")return(b.folder||"").localeCompare(a.folder||"");
+      return new Date(b.modified)-new Date(a.modified);
+    });
     const selCred=pmSelectedId?pmCredentials.find(c=>c.id===pmSelectedId):null;
     const now=new Date();const tod=new Date(now.getFullYear(),now.getMonth(),now.getDate());
     const w7=new Date(tod-7*864e5);const m30=new Date(tod-30*864e5);
     const timeGroups=[];
-    const gT=filtered.filter(c=>new Date(c.modified)>=tod);
-    const gW=filtered.filter(c=>{const d=new Date(c.modified);return d>=w7&&d<tod});
-    const gM=filtered.filter(c=>{const d=new Date(c.modified);return d>=m30&&d<w7});
-    const gO=filtered.filter(c=>new Date(c.modified)<m30);
-    if(gT.length)timeGroups.push({l:"Today",items:gT});
-    if(gW.length)timeGroups.push({l:"Last 7 days",items:gW});
-    if(gM.length)timeGroups.push({l:"Last month",items:gM});
-    if(gO.length)timeGroups.push({l:"Older",items:gO});
+    if(pmSortBy==="recent"){
+      const gT=filtered.filter(c=>new Date(c.modified)>=tod);
+      const gW=filtered.filter(c=>{const d=new Date(c.modified);return d>=w7&&d<tod});
+      const gM=filtered.filter(c=>{const d=new Date(c.modified);return d>=m30&&d<w7});
+      const gO=filtered.filter(c=>new Date(c.modified)<m30);
+      if(gT.length)timeGroups.push({l:"Today",items:gT});
+      if(gW.length)timeGroups.push({l:"Last 7 days",items:gW});
+      if(gM.length)timeGroups.push({l:"Last month",items:gM});
+      if(gO.length)timeGroups.push({l:"Older",items:gO});
+    }else{
+      if(filtered.length)timeGroups.push({l:`Sorted by ${PM_SORTS.find(s=>s.id===pmSortBy)?.name||""}`,items:filtered});
+    }
     const scCopy=(txt,key)=>{navigator.clipboard.writeText(txt);setPmCopied(key);setTimeout(()=>setPmCopied(""),1500)};
-    const fColors=["#6366f1","#f59e0b","#10b981","#ef4444","#ec4899","#8b5cf6","#06b6d4","#f97316"];
+    const itemSub=(c)=>{const t=c.type||"login";if(t==="card")return c.cardNumber?"••••"+c.cardNumber.slice(-4):c.cardHolder||"";if(t==="note")return(c.notes||"").slice(0,40);if(t==="identity")return c.fullName||c.username||"";return c.username||""};
+    const itemFav=(c)=>{const t=c.type||"login";if(t!=="login"||!c.siteUrl)return<span style={{fontSize:16}}>{typeIcon(t)}</span>;return<img src={`https://www.google.com/s2/favicons?domain=${encodeURIComponent(c.siteUrl)}&sz=32`} width="24" height="24" style={{borderRadius:4}} onError={e=>{e.currentTarget.style.display="none";e.currentTarget.parentElement.innerHTML=`<span style="font-size:16px">${typeIcon(t)}</span>`}}/>};
     const vCss=`
 .sc-item{transition:all 0.15s;cursor:pointer;border-left:3px solid transparent}.sc-item:hover{background:rgba(${T.accentRgb},0.06)!important}
 .sc-item.active{background:rgba(${T.accentRgb},0.1)!important;border-left-color:${T.accent}!important}
+.sc-grid-item{transition:all 0.2s;cursor:pointer}.sc-grid-item:hover{transform:translateY(-2px)!important;box-shadow:0 8px 24px rgba(0,0,0,0.2),0 0 12px rgba(${T.accentRgb},0.1)!important}
 .sc-vault-btn{transition:all 0.15s;cursor:pointer}.sc-vault-btn:hover{background:rgba(${T.accentRgb},0.06)!important}
 .sc-vault-btn.active{background:rgba(${T.accentRgb},0.1)!important}
 .sc-field{transition:all 0.15s;border-radius:12px}.sc-field:hover{background:rgba(${T.accentRgb},0.04)!important}
 .sc-copy-btn{opacity:0;transition:all 0.15s}.sc-field:hover .sc-copy-btn{opacity:1}
 .sc-bottom-btn{transition:all 0.15s;cursor:pointer}.sc-bottom-btn:hover{background:rgba(${T.accentRgb},0.06)!important;color:${T.text}!important}
+.sc-dd{position:absolute;top:100%;right:0;margin-top:4px;background:${T.dark?T.bg2||"#1e1e2e":"#fff"};border:1px solid ${T.bdr};border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,0.3);z-index:50;min-width:180px;padding:4px;overflow:hidden}
+.sc-dd button{width:100%;display:flex;align-items:center;gap:10px;padding:8px 12px;background:transparent;border:none;border-radius:6px;color:${T.text};font-size:13px;font-family:inherit;cursor:pointer;text-align:left;transition:all 0.15s}
+.sc-dd button:hover{background:rgba(${T.accentRgb},0.08)}
 `;
     return(<div style={{width:"100vw",height:"100vh",display:"flex",background:T.bg,fontFamily:`${F.body},sans-serif`,color:T.text,overflow:"hidden"}}>
       <style>{css}{vCss}</style>
 
       {/* ═══ LEFT SIDEBAR ═══ */}
       <div style={{width:260,minWidth:260,height:"100%",background:T.dark?"rgba(255,255,255,0.015)":"rgba(0,0,0,0.02)",borderRight:`1px solid ${T.bdr}`,display:"flex",flexDirection:"column"}}>
-        {/* Logo */}
         <div style={{padding:"18px 16px 14px",display:"flex",alignItems:"center",gap:10}}>
           <div style={{width:36,height:36,borderRadius:10,background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
             <ShieldLogo s={22} accentRgb="255,255,255" accent="#fff" accent2="#fff" text="rgba(255,255,255,0.9)" warn="rgba(255,255,255,0.95)" uid="scSb"/>
@@ -1942,26 +1980,52 @@ html{scroll-behavior:smooth}
           <span style={{fontSize:16,fontWeight:700,fontFamily:`${F.heading},sans-serif`,letterSpacing:1}}>ShieldCraft</span>
         </div>
 
-        {/* Vaults */}
         <div style={{flex:1,overflowY:"auto",padding:"0 10px"}}>
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"12px 6px 8px"}}>
             <span style={{fontSize:11,fontWeight:700,letterSpacing:1.2,color:T.dim,textTransform:"uppercase"}}>Vaults</span>
-            <button onClick={()=>{pmClearForm();setPmView("add");setPmSelectedId(null)}} style={{width:22,height:22,borderRadius:6,background:`rgba(${T.accentRgb},0.12)`,border:"none",color:T.accent,fontSize:14,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}} title="Add credential">+</button>
+            <button onClick={()=>setPmShowNewVault(!pmShowNewVault)} style={{width:22,height:22,borderRadius:6,background:`rgba(${T.accentRgb},0.12)`,border:"none",color:T.accent,fontSize:14,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}} title="Create vault">+</button>
           </div>
 
-          <button className={`sc-vault-btn${!pmFolderFilter&&pmView!=="starred-view"&&pmView!=="totp-view"&&pmView!=="generator"&&pmView!=="add"&&pmView!=="edit"?" active":""}`} onClick={()=>{setPmFolderFilter(null);setPmView("list")}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",marginBottom:1,background:"transparent",border:"none",borderRadius:8,color:(!pmFolderFilter&&pmView!=="starred-view"&&pmView!=="totp-view")?T.text:T.dim,fontSize:13,fontFamily:"inherit",cursor:"pointer",textAlign:"left"}}>
+          {/* New vault form */}
+          {pmShowNewVault&&<div style={{padding:"8px",marginBottom:6,borderRadius:8,background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.02)",border:`1px solid ${T.bdr}`}}>
+            <input value={pmNewVaultName} onChange={e=>setPmNewVaultName(e.target.value)} placeholder="Vault name..." style={{width:"100%",padding:"6px 8px",borderRadius:6,background:"transparent",border:`1px solid ${T.bdr}`,color:T.text,fontSize:12,fontFamily:"inherit",outline:"none",boxSizing:"border-box",marginBottom:6}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=T.bdr}}/>
+            <div style={{display:"flex",gap:3,flexWrap:"wrap",marginBottom:6}}>
+              {defVC.map(c=><button key={c} onClick={()=>setPmNewVaultColor(c)} style={{width:18,height:18,borderRadius:4,background:c,border:pmNewVaultColor===c?`2px solid ${T.text}`:"2px solid transparent",cursor:"pointer",padding:0}}/>)}
+            </div>
+            <div style={{display:"flex",gap:4}}>
+              <button onClick={()=>{if(pmNewVaultName.trim()){setPmVaultDefs(d=>({...d,[pmNewVaultName.trim()]:{color:pmNewVaultColor}}));setPmNewVaultName("");setPmShowNewVault(false)}}} style={{flex:1,padding:"5px",background:`rgba(${T.accentRgb},0.15)`,border:"none",borderRadius:6,color:T.accent,fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Create</button>
+              <button onClick={()=>{setPmShowNewVault(false);setPmNewVaultName("")}} style={{flex:1,padding:"5px",background:"transparent",border:`1px solid ${T.bdr}`,borderRadius:6,color:T.dim,fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>Cancel</button>
+            </div>
+          </div>}
+
+          {/* All Items */}
+          <button className={`sc-vault-btn${!pmFolderFilter&&pmView!=="starred-view"&&pmView!=="totp-view"&&pmView!=="generator"&&pmView!=="add"&&pmView!=="edit"?" active":""}`} onClick={()=>{setPmFolderFilter(null);setPmView("list")}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",marginBottom:1,background:"transparent",border:"none",borderRadius:8,color:(!pmFolderFilter&&pmView!=="starred-view"&&pmView!=="totp-view"&&pmView!=="generator")?T.text:T.dim,fontSize:13,fontFamily:"inherit",cursor:"pointer",textAlign:"left"}}>
             <span style={{width:28,height:28,borderRadius:8,background:`rgba(${T.accentRgb},0.12)`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><IC.Shield/></span>
             <span style={{flex:1,fontWeight:500}}>All Items</span>
-            <span style={{fontSize:12,color:T.faint}}>{pmCredentials.length} items</span>
+            <span style={{fontSize:12,color:T.faint}}>{pmCredentials.length}</span>
           </button>
 
-          {allFolders.map((f,fi)=>{
-            const fc=pmCredentials.filter(c=>c.folder===f).length;
-            return<button key={f} className={`sc-vault-btn${pmFolderFilter===f?" active":""}`} onClick={()=>{setPmFolderFilter(pmFolderFilter===f?null:f);setPmView("list")}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",marginBottom:1,background:"transparent",border:"none",borderRadius:8,color:pmFolderFilter===f?T.text:T.dim,fontSize:13,fontFamily:"inherit",cursor:"pointer",textAlign:"left"}}>
-              <span style={{width:28,height:28,borderRadius:8,background:`${fColors[fi%fColors.length]}22`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,flexShrink:0}}>📁</span>
-              <span style={{flex:1,fontWeight:500}}>{f}</span>
-              <span style={{fontSize:12,color:T.faint}}>{fc} items</span>
-            </button>
+          {/* Vault entries */}
+          {allVaults.map((v,vi)=>{
+            const vc=gvc(v);const cnt=pmCredentials.filter(c=>c.folder===v).length;
+            return<div key={v} style={{position:"relative"}}>
+              <button className={`sc-vault-btn${pmFolderFilter===v?" active":""}`} onClick={()=>{setPmFolderFilter(pmFolderFilter===v?null:v);setPmView("list");setPmEditVaultMenu(null)}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",marginBottom:1,background:"transparent",border:"none",borderRadius:8,color:pmFolderFilter===v?T.text:T.dim,fontSize:13,fontFamily:"inherit",cursor:"pointer",textAlign:"left"}}>
+                <span style={{width:28,height:28,borderRadius:8,background:`${vc}22`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,flexShrink:0,color:vc}}>📁</span>
+                <span style={{flex:1,fontWeight:500}}>{v}</span>
+                <span style={{fontSize:12,color:T.faint}}>{cnt}</span>
+                <span onClick={e=>{e.stopPropagation();setPmEditVaultMenu(pmEditVaultMenu===v?null:v)}} style={{fontSize:14,color:T.dim,padding:"0 2px",cursor:"pointer",opacity:0.5}}>⋮</span>
+              </button>
+              {/* Vault edit menu */}
+              {pmEditVaultMenu===v&&<div style={{position:"absolute",right:4,top:"100%",zIndex:50,background:T.dark?T.bg2||"#1e1e2e":"#fff",border:`1px solid ${T.bdr}`,borderRadius:10,boxShadow:"0 8px 32px rgba(0,0,0,0.3)",padding:4,minWidth:160}}>
+                <div style={{padding:"8px 10px 4px",fontSize:10,fontWeight:700,color:T.dim,textTransform:"uppercase",letterSpacing:0.5}}>Color</div>
+                <div style={{display:"flex",gap:3,flexWrap:"wrap",padding:"0 10px 8px"}}>
+                  {defVC.map(c=><button key={c} onClick={()=>{setPmVaultDefs(d=>({...d,[v]:{...d[v],color:c}}));setPmEditVaultMenu(null)}} style={{width:18,height:18,borderRadius:4,background:c,border:vc===c?`2px solid ${T.text}`:"2px solid transparent",cursor:"pointer",padding:0}}/>)}
+                </div>
+                <button onClick={()=>{const newName=prompt("Rename vault:",v);if(newName&&newName!==v){const upd=pmCredentials.map(c=>c.folder===v?{...c,folder:newName}:c);pmSave(upd);setPmVaultDefs(d=>{const n={...d};n[newName]=n[v]||{color:vc};delete n[v];return n});setPmEditVaultMenu(null);if(pmFolderFilter===v)setPmFolderFilter(newName)}}} style={{width:"100%",display:"flex",alignItems:"center",gap:8,padding:"7px 10px",background:"transparent",border:"none",borderRadius:6,color:T.text,fontSize:12,fontFamily:"inherit",cursor:"pointer",textAlign:"left"}}>Rename</button>
+                <button onClick={()=>{if(confirm(`Delete vault "${v}"? Items will become unassigned.`)){const upd=pmCredentials.map(c=>c.folder===v?{...c,folder:""}:c);pmSave(upd);setPmVaultDefs(d=>{const n={...d};delete n[v];return n});setPmEditVaultMenu(null);if(pmFolderFilter===v)setPmFolderFilter(null)}}} style={{width:"100%",display:"flex",alignItems:"center",gap:8,padding:"7px 10px",background:"transparent",border:"none",borderRadius:6,color:"#ef4444",fontSize:12,fontFamily:"inherit",cursor:"pointer",textAlign:"left"}}>Delete</button>
+                <button onClick={()=>setPmEditVaultMenu(null)} style={{width:"100%",display:"flex",alignItems:"center",gap:8,padding:"7px 10px",background:"transparent",border:"none",borderRadius:6,color:T.dim,fontSize:12,fontFamily:"inherit",cursor:"pointer",textAlign:"left"}}>Close</button>
+              </div>}
+            </div>
           })}
 
           <div style={{height:1,background:T.bdr,margin:"10px 6px"}}/>
@@ -1979,15 +2043,18 @@ html{scroll-behavior:smooth}
           </button>
         </div>
 
-        {/* Bottom section */}
+        {/* Bottom */}
         <div style={{borderTop:`1px solid ${T.bdr}`,padding:"6px 10px 4px"}}>
           <button className={pmView==="generator"?"sc-vault-btn active":"sc-bottom-btn"} onClick={()=>{setPmView("generator");setPmSelectedId(null)}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",background:pmView==="generator"?`rgba(${T.accentRgb},0.1)`:"transparent",border:"none",borderRadius:8,color:pmView==="generator"?T.accent:T.dim,fontSize:13,fontFamily:"inherit",textAlign:"left",cursor:"pointer"}}>
             <span>⚡</span><span>Generator</span>
           </button>
-          <button className="sc-bottom-btn" onClick={()=>{setPmIsLoggedIn(false);setPmCredentials([]);pmStorageRef.current=null;pmUserRef.current=null}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",background:"transparent",border:"none",borderRadius:8,color:T.dim,fontSize:13,fontFamily:"inherit",textAlign:"left"}}>
+          <button className="sc-bottom-btn" onClick={()=>setPmShowThemes(true)} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",background:"transparent",border:"none",borderRadius:8,color:T.dim,fontSize:13,fontFamily:"inherit",textAlign:"left",cursor:"pointer"}}>
+            <span>🎨</span><span>Themes</span>
+          </button>
+          <button className="sc-bottom-btn" onClick={()=>{setPmIsLoggedIn(false);setPmCredentials([]);pmStorageRef.current=null;pmUserRef.current=null}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",background:"transparent",border:"none",borderRadius:8,color:T.dim,fontSize:13,fontFamily:"inherit",textAlign:"left",cursor:"pointer"}}>
             <span>🔒</span><span>Lock ShieldCraft</span>
           </button>
-          <button className="sc-bottom-btn" onClick={()=>{setInfoPage(null);setShowLanding(true)}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",marginBottom:4,background:"transparent",border:"none",borderRadius:8,color:T.dim,fontSize:13,fontFamily:"inherit",textAlign:"left"}}>
+          <button className="sc-bottom-btn" onClick={()=>{setInfoPage(null);setShowLanding(true)}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",marginBottom:4,background:"transparent",border:"none",borderRadius:8,color:T.dim,fontSize:13,fontFamily:"inherit",textAlign:"left",cursor:"pointer"}}>
             <span>🦋</span><span>NotesCraft</span>
           </button>
           <div style={{display:"flex",alignItems:"center",gap:8,padding:"10px 8px 8px",borderTop:`1px solid ${T.bdr}`}}>
@@ -1999,85 +2066,164 @@ html{scroll-behavior:smooth}
         </div>
       </div>
 
-      {/* ═══ MIDDLE COLUMN — CREDENTIAL LIST ═══ */}
+      {/* ═══ MIDDLE COLUMN ═══ */}
       <div style={{width:350,minWidth:350,height:"100%",borderRight:`1px solid ${T.bdr}`,display:"flex",flexDirection:"column",background:T.dark?"rgba(255,255,255,0.008)":"rgba(0,0,0,0.01)"}}>
-        {/* Search */}
         <div style={{padding:"14px 16px 0"}}>
           <div style={{position:"relative",marginBottom:12}}>
             <span style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",color:T.dim,fontSize:14,pointerEvents:"none"}}>🔍</span>
             <input value={pmSearch} onChange={e=>setPmSearch(e.target.value)} placeholder="Search in all items..." style={{width:"100%",padding:"10px 14px 10px 36px",borderRadius:8,background:T.dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.04)",border:`1px solid ${T.bdr}`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=T.bdr}}/>
           </div>
-          {/* Filter tabs */}
+          {/* Controls row */}
           <div style={{display:"flex",alignItems:"center",gap:6,paddingBottom:10}}>
-            {[{l:`All (${filtered.length})`,v:"list",active:pmView==="list"||pmView==="starred-view"||pmView==="totp-view"},{l:"Recent",v:"recent",active:false}].map(t=><button key={t.v} onClick={()=>{if(t.v==="list"){setPmView("list");setPmFolderFilter(null)}}} style={{padding:"5px 14px",borderRadius:20,border:`1px solid ${t.active?T.accent:T.bdr}`,background:t.active?`rgba(${T.accentRgb},0.12)`:"transparent",color:t.active?T.accent:T.dim,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>{t.l}</button>)}
+            {/* View mode toggle */}
+            <div style={{display:"flex",border:`1px solid ${T.bdr}`,borderRadius:6,overflow:"hidden"}}>
+              <button onClick={()=>setPmViewMode("list")} style={{padding:"4px 8px",background:pmViewMode==="list"?`rgba(${T.accentRgb},0.15)`:"transparent",border:"none",color:pmViewMode==="list"?T.accent:T.dim,fontSize:13,cursor:"pointer"}} title="List view">☰</button>
+              <button onClick={()=>setPmViewMode("grid")} style={{padding:"4px 8px",background:pmViewMode==="grid"?`rgba(${T.accentRgb},0.15)`:"transparent",border:"none",color:pmViewMode==="grid"?T.accent:T.dim,fontSize:13,cursor:"pointer"}} title="Grid view">⊞</button>
+            </div>
+            {/* Sort dropdown */}
+            <div style={{position:"relative"}}>
+              <button onClick={()=>{setPmSortOpen(!pmSortOpen);setPmCreateMenu(false)}} style={{padding:"4px 10px",borderRadius:6,border:`1px solid ${T.bdr}`,background:"transparent",color:T.dim,fontSize:11,fontWeight:500,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",gap:4}}>
+                Sort: {PM_SORTS.find(s=>s.id===pmSortBy)?.name||"Recent"} <span style={{fontSize:8}}>▼</span>
+              </button>
+              {pmSortOpen&&<><div style={{position:"fixed",inset:0,zIndex:49}} onClick={()=>setPmSortOpen(false)}/><div className="sc-dd" style={{left:0,right:"auto"}}>
+                {PM_SORTS.map(s=><button key={s.id} onClick={()=>{setPmSortBy(s.id);setPmSortOpen(false)}} style={{color:pmSortBy===s.id?T.accent:T.text,fontWeight:pmSortBy===s.id?600:400}}>{s.name}{pmSortBy===s.id&&<span style={{marginLeft:"auto"}}>✓</span>}</button>)}
+              </div></>}
+            </div>
             <div style={{flex:1}}/>
-            <button onClick={()=>{pmClearForm();setPmView("add");setPmSelectedId(null)}} style={{padding:"5px 12px",borderRadius:20,border:`1px solid rgba(${T.accentRgb},0.25)`,background:`rgba(${T.accentRgb},0.08)`,color:T.accent,fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>+ Add</button>
+            {/* Create Item dropdown */}
+            <div style={{position:"relative"}}>
+              <button onClick={()=>{setPmCreateMenu(!pmCreateMenu);setPmSortOpen(false)}} style={{padding:"5px 12px",borderRadius:20,border:`1px solid rgba(${T.accentRgb},0.25)`,background:`rgba(${T.accentRgb},0.08)`,color:T.accent,fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>+ Create item</button>
+              {pmCreateMenu&&<><div style={{position:"fixed",inset:0,zIndex:49}} onClick={()=>setPmCreateMenu(false)}/><div className="sc-dd">
+                {PM_TYPES.map(t=><button key={t.id} onClick={()=>{pmClearForm();setPmFormType(t.id);setPmView("add");setPmSelectedId(null);setPmCreateMenu(false)}}><span style={{fontSize:16}}>{t.icon}</span>{t.name}</button>)}
+              </div></>}
+            </div>
           </div>
         </div>
 
-        {/* Credential list */}
-        <div style={{flex:1,overflowY:"auto"}}>
+        {/* Credential list/grid */}
+        <div style={{flex:1,overflowY:"auto",padding:pmViewMode==="grid"?"0 12px":"0"}}>
           {!filtered.length&&<div style={{textAlign:"center",padding:"60px 20px",color:T.dim,fontSize:13}}>{pmCredentials.length?`No results for "${pmSearch}"`:"Your vault is empty"}</div>}
-          {timeGroups.map((g,gi)=><div key={gi}>
-            <div style={{padding:"12px 16px 6px",fontSize:11,fontWeight:700,color:T.faint,letterSpacing:0.5,textTransform:"uppercase"}}>{g.l}</div>
-            {g.items.map(c=><div key={c.id} className={`sc-item${pmSelectedId===c.id?" active":""}`} onClick={()=>{setPmSelectedId(c.id);if(pmView==="add"||pmView==="edit"||pmView==="generator")setPmView("list")}} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 16px",background:"transparent",borderBottom:`1px solid ${T.bdr}`}}>
-              <div style={{width:36,height:36,borderRadius:10,background:T.dark?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.04)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,fontWeight:700,color:T.accent,flexShrink:0,overflow:"hidden"}}>
-                {c.siteUrl?<img src={`https://www.google.com/s2/favicons?domain=${encodeURIComponent(c.siteUrl)}&sz=32`} width="24" height="24" style={{borderRadius:4}} onError={e=>{e.currentTarget.style.display="none";e.currentTarget.parentElement.textContent=(c.siteName||"?")[0].toUpperCase()}}/>:(c.siteName||"?")[0].toUpperCase()}
-              </div>
-              <div style={{flex:1,overflow:"hidden"}}>
-                <div style={{fontSize:14,fontWeight:600,color:T.text,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{c.siteName||"Untitled"}</div>
-                <div style={{fontSize:12,color:T.dim,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",marginTop:1}}>{c.username}</div>
-              </div>
-              {c.starred&&<span style={{color:"#f59e0b",fontSize:12}}>★</span>}
-            </div>)}
-          </div>)}
+
+          {pmViewMode==="grid"?
+            /* ── GRID VIEW ── */
+            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(148px,1fr))",gap:10,paddingBottom:20}}>
+              {filtered.map(c=><div key={c.id} className="sc-grid-item" onClick={()=>{setPmSelectedId(c.id);if(pmView==="add"||pmView==="edit"||pmView==="generator")setPmView("list")}} style={{padding:"16px 12px",borderRadius:12,background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.02)",border:`1px solid ${pmSelectedId===c.id?T.accent:T.bdr}`,textAlign:"center",position:"relative",cursor:"pointer"}}>
+                <div style={{width:40,height:40,borderRadius:10,background:T.dark?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.04)",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 8px",overflow:"hidden"}}>{itemFav(c)}</div>
+                <div style={{fontSize:13,fontWeight:600,color:T.text,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",marginBottom:2}}>{c.siteName||c.fullName||"Untitled"}</div>
+                <div style={{fontSize:11,color:T.dim,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{itemSub(c)}</div>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:4,marginTop:6}}>
+                  <span style={{fontSize:10,opacity:0.6}}>{typeIcon(c.type||"login")}</span>
+                  {c.starred&&<span style={{color:"#f59e0b",fontSize:10}}>★</span>}
+                  {c.totpSecret&&<span style={{fontSize:9,color:T.accent,background:`rgba(${T.accentRgb},0.1)`,padding:"0 4px",borderRadius:3,fontWeight:600}}>2FA</span>}
+                </div>
+                {c.folder&&<div style={{position:"absolute",top:6,right:6,width:8,height:8,borderRadius:"50%",background:gvc(c.folder)}}/>}
+              </div>)}
+            </div>
+          :
+            /* ── LIST VIEW ── */
+            <div>
+              {timeGroups.map((g,gi)=><div key={gi}>
+                <div style={{padding:"12px 16px 6px",fontSize:11,fontWeight:700,color:T.faint,letterSpacing:0.5,textTransform:"uppercase"}}>{g.l}</div>
+                {g.items.map(c=><div key={c.id} className={`sc-item${pmSelectedId===c.id?" active":""}`} onClick={()=>{setPmSelectedId(c.id);if(pmView==="add"||pmView==="edit"||pmView==="generator")setPmView("list")}} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 16px",background:"transparent",borderBottom:`1px solid ${T.bdr}`}}>
+                  <div style={{width:36,height:36,borderRadius:10,background:T.dark?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.04)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,overflow:"hidden"}}>{itemFav(c)}</div>
+                  <div style={{flex:1,overflow:"hidden"}}>
+                    <div style={{fontSize:14,fontWeight:600,color:T.text,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{c.siteName||c.fullName||"Untitled"}</div>
+                    <div style={{fontSize:12,color:T.dim,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",marginTop:1}}>{itemSub(c)}</div>
+                  </div>
+                  {c.folder&&<div style={{width:8,height:8,borderRadius:"50%",background:gvc(c.folder),flexShrink:0}}/>}
+                  {c.starred&&<span style={{color:"#f59e0b",fontSize:12}}>★</span>}
+                </div>)}
+              </div>)}
+            </div>
+          }
         </div>
       </div>
 
-      {/* ═══ RIGHT PANEL — DETAIL / ADD / EDIT / GENERATOR ═══ */}
-      <div style={{flex:1,height:"100%",display:"flex",flexDirection:"column",overflow:"hidden"}}>
+      {/* ═══ RIGHT PANEL ═══ */}
+      <div style={{flex:1,height:"100%",display:"flex",flexDirection:"column",overflow:"hidden",position:"relative"}}>
+
+        {/* ─── THEME PICKER OVERLAY ─── */}
+        {pmShowThemes&&<div style={{position:"absolute",inset:0,zIndex:100,background:"rgba(0,0,0,0.5)",display:"flex",alignItems:"center",justifyContent:"center",backdropFilter:"blur(4px)"}} onClick={()=>setPmShowThemes(false)}>
+          <div style={{width:640,maxHeight:"80vh",background:T.bg,borderRadius:16,border:`1px solid ${T.bdr}`,overflow:"hidden",boxShadow:"0 20px 60px rgba(0,0,0,0.4)"}} onClick={e=>e.stopPropagation()}>
+            <div style={{padding:"18px 24px",borderBottom:`1px solid ${T.bdr}`,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+              <h2 style={{fontSize:18,fontWeight:700,fontFamily:`${F.heading},sans-serif`,margin:0}}>Choose Theme</h2>
+              <button onClick={()=>setPmShowThemes(false)} style={{background:"none",border:"none",color:T.dim,fontSize:20,cursor:"pointer",padding:4}}>×</button>
+            </div>
+            <div style={{padding:20,overflowY:"auto",maxHeight:"65vh",display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(130px,1fr))",gap:10}}>
+              {Object.values(THEMES).map(th=><button key={th.id} onClick={()=>{setThemeId(th.id)}} style={{padding:0,background:"transparent",border:themeId===th.id?`2px solid ${th.accent}`:`2px solid transparent`,borderRadius:10,cursor:"pointer",overflow:"hidden",textAlign:"center"}}>
+                <div style={{height:48,background:th.bg,display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>
+                  <div style={{width:14,height:14,borderRadius:"50%",background:th.accent,boxShadow:`0 0 8px ${th.accent}`}}/>
+                  {th.accent2&&<div style={{width:8,height:8,borderRadius:"50%",background:th.accent2}}/>}
+                </div>
+                <div style={{padding:"6px 4px",background:th.dark?"rgba(0,0,0,0.3)":"rgba(255,255,255,0.8)"}}>
+                  <div style={{fontSize:10,fontWeight:600,color:th.text,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{th.icon} {th.name}</div>
+                </div>
+              </button>)}
+            </div>
+          </div>
+        </div>}
 
         {/* ─── ADD / EDIT FORM ─── */}
         {(pmView==="add"||pmView==="edit")&&<div style={{flex:1,overflowY:"auto",padding:"32px 40px"}}>
           <div style={{maxWidth:560,margin:"0 auto"}}>
-            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:24}}>
-              <h2 style={{fontSize:20,fontWeight:700,fontFamily:`${F.heading},sans-serif`,margin:0}}>{pmView==="add"?"Add Credential":"Edit Credential"}</h2>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20}}>
+              <h2 style={{fontSize:20,fontWeight:700,fontFamily:`${F.heading},sans-serif`,margin:0}}>{pmView==="add"?`Add ${(PM_TYPES.find(t=>t.id===pmFormType)||PM_TYPES[0]).name}`:"Edit Item"}</h2>
               <div style={{display:"flex",gap:8}}>
                 {pmView==="edit"&&<button onClick={()=>{if(pmDelConfirm===pmSelectedId){pmDeleteCredential(pmSelectedId);pmClearForm();setPmSelectedId(null);setPmView("list")}else{setPmDelConfirm(pmSelectedId)}}} style={{padding:"7px 14px",background:pmDelConfirm===pmSelectedId?"rgba(239,68,68,0.15)":"transparent",border:`1px solid ${pmDelConfirm===pmSelectedId?"rgba(239,68,68,0.4)":"rgba(239,68,68,0.2)"}`,borderRadius:8,color:"#ef4444",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>{pmDelConfirm===pmSelectedId?"Confirm Delete":"Delete"}</button>}
                 <button onClick={()=>{pmClearForm();setPmSelectedId(null);setPmView("list");setPmDelConfirm(null)}} style={{padding:"7px 14px",background:"transparent",border:`1px solid ${T.bdr}`,borderRadius:8,color:T.dim,fontSize:12,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>Cancel</button>
               </div>
             </div>
-            <div style={{display:"flex",flexDirection:"column",gap:16}}>
-              {[{label:"Site Name",val:pmFormSite,set:setPmFormSite,ph:"GitHub"},
-                {label:"URL",val:pmFormUrl,set:setPmFormUrl,ph:"https://github.com"},
-                {label:"Username / Email",val:pmFormUser,set:setPmFormUser,ph:"user@example.com"},
-                {label:"Password",val:pmFormPw,set:setPmFormPw,ph:"Enter password",type:"password"},
-                {label:"TOTP Secret (Base32)",val:pmFormTotp,set:setPmFormTotp,ph:"JBSWY3DPEHPK3PXP (optional)"},
-                {label:"Folder",val:pmFormFolder,set:setPmFormFolder,ph:"Development (optional)"},
-                {label:"Notes",val:pmFormNotes,set:setPmFormNotes,ph:"Additional notes (optional)",multi:true}
-              ].map((f,i)=><div key={i}>
-                <label style={{fontSize:11,fontWeight:600,color:T.dim,display:"block",marginBottom:5,letterSpacing:0.5,textTransform:"uppercase"}}>{f.label}</label>
-                {f.multi?<textarea value={f.val} onChange={e=>f.set(e.target.value)} placeholder={f.ph} rows={3} style={{width:"100%",padding:"10px 14px",borderRadius:10,background:T.dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box",resize:"vertical"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=T.bdr}}/>
-                :<div style={{display:"flex",gap:8}}>
-                  <input type={f.type||"text"} value={f.val} onChange={e=>f.set(e.target.value)} placeholder={f.ph} style={{flex:1,padding:"10px 14px",borderRadius:10,background:T.dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=T.bdr}}/>
-                  {f.label==="Password"&&<button onClick={()=>{const g=generateRandomPw(20,true,true,true,true,false);setPmFormPw(g)}} style={{padding:"8px 14px",background:`rgba(${T.accentRgb},0.1)`,border:`1px solid rgba(${T.accentRgb},0.25)`,borderRadius:10,color:T.accent,fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>Generate</button>}
-                </div>}
-              </div>)}
+            {/* Type selector (only for add) */}
+            {pmView==="add"&&<div style={{display:"flex",gap:6,marginBottom:18}}>
+              {PM_TYPES.map(t=><button key={t.id} onClick={()=>setPmFormType(t.id)} style={{flex:1,padding:"8px 0",borderRadius:8,border:`1px solid ${pmFormType===t.id?T.accent:T.bdr}`,background:pmFormType===t.id?`rgba(${T.accentRgb},0.12)`:"transparent",color:pmFormType===t.id?T.accent:T.dim,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",gap:4}}><span>{t.icon}</span>{t.name}</button>)}
+            </div>}
+            <div style={{display:"flex",flexDirection:"column",gap:14}}>
+              {/* Common: Name */}
+              <div>
+                <label style={{fontSize:11,fontWeight:600,color:T.dim,display:"block",marginBottom:5,letterSpacing:0.5,textTransform:"uppercase"}}>{pmFormType==="identity"?"Identity Name":pmFormType==="card"?"Card Name":pmFormType==="note"?"Title":"Site Name"}</label>
+                <input value={pmFormSite} onChange={e=>setPmFormSite(e.target.value)} placeholder={pmFormType==="card"?"My Visa Card":pmFormType==="note"?"Note title":pmFormType==="identity"?"Primary Identity":"GitHub"} style={{width:"100%",padding:"10px 14px",borderRadius:10,background:T.dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=T.bdr}}/>
+              </div>
+              {/* Login fields */}
+              {pmFormType==="login"&&<>
+                {[{l:"URL",v:pmFormUrl,s:setPmFormUrl,ph:"https://github.com"},{l:"Username / Email",v:pmFormUser,s:setPmFormUser,ph:"user@example.com"}].map((f,i)=><div key={i}><label style={{fontSize:11,fontWeight:600,color:T.dim,display:"block",marginBottom:5,letterSpacing:0.5,textTransform:"uppercase"}}>{f.l}</label><input value={f.v} onChange={e=>f.s(e.target.value)} placeholder={f.ph} style={{width:"100%",padding:"10px 14px",borderRadius:10,background:T.dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=T.bdr}}/></div>)}
+                <div><label style={{fontSize:11,fontWeight:600,color:T.dim,display:"block",marginBottom:5,letterSpacing:0.5,textTransform:"uppercase"}}>Password</label><div style={{display:"flex",gap:8}}>
+                  <input type="password" value={pmFormPw} onChange={e=>setPmFormPw(e.target.value)} placeholder="Enter password" style={{flex:1,padding:"10px 14px",borderRadius:10,background:T.dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=T.bdr}}/>
+                  <button onClick={()=>{const g=generateRandomPw(20,true,true,true,true,false);setPmFormPw(g)}} style={{padding:"8px 14px",background:`rgba(${T.accentRgb},0.1)`,border:`1px solid rgba(${T.accentRgb},0.25)`,borderRadius:10,color:T.accent,fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>Generate</button>
+                </div></div>
+                <div><label style={{fontSize:11,fontWeight:600,color:T.dim,display:"block",marginBottom:5,letterSpacing:0.5,textTransform:"uppercase"}}>TOTP Secret (optional)</label><input value={pmFormTotp} onChange={e=>setPmFormTotp(e.target.value)} placeholder="JBSWY3DPEHPK3PXP" style={{width:"100%",padding:"10px 14px",borderRadius:10,background:T.dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=T.bdr}}/></div>
+              </>}
+              {/* Card fields */}
+              {pmFormType==="card"&&<>
+                {[{l:"Cardholder Name",v:pmFormCardHolder,s:setPmFormCardHolder,ph:"John Doe"},{l:"Card Number",v:pmFormCardNum,s:setPmFormCardNum,ph:"4532 0151 1283 0366"},{l:"Expiry Date",v:pmFormCardExp,s:setPmFormCardExp,ph:"12/28"},{l:"CVV",v:pmFormCardCvv,s:setPmFormCardCvv,ph:"847"}].map((f,i)=><div key={i}><label style={{fontSize:11,fontWeight:600,color:T.dim,display:"block",marginBottom:5,letterSpacing:0.5,textTransform:"uppercase"}}>{f.l}</label><input value={f.v} onChange={e=>f.s(e.target.value)} placeholder={f.ph} style={{width:"100%",padding:"10px 14px",borderRadius:10,background:T.dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=T.bdr}}/></div>)}
+              </>}
+              {/* Identity fields */}
+              {pmFormType==="identity"&&<>
+                {[{l:"Full Name",v:pmFormFullName,s:setPmFormFullName,ph:"John Doe"},{l:"Email",v:pmFormUser,s:setPmFormUser,ph:"john@example.com"},{l:"Phone",v:pmFormPhone,s:setPmFormPhone,ph:"+64 21 123 4567"},{l:"Address",v:pmFormAddress,s:setPmFormAddress,ph:"123 Main St, City"}].map((f,i)=><div key={i}><label style={{fontSize:11,fontWeight:600,color:T.dim,display:"block",marginBottom:5,letterSpacing:0.5,textTransform:"uppercase"}}>{f.l}</label><input value={f.v} onChange={e=>f.s(e.target.value)} placeholder={f.ph} style={{width:"100%",padding:"10px 14px",borderRadius:10,background:T.dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=T.bdr}}/></div>)}
+              </>}
+              {/* Notes (all types) */}
+              <div><label style={{fontSize:11,fontWeight:600,color:T.dim,display:"block",marginBottom:5,letterSpacing:0.5,textTransform:"uppercase"}}>Notes</label><textarea value={pmFormNotes} onChange={e=>setPmFormNotes(e.target.value)} placeholder={pmFormType==="note"?"Write your note here...":"Additional notes (optional)"} rows={pmFormType==="note"?8:3} style={{width:"100%",padding:"10px 14px",borderRadius:10,background:T.dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box",resize:"vertical"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=T.bdr}}/></div>
+              {/* Vault selector */}
+              <div><label style={{fontSize:11,fontWeight:600,color:T.dim,display:"block",marginBottom:5,letterSpacing:0.5,textTransform:"uppercase"}}>Vault</label><div style={{display:"flex",gap:8}}>
+                <select value={allVaults.includes(pmFormFolder)?pmFormFolder:""} onChange={e=>setPmFormFolder(e.target.value)} style={{flex:1,padding:"10px 14px",borderRadius:10,background:T.dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none"}}>
+                  <option value="">No vault</option>
+                  {allVaults.map(v=><option key={v} value={v}>{v}</option>)}
+                </select>
+                <input value={!allVaults.includes(pmFormFolder)?pmFormFolder:""} onChange={e=>setPmFormFolder(e.target.value)} placeholder="Or type new..." style={{flex:1,padding:"10px 14px",borderRadius:10,background:T.dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=T.bdr}}/>
+              </div></div>
+              {/* Star */}
               <label style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer",fontSize:13,color:T.text}}>
                 <div onClick={()=>setPmFormStarred(!pmFormStarred)} style={{width:18,height:18,borderRadius:4,border:`1.5px solid ${pmFormStarred?T.accent:`rgba(${T.accentRgb},0.3)`}`,background:pmFormStarred?`rgba(${T.accentRgb},0.15)`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}>{pmFormStarred&&<span style={{color:T.accent,fontSize:11}}>★</span>}</div>
-                Star this credential
+                Star this item
               </label>
-              {/* TOTP display in edit mode */}
+              {/* TOTP display in edit */}
               {pmView==="edit"&&pmFormTotp&&pmTotpCodes[pmSelectedId]&&<div style={{display:"flex",alignItems:"center",gap:12,padding:"14px 16px",borderRadius:12,background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.02)",border:`1px solid ${T.bdr}`}}>
                 <span style={{fontSize:11,color:T.dim,fontWeight:600}}>TOTP:</span>
                 <span style={{fontSize:22,fontFamily:"monospace",fontWeight:700,color:T.accent,letterSpacing:3}}>{pmTotpCodes[pmSelectedId]}</span>
-                <div style={{width:24,height:24,position:"relative"}}>
-                  <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke={`rgba(${T.accentRgb},0.15)`} strokeWidth="2"/><circle cx="12" cy="12" r="10" fill="none" stroke={T.accent} strokeWidth="2" strokeDasharray={`${(pmTotpRemaining/30)*62.8} 62.8`} strokeLinecap="round" transform="rotate(-90 12 12)" style={{transition:"stroke-dasharray 0.3s"}}/></svg>
-                  <span style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:8,fontWeight:700,color:T.dim}}>{pmTotpRemaining}</span>
-                </div>
+                <div style={{width:24,height:24,position:"relative"}}><svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke={`rgba(${T.accentRgb},0.15)`} strokeWidth="2"/><circle cx="12" cy="12" r="10" fill="none" stroke={T.accent} strokeWidth="2" strokeDasharray={`${(pmTotpRemaining/30)*62.8} 62.8`} strokeLinecap="round" transform="rotate(-90 12 12)" style={{transition:"stroke-dasharray 0.3s"}}/></svg><span style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:8,fontWeight:700,color:T.dim}}>{pmTotpRemaining}</span></div>
                 <button onClick={()=>{navigator.clipboard.writeText(pmTotpCodes[pmSelectedId]);setPmCopied("totp");setTimeout(()=>setPmCopied(""),1500)}} style={{marginLeft:"auto",background:"none",border:"none",color:pmCopied==="totp"?T.accent:T.dim,fontSize:10,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>{pmCopied==="totp"?"Copied!":"Copy"}</button>
               </div>}
-              <button onClick={pmView==="add"?pmAddCredential:pmUpdateCredential} disabled={!pmFormSite||!pmFormPw} style={{padding:"12px 0",background:(!pmFormSite||!pmFormPw)?"rgba(255,255,255,0.06)":`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:12,color:(!pmFormSite||!pmFormPw)?T.dim:"#fff",fontSize:14,fontWeight:700,cursor:(!pmFormSite||!pmFormPw)?"not-allowed":"pointer",fontFamily:"inherit",letterSpacing:1,marginTop:8,boxShadow:(!pmFormSite||!pmFormPw)?"none":`0 4px 20px rgba(${T.accentRgb},0.35)`}}>{pmView==="add"?"Save Credential":"Update Credential"}</button>
+              {/* Save button */}
+              <button onClick={pmView==="add"?pmAddCredential:pmUpdateCredential} disabled={!pmFormSite&&pmFormType!=="note"} style={{padding:"12px 0",background:(!pmFormSite&&pmFormType!=="note")?"rgba(255,255,255,0.06)":`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:12,color:(!pmFormSite&&pmFormType!=="note")?T.dim:"#fff",fontSize:14,fontWeight:700,cursor:(!pmFormSite&&pmFormType!=="note")?"not-allowed":"pointer",fontFamily:"inherit",letterSpacing:1,marginTop:4,boxShadow:(!pmFormSite&&pmFormType!=="note")?"none":`0 4px 20px rgba(${T.accentRgb},0.35)`}}>{pmView==="add"?"Save":"Update"}</button>
             </div>
           </div>
         </div>}
@@ -2089,7 +2235,6 @@ html{scroll-behavior:smooth}
               <h2 style={{fontSize:20,fontWeight:700,fontFamily:`${F.heading},sans-serif`,margin:0}}>Password Generator</h2>
               <button onClick={()=>setPmView("list")} style={{padding:"7px 14px",background:"transparent",border:`1px solid ${T.bdr}`,borderRadius:8,color:T.dim,fontSize:12,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>Back</button>
             </div>
-            {/* Password Display */}
             <div style={{background:pgQuantumSafe?"rgba(16,185,129,0.05)":"rgba(255,255,255,0.06)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:pgQuantumSafe?`2px solid rgba(16,185,129,${pgScrambling?0.9:0.5})`:`2px solid ${pgScrambling?T.accent:`rgba(${T.accentRgb},0.45)`}`,borderRadius:16,padding:"22px 26px",marginBottom:20,position:"relative",transition:"all 0.4s",boxShadow:pgQuantumSafe?`0 6px 30px rgba(0,0,0,0.25),0 0 ${pgScrambling?40:18}px rgba(16,185,129,${pgScrambling?0.45:0.2})`:`0 6px 30px rgba(0,0,0,0.25),0 0 ${pgScrambling?40:18}px rgba(${T.accentRgb},${pgScrambling?0.4:0.18})`,overflow:"hidden"}}>
               <div style={{position:"absolute",inset:0,backgroundImage:pgQuantumSafe?"repeating-linear-gradient(45deg,transparent,transparent 18px,rgba(16,185,129,0.15) 18px,rgba(16,185,129,0.15) 36px)":`repeating-linear-gradient(45deg,transparent,transparent 18px,rgba(${T.accentRgb},0.12) 18px,rgba(${T.accentRgb},0.12) 36px)`,backgroundSize:"50px 50px",animation:"pgStripeMove 3s linear infinite",pointerEvents:"none",borderRadius:14}}/>
               <div style={{position:"relative",zIndex:1,fontSize:(pgDisplay||pgResult).length>30?14:18,fontFamily:"monospace",fontWeight:600,color:pgScrambling?(pgQuantumSafe?"#10b981":T.accent):T.text,wordBreak:"break-all",lineHeight:1.6,letterSpacing:0.5,minHeight:28,paddingRight:90}}>{pgHidden&&!pgScrambling?"•".repeat(Math.min((pgDisplay||pgResult).length,40)):(pgDisplay||pgResult)}</div>
@@ -2098,7 +2243,6 @@ html{scroll-behavior:smooth}
                 <button onClick={()=>{const cw=pgUseCustom?pgCustomWords:"";if(cw){const err=validateCustomWords(cw);setPgCustomErr(err);if(err)return}else{setPgCustomErr("")}const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep,cw);setPgResult(pw);setPgStrength(calcPwStrength(pw));setPgCopied(false);setPgHidden(false)}} style={{width:36,height:36,borderRadius:"50%",background:`rgba(${T.accentRgb},0.15)`,border:`2px solid rgba(${T.accentRgb},0.5)`,color:T.accent,fontSize:18,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}} title="Regenerate">&#x21bb;</button>
               </div>
             </div>
-            {/* Copy + Strength */}
             <div style={{display:"flex",gap:10,marginBottom:20}}>
               <button onClick={()=>{navigator.clipboard.writeText(pgResult);setPgCopied(true);setTimeout(()=>setPgCopied(false),2000)}} style={{flex:1,padding:"12px 0",background:pgCopied?`rgba(${T.accentRgb},0.15)`:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:pgCopied?`1px solid ${T.accent}`:"none",borderRadius:12,color:pgCopied?T.accent:"#fff",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:1}}>{pgCopied?"Copied!":"Copy Password"}</button>
             </div>
@@ -2111,50 +2255,22 @@ html{scroll-behavior:smooth}
                 <div style={{height:"100%",borderRadius:2,background:pgStrength>=80?"#10b981":pgStrength>=60?T.accent:pgStrength>=40?"#f59e0b":"#ef4444",width:`${pgStrength}%`,transition:"all 0.4s"}}/>
               </div>
             </div>
-            {/* Mode + Options */}
             <div style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.02)",border:`1px solid ${T.bdr}`,padding:"18px 20px",borderRadius:14}}>
               <div style={{display:"flex",gap:6,marginBottom:14}}>
-                {["random","memorable"].map(m=><button key={m} onClick={()=>setPgMode(m)} style={{flex:1,padding:"8px 0",borderRadius:8,border:`1px solid ${pgMode===m?T.accent:`rgba(${T.accentRgb},0.15)`}`,background:pgMode===m?`rgba(${T.accentRgb},0.12)`:"transparent",color:pgMode===m?T.accent:T.dim,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",transition:"all 0.2s"}}>{m==="random"?"Random":"Memorable"}</button>)}
+                {["random","memorable"].map(m=><button key={m} onClick={()=>setPgMode(m)} style={{flex:1,padding:"8px 0",borderRadius:8,border:`1px solid ${pgMode===m?T.accent:`rgba(${T.accentRgb},0.15)`}`,background:pgMode===m?`rgba(${T.accentRgb},0.12)`:"transparent",color:pgMode===m?T.accent:T.dim,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>{m==="random"?"Random":"Memorable"}</button>)}
               </div>
               {pgMode==="random"?<div style={{display:"flex",flexDirection:"column",gap:12}}>
-                <div>
-                  <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
-                    <label style={{fontSize:12,fontWeight:600,color:T.text}}>Length</label>
-                    <span style={{fontSize:13,fontWeight:700,color:T.accent}}>{pgLen}</span>
-                  </div>
-                  <input type="range" min={pgQuantumSafe?65:8} max={256} value={pgLen} onChange={e=>setPgLen(+e.target.value)} className={pgQuantumSafe?"pg-slider-qm":"pg-slider"}/>
-                </div>
+                <div><div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><label style={{fontSize:12,fontWeight:600,color:T.text}}>Length</label><span style={{fontSize:13,fontWeight:700,color:T.accent}}>{pgLen}</span></div><input type="range" min={pgQuantumSafe?65:8} max={256} value={pgLen} onChange={e=>setPgLen(+e.target.value)} className={pgQuantumSafe?"pg-slider-qm":"pg-slider"}/></div>
                 <div style={{display:"flex",flexWrap:"wrap",gap:10}}>
-                  {[{label:"Uppercase",val:pgUpper,set:setPgUpper},{label:"Lowercase",val:pgLower,set:setPgLower},{label:"Digits",val:pgDigits,set:setPgDigits},{label:"Symbols",val:pgSymbols,set:setPgSymbols},{label:"No ambiguous",val:pgNoAmbig,set:setPgNoAmbig}].map((o,i)=><label key={i} style={{display:"flex",alignItems:"center",gap:6,fontSize:11,color:T.text,cursor:"pointer"}}>
-                    <div onClick={()=>o.set(!o.val)} style={{width:16,height:16,borderRadius:4,border:`1.5px solid ${o.val?T.accent:`rgba(${T.accentRgb},0.3)`}`,background:o.val?`rgba(${T.accentRgb},0.15)`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}>{o.val&&<span style={{color:T.accent,fontSize:9}}>✓</span>}</div>
-                    {o.label}
-                  </label>)}
+                  {[{l:"Uppercase",v:pgUpper,s:setPgUpper},{l:"Lowercase",v:pgLower,s:setPgLower},{l:"Digits",v:pgDigits,s:setPgDigits},{l:"Symbols",v:pgSymbols,s:setPgSymbols},{l:"No ambiguous",v:pgNoAmbig,s:setPgNoAmbig}].map((o,i)=><label key={i} style={{display:"flex",alignItems:"center",gap:6,fontSize:11,color:T.text,cursor:"pointer"}}><div onClick={()=>o.s(!o.v)} style={{width:16,height:16,borderRadius:4,border:`1.5px solid ${o.v?T.accent:`rgba(${T.accentRgb},0.3)`}`,background:o.v?`rgba(${T.accentRgb},0.15)`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}>{o.v&&<span style={{color:T.accent,fontSize:9}}>✓</span>}</div>{o.l}</label>)}
                 </div>
-              </div>
-              :<div style={{display:"flex",flexDirection:"column",gap:12}}>
-                <div>
-                  <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
-                    <label style={{fontSize:12,fontWeight:600,color:T.text}}>Words</label>
-                    <span style={{fontSize:13,fontWeight:700,color:T.accent}}>{pgWords}</span>
-                  </div>
-                  <input type="range" min={2} max={8} value={pgWords} onChange={e=>setPgWords(+e.target.value)} className="pg-slider"/>
-                </div>
+              </div>:<div style={{display:"flex",flexDirection:"column",gap:12}}>
+                <div><div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><label style={{fontSize:12,fontWeight:600,color:T.text}}>Words</label><span style={{fontSize:13,fontWeight:700,color:T.accent}}>{pgWords}</span></div><input type="range" min={2} max={8} value={pgWords} onChange={e=>setPgWords(+e.target.value)} className="pg-slider"/></div>
                 <div style={{display:"flex",flexWrap:"wrap",gap:10}}>
-                  <label style={{display:"flex",alignItems:"center",gap:6,fontSize:11,color:T.text,cursor:"pointer"}}>
-                    <div onClick={()=>setPgDigits(!pgDigits)} style={{width:16,height:16,borderRadius:4,border:`1.5px solid ${pgDigits?T.accent:`rgba(${T.accentRgb},0.3)`}`,background:pgDigits?`rgba(${T.accentRgb},0.15)`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}>{pgDigits&&<span style={{color:T.accent,fontSize:9}}>✓</span>}</div>
-                    Number
-                  </label>
-                  <label style={{display:"flex",alignItems:"center",gap:6,fontSize:11,color:T.text,cursor:"pointer"}}>
-                    <div onClick={()=>setPgSymbols(!pgSymbols)} style={{width:16,height:16,borderRadius:4,border:`1.5px solid ${pgSymbols?T.accent:`rgba(${T.accentRgb},0.3)`}`,background:pgSymbols?`rgba(${T.accentRgb},0.15)`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}>{pgSymbols&&<span style={{color:T.accent,fontSize:9}}>✓</span>}</div>
-                    Symbol
-                  </label>
+                  <label style={{display:"flex",alignItems:"center",gap:6,fontSize:11,color:T.text,cursor:"pointer"}}><div onClick={()=>setPgDigits(!pgDigits)} style={{width:16,height:16,borderRadius:4,border:`1.5px solid ${pgDigits?T.accent:`rgba(${T.accentRgb},0.3)`}`,background:pgDigits?`rgba(${T.accentRgb},0.15)`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}>{pgDigits&&<span style={{color:T.accent,fontSize:9}}>✓</span>}</div>Number</label>
+                  <label style={{display:"flex",alignItems:"center",gap:6,fontSize:11,color:T.text,cursor:"pointer"}}><div onClick={()=>setPgSymbols(!pgSymbols)} style={{width:16,height:16,borderRadius:4,border:`1.5px solid ${pgSymbols?T.accent:`rgba(${T.accentRgb},0.3)`}`,background:pgSymbols?`rgba(${T.accentRgb},0.15)`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}>{pgSymbols&&<span style={{color:T.accent,fontSize:9}}>✓</span>}</div>Symbol</label>
                 </div>
-                <div>
-                  <label style={{fontSize:12,fontWeight:600,color:T.text,display:"block",marginBottom:4}}>Separator</label>
-                  <select value={pgSep} onChange={e=>setPgSep(e.target.value)} style={{padding:"8px 12px",borderRadius:8,background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.15)`,color:T.text,fontSize:12,fontFamily:"inherit",outline:"none"}}>
-                    {[{l:"Hyphens",v:"-"},{l:"Spaces",v:" "},{l:"Dots",v:"."},{l:"Underscores",v:"_"},{l:"None",v:""}].map(s=><option key={s.v} value={s.v}>{s.l}</option>)}
-                  </select>
-                </div>
+                <div><label style={{fontSize:12,fontWeight:600,color:T.text,display:"block",marginBottom:4}}>Separator</label><select value={pgSep} onChange={e=>setPgSep(e.target.value)} style={{padding:"8px 12px",borderRadius:8,background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.15)`,color:T.text,fontSize:12,fontFamily:"inherit",outline:"none"}}>{[{l:"Hyphens",v:"-"},{l:"Spaces",v:" "},{l:"Dots",v:"."},{l:"Underscores",v:"_"},{l:"None",v:""}].map(s=><option key={s.v} value={s.v}>{s.l}</option>)}</select></div>
               </div>}
             </div>
           </div>
@@ -2162,15 +2278,17 @@ html{scroll-behavior:smooth}
 
         {/* ─── DETAIL VIEW ─── */}
         {pmView!=="add"&&pmView!=="edit"&&pmView!=="generator"&&selCred&&<div style={{flex:1,overflowY:"auto",padding:"32px 40px"}}>
-          {/* Header */}
           <div style={{marginBottom:28}}>
             <div style={{display:"flex",alignItems:"flex-start",gap:16,marginBottom:16}}>
               <div style={{width:56,height:56,borderRadius:14,background:T.dark?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.04)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,fontWeight:700,color:T.accent,flexShrink:0,overflow:"hidden"}}>
-                {selCred.siteUrl?<img src={`https://www.google.com/s2/favicons?domain=${encodeURIComponent(selCred.siteUrl)}&sz=64`} width="40" height="40" style={{borderRadius:6}} onError={e=>{e.currentTarget.style.display="none";e.currentTarget.parentElement.textContent=(selCred.siteName||"?")[0].toUpperCase()}}/>:(selCred.siteName||"?")[0].toUpperCase()}
+                {(selCred.type||"login")==="login"&&selCred.siteUrl?<img src={`https://www.google.com/s2/favicons?domain=${encodeURIComponent(selCred.siteUrl)}&sz=64`} width="40" height="40" style={{borderRadius:6}} onError={e=>{e.currentTarget.style.display="none";e.currentTarget.parentElement.textContent=(selCred.siteName||"?")[0].toUpperCase()}}/>:<span style={{fontSize:28}}>{typeIcon(selCred.type||"login")}</span>}
               </div>
               <div style={{flex:1}}>
-                <h1 style={{fontSize:24,fontWeight:700,fontFamily:`${F.heading},sans-serif`,margin:"0 0 6px"}}>{selCred.siteName}</h1>
-                {selCred.folder&&<span style={{display:"inline-flex",alignItems:"center",gap:4,padding:"3px 10px",borderRadius:6,background:`rgba(${T.accentRgb},0.1)`,color:T.accent,fontSize:11,fontWeight:600}}>📁 {selCred.folder}</span>}
+                <h1 style={{fontSize:24,fontWeight:700,fontFamily:`${F.heading},sans-serif`,margin:"0 0 6px"}}>{selCred.siteName||selCred.fullName||"Untitled"}</h1>
+                <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+                  {selCred.folder&&<span style={{display:"inline-flex",alignItems:"center",gap:4,padding:"3px 10px",borderRadius:6,background:`${gvc(selCred.folder)}22`,color:gvc(selCred.folder),fontSize:11,fontWeight:600}}>📁 {selCred.folder}</span>}
+                  <span style={{display:"inline-flex",alignItems:"center",gap:3,padding:"3px 8px",borderRadius:6,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.03)",color:T.dim,fontSize:11,fontWeight:500}}>{typeIcon(selCred.type||"login")} {(PM_TYPES.find(t=>t.id===(selCred.type||"login"))||PM_TYPES[0]).name}</span>
+                </div>
               </div>
             </div>
             <div style={{display:"flex",gap:8}}>
@@ -2178,81 +2296,44 @@ html{scroll-behavior:smooth}
               <button onClick={()=>{if(pmDelConfirm===selCred.id){pmDeleteCredential(selCred.id);setPmSelectedId(null);setPmDelConfirm(null)}else{setPmDelConfirm(selCred.id)}}} style={{padding:"8px 20px",background:pmDelConfirm===selCred.id?"rgba(239,68,68,0.15)":"transparent",border:`1px solid ${pmDelConfirm===selCred.id?"rgba(239,68,68,0.4)":"rgba(239,68,68,0.15)"}`,borderRadius:8,color:"#ef4444",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>{pmDelConfirm===selCred.id?"Confirm Delete":"Delete"}</button>
             </div>
           </div>
-
-          {/* Detail fields */}
           <div style={{display:"flex",flexDirection:"column",gap:2}}>
-            {/* Email / Username */}
-            <div className="sc-field" style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px"}}>
-              <span style={{width:36,height:36,borderRadius:10,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.03)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,flexShrink:0}}>👤</span>
-              <div style={{flex:1,overflow:"hidden"}}>
-                <div style={{fontSize:11,color:T.dim,fontWeight:500,marginBottom:3}}>Email</div>
-                <div style={{fontSize:14,color:T.text,fontWeight:500}}>{selCred.username}</div>
+            {/* Login detail fields */}
+            {(selCred.type||"login")==="login"&&<>
+              <div className="sc-field" style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px"}}><span style={{width:36,height:36,borderRadius:10,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.03)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,flexShrink:0}}>👤</span><div style={{flex:1,overflow:"hidden"}}><div style={{fontSize:11,color:T.dim,fontWeight:500,marginBottom:3}}>Email</div><div style={{fontSize:14,color:T.text,fontWeight:500}}>{selCred.username}</div></div><button className="sc-copy-btn" onClick={()=>scCopy(selCred.username,"user")} style={{padding:"6px 14px",background:"transparent",border:`1px solid ${T.bdr}`,borderRadius:6,color:pmCopied==="user"?T.accent:T.dim,fontSize:11,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>{pmCopied==="user"?"Copied":"Copy"}</button></div>
+              <div className="sc-field" style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px"}}><span style={{width:36,height:36,borderRadius:10,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.03)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,flexShrink:0}}>🔑</span><div style={{flex:1,overflow:"hidden"}}><div style={{fontSize:11,color:T.dim,fontWeight:500,marginBottom:3}}>Password</div><div style={{fontSize:14,color:T.text,fontWeight:500,fontFamily:"monospace",letterSpacing:pmShowPw[selCred.id]?0:2}}>{pmShowPw[selCred.id]?selCred.password:"••••••••••••"}</div></div><button onClick={()=>setPmShowPw(p=>({...p,[selCred.id]:!p[selCred.id]}))} style={{padding:"6px",background:"transparent",border:"none",color:T.dim,fontSize:15,cursor:"pointer"}}>{pmShowPw[selCred.id]?"🙈":"👁"}</button><button className="sc-copy-btn" onClick={()=>scCopy(selCred.password,"pw")} style={{padding:"6px 14px",background:"transparent",border:`1px solid ${T.bdr}`,borderRadius:6,color:pmCopied==="pw"?T.accent:T.dim,fontSize:11,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>{pmCopied==="pw"?"Copied":"Copy"}</button></div>
+              {selCred.totpSecret&&pmTotpCodes[selCred.id]&&<div className="sc-field" style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px"}}><span style={{width:36,height:36,borderRadius:10,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.03)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,flexShrink:0}}>🔐</span><div style={{flex:1}}><div style={{fontSize:11,color:T.dim,fontWeight:500,marginBottom:3}}>2FA token (TOTP)</div><div style={{fontSize:24,fontFamily:"monospace",fontWeight:700,color:T.accent,letterSpacing:4}}>{pmTotpCodes[selCred.id]}</div></div><div style={{width:30,height:30,position:"relative",flexShrink:0}}><svg width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" fill="none" stroke={`rgba(${T.accentRgb},0.15)`} strokeWidth="2.5"/><circle cx="15" cy="15" r="13" fill="none" stroke={T.accent} strokeWidth="2.5" strokeDasharray={`${(pmTotpRemaining/30)*81.7} 81.7`} strokeLinecap="round" transform="rotate(-90 15 15)" style={{transition:"stroke-dasharray 0.3s"}}/></svg><span style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:9,fontWeight:700,color:T.dim}}>{pmTotpRemaining}</span></div><button className="sc-copy-btn" onClick={()=>scCopy(pmTotpCodes[selCred.id],"totp")} style={{padding:"6px 14px",background:"transparent",border:`1px solid ${T.bdr}`,borderRadius:6,color:pmCopied==="totp"?T.accent:T.dim,fontSize:11,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>{pmCopied==="totp"?"Copied":"Copy"}</button></div>}
+              {selCred.siteUrl&&<div className="sc-field" style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px"}}><span style={{width:36,height:36,borderRadius:10,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.03)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,flexShrink:0}}>🌐</span><div style={{flex:1}}><div style={{fontSize:11,color:T.dim,fontWeight:500,marginBottom:3}}>Websites</div><a href={selCred.siteUrl} target="_blank" rel="noopener noreferrer" style={{fontSize:14,color:T.accent,textDecoration:"none",fontWeight:500}}>{selCred.siteUrl}</a></div></div>}
+            </>}
+            {/* Card detail fields */}
+            {selCred.type==="card"&&<>
+              {selCred.cardHolder&&<div className="sc-field" style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px"}}><span style={{width:36,height:36,borderRadius:10,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.03)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,flexShrink:0}}>👤</span><div style={{flex:1}}><div style={{fontSize:11,color:T.dim,fontWeight:500,marginBottom:3}}>Cardholder</div><div style={{fontSize:14,color:T.text,fontWeight:500}}>{selCred.cardHolder}</div></div><button className="sc-copy-btn" onClick={()=>scCopy(selCred.cardHolder,"ch")} style={{padding:"6px 14px",background:"transparent",border:`1px solid ${T.bdr}`,borderRadius:6,color:pmCopied==="ch"?T.accent:T.dim,fontSize:11,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>{pmCopied==="ch"?"Copied":"Copy"}</button></div>}
+              {selCred.cardNumber&&<div className="sc-field" style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px"}}><span style={{width:36,height:36,borderRadius:10,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.03)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,flexShrink:0}}>💳</span><div style={{flex:1}}><div style={{fontSize:11,color:T.dim,fontWeight:500,marginBottom:3}}>Card Number</div><div style={{fontSize:14,color:T.text,fontWeight:500,fontFamily:"monospace",letterSpacing:2}}>{pmShowPw[selCred.id]?selCred.cardNumber:"•••• •••• •••• "+selCred.cardNumber.slice(-4)}</div></div><button onClick={()=>setPmShowPw(p=>({...p,[selCred.id]:!p[selCred.id]}))} style={{padding:"6px",background:"transparent",border:"none",color:T.dim,fontSize:15,cursor:"pointer"}}>{pmShowPw[selCred.id]?"🙈":"👁"}</button><button className="sc-copy-btn" onClick={()=>scCopy(selCred.cardNumber,"cn")} style={{padding:"6px 14px",background:"transparent",border:`1px solid ${T.bdr}`,borderRadius:6,color:pmCopied==="cn"?T.accent:T.dim,fontSize:11,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>{pmCopied==="cn"?"Copied":"Copy"}</button></div>}
+              <div style={{display:"flex",gap:2}}>
+                {selCred.cardExpiry&&<div className="sc-field" style={{flex:1,display:"flex",alignItems:"center",gap:14,padding:"14px 16px"}}><span style={{width:36,height:36,borderRadius:10,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.03)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,flexShrink:0}}>📅</span><div style={{flex:1}}><div style={{fontSize:11,color:T.dim,fontWeight:500,marginBottom:3}}>Expiry</div><div style={{fontSize:14,color:T.text,fontWeight:500}}>{selCred.cardExpiry}</div></div></div>}
+                {selCred.cardCvv&&<div className="sc-field" style={{flex:1,display:"flex",alignItems:"center",gap:14,padding:"14px 16px"}}><span style={{width:36,height:36,borderRadius:10,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.03)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,flexShrink:0}}>🔒</span><div style={{flex:1}}><div style={{fontSize:11,color:T.dim,fontWeight:500,marginBottom:3}}>CVV</div><div style={{fontSize:14,color:T.text,fontWeight:500,fontFamily:"monospace"}}>{pmShowPw[selCred.id]?selCred.cardCvv:"•••"}</div></div></div>}
               </div>
-              <button className="sc-copy-btn" onClick={()=>scCopy(selCred.username,"user")} style={{padding:"6px 14px",background:"transparent",border:`1px solid ${T.bdr}`,borderRadius:6,color:pmCopied==="user"?T.accent:T.dim,fontSize:11,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>{pmCopied==="user"?"Copied":"Copy"}</button>
-            </div>
-
-            {/* Password */}
-            <div className="sc-field" style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px"}}>
-              <span style={{width:36,height:36,borderRadius:10,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.03)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,flexShrink:0}}>🔑</span>
-              <div style={{flex:1,overflow:"hidden"}}>
-                <div style={{fontSize:11,color:T.dim,fontWeight:500,marginBottom:3}}>Password</div>
-                <div style={{fontSize:14,color:T.text,fontWeight:500,fontFamily:"monospace",letterSpacing:pmShowPw[selCred.id]?0:2}}>{pmShowPw[selCred.id]?selCred.password:"••••••••••••"}</div>
-              </div>
-              <button onClick={()=>setPmShowPw(p=>({...p,[selCred.id]:!p[selCred.id]}))} style={{padding:"6px",background:"transparent",border:"none",color:T.dim,fontSize:15,cursor:"pointer"}}>{pmShowPw[selCred.id]?"🙈":"👁"}</button>
-              <button className="sc-copy-btn" onClick={()=>scCopy(selCred.password,"pw")} style={{padding:"6px 14px",background:"transparent",border:`1px solid ${T.bdr}`,borderRadius:6,color:pmCopied==="pw"?T.accent:T.dim,fontSize:11,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>{pmCopied==="pw"?"Copied":"Copy"}</button>
-            </div>
-
-            {/* 2FA TOTP */}
-            {selCred.totpSecret&&pmTotpCodes[selCred.id]&&<div className="sc-field" style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px"}}>
-              <span style={{width:36,height:36,borderRadius:10,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.03)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,flexShrink:0}}>🔐</span>
-              <div style={{flex:1}}>
-                <div style={{fontSize:11,color:T.dim,fontWeight:500,marginBottom:3}}>2FA token (TOTP)</div>
-                <div style={{fontSize:24,fontFamily:"monospace",fontWeight:700,color:T.accent,letterSpacing:4}}>{pmTotpCodes[selCred.id]}</div>
-              </div>
-              <div style={{width:30,height:30,position:"relative",flexShrink:0}}>
-                <svg width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" fill="none" stroke={`rgba(${T.accentRgb},0.15)`} strokeWidth="2.5"/><circle cx="15" cy="15" r="13" fill="none" stroke={T.accent} strokeWidth="2.5" strokeDasharray={`${(pmTotpRemaining/30)*81.7} 81.7`} strokeLinecap="round" transform="rotate(-90 15 15)" style={{transition:"stroke-dasharray 0.3s"}}/></svg>
-                <span style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:9,fontWeight:700,color:T.dim}}>{pmTotpRemaining}</span>
-              </div>
-              <button className="sc-copy-btn" onClick={()=>scCopy(pmTotpCodes[selCred.id],"totp")} style={{padding:"6px 14px",background:"transparent",border:`1px solid ${T.bdr}`,borderRadius:6,color:pmCopied==="totp"?T.accent:T.dim,fontSize:11,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>{pmCopied==="totp"?"Copied":"Copy"}</button>
-            </div>}
-
-            {/* Websites */}
-            {selCred.siteUrl&&<div className="sc-field" style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px"}}>
-              <span style={{width:36,height:36,borderRadius:10,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.03)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,flexShrink:0}}>🌐</span>
-              <div style={{flex:1}}>
-                <div style={{fontSize:11,color:T.dim,fontWeight:500,marginBottom:3}}>Websites</div>
-                <a href={selCred.siteUrl} target="_blank" rel="noopener noreferrer" style={{fontSize:14,color:T.accent,textDecoration:"none",fontWeight:500}}>{selCred.siteUrl}</a>
-              </div>
-            </div>}
-
-            {/* Notes */}
-            {selCred.notes&&<div className="sc-field" style={{display:"flex",alignItems:"flex-start",gap:14,padding:"14px 16px"}}>
-              <span style={{width:36,height:36,borderRadius:10,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.03)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,flexShrink:0}}>📝</span>
-              <div style={{flex:1}}>
-                <div style={{fontSize:11,color:T.dim,fontWeight:500,marginBottom:3}}>Note</div>
-                <div style={{fontSize:14,color:T.text,fontWeight:400,lineHeight:1.6,whiteSpace:"pre-wrap"}}>{selCred.notes}</div>
-              </div>
-            </div>}
-
+            </>}
+            {/* Identity detail fields */}
+            {selCred.type==="identity"&&<>
+              {selCred.fullName&&<div className="sc-field" style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px"}}><span style={{width:36,height:36,borderRadius:10,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.03)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,flexShrink:0}}>👤</span><div style={{flex:1}}><div style={{fontSize:11,color:T.dim,fontWeight:500,marginBottom:3}}>Full Name</div><div style={{fontSize:14,color:T.text,fontWeight:500}}>{selCred.fullName}</div></div><button className="sc-copy-btn" onClick={()=>scCopy(selCred.fullName,"fn")} style={{padding:"6px 14px",background:"transparent",border:`1px solid ${T.bdr}`,borderRadius:6,color:pmCopied==="fn"?T.accent:T.dim,fontSize:11,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>{pmCopied==="fn"?"Copied":"Copy"}</button></div>}
+              {selCred.username&&<div className="sc-field" style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px"}}><span style={{width:36,height:36,borderRadius:10,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.03)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,flexShrink:0}}>✉️</span><div style={{flex:1}}><div style={{fontSize:11,color:T.dim,fontWeight:500,marginBottom:3}}>Email</div><div style={{fontSize:14,color:T.text,fontWeight:500}}>{selCred.username}</div></div><button className="sc-copy-btn" onClick={()=>scCopy(selCred.username,"em")} style={{padding:"6px 14px",background:"transparent",border:`1px solid ${T.bdr}`,borderRadius:6,color:pmCopied==="em"?T.accent:T.dim,fontSize:11,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>{pmCopied==="em"?"Copied":"Copy"}</button></div>}
+              {selCred.phone&&<div className="sc-field" style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px"}}><span style={{width:36,height:36,borderRadius:10,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.03)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,flexShrink:0}}>📞</span><div style={{flex:1}}><div style={{fontSize:11,color:T.dim,fontWeight:500,marginBottom:3}}>Phone</div><div style={{fontSize:14,color:T.text,fontWeight:500}}>{selCred.phone}</div></div><button className="sc-copy-btn" onClick={()=>scCopy(selCred.phone,"ph")} style={{padding:"6px 14px",background:"transparent",border:`1px solid ${T.bdr}`,borderRadius:6,color:pmCopied==="ph"?T.accent:T.dim,fontSize:11,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>{pmCopied==="ph"?"Copied":"Copy"}</button></div>}
+              {selCred.address&&<div className="sc-field" style={{display:"flex",alignItems:"flex-start",gap:14,padding:"14px 16px"}}><span style={{width:36,height:36,borderRadius:10,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.03)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,flexShrink:0}}>📍</span><div style={{flex:1}}><div style={{fontSize:11,color:T.dim,fontWeight:500,marginBottom:3}}>Address</div><div style={{fontSize:14,color:T.text,fontWeight:400,lineHeight:1.5}}>{selCred.address}</div></div></div>}
+            </>}
+            {/* Notes (all types) */}
+            {selCred.notes&&<div className="sc-field" style={{display:"flex",alignItems:"flex-start",gap:14,padding:"14px 16px"}}><span style={{width:36,height:36,borderRadius:10,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.03)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,flexShrink:0}}>📝</span><div style={{flex:1}}><div style={{fontSize:11,color:T.dim,fontWeight:500,marginBottom:3}}>Note</div><div style={{fontSize:14,color:T.text,fontWeight:400,lineHeight:1.6,whiteSpace:"pre-wrap"}}>{selCred.notes}</div></div></div>}
             {/* Timestamps */}
-            <div className="sc-field" style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px",marginTop:8}}>
-              <span style={{width:36,height:36,borderRadius:10,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.03)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,flexShrink:0}}>🕐</span>
-              <div style={{flex:1}}>
-                <div style={{fontSize:11,color:T.dim,fontWeight:500,marginBottom:4}}>Last modified</div>
-                <div style={{fontSize:13,color:T.text}}>{new Date(selCred.modified).toLocaleString()}</div>
-                <div style={{fontSize:11,color:T.dim,marginTop:6}}>Created: {new Date(selCred.created).toLocaleString()}</div>
-              </div>
-            </div>
+            <div className="sc-field" style={{display:"flex",alignItems:"center",gap:14,padding:"14px 16px",marginTop:8}}><span style={{width:36,height:36,borderRadius:10,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.03)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,flexShrink:0}}>🕐</span><div style={{flex:1}}><div style={{fontSize:11,color:T.dim,fontWeight:500,marginBottom:4}}>Last modified</div><div style={{fontSize:13,color:T.text}}>{new Date(selCred.modified).toLocaleString()}</div><div style={{fontSize:11,color:T.dim,marginTop:6}}>Created: {new Date(selCred.created).toLocaleString()}</div></div></div>
           </div>
         </div>}
 
         {/* ─── EMPTY STATE ─── */}
-        {pmView!=="add"&&pmView!=="edit"&&pmView!=="generator"&&!selCred&&<div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:12}}>
+        {pmView!=="add"&&pmView!=="edit"&&pmView!=="generator"&&!selCred&&!pmShowThemes&&<div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:12}}>
           <div style={{width:80,height:80,borderRadius:20,background:`rgba(${T.accentRgb},0.08)`,display:"flex",alignItems:"center",justifyContent:"center"}}>
             <ShieldLogo s={40} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} uid="scEmpty"/>
           </div>
-          <div style={{fontSize:16,fontWeight:600,color:T.dim,marginTop:8}}>Select a credential</div>
-          <div style={{fontSize:13,color:T.faint}}>Choose an item from the list to view details</div>
+          <div style={{fontSize:16,fontWeight:600,color:T.dim,marginTop:8}}>Select an item</div>
+          <div style={{fontSize:13,color:T.faint}}>Choose from the list or create a new item</div>
         </div>}
 
       </div>
