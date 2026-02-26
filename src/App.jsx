@@ -2109,7 +2109,7 @@ html{scroll-behavior:smooth}
       </div>
 
       {/* ═══ RIGHT PANEL ═══ */}
-      <div style={{...(gridWide?{display:"none"}:{flex:1}),height:"100%",display:gridWide?"none":"flex",flexDirection:"column",overflow:"hidden",position:"relative"}}>
+      {!gridWide&&<div style={{flex:1,height:"100%",display:"flex",flexDirection:"column",overflow:"hidden",position:"relative"}}>
 
         {/* ─── THEME PICKER OVERLAY ─── */}
         {pmShowThemes&&<div style={{position:"absolute",inset:0,zIndex:100,background:"rgba(0,0,0,0.5)",display:"flex",alignItems:"center",justifyContent:"center",backdropFilter:"blur(4px)"}} onClick={()=>setPmShowThemes(false)}>
@@ -2215,15 +2215,15 @@ html{scroll-behavior:smooth}
             <div style={{display:"flex",gap:10,marginBottom:20}}>
               <button onClick={()=>{navigator.clipboard.writeText(pgResult);setPgCopied(true);setTimeout(()=>setPgCopied(false),2000)}} style={{flex:1,padding:"12px 0",background:pgCopied?`rgba(${T.accentRgb},0.15)`:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:pgCopied?`1px solid ${T.accent}`:"none",borderRadius:12,color:pgCopied?T.accent:"#fff",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:1}}>{pgCopied?"Copied!":"Copy Password"}</button>
             </div>
-            <div style={{marginBottom:20}}>
+            {pgStrength&&<div style={{marginBottom:20}}>
               <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
                 <span style={{fontSize:11,fontWeight:600,color:T.dim}}>Strength</span>
-                <span style={{fontSize:11,fontWeight:700,color:pgStrength>=80?"#10b981":pgStrength>=60?T.accent:pgStrength>=40?"#f59e0b":"#ef4444"}}>{pgStrength>=80?"Excellent":pgStrength>=60?"Strong":pgStrength>=40?"Fair":"Weak"} ({pgStrength}%)</span>
+                <span style={{fontSize:11,fontWeight:700,color:pgStrength.color||T.dim}}>{pgStrength.label||"—"}</span>
               </div>
               <div style={{height:4,borderRadius:2,background:`rgba(${T.accentRgb},0.1)`,overflow:"hidden"}}>
-                <div style={{height:"100%",borderRadius:2,background:pgStrength>=80?"#10b981":pgStrength>=60?T.accent:pgStrength>=40?"#f59e0b":"#ef4444",width:`${pgStrength}%`,transition:"all 0.4s"}}/>
+                <div style={{height:"100%",borderRadius:2,background:pgStrength.color||T.accent,width:`${pgStrength.percent||0}%`,transition:"all 0.4s"}}/>
               </div>
-            </div>
+            </div>}
             <div style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.02)",border:`1px solid ${T.bdr}`,padding:"18px 20px",borderRadius:14}}>
               <div style={{display:"flex",gap:6,marginBottom:14}}>
                 {["random","memorable"].map(m=><button key={m} onClick={()=>setPgMode(m)} style={{flex:1,padding:"8px 0",borderRadius:8,border:`1px solid ${pgMode===m?T.accent:`rgba(${T.accentRgb},0.15)`}`,background:pgMode===m?`rgba(${T.accentRgb},0.12)`:"transparent",color:pgMode===m?T.accent:T.dim,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>{m==="random"?"Random":"Memorable"}</button>)}
@@ -2305,7 +2305,7 @@ html{scroll-behavior:smooth}
           <div style={{fontSize:13,color:T.faint}}>Choose from the list or create a new item</div>
         </div>}
 
-      </div>
+      </div>}
     </div>);
   }
 
