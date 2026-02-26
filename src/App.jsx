@@ -2268,7 +2268,7 @@ html{scroll-behavior:smooth}
               <div style={{flex:1}}>
                 <h1 style={{fontSize:24,fontWeight:700,fontFamily:`${F.heading},sans-serif`,margin:"0 0 6px"}}>{selCred.siteName||selCred.fullName||"Untitled"}</h1>
                 <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-                  {selCred.folder&&<span style={{display:"inline-flex",alignItems:"center",gap:4,padding:"3px 10px",borderRadius:6,background:`${gvc(selCred.folder)}22`,color:gvc(selCred.folder),fontSize:11,fontWeight:600}}>📁 {selCred.folder}</span>}
+                  {selCred.folder&&<span style={{display:"inline-flex",alignItems:"center",gap:4,padding:"3px 10px",borderRadius:6,background:`${gvc(selCred.folder)}22`,color:gvc(selCred.folder),fontSize:11,fontWeight:600}}>{vaultShield(gvc(selCred.folder),13)} {selCred.folder}</span>}
                   <span style={{display:"inline-flex",alignItems:"center",gap:3,padding:"3px 8px",borderRadius:6,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.03)",color:T.dim,fontSize:11,fontWeight:500}}>{typeIcon(selCred.type||"login")} {(PM_TYPES.find(t=>t.id===(selCred.type||"login"))||PM_TYPES[0]).name}</span>
                 </div>
               </div>
