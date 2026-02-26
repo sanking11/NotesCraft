@@ -2523,7 +2523,7 @@ html{scroll-behavior:smooth}
           <div style={{animation:"shieldEntrance 0.8s ease-out",filter:`drop-shadow(0 4px 12px rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.3))`,marginRight:-2}}>
             <ShieldLogo s={80} accentRgb={pgQuantumSafe?"16,185,129":T.accentRgb} accent={pgQuantumSafe?"#10b981":T.accent} accent2={pgQuantumSafe?"#059669":T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} pulse uid="scPub"/>
           </div>
-          <div>
+          <div style={{marginTop:-10}}>
             <span className="sc-grad-title" style={{display:"inline-block",fontSize:32,fontWeight:800,fontFamily:`${F.heading},sans-serif`,letterSpacing:2,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${pgQuantumSafe?"#10b981":T.accent} 70%,${pgQuantumSafe?"#059669":T.accent2||T.accent})`,lineHeight:1.2}}>ShieldCraft</span>
             <p style={{fontSize:9,color:pgQuantumSafe?"rgba(16,185,129,0.6)":T.dim,margin:"1px 0 0",letterSpacing:1.2,fontWeight:500}}> Password Generator Tool by NotesCraft</p>
           </div>
