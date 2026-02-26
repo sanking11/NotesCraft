@@ -539,6 +539,19 @@ export default function NotesCraft(){
   const[pmFormFullName,setPmFormFullName]=useState("");
   const[pmFormPhone,setPmFormPhone]=useState("");
   const[pmFormAddress,setPmFormAddress]=useState("");
+  // ThreatShield state
+  const[pmThreatScanning,setPmThreatScanning]=useState(false);
+  const[pmThreatProgress,setPmThreatProgress]=useState({done:0,total:0});
+  const[pmThreatLastScan,setPmThreatLastScan]=useState(null);
+  const pmThreatAbortRef=useRef(false);
+  // Ghost Shield state
+  const[pmGhostUnlocked,setPmGhostUnlocked]=useState(new Set());
+  const[pmGhostInput,setPmGhostInput]=useState(false);
+  const[pmGhostName,setPmGhostName]=useState("");
+  const[pmGhostCode,setPmGhostCode]=useState("");
+  const[pmGhostErr,setPmGhostErr]=useState("");
+  const[pmGhostCreating,setPmGhostCreating]=useState(false);
+  const[pmGhostNewCode,setPmGhostNewCode]=useState("");
   const pmStorageRef=useRef(null);
   const pmUserRef=useRef(null);
   // 2FA state
@@ -682,11 +695,12 @@ export default function NotesCraft(){
   },[pgQuantumSafe,pgMode]);
   // Password Manager — CRUD helpers
   const pmClearForm=()=>{setPmFormSite("");setPmFormUrl("");setPmFormUser("");setPmFormPw("");setPmFormNotes("");setPmFormTotp("");setPmFormFolder("");setPmFormStarred(false);setPmFormType("login");setPmFormCardNum("");setPmFormCardExp("");setPmFormCardCvv("");setPmFormCardHolder("");setPmFormFullName("");setPmFormPhone("");setPmFormAddress("")};
-  const pmSave=async(creds)=>{
-    setPmCredentials(creds);
+  const pmSave=async(creds,vDefs)=>{
+    const cr=creds||pmCredentials;const vd=vDefs||pmVaultDefs;
+    if(creds)setPmCredentials(cr);if(vDefs)setPmVaultDefs(vd);
     const stRef=pmStorageRef.current||storageRef.current;
     const uRef=pmUserRef.current||(user&&email);
-    if(stRef&&uRef){try{await stRef.setPasswords(typeof uRef==="string"?uRef:uRef.email||email,creds)}catch(e){console.error("PM save failed",e)}}
+    if(stRef&&uRef){try{await stRef.setPasswords(typeof uRef==="string"?uRef:uRef.email||email,{__v:2,credentials:cr,vaultDefs:vd})}catch(e){console.error("PM save failed",e)}}
   };
   const pmAddCredential=()=>{
     const cred={id:"pm_"+crypto.randomUUID(),type:pmFormType,siteName:pmFormSite,siteUrl:pmFormUrl,username:pmFormUser,password:pmFormPw,notes:pmFormNotes,totpSecret:pmFormTotp,folder:pmFormFolder,starred:pmFormStarred,cardNumber:pmFormCardNum,cardExpiry:pmFormCardExp,cardCvv:pmFormCardCvv,cardHolder:pmFormCardHolder,fullName:pmFormFullName,phone:pmFormPhone,address:pmFormAddress,created:new Date().toISOString(),modified:new Date().toISOString()};
@@ -698,11 +712,51 @@ export default function NotesCraft(){
   };
   const pmDeleteCredential=(id)=>{pmSave(pmCredentials.filter(c=>c.id!==id));setPmDelConfirm(null)};
   const pmEditCredential=(c)=>{setPmFormType(c.type||"login");setPmFormSite(c.siteName||"");setPmFormUrl(c.siteUrl||"");setPmFormUser(c.username||"");setPmFormPw(c.password||"");setPmFormNotes(c.notes||"");setPmFormTotp(c.totpSecret||"");setPmFormFolder(c.folder||"");setPmFormStarred(c.starred||false);setPmFormCardNum(c.cardNumber||"");setPmFormCardExp(c.cardExpiry||"");setPmFormCardCvv(c.cardCvv||"");setPmFormCardHolder(c.cardHolder||"");setPmFormFullName(c.fullName||"");setPmFormPhone(c.phone||"");setPmFormAddress(c.address||"");setPmSelectedId(c.id);setPmView("edit")};
+  // ThreatShield — scan functions
+  const pmScanThreats=async()=>{
+    setPmThreatScanning(true);pmThreatAbortRef.current=false;
+    const targets=pmCredentials.filter(c=>c.password&&c.type!=="note");
+    setPmThreatProgress({done:0,total:targets.length});
+    const updated=[...pmCredentials];
+    for(let i=0;i<targets.length;i++){
+      if(pmThreatAbortRef.current)break;
+      const cred=targets[i];const idx=updated.findIndex(c=>c.id===cred.id);
+      try{const r=await checkHIBP(cred.password);updated[idx]={...updated[idx],breachCheck:{breached:r.breached,count:r.count,checkedAt:new Date().toISOString()}}}catch{}
+      setPmThreatProgress({done:i+1,total:targets.length});
+      if(i<targets.length-1)await new Promise(r=>setTimeout(r,200));
+    }
+    await pmSave(updated);setPmThreatLastScan(new Date().toISOString());setPmThreatScanning(false);
+  };
+  const pmScanSingle=async(credId)=>{
+    const cred=pmCredentials.find(c=>c.id===credId);if(!cred||!cred.password)return;
+    try{const r=await checkHIBP(cred.password);const updated=pmCredentials.map(c=>c.id===credId?{...c,breachCheck:{breached:r.breached,count:r.count,checkedAt:new Date().toISOString()}}:c);await pmSave(updated)}catch{}
+  };
+  // Ghost Shield — helpers
+  const pmHashPasscode=async(code)=>{const buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(code));return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("")};
+  const pmCreateGhostVault=async(name,color,passcode)=>{
+    if(!name.trim()||!passcode||passcode.length!==6)return;
+    const hash=await pmHashPasscode(passcode);
+    const nd={...pmVaultDefs,[name.trim()]:{color,ghost:true,passcodeHash:hash}};
+    setPmVaultDefs(nd);await pmSave(null,nd);
+  };
+  const pmUnlockGhost=async(name,code)=>{
+    const def=pmVaultDefs[name];
+    if(!def||!def.ghost){setPmGhostErr("Vault not found");return false}
+    const hash=await pmHashPasscode(code);
+    if(hash!==def.passcodeHash){setPmGhostErr("Incorrect passcode");return false}
+    setPmGhostUnlocked(prev=>new Set([...prev,name]));
+    setPmGhostErr("");setPmGhostInput(false);setPmGhostName("");setPmGhostCode("");return true;
+  };
+  const pmLockGhost=(name)=>{setPmGhostUnlocked(prev=>{const n=new Set(prev);n.delete(name);return n});if(pmFolderFilter===name){setPmFolderFilter(null);setPmView("list")}};
+  const pmLockAllGhosts=()=>{setPmGhostUnlocked(new Set())};
+  const isGhostLocked=(folder)=>{if(!folder)return false;const def=pmVaultDefs[folder];return def&&def.ghost&&!pmGhostUnlocked.has(folder)};
   const pmLoadVault=async(stRef,em)=>{
     try{
-      let creds=await stRef.getPasswords(em);
-      if(!creds||!creds.length){
-        creds=[
+      let raw=await stRef.getPasswords(em);
+      let creds,vDefs={};
+      if(raw&&raw.__v===2){creds=raw.credentials||[];vDefs=raw.vaultDefs||{}}
+      else if(Array.isArray(raw)&&raw.length){creds=raw}
+      else{creds=[
           {id:"pm_demo_1",type:"login",siteName:"GitHub",siteUrl:"https://github.com",username:"dev@notecraft.app",password:"Gh$ecure2026!xK9",notes:"Personal development account",totpSecret:"JBSWY3DPEHPK3PXP",folder:"Development",starred:true,created:"2026-01-15T10:30:00Z",modified:"2026-02-20T14:22:00Z"},
           {id:"pm_demo_2",type:"login",siteName:"Google",siteUrl:"https://google.com",username:"user@gmail.com",password:"G00gl3P@ss!Str0ng",notes:"Main Google account",totpSecret:"NBSWY3DPEHPK3PXQ",folder:"Personal",starred:true,created:"2026-01-10T08:00:00Z",modified:"2026-02-18T09:15:00Z"},
           {id:"pm_demo_3",type:"login",siteName:"Netflix",siteUrl:"https://netflix.com",username:"chill@email.com",password:"N3tfl!x_Str3am#42",notes:"Family plan",folder:"Entertainment",starred:false,created:"2026-02-01T12:00:00Z",modified:"2026-02-25T16:30:00Z"},
@@ -716,9 +770,9 @@ export default function NotesCraft(){
           {id:"pm_demo_11",type:"note",siteName:"Server Config",folder:"Development",starred:false,notes:"Production: 192.168.1.100\\nStaging: 192.168.1.101\\nSSH key: ~/.ssh/prod_key\\nDB port: 5432",created:"2026-02-01T11:00:00Z",modified:"2026-02-22T16:00:00Z"},
           {id:"pm_demo_12",type:"identity",siteName:"Primary Identity",folder:"Personal",starred:false,fullName:"Sunny Tailor",username:"sunny@email.com",phone:"+64 21 123 4567",address:"123 Main St, Auckland, New Zealand",notes:"Main identity",created:"2026-01-01T08:00:00Z",modified:"2026-02-18T12:00:00Z"}
         ];
-        await stRef.setPasswords(em,creds);
+        await stRef.setPasswords(em,{__v:2,credentials:creds,vaultDefs:{}});
       }
-      setPmCredentials(creds);setPmIsLoggedIn(true);
+      setPmCredentials(creds);setPmVaultDefs(vDefs);setPmIsLoggedIn(true);
     }catch(e){console.error("PM load failed",e)}
   };
   const pmDoLogin=async()=>{
@@ -1890,10 +1944,11 @@ html{scroll-behavior:smooth}
     const vaultShield=(color,sz=16)=><svg width={sz} height={sz} viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill={`${color}20`} stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="2 1.5" opacity="0.5"/></svg>;
     const PM_SORTS=[{id:"recent",name:"Most Recent"},{id:"name-az",name:"Name (a-z)"},{id:"name-za",name:"Name (z-a)"},{id:"folder-az",name:"Vault (a-z)"},{id:"folder-za",name:"Vault (z-a)"}];
     const existingFolders=[...new Set(pmCredentials.filter(c=>c.folder).map(c=>c.folder))].sort();
-    const allVaults=[...new Set([...Object.keys(pmVaultDefs),...existingFolders])].sort();
+    const allVaults=[...new Set([...Object.keys(pmVaultDefs),...existingFolders])].filter(v=>{const d=pmVaultDefs[v];return!(d&&d.ghost&&!pmGhostUnlocked.has(v))}).sort();
     const gvc=(name)=>(pmVaultDefs[name]&&pmVaultDefs[name].color)||defVC[allVaults.indexOf(name)%defVC.length];
     const typeIcon=(t)=>(PM_TYPES.find(x=>x.id===t)||PM_TYPES[0]).icon;
     const filtered=pmCredentials.filter(c=>{
+      if(isGhostLocked(c.folder))return false;
       if(pmFolderFilter&&c.folder!==pmFolderFilter)return false;
       if(pmView==="starred-view")return c.starred;
       if(pmView==="totp-view")return!!c.totpSecret;
@@ -1938,7 +1993,7 @@ html{scroll-behavior:smooth}
 .sc-dd button{width:100%;display:flex;align-items:center;gap:10px;padding:8px 12px;background:transparent;border:none;border-radius:6px;color:${T.text};font-size:13px;font-family:inherit;cursor:pointer;text-align:left;transition:all 0.15s}
 .sc-dd button:hover{background:rgba(${T.accentRgb},0.08)}
 `;
-    const rpActive=pmSelectedId||pmView==="add"||pmView==="edit"||pmView==="generator";
+    const rpActive=pmSelectedId||pmView==="add"||pmView==="edit"||pmView==="generator"||pmView==="threat";
     const gridWide=pmViewMode==="grid"&&!rpActive;
     return(<div style={{width:"100vw",height:"100vh",display:"flex",background:T.bg,fontFamily:`${F.body},sans-serif`,color:T.text,overflow:"hidden"}}>
       <style>{css}{vCss}</style>
@@ -1965,17 +2020,22 @@ html{scroll-behavior:smooth}
                 <input type="color" value={pmNewVaultColor} onChange={e=>setPmNewVaultColor(e.target.value)} style={{position:"absolute",inset:-4,width:"calc(100% + 8px)",height:"calc(100% + 8px)",cursor:"pointer",opacity:0}}/>
               </label>
             </div>
+            <label style={{display:"flex",alignItems:"center",gap:8,marginBottom:6,cursor:"pointer",fontSize:11,color:T.text}}>
+              <div onClick={()=>setPmGhostCreating(!pmGhostCreating)} style={{width:16,height:16,borderRadius:4,border:`1.5px solid ${pmGhostCreating?T.accent:`rgba(${T.accentRgb},0.3)`}`,background:pmGhostCreating?`rgba(${T.accentRgb},0.15)`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}>{pmGhostCreating&&<span style={{color:T.accent,fontSize:9}}>✓</span>}</div>
+              <span>👻 Ghost Vault <span style={{color:T.dim,fontWeight:400}}>(hidden, requires passcode)</span></span>
+            </label>
+            {pmGhostCreating&&<input value={pmGhostNewCode} onChange={e=>setPmGhostNewCode(e.target.value.replace(/\D/g,"").slice(0,6))} placeholder="6-digit passcode" maxLength={6} style={{width:"100%",padding:"6px 8px",borderRadius:6,background:"transparent",border:`1px solid ${T.bdr}`,color:T.text,fontSize:12,fontFamily:"monospace",letterSpacing:4,outline:"none",boxSizing:"border-box",marginBottom:6,textAlign:"center"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=T.bdr}}/>}
             <div style={{display:"flex",gap:4}}>
-              <button onClick={()=>{if(pmNewVaultName.trim()){setPmVaultDefs(d=>({...d,[pmNewVaultName.trim()]:{color:pmNewVaultColor}}));setPmNewVaultName("");setPmShowNewVault(false)}}} style={{flex:1,padding:"5px",background:`rgba(${T.accentRgb},0.15)`,border:"none",borderRadius:6,color:T.accent,fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Create</button>
-              <button onClick={()=>{setPmShowNewVault(false);setPmNewVaultName("")}} style={{flex:1,padding:"5px",background:"transparent",border:`1px solid ${T.bdr}`,borderRadius:6,color:T.dim,fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>Cancel</button>
+              <button onClick={async()=>{if(pmNewVaultName.trim()){if(pmGhostCreating){if(pmGhostNewCode.length!==6)return;await pmCreateGhostVault(pmNewVaultName,pmNewVaultColor,pmGhostNewCode)}else{const nd={...pmVaultDefs,[pmNewVaultName.trim()]:{color:pmNewVaultColor}};setPmVaultDefs(nd);pmSave(null,nd)}setPmNewVaultName("");setPmShowNewVault(false);setPmGhostCreating(false);setPmGhostNewCode("")}}} style={{flex:1,padding:"5px",background:`rgba(${T.accentRgb},0.15)`,border:"none",borderRadius:6,color:T.accent,fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Create</button>
+              <button onClick={()=>{setPmShowNewVault(false);setPmNewVaultName("");setPmGhostCreating(false);setPmGhostNewCode("")}} style={{flex:1,padding:"5px",background:"transparent",border:`1px solid ${T.bdr}`,borderRadius:6,color:T.dim,fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>Cancel</button>
             </div>
           </div>}
 
           {/* All Items */}
-          <button className={`sc-vault-btn${!pmFolderFilter&&pmView!=="starred-view"&&pmView!=="totp-view"&&pmView!=="generator"&&pmView!=="add"&&pmView!=="edit"?" active":""}`} onClick={()=>{setPmFolderFilter(null);setPmView("list")}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",marginBottom:1,background:"transparent",border:"none",borderRadius:8,color:(!pmFolderFilter&&pmView!=="starred-view"&&pmView!=="totp-view"&&pmView!=="generator")?T.text:T.dim,fontSize:13,fontFamily:"inherit",cursor:"pointer",textAlign:"left"}}>
+          <button className={`sc-vault-btn${!pmFolderFilter&&pmView!=="starred-view"&&pmView!=="totp-view"&&pmView!=="generator"&&pmView!=="add"&&pmView!=="edit"&&pmView!=="threat"?" active":""}`} onClick={()=>{setPmFolderFilter(null);setPmView("list")}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",marginBottom:1,background:"transparent",border:"none",borderRadius:8,color:(!pmFolderFilter&&pmView!=="starred-view"&&pmView!=="totp-view"&&pmView!=="generator"&&pmView!=="threat")?T.text:T.dim,fontSize:13,fontFamily:"inherit",cursor:"pointer",textAlign:"left"}}>
             <span style={{width:28,height:28,borderRadius:8,background:`rgba(${T.accentRgb},0.12)`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><IC.Shield/></span>
             <span style={{flex:1,fontWeight:500}}>All Items</span>
-            <span style={{fontSize:12,color:T.faint}}>{pmCredentials.length}</span>
+            <span style={{fontSize:12,color:T.faint}}>{pmCredentials.filter(c=>!isGhostLocked(c.folder)).length}</span>
           </button>
 
           {/* Vault entries */}
@@ -1992,13 +2052,13 @@ html{scroll-behavior:smooth}
               {pmEditVaultMenu===v&&<div style={{position:"absolute",right:4,top:"100%",zIndex:50,background:T.dark?T.bg2||"#1e1e2e":"#fff",border:`1px solid ${T.bdr}`,borderRadius:10,boxShadow:"0 8px 32px rgba(0,0,0,0.3)",padding:4,minWidth:160}}>
                 <div style={{padding:"8px 10px 4px",fontSize:10,fontWeight:700,color:T.dim,textTransform:"uppercase",letterSpacing:0.5}}>Color</div>
                 <div style={{display:"flex",gap:3,flexWrap:"wrap",padding:"0 10px 8px",alignItems:"center"}}>
-                  {defVC.map(c=><button key={c} onClick={()=>{setPmVaultDefs(d=>({...d,[v]:{...d[v],color:c}}));setPmEditVaultMenu(null)}} style={{width:18,height:18,borderRadius:4,background:c,border:vc===c?`2px solid ${T.text}`:"2px solid transparent",cursor:"pointer",padding:0}}/>)}
+                  {defVC.map(c=><button key={c} onClick={()=>{const nd={...pmVaultDefs,[v]:{...pmVaultDefs[v],color:c}};setPmVaultDefs(nd);pmSave(null,nd);setPmEditVaultMenu(null)}} style={{width:18,height:18,borderRadius:4,background:c,border:vc===c?`2px solid ${T.text}`:"2px solid transparent",cursor:"pointer",padding:0}}/>)}
                   <label style={{width:18,height:18,borderRadius:4,overflow:"hidden",cursor:"pointer",border:`2px solid ${T.bdr}`,position:"relative",background:`conic-gradient(red,yellow,lime,aqua,blue,magenta,red)`}}>
-                    <input type="color" value={vc} onChange={e=>{setPmVaultDefs(d=>({...d,[v]:{...d[v],color:e.target.value}}))}} style={{position:"absolute",inset:-4,width:"calc(100% + 8px)",height:"calc(100% + 8px)",cursor:"pointer",opacity:0}}/>
+                    <input type="color" value={vc} onChange={e=>{const nd={...pmVaultDefs,[v]:{...pmVaultDefs[v],color:e.target.value}};setPmVaultDefs(nd);pmSave(null,nd)}} style={{position:"absolute",inset:-4,width:"calc(100% + 8px)",height:"calc(100% + 8px)",cursor:"pointer",opacity:0}}/>
                   </label>
                 </div>
-                <button onClick={()=>{const newName=prompt("Rename vault:",v);if(newName&&newName!==v){const upd=pmCredentials.map(c=>c.folder===v?{...c,folder:newName}:c);pmSave(upd);setPmVaultDefs(d=>{const n={...d};n[newName]=n[v]||{color:vc};delete n[v];return n});setPmEditVaultMenu(null);if(pmFolderFilter===v)setPmFolderFilter(newName)}}} style={{width:"100%",display:"flex",alignItems:"center",gap:8,padding:"7px 10px",background:"transparent",border:"none",borderRadius:6,color:T.text,fontSize:12,fontFamily:"inherit",cursor:"pointer",textAlign:"left"}}>Rename</button>
-                <button onClick={()=>{if(confirm(`Delete vault "${v}"? Items will become unassigned.`)){const upd=pmCredentials.map(c=>c.folder===v?{...c,folder:""}:c);pmSave(upd);setPmVaultDefs(d=>{const n={...d};delete n[v];return n});setPmEditVaultMenu(null);if(pmFolderFilter===v)setPmFolderFilter(null)}}} style={{width:"100%",display:"flex",alignItems:"center",gap:8,padding:"7px 10px",background:"transparent",border:"none",borderRadius:6,color:"#ef4444",fontSize:12,fontFamily:"inherit",cursor:"pointer",textAlign:"left"}}>Delete</button>
+                <button onClick={()=>{const newName=prompt("Rename vault:",v);if(newName&&newName!==v){const upd=pmCredentials.map(c=>c.folder===v?{...c,folder:newName}:c);const nd={...pmVaultDefs};nd[newName]=nd[v]||{color:vc};delete nd[v];setPmVaultDefs(nd);pmSave(upd,nd);setPmEditVaultMenu(null);if(pmFolderFilter===v)setPmFolderFilter(newName)}}} style={{width:"100%",display:"flex",alignItems:"center",gap:8,padding:"7px 10px",background:"transparent",border:"none",borderRadius:6,color:T.text,fontSize:12,fontFamily:"inherit",cursor:"pointer",textAlign:"left"}}>Rename</button>
+                <button onClick={()=>{if(confirm(`Delete vault "${v}"? Items will become unassigned.`)){const upd=pmCredentials.map(c=>c.folder===v?{...c,folder:""}:c);const nd={...pmVaultDefs};delete nd[v];setPmVaultDefs(nd);pmSave(upd,nd);setPmEditVaultMenu(null);if(pmFolderFilter===v)setPmFolderFilter(null)}}} style={{width:"100%",display:"flex",alignItems:"center",gap:8,padding:"7px 10px",background:"transparent",border:"none",borderRadius:6,color:"#ef4444",fontSize:12,fontFamily:"inherit",cursor:"pointer",textAlign:"left"}}>Delete</button>
                 <button onClick={()=>setPmEditVaultMenu(null)} style={{width:"100%",display:"flex",alignItems:"center",gap:8,padding:"7px 10px",background:"transparent",border:"none",borderRadius:6,color:T.dim,fontSize:12,fontFamily:"inherit",cursor:"pointer",textAlign:"left"}}>Close</button>
               </div>}
             </div>
@@ -2017,6 +2077,22 @@ html{scroll-behavior:smooth}
             <span style={{flex:1,fontWeight:500}}>With 2FA</span>
             <span style={{fontSize:12,color:T.faint}}>{pmCredentials.filter(c=>c.totpSecret).length}</span>
           </button>
+
+          <button className={`sc-vault-btn${pmView==="threat"?" active":""}`} onClick={()=>{setPmFolderFilter(null);setPmView("threat");setPmSelectedId(null)}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",marginBottom:1,background:"transparent",border:"none",borderRadius:8,color:pmView==="threat"?T.text:T.dim,fontSize:13,fontFamily:"inherit",cursor:"pointer",textAlign:"left"}}>
+            <span style={{width:28,height:28,borderRadius:8,background:pmCredentials.some(c=>c.breachCheck&&c.breachCheck.breached)?"rgba(239,68,68,0.12)":"rgba(245,158,11,0.12)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,flexShrink:0}}>🛡️</span>
+            <span style={{flex:1,fontWeight:500}}>ThreatShield</span>
+            {pmCredentials.filter(c=>c.breachCheck&&c.breachCheck.breached).length>0&&<span style={{fontSize:10,fontWeight:700,color:"#fff",background:"#ef4444",borderRadius:10,padding:"1px 6px",minWidth:18,textAlign:"center"}}>{pmCredentials.filter(c=>c.breachCheck&&c.breachCheck.breached).length}</span>}
+          </button>
+
+          <div style={{height:1,background:T.bdr,margin:"8px 6px 4px"}}/>
+
+          {/* Ghost Shield unlock */}
+          <button className="sc-vault-btn" onClick={()=>{setPmGhostInput(true);setPmGhostErr("");setPmGhostName("");setPmGhostCode("")}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",marginBottom:1,background:"transparent",border:"none",borderRadius:8,color:T.dim,fontSize:13,fontFamily:"inherit",cursor:"pointer",textAlign:"left",opacity:0.7}}>
+            <span style={{width:28,height:28,borderRadius:8,background:"rgba(168,85,247,0.12)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,flexShrink:0}}>👻</span>
+            <span style={{flex:1,fontWeight:500,fontStyle:"italic"}}>Ghost Shield</span>
+          </button>
+          {/* Unlocked ghost vaults */}
+          {[...pmGhostUnlocked].map(gv=>{const def=pmVaultDefs[gv];if(!def)return null;const vc=def.color||"#a855f7";const cnt=pmCredentials.filter(c=>c.folder===gv).length;return<div key={"ghost-"+gv} style={{position:"relative"}}><button className={`sc-vault-btn${pmFolderFilter===gv?" active":""}`} onClick={()=>{setPmFolderFilter(pmFolderFilter===gv?null:gv);setPmView("list")}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",marginBottom:1,background:"transparent",border:"none",borderRadius:8,borderLeft:`2px dashed ${vc}`,color:pmFolderFilter===gv?T.text:T.dim,fontSize:13,fontFamily:"inherit",cursor:"pointer",textAlign:"left",opacity:0.9}}><span style={{width:28,height:28,borderRadius:8,background:`${vc}18`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:12}}>👻</span><span style={{flex:1,fontWeight:500}}>{gv}</span><span style={{fontSize:12,color:T.faint}}>{cnt}</span><span onClick={e=>{e.stopPropagation();pmLockGhost(gv)}} style={{fontSize:14,color:T.dim,padding:"0 2px",cursor:"pointer",opacity:0.7}} title="Lock ghost vault">🔒</span></button></div>})}
         </div>
 
         {/* Bottom */}
@@ -2027,7 +2103,7 @@ html{scroll-behavior:smooth}
           <button className="sc-bottom-btn" onClick={()=>setPmShowThemes(true)} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",background:"transparent",border:"none",borderRadius:8,color:T.dim,fontSize:13,fontFamily:"inherit",textAlign:"left",cursor:"pointer"}}>
             <span>🎨</span><span>Themes</span>
           </button>
-          <button className="sc-bottom-btn" onClick={()=>{setPmIsLoggedIn(false);setPmCredentials([]);pmStorageRef.current=null;pmUserRef.current=null}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",background:"transparent",border:"none",borderRadius:8,color:T.dim,fontSize:13,fontFamily:"inherit",textAlign:"left",cursor:"pointer"}}>
+          <button className="sc-bottom-btn" onClick={()=>{setPmIsLoggedIn(false);setPmCredentials([]);pmStorageRef.current=null;pmUserRef.current=null;pmLockAllGhosts()}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",background:"transparent",border:"none",borderRadius:8,color:T.dim,fontSize:13,fontFamily:"inherit",textAlign:"left",cursor:"pointer"}}>
             <span>🔒</span><span>Lock ShieldCraft</span>
           </button>
           <button className="sc-bottom-btn" onClick={()=>{setInfoPage(null);setShowLanding(true)}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",marginBottom:4,background:"transparent",border:"none",borderRadius:8,color:T.dim,fontSize:13,fontFamily:"inherit",textAlign:"left",cursor:"pointer"}}>
@@ -2096,6 +2172,7 @@ html{scroll-behavior:smooth}
                   {c.totpSecret&&<span style={{fontSize:9,color:T.accent,background:`rgba(${T.accentRgb},0.1)`,padding:"0 4px",borderRadius:3,fontWeight:600}}>2FA</span>}
                 </div>
                 {c.folder&&<div style={{position:"absolute",top:6,right:6,width:8,height:8,borderRadius:"50%",background:gvc(c.folder)}}/>}
+                {c.breachCheck&&c.breachCheck.breached&&<div style={{position:"absolute",top:6,left:6,width:18,height:18,borderRadius:"50%",background:"rgba(239,68,68,0.15)",border:"1px solid rgba(239,68,68,0.3)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:10}} title={`Found in ${c.breachCheck.count} breaches`}>⚠️</div>}
               </div>)}
             </div>
           :
@@ -2109,6 +2186,7 @@ html{scroll-behavior:smooth}
                     <div style={{fontSize:14,fontWeight:600,color:T.text,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{c.siteName||c.fullName||"Untitled"}</div>
                     <div style={{fontSize:12,color:T.dim,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",marginTop:1}}>{itemSub(c)}</div>
                   </div>
+                  {c.breachCheck&&c.breachCheck.breached&&<span style={{fontSize:11,color:"#ef4444",flexShrink:0}} title={`${c.breachCheck.count} breaches`}>⚠️</span>}
                   {c.folder&&<div style={{width:8,height:8,borderRadius:"50%",background:gvc(c.folder),flexShrink:0}}/>}
                   {c.starred&&<span style={{color:"#f59e0b",fontSize:12}}>★</span>}
                 </div>)}
@@ -2189,7 +2267,7 @@ html{scroll-behavior:smooth}
                   {allVaults.map(v=><option key={v} value={v}>{v}</option>)}
                 </select>
                 <input value={!allVaults.includes(pmFormFolder)?pmFormFolder:""} onChange={e=>setPmFormFolder(e.target.value)} placeholder="Or type new..." style={{flex:1,padding:"10px 14px",borderRadius:10,background:T.dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=T.bdr}}/>
-              </div></div>
+              </div>{pmFormFolder&&pmVaultDefs[pmFormFolder]&&pmVaultDefs[pmFormFolder].ghost&&<div style={{fontSize:10,color:"#facc15",marginTop:4,display:"flex",alignItems:"center",gap:4}}><span>👻</span> This is a ghost vault. Items will be hidden unless unlocked.</div>}</div>
               {/* Star */}
               <label style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer",fontSize:13,color:T.text}}>
                 <div onClick={()=>setPmFormStarred(!pmFormStarred)} style={{width:18,height:18,borderRadius:4,border:`1.5px solid ${pmFormStarred?T.accent:`rgba(${T.accentRgb},0.3)`}`,background:pmFormStarred?`rgba(${T.accentRgb},0.15)`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}>{pmFormStarred&&<span style={{color:T.accent,fontSize:11}}>★</span>}</div>
@@ -2256,8 +2334,40 @@ html{scroll-behavior:smooth}
           </div>
         </div>}
 
+        {/* ─── THREATSHIELD VIEW ─── */}
+        {pmView==="threat"&&<div style={{flex:1,overflowY:"auto",padding:"32px 40px"}}>
+          <div style={{maxWidth:600,margin:"0 auto"}}>
+            <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:24}}>
+              <div style={{width:56,height:56,borderRadius:14,background:"rgba(239,68,68,0.08)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:28}}>🛡️</div>
+              <div><h2 style={{fontSize:22,fontWeight:700,fontFamily:`${F.heading},sans-serif`,margin:0}}>ThreatShield</h2><div style={{fontSize:12,color:T.dim,marginTop:2}}>Dark Web Monitoring</div></div>
+              <button onClick={()=>setPmView("list")} style={{marginLeft:"auto",padding:"7px 14px",background:"transparent",border:`1px solid ${T.bdr}`,borderRadius:8,color:T.dim,fontSize:12,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>Back</button>
+            </div>
+            <button onClick={pmThreatScanning?()=>{pmThreatAbortRef.current=true}:pmScanThreats} style={{width:"100%",padding:"14px 0",background:pmThreatScanning?"rgba(239,68,68,0.1)":"linear-gradient(135deg,#ef4444,#dc2626)",border:pmThreatScanning?"1px solid rgba(239,68,68,0.3)":"none",borderRadius:12,color:pmThreatScanning?"#ef4444":"#fff",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:1,marginBottom:16,boxShadow:pmThreatScanning?"none":"0 4px 20px rgba(239,68,68,0.35)"}}>{pmThreatScanning?`Scanning... ${pmThreatProgress.done}/${pmThreatProgress.total} — Click to Cancel`:"Scan All Passwords"}</button>
+            {pmThreatScanning&&<div style={{height:4,borderRadius:2,background:"rgba(239,68,68,0.1)",overflow:"hidden",marginBottom:16}}><div style={{height:"100%",borderRadius:2,background:"#ef4444",width:`${pmThreatProgress.total?(pmThreatProgress.done/pmThreatProgress.total*100):0}%`,transition:"width 0.3s"}}/></div>}
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10,marginBottom:20}}>
+              {[{label:"Scanned",value:pmCredentials.filter(c=>c.breachCheck).length,icon:"🔍",color:T.accent},{label:"Compromised",value:pmCredentials.filter(c=>c.breachCheck&&c.breachCheck.breached).length,icon:"⚠️",color:"#ef4444"},{label:"Safe",value:pmCredentials.filter(c=>c.breachCheck&&!c.breachCheck.breached).length,icon:"✅",color:"#4ade80"}].map((s,i)=><div key={i} style={{padding:"16px 14px",borderRadius:12,background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.02)",border:`1px solid ${T.bdr}`,textAlign:"center"}}><div style={{fontSize:18,marginBottom:4}}>{s.icon}</div><div style={{fontSize:22,fontWeight:700,color:s.color}}>{s.value}</div><div style={{fontSize:11,color:T.dim,marginTop:2}}>{s.label}</div></div>)}
+            </div>
+            {pmThreatLastScan&&<div style={{fontSize:11,color:T.faint,marginBottom:16,textAlign:"center"}}>Last full scan: {new Date(pmThreatLastScan).toLocaleString()}</div>}
+            {pmCredentials.filter(c=>c.breachCheck&&c.breachCheck.breached).length>0&&<>
+              <div style={{fontSize:12,fontWeight:700,color:"#ef4444",letterSpacing:0.5,textTransform:"uppercase",marginBottom:8}}>Compromised Credentials</div>
+              {pmCredentials.filter(c=>c.breachCheck&&c.breachCheck.breached).map(c=><div key={c.id} style={{display:"flex",alignItems:"center",gap:12,padding:"12px 14px",marginBottom:4,borderRadius:10,background:"rgba(239,68,68,0.04)",border:"1px solid rgba(239,68,68,0.15)",cursor:"pointer"}} onClick={()=>{setPmSelectedId(c.id);setPmView("list")}}>
+                <div style={{width:36,height:36,borderRadius:10,background:T.dark?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.04)",display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden"}}>{itemFav(c)}</div>
+                <div style={{flex:1}}><div style={{fontSize:13,fontWeight:600,color:T.text}}>{c.siteName||"Untitled"}</div><div style={{fontSize:11,color:T.dim}}>{c.username}</div></div>
+                <div style={{textAlign:"right"}}><div style={{fontSize:11,fontWeight:700,color:"#ef4444"}}>{c.breachCheck.count.toLocaleString()} breaches</div><div style={{fontSize:9,color:T.faint}}>{new Date(c.breachCheck.checkedAt).toLocaleDateString()}</div></div>
+                <button onClick={e=>{e.stopPropagation();pmEditCredential(c)}} style={{padding:"5px 12px",background:"rgba(239,68,68,0.1)",border:"1px solid rgba(239,68,68,0.25)",borderRadius:6,color:"#ef4444",fontSize:10,fontWeight:600,cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>Change Password</button>
+              </div>)}
+            </>}
+            {pmCredentials.filter(c=>c.breachCheck&&!c.breachCheck.breached).length>0&&<>
+              <div style={{fontSize:12,fontWeight:700,color:"#4ade80",letterSpacing:0.5,textTransform:"uppercase",marginTop:16,marginBottom:8}}>Safe Credentials</div>
+              {pmCredentials.filter(c=>c.breachCheck&&!c.breachCheck.breached).map(c=><div key={c.id} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 14px",marginBottom:2,borderRadius:8,background:T.dark?"rgba(255,255,255,0.02)":"rgba(0,0,0,0.01)"}}><span style={{fontSize:12}}>✅</span><span style={{fontSize:13,color:T.text,fontWeight:500}}>{c.siteName||"Untitled"}</span><span style={{fontSize:11,color:T.faint,marginLeft:"auto"}}>{new Date(c.breachCheck.checkedAt).toLocaleDateString()}</span></div>)}
+            </>}
+            {!pmCredentials.some(c=>c.breachCheck)&&!pmThreatScanning&&<div style={{textAlign:"center",padding:"40px 20px",color:T.dim}}><div style={{fontSize:40,marginBottom:12}}>🛡️</div><div style={{fontSize:14,fontWeight:600,marginBottom:4}}>No scan results yet</div><div style={{fontSize:12}}>Click "Scan All Passwords" to check your credentials against known data breaches.</div></div>}
+          </div>
+        </div>}
+
         {/* ─── DETAIL VIEW ─── */}
-        {pmView!=="add"&&pmView!=="edit"&&pmView!=="generator"&&selCred&&<div style={{flex:1,overflowY:"auto",padding:"32px 40px"}}>
+        {pmView!=="add"&&pmView!=="edit"&&pmView!=="generator"&&pmView!=="threat"&&selCred&&<div style={{flex:1,overflowY:"auto",padding:"32px 40px"}}>
+          {selCred.breachCheck&&selCred.breachCheck.breached&&<div style={{display:"flex",alignItems:"center",gap:12,padding:"14px 16px",borderRadius:12,background:"rgba(239,68,68,0.06)",border:"1px solid rgba(239,68,68,0.2)",marginBottom:16}}><span style={{fontSize:20}}>⚠️</span><div style={{flex:1}}><div style={{fontSize:13,fontWeight:700,color:"#ef4444"}}>Password Compromised</div><div style={{fontSize:11,color:T.dim}}>Found in {selCred.breachCheck.count.toLocaleString()} known data breaches. Change your password immediately.</div></div><button onClick={()=>pmEditCredential(selCred)} style={{padding:"6px 14px",background:"rgba(239,68,68,0.1)",border:"1px solid rgba(239,68,68,0.3)",borderRadius:8,color:"#ef4444",fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>Change Password</button></div>}
           <div style={{marginBottom:28}}>
             <div style={{display:"flex",alignItems:"flex-start",gap:16,marginBottom:16}}>
               <div style={{width:56,height:56,borderRadius:14,background:T.dark?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.04)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,fontWeight:700,color:T.accent,flexShrink:0,overflow:"hidden"}}>
@@ -2393,6 +2503,20 @@ html{scroll-behavior:smooth}
         <div style={{position:"absolute",top:20,right:24,zIndex:10}}>
           <button onClick={()=>{setPmShowLogin(true);setPmLoginErr("");setPmLogin2FA(false);setPmLogin2FACode("");setPmLogin2FAErr("");setPmSignupMode(false)}} style={{padding:"8px 20px",background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:10,color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5,boxShadow:`0 4px 16px rgba(${T.accentRgb},0.35)`,transition:"all 0.3s"}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-1px)"}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)"}}>Login</button>
         </div>
+
+        {/* ═══════ GHOST SHIELD UNLOCK MODAL ═══════ */}
+        {pmGhostInput&&<div style={{position:"fixed",inset:0,zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.6)",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)"}} onClick={e=>{if(e.target===e.currentTarget)setPmGhostInput(false)}}>
+          <div style={{width:340,maxWidth:"90vw",background:T.dark?"rgba(16,18,27,0.95)":"rgba(30,32,44,0.95)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:`1px solid rgba(${T.accentRgb},0.2)`,borderRadius:20,padding:"32px 28px",boxShadow:`0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(${T.accentRgb},0.08)`}}>
+            <div style={{textAlign:"center",marginBottom:20}}><div style={{fontSize:40,marginBottom:8}}>👻</div><h3 style={{fontSize:18,fontWeight:700,fontFamily:`${F.heading},sans-serif`,color:T.text,margin:"0 0 4px"}}>Ghost Shield</h3><p style={{fontSize:11,color:T.dim,margin:0}}>Enter the vault name and 6-digit passcode to reveal</p></div>
+            <div style={{display:"flex",flexDirection:"column",gap:10}}>
+              <input value={pmGhostName} onChange={e=>setPmGhostName(e.target.value)} placeholder="Vault name" style={{padding:"11px 14px",borderRadius:10,background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.15)`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.15)`}}/>
+              <input value={pmGhostCode} onChange={e=>setPmGhostCode(e.target.value.replace(/\D/g,"").slice(0,6))} placeholder="000000" maxLength={6} style={{padding:"12px 14px",borderRadius:10,background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.15)`,color:T.text,fontSize:22,fontFamily:"monospace",fontWeight:700,outline:"none",boxSizing:"border-box",textAlign:"center",letterSpacing:8}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.15)`}} onKeyDown={e=>{if(e.key==="Enter"&&pmGhostCode.length===6)pmUnlockGhost(pmGhostName,pmGhostCode)}}/>
+              {pmGhostErr&&<p style={{fontSize:11,color:"#ef4444",margin:0,fontWeight:500,textAlign:"center"}}>{pmGhostErr}</p>}
+              <button onClick={()=>pmUnlockGhost(pmGhostName,pmGhostCode)} disabled={pmGhostCode.length!==6||!pmGhostName} style={{padding:"12px 0",background:(pmGhostCode.length!==6||!pmGhostName)?"rgba(255,255,255,0.06)":`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:10,color:(pmGhostCode.length!==6||!pmGhostName)?T.dim:"#fff",fontSize:14,fontWeight:700,cursor:(pmGhostCode.length!==6||!pmGhostName)?"not-allowed":"pointer",fontFamily:"inherit",letterSpacing:1}}>Unlock</button>
+              <button onClick={()=>setPmGhostInput(false)} style={{padding:"8px",background:"transparent",border:`1px solid ${T.bdr}`,borderRadius:10,color:T.dim,fontSize:12,cursor:"pointer",fontFamily:"inherit"}}>Cancel</button>
+            </div>
+          </div>
+        </div>}
 
         {/* ═══════ LOGIN / SIGNUP MODAL ═══════ */}
         {pmShowLogin&&<div style={{position:"fixed",inset:0,zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.6)",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)"}} onClick={e=>{if(e.target===e.currentTarget)setPmShowLogin(false)}}>
