@@ -805,7 +805,7 @@ export default function NotesCraft(){
         setNotes(ln);
         setStorageBytes(measureNotesBytes(ln));
         if(sp){setThemeId(sp.theme||"midnight");setTags(sp.tags||DEF_TAGS);setFolderColors(sp.folderColors||{})}
-        const sc=await es.getCalendar(em);setCalEvents(sc||[]);const spw=await es.getPasswords(em);setPmCredentials(spw||[]);
+        const sc=await es.getCalendar(em);setCalEvents(sc||[]);const spw=await es.getPasswords(em);setPmCredentials(spw||[]);pmStorageRef.current=es;pmUserRef.current=em;setPmIsLoggedIn(true);
         const first=ln.find(n=>!n.deleted&&!n.archived);
         if(first){setSelId(first.id);setETitle(first.title);setEBlocks(getBlocks(first))}
         setAuthMode("app");
@@ -914,7 +914,7 @@ export default function NotesCraft(){
         setUser(u);setNotes(ln);
         setQuotaGB(100);setStorageBytes(measureNotesBytes(ln));
         if(lp){setThemeId(lp.theme||"midnight");setTags(lp.tags||DEF_TAGS)}
-        const sc=await es.getCalendar(em);setCalEvents(sc||[]);const spw=await es.getPasswords(em);setPmCredentials(spw||[]);
+        const sc=await es.getCalendar(em);setCalEvents(sc||[]);const spw=await es.getPasswords(em);setPmCredentials(spw||[]);pmStorageRef.current=es;pmUserRef.current=em;setPmIsLoggedIn(true);
         const first=ln.find(n=>!n.deleted&&!n.archived);
         if(first){setSelId(first.id);setETitle(first.title);setEBlocks(getBlocks(first))}
         setAuthMode("app");setAuthLoad(false);
@@ -944,7 +944,7 @@ export default function NotesCraft(){
       setNotes(ln);
       setStorageBytes(measureNotesBytes(ln));
       if(sp){setThemeId(sp.theme||"midnight");setTags(sp.tags||DEF_TAGS);setFolderColors(sp.folderColors||{})}
-      const sc=await es.getCalendar(em);setCalEvents(sc||[]);const spw=await es.getPasswords(em);setPmCredentials(spw||[]);
+      const sc=await es.getCalendar(em);setCalEvents(sc||[]);const spw=await es.getPasswords(em);setPmCredentials(spw||[]);pmStorageRef.current=es;pmUserRef.current=em;setPmIsLoggedIn(true);
       const first=ln.find(n=>!n.deleted&&!n.archived);
       if(first){setSelId(first.id);setETitle(first.title);setEBlocks(getBlocks(first))}
       setAuthMode("app");
@@ -993,7 +993,7 @@ export default function NotesCraft(){
       const sn=await es.getNotes(em);const sp=await es.getPrefs(em);
       const ln=sn||DEF_NOTES;setNotes(ln);setStorageBytes(measureNotesBytes(ln));
       if(sp){setThemeId(sp.theme||"midnight");setTags(sp.tags||DEF_TAGS);setFolderColors(sp.folderColors||{})}
-      const sc=await es.getCalendar(em);setCalEvents(sc||[]);const spw=await es.getPasswords(em);setPmCredentials(spw||[]);
+      const sc=await es.getCalendar(em);setCalEvents(sc||[]);const spw=await es.getPasswords(em);setPmCredentials(spw||[]);pmStorageRef.current=es;pmUserRef.current=em;setPmIsLoggedIn(true);
       const first=ln.find(n=>!n.deleted&&!n.archived);
       if(first){setSelId(first.id);setETitle(first.title);setEBlocks(getBlocks(first))}
       setAuthMode("app");saveSession(em,key);
