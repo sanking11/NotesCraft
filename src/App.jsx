@@ -1908,7 +1908,7 @@ html{scroll-behavior:smooth}
         {/* Views */}
         <div style={{padding:"10px 6px 0",overflowY:"auto",flex:1}}>
           <div style={{fontSize:10,fontWeight:700,letterSpacing:1.5,color:T.faint||T.dim,padding:"0 8px 6px",textTransform:"uppercase"}}>Views</div>
-          {[{n:"All Passwords",icon:<IC.Shield/>,v:"list"},{n:"Starred",icon:<IC.Star/>,v:"starred-view",c:pmCredentials.filter(c=>c.starred).length},{n:"With 2FA",icon:<IC.Lock/>,v:"totp-view",c:pmCredentials.filter(c=>c.totpSecret).length},{d:true},{n:"Generator",icon:<IC.Edit/>,v:"generator"}].map((v,i)=>v.d?<div key={i} style={{height:1,background:T.bdr,margin:"6px 8px"}}/>:(
+          {[{n:"All Passwords",icon:<IC.Shield/>,v:"list"},{n:"Starred",icon:<IC.Star/>,v:"starred-view",c:pmCredentials.filter(c=>c.starred).length},{n:"With 2FA",icon:<IC.Lock/>,v:"totp-view",c:pmCredentials.filter(c=>c.totpSecret).length},{d:true},{n:"Generator",icon:<IC.PriUrgent/>,v:"generator"}].map((v,i)=>v.d?<div key={i} style={{height:1,background:T.bdr,margin:"6px 8px"}}/>:(
             <button key={v.n} onClick={()=>{setPmView(v.v);if(v.v==="list")setPmFolderFilter(null)}} style={{width:"100%",display:"flex",alignItems:"center",gap:9,padding:"7px 10px",marginBottom:2,background:(pmView===v.v||(v.v==="list"&&pmView==="list"&&!pmFolderFilter))?`rgba(${T.accentRgb},0.1)`:"transparent",border:"none",borderRadius:6,color:(pmView===v.v)?T.accent:T.dim,fontSize:13,fontFamily:"inherit",cursor:"pointer",textAlign:"left",transition:"all 0.15s"}} className="sb-view-btn">
               <span style={{opacity:.7,flexShrink:0,display:"inline-flex"}}>{v.icon}</span>
               <span style={{flex:1}}>{v.n}</span>
