@@ -2461,6 +2461,21 @@ html{scroll-behavior:smooth}
         </div>}
 
       </div>}
+
+      {/* ═══════ GHOST SHIELD UNLOCK MODAL (dashboard) ═══════ */}
+      {pmGhostInput&&<div style={{position:"fixed",inset:0,zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.6)",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)"}} onClick={e=>{if(e.target===e.currentTarget)setPmGhostInput(false)}}>
+        <div style={{width:340,maxWidth:"90vw",background:T.dark?"rgba(16,18,27,0.95)":"rgba(30,32,44,0.95)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:`1px solid rgba(${T.accentRgb},0.2)`,borderRadius:20,padding:"32px 28px",boxShadow:`0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(${T.accentRgb},0.08)`}}>
+          <div style={{textAlign:"center",marginBottom:20}}><div style={{fontSize:40,marginBottom:8}}>👻</div><h3 style={{fontSize:18,fontWeight:700,fontFamily:`${F.heading},sans-serif`,color:T.text,margin:"0 0 4px"}}>Ghost Shield</h3><p style={{fontSize:11,color:T.dim,margin:0}}>Enter the vault name and 6-digit passcode to reveal</p></div>
+          <div style={{display:"flex",flexDirection:"column",gap:10}}>
+            <input value={pmGhostName} onChange={e=>setPmGhostName(e.target.value)} placeholder="Vault name" style={{padding:"11px 14px",borderRadius:10,background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.15)`,color:T.text,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box"}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.15)`}}/>
+            <input value={pmGhostCode} onChange={e=>setPmGhostCode(e.target.value.replace(/\D/g,"").slice(0,6))} placeholder="000000" maxLength={6} style={{padding:"12px 14px",borderRadius:10,background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.15)`,color:T.text,fontSize:22,fontFamily:"monospace",fontWeight:700,outline:"none",boxSizing:"border-box",textAlign:"center",letterSpacing:8}} onFocus={e=>{e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.15)`}} onKeyDown={e=>{if(e.key==="Enter"&&pmGhostCode.length===6)pmUnlockGhost(pmGhostName,pmGhostCode)}}/>
+            {pmGhostErr&&<p style={{fontSize:11,color:"#ef4444",margin:0,fontWeight:500,textAlign:"center"}}>{pmGhostErr}</p>}
+            <button onClick={()=>pmUnlockGhost(pmGhostName,pmGhostCode)} disabled={pmGhostCode.length!==6||!pmGhostName} style={{padding:"12px 0",background:(pmGhostCode.length!==6||!pmGhostName)?"rgba(255,255,255,0.06)":`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:10,color:(pmGhostCode.length!==6||!pmGhostName)?T.dim:"#fff",fontSize:14,fontWeight:700,cursor:(pmGhostCode.length!==6||!pmGhostName)?"not-allowed":"pointer",fontFamily:"inherit",letterSpacing:1}}>Unlock</button>
+            <button onClick={()=>setPmGhostInput(false)} style={{padding:"8px",background:"transparent",border:`1px solid ${T.bdr}`,borderRadius:10,color:T.dim,fontSize:12,cursor:"pointer",fontFamily:"inherit"}}>Cancel</button>
+          </div>
+        </div>
+      </div>}
+
     </div>);
   }
 
