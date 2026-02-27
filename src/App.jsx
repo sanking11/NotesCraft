@@ -2007,11 +2007,14 @@ html{scroll-behavior:smooth}
           <span style={{fontSize:17,fontWeight:700,fontFamily:`${F.heading},sans-serif`,letterSpacing:1.2}}>ShieldCraft</span>
         </div>
 
-        <div style={{flex:1,overflowY:"auto",padding:"0 10px"}}>
-          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"12px 6px 8px"}}>
-            <span style={{fontSize:11,fontWeight:700,letterSpacing:1.2,color:T.dim,textTransform:"uppercase"}}>Vaults</span>
-            <button onClick={()=>setPmShowNewVault(!pmShowNewVault)} style={{width:22,height:22,borderRadius:6,background:`rgba(${T.accentRgb},0.12)`,border:"none",color:T.accent,fontSize:14,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}} title="Create vault">+</button>
+        <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
+          <div style={{padding:"0 10px"}}>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"12px 6px 8px"}}>
+              <span style={{fontSize:11,fontWeight:700,letterSpacing:1.2,color:T.dim,textTransform:"uppercase"}}>Vaults</span>
+              <button onClick={()=>setPmShowNewVault(!pmShowNewVault)} style={{width:22,height:22,borderRadius:6,background:`rgba(${T.accentRgb},0.12)`,border:"none",color:T.accent,fontSize:14,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}} title="Create vault">+</button>
+            </div>
           </div>
+          <div style={{flex:1,overflowY:"auto",padding:"0 10px"}}>
 
           {/* New vault modal */}
           {pmShowNewVault&&<div style={{position:"fixed",inset:0,zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.6)",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)"}} onClick={e=>{if(e.target===e.currentTarget){setPmShowNewVault(false);setPmNewVaultName("");setPmGhostCreating(false);setPmGhostNewCode("")}}}>
@@ -2079,7 +2082,9 @@ html{scroll-behavior:smooth}
             </div>
           })}
 
-          <div style={{height:1,background:T.bdr,margin:"10px 6px"}}/>
+          </div>{/* end scrollable vault list */}
+          <div style={{padding:"0 10px",flexShrink:0}}>
+          <div style={{height:1,background:T.bdr,margin:"6px 6px"}}/>
 
           <button className={`sc-vault-btn${pmView==="starred-view"?" active":""}`} onClick={()=>{setPmFolderFilter(null);setPmView("starred-view")}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",marginBottom:1,background:"transparent",border:"none",borderRadius:8,color:pmView==="starred-view"?T.text:T.dim,fontSize:13,fontFamily:"inherit",cursor:"pointer",textAlign:"left"}}>
             <span style={{width:28,height:28,borderRadius:8,background:"rgba(245,158,11,0.12)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,flexShrink:0}}>⭐</span>
@@ -2108,7 +2113,8 @@ html{scroll-behavior:smooth}
           </button>
           {/* Unlocked ghost vaults */}
           {[...pmGhostUnlocked].map(gv=>{const def=pmVaultDefs[gv];if(!def)return null;const vc=def.color||"#a855f7";const cnt=pmCredentials.filter(c=>c.folder===gv).length;return<div key={"ghost-"+gv} style={{position:"relative"}}><button className={`sc-vault-btn${pmFolderFilter===gv?" active":""}`} onClick={()=>{setPmFolderFilter(pmFolderFilter===gv?null:gv);setPmView("list")}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",marginBottom:1,background:"transparent",border:"none",borderRadius:8,borderLeft:`2px dashed ${vc}`,color:pmFolderFilter===gv?T.text:T.dim,fontSize:13,fontFamily:"inherit",cursor:"pointer",textAlign:"left",opacity:0.9}}><span style={{width:28,height:28,borderRadius:8,background:`${vc}18`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:12}}>👻</span><span style={{flex:1,fontWeight:500}}>{gv}</span><span style={{fontSize:12,color:T.faint}}>{cnt}</span><span onClick={e=>{e.stopPropagation();pmLockGhost(gv)}} style={{fontSize:13,color:"#ef4444",padding:"2px 6px",cursor:"pointer",borderRadius:6,background:"rgba(239,68,68,0.1)",border:"1px solid rgba(239,68,68,0.2)",transition:"all 0.2s"}} onMouseEnter={e=>{e.currentTarget.style.background="rgba(239,68,68,0.2)"}} onMouseLeave={e=>{e.currentTarget.style.background="rgba(239,68,68,0.1)"}} title="Lock ghost vault">🔒</span></button></div>})}
-        </div>
+          </div>{/* end static section */}
+        </div>{/* end flex container */}
 
         {/* Bottom */}
         <div style={{borderTop:`1px solid ${T.bdr}`,padding:"6px 10px 4px"}}>
