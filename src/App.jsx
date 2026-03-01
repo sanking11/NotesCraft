@@ -2115,6 +2115,12 @@ html{scroll-behavior:smooth}
             {pmCredentials.filter(c=>c.breachCheck&&c.breachCheck.breached).length>0&&<span style={{fontSize:10,fontWeight:700,color:"#fff",background:"#ef4444",borderRadius:10,padding:"1px 6px",minWidth:18,textAlign:"center"}}>{pmCredentials.filter(c=>c.breachCheck&&c.breachCheck.breached).length}</span>}
           </button>
 
+          {/* Generator */}
+          <button className={`sc-vault-btn${pmView==="generator"?" active":""}`} onClick={()=>{setPmFolderFilter(null);setPmView("generator");setPmSelectedId(null)}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",marginBottom:1,background:"transparent",border:"none",borderRadius:8,color:pmView==="generator"?T.text:T.dim,fontSize:13,fontFamily:"inherit",cursor:"pointer",textAlign:"left"}}>
+            <span style={{width:28,height:28,borderRadius:8,background:`rgba(${T.accentRgb},0.12)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,flexShrink:0}}>⚡</span>
+            <span style={{flex:1,fontWeight:500}}>Generator</span>
+          </button>
+
           <div style={{height:1,background:T.bdr,margin:"8px 6px 4px"}}/>
 
           {/* Ghost Shield unlock */}
@@ -2132,8 +2138,8 @@ html{scroll-behavior:smooth}
           <div style={{display:"flex",alignItems:"center",gap:6,padding:"8px 12px"}}>
             <div style={{width:24,height:24,borderRadius:6,background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:11,fontWeight:700,flexShrink:0}}>{(pmUserRef.current||email||"?")[0].toUpperCase()}</div>
             <span style={{fontSize:13,color:T.dim,flex:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{pmUserRef.current||email}</span>
+            <button onClick={()=>setShowProfileMenu(true)} className="sidebar-icon-btn" style={{background:"none",border:"none",color:T.faint,cursor:"pointer",padding:2,display:"flex"}} title="Account Settings"><IC.Settings/></button>
             <button onClick={()=>setPmShowThemes(true)} className="sidebar-icon-btn" style={{background:"none",border:"none",color:T.faint,cursor:"pointer",padding:2,display:"flex"}} title="Themes"><IC.Palette/></button>
-            <button onClick={()=>{setPmView("generator");setPmSelectedId(null)}} className="sidebar-icon-btn" style={{background:"none",border:"none",color:pmView==="generator"?T.accent:T.faint,cursor:"pointer",padding:2,display:"flex"}} title="Generator"><IC.Settings/></button>
             <button onClick={()=>{setPmIsLoggedIn(false);setPmCredentials([]);pmStorageRef.current=null;pmUserRef.current=null;pmLockAllGhosts()}} className="sidebar-icon-btn" style={{background:"none",border:"none",color:T.faint,cursor:"pointer",padding:2,display:"flex"}} title="Lock ShieldCraft"><IC.Logout/></button>
           </div>
           <div style={{display:"flex",alignItems:"center",gap:6,padding:"4px 12px 8px"}}>
