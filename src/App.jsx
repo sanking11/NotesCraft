@@ -178,36 +178,102 @@ const IC = {
 };
 
 /* Butterfly logo — geometric origami, exact match to reference */
-const ShieldLogo=({s=60,accentRgb,accent,accent2,text,warn,pulse,uid})=>{
-  const id=uid||'sh';const a2=accent2||accent;
-  return<svg width={s} height={s*1.1} viewBox="0 0 200 220" fill="none" draggable={false} onContextMenu={e=>e.preventDefault()} style={{overflow:'visible',userSelect:'none',WebkitUserDrag:'none',msUserSelect:'none'}}>
-    <defs>
-      <linearGradient id={`${id}SG`} x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor={accent}/><stop offset="50%" stopColor={a2}/><stop offset="100%" stopColor={a2}/></linearGradient>
-      <linearGradient id={`${id}SF`} x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor={accent} stopOpacity="0.14"/><stop offset="100%" stopColor={a2} stopOpacity="0.04"/></linearGradient>
-      <filter id={`${id}Gl`}><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-      <filter id={`${id}GlS`}><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-    </defs>
-    <style>{`@keyframes ${id}D{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-600}}@keyframes ${id}N{0%,100%{opacity:.35}50%{opacity:1}}@keyframes ${id}S{0%,60%{transform:translateY(0) rotate(0)}70%,90%{transform:translateY(-6px) rotate(-15deg)}100%{transform:translateY(0) rotate(0)}}@keyframes ${id}R{0%{r:18;opacity:.45}100%{r:36;opacity:0}}@keyframes ${id}B{0%,60%{fill:rgba(${accentRgb},0.18)}70%,90%{fill:rgba(${accentRgb},0.3)}100%{fill:rgba(${accentRgb},0.18)}}`}</style>
-    <path d="M100 12 L34 46 L34 122 C34 162 62 184 100 200 C138 184 166 162 166 122 L166 46 Z" fill="none" stroke={`rgba(${accentRgb},0.3)`} strokeWidth="3" strokeDasharray="12 8" style={{animation:`${id}D 8s linear infinite`}}/>
-    <path d="M100 24 L44 54 L44 118 C44 154 68 176 100 190 C132 176 156 154 156 118 L156 54 Z" fill={`url(#${id}SF)`} stroke={`url(#${id}SG)`} strokeWidth="5" strokeLinejoin="round"/>
-    <g stroke={accent} strokeWidth="2.5" opacity="0.5">
-      <line x1="62" y1="72" x2="82" y2="72"/><line x1="118" y1="72" x2="138" y2="72"/>
-      <line x1="58" y1="105" x2="78" y2="105"/><line x1="122" y1="105" x2="146" y2="105"/>
-      <line x1="64" y1="140" x2="82" y2="140"/><line x1="118" y1="140" x2="138" y2="140"/>
-      <line x1="72" y1="72" x2="72" y2="105"/><line x1="128" y1="72" x2="128" y2="105"/>
-    </g>
-    <g fill={accent} filter={`url(#${id}GlS)`}>
-      {[[62,72,0],[138,72,.3],[58,105,.6],[146,105,.9],[64,140,.2],[138,140,.5],[72,88,.4],[128,88,.7]].map(([cx,cy,d],i)=><circle key={i} cx={cx} cy={cy} r={i<6?4.5:4} style={{animation:`${id}N 1.8s ease-in-out ${d}s infinite`}}/>)}
-    </g>
-    <circle cx="100" cy="108" r="18" fill="none" stroke={accent} strokeWidth="1.5" style={{animation:`${id}R 4s ease-out infinite`}}/>
-    <circle cx="100" cy="108" r="18" fill="none" stroke={accent} strokeWidth="1.5" style={{animation:`${id}R 4s ease-out 2s infinite`}}/>
-    <g filter={`url(#${id}Gl)`}>
-      <rect x="80" y="100" width="40" height="30" rx="6" stroke={`url(#${id}SG)`} strokeWidth="4" style={{animation:`${id}B 4s ease-in-out infinite`}}/>
-      <path d="M88 100 L88 84 C88 74 93 68 100 68 C107 68 112 74 112 84 L112 100" fill="none" stroke={`url(#${id}SG)`} strokeWidth="5" strokeLinecap="round" style={{transformOrigin:'100px 86px',animation:`${id}S 4s ease-in-out infinite`}}/>
-      <circle cx="100" cy="113" r="5" fill={accent}/><rect x="97.5" y="117" width="5" height="7" rx="1.5" fill={accent}/>
-    </g>
-  </svg>;
-};
+const SCLogo=({s=60,animate=true})=>{const u='scl'+Math.random().toString(36).slice(2,6);return<svg viewBox="0 0 220 220" width={s} height={s} xmlns="http://www.w3.org/2000/svg" draggable={false} onContextMenu={e=>e.preventDefault()} style={{userSelect:'none',WebkitUserDrag:'none',msUserSelect:'none'}}>
+<defs>
+<linearGradient id={`${u}bg`} x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#00AAFF"/><stop offset="40%" stopColor="#6040E8"/><stop offset="100%" stopColor="#A030C8"/></linearGradient>
+<linearGradient id={`${u}sf`} x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor="rgba(180,220,255,0.55)"/><stop offset="100%" stopColor="rgba(120,160,255,0.35)"/></linearGradient>
+<linearGradient id={`${u}lf`} x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor="rgba(255,255,255,0.85)"/><stop offset="100%" stopColor="rgba(200,220,255,0.7)"/></linearGradient>
+<filter id={`${u}gl`}><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id={`${u}tg`}><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id={`${u}sh`}><feDropShadow dx="0" dy="1.5" stdDeviation="3" floodColor="#000" floodOpacity="0.35"/></filter>
+<filter id={`${u}ss`}><feDropShadow dx="0" dy="1" stdDeviation="2" floodColor="rgba(0,80,180,0.4)" floodOpacity="0.5"/></filter>
+<clipPath id={`${u}cl`}><rect x="5" y="5" width="210" height="210" rx="42"/></clipPath>
+</defs>
+<style>{`
+@keyframes ${u}fL{0%,100%{transform:scaleX(1)}50%{transform:scaleX(0.85)}}
+@keyframes ${u}fR{0%,100%{transform:scaleX(1)}50%{transform:scaleX(0.85)}}
+@keyframes ${u}np{0%,100%{opacity:0.3}50%{opacity:1}}
+@keyframes ${u}ml{0%,100%{opacity:0.1}50%{opacity:0.5}}
+@keyframes ${u}lg{0%,100%{filter:none}50%{filter:url(#${u}gl)}}
+@keyframes ${u}sk{0%,65%{transform:translateY(0) rotate(0)}72%,88%{transform:translateY(-3px) rotate(-10deg)}100%{transform:translateY(0) rotate(0)}}
+@keyframes ${u}ip{0%{stroke-opacity:0.15;stroke-width:1.2}30%{stroke-opacity:0.55;stroke-width:1.8}60%{stroke-opacity:0.2;stroke-width:1.2}100%{stroke-opacity:0.15;stroke-width:1.2}}
+@keyframes ${u}is{0%{stroke-dashoffset:200}100%{stroke-dashoffset:0}}
+@keyframes ${u}as{0%,100%{transform:rotate(0deg)}25%{transform:rotate(4deg)}75%{transform:rotate(-4deg)}}
+@keyframes ${u}at{0%,100%{opacity:0.5;r:3}50%{opacity:1;r:4.5}}
+@keyframes ${u}ap{0%,100%{stroke-opacity:0.5;stroke-width:2.2}50%{stroke-opacity:0.9;stroke-width:2.8}}
+@keyframes ${u}df{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-400}}
+.${u}wL{transform-origin:110px 112px;animation:${animate?`${u}fL 2.6s ease-in-out infinite`:'none'}}
+.${u}wR{transform-origin:110px 112px;animation:${animate?`${u}fR 2.6s ease-in-out infinite 0.1s`:'none'}}
+.${u}np{animation:${animate?`${u}np 2s ease-in-out infinite`:'none'}}
+.${u}ml{animation:${animate?`${u}ml 2s ease-in-out infinite`:'none'}}
+.${u}lg{animation:${animate?`${u}lg 3s ease-in-out infinite`:'none'}}
+.${u}sk{transform-origin:110px 109px;animation:${animate?`${u}sk 4s ease-in-out infinite`:'none'}}
+.${u}iL{stroke-dasharray:200;animation:${animate?`${u}ip 3s ease-in-out infinite,${u}is 4s linear infinite`:'none'}}
+.${u}iR{stroke-dasharray:200;animation:${animate?`${u}ip 3s ease-in-out infinite 0.3s,${u}is 4s linear infinite 0.3s`:'none'}}
+.${u}aL{transform-origin:106px 90px;animation:${animate?`${u}as 3s ease-in-out infinite`:'none'}}
+.${u}aR{transform-origin:114px 90px;animation:${animate?`${u}as 3s ease-in-out infinite 0.4s`:'none'}}
+.${u}alL{animation:${animate?`${u}ap 3s ease-in-out infinite`:'none'}}
+.${u}alR{animation:${animate?`${u}ap 3s ease-in-out infinite 0.4s`:'none'}}
+.${u}atL{animation:${animate?`${u}at 3s ease-in-out infinite`:'none'}}
+.${u}atR{animation:${animate?`${u}at 3s ease-in-out infinite 0.4s`:'none'}}
+.${u}sd{stroke-dasharray:6 4;animation:${animate?`${u}df 6s linear infinite`:'none'}}
+`}</style>
+<rect x="5" y="5" width="210" height="210" rx="42" fill={`url(#${u}bg)`}/>
+<g clipPath={`url(#${u}cl)`}>
+<g className={`${u}wL`} filter={`url(#${u}sh)`}>
+<path d="M106 88 C78 58 28 48 22 84 C16 116 46 126 80 122 L106 113 Z" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.55)" strokeWidth="2.5" strokeLinejoin="round"/>
+<path className={`${u}iL`} d="M103 93 C82 72 48 66 44 88 C40 108 58 114 78 112 L103 106 Z" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.35)" strokeLinejoin="round"/>
+<path d="M106 122 C80 126 46 136 44 160 C42 176 60 180 78 172 C92 165 106 150 106 146 Z" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.45)" strokeWidth="2.5" strokeLinejoin="round"/>
+<path className={`${u}iL`} d="M104 128 C84 132 58 140 57 158 C56 168 68 172 80 165 C90 160 104 148 104 144 Z" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.3)" strokeLinejoin="round" style={{animationDelay:'0.5s'}}/>
+<line className={`${u}ml`} x1="44" y1="86" x2="66" y2="100" stroke="#fff" strokeWidth="1"/>
+<line className={`${u}ml`} x1="66" y1="100" x2="50" y2="112" stroke="#fff" strokeWidth="1" style={{animationDelay:'0.3s'}}/>
+<line className={`${u}ml`} x1="44" y1="86" x2="50" y2="112" stroke="#fff" strokeWidth="1" style={{animationDelay:'0.6s'}}/>
+<line className={`${u}ml`} x1="66" y1="100" x2="88" y2="106" stroke="#fff" strokeWidth="1" style={{animationDelay:'0.2s'}}/>
+<line className={`${u}ml`} x1="60" y1="142" x2="76" y2="160" stroke="#fff" strokeWidth="1" style={{animationDelay:'0.4s'}}/>
+<line className={`${u}ml`} x1="76" y1="160" x2="90" y2="144" stroke="#fff" strokeWidth="1" style={{animationDelay:'0.7s'}}/>
+<circle className={`${u}np`} cx="44" cy="86" r="3" fill="#fff" filter={`url(#${u}gl)`} style={{animationDelay:'0s'}}/>
+<circle className={`${u}np`} cx="66" cy="100" r="3" fill="#fff" filter={`url(#${u}gl)`} style={{animationDelay:'0.4s'}}/>
+<circle className={`${u}np`} cx="50" cy="112" r="3" fill="#fff" filter={`url(#${u}gl)`} style={{animationDelay:'0.8s'}}/>
+<circle className={`${u}np`} cx="60" cy="142" r="3" fill="#fff" filter={`url(#${u}gl)`} style={{animationDelay:'0.2s'}}/>
+<circle className={`${u}np`} cx="76" cy="160" r="3" fill="#fff" filter={`url(#${u}gl)`} style={{animationDelay:'0.6s'}}/>
+<circle className={`${u}np`} cx="90" cy="144" r="3" fill="#fff" filter={`url(#${u}gl)`} style={{animationDelay:'1s'}}/>
+</g>
+<g className={`${u}wR`} filter={`url(#${u}sh)`}>
+<path d="M114 88 C142 58 192 48 198 84 C204 116 174 126 140 122 L114 113 Z" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.55)" strokeWidth="2.5" strokeLinejoin="round"/>
+<path className={`${u}iR`} d="M117 93 C138 72 172 66 176 88 C180 108 162 114 142 112 L117 106 Z" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.35)" strokeLinejoin="round"/>
+<path d="M114 122 C140 126 174 136 176 160 C178 176 160 180 142 172 C128 165 114 150 114 146 Z" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.45)" strokeWidth="2.5" strokeLinejoin="round"/>
+<path className={`${u}iR`} d="M116 128 C136 132 162 140 163 158 C164 168 152 172 140 165 C130 160 116 148 116 144 Z" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.3)" strokeLinejoin="round" style={{animationDelay:'0.5s'}}/>
+<line className={`${u}ml`} x1="176" y1="86" x2="154" y2="100" stroke="#fff" strokeWidth="1" style={{animationDelay:'0.15s'}}/>
+<line className={`${u}ml`} x1="154" y1="100" x2="170" y2="112" stroke="#fff" strokeWidth="1" style={{animationDelay:'0.45s'}}/>
+<line className={`${u}ml`} x1="176" y1="86" x2="170" y2="112" stroke="#fff" strokeWidth="1" style={{animationDelay:'0.75s'}}/>
+<line className={`${u}ml`} x1="154" y1="100" x2="132" y2="106" stroke="#fff" strokeWidth="1" style={{animationDelay:'0.35s'}}/>
+<line className={`${u}ml`} x1="160" y1="142" x2="144" y2="160" stroke="#fff" strokeWidth="1" style={{animationDelay:'0.55s'}}/>
+<line className={`${u}ml`} x1="144" y1="160" x2="130" y2="144" stroke="#fff" strokeWidth="1" style={{animationDelay:'0.85s'}}/>
+<circle className={`${u}np`} cx="176" cy="86" r="3" fill="#fff" filter={`url(#${u}gl)`} style={{animationDelay:'0.15s'}}/>
+<circle className={`${u}np`} cx="154" cy="100" r="3" fill="#fff" filter={`url(#${u}gl)`} style={{animationDelay:'0.55s'}}/>
+<circle className={`${u}np`} cx="170" cy="112" r="3" fill="#fff" filter={`url(#${u}gl)`} style={{animationDelay:'0.95s'}}/>
+<circle className={`${u}np`} cx="160" cy="142" r="3" fill="#fff" filter={`url(#${u}gl)`} style={{animationDelay:'0.35s'}}/>
+<circle className={`${u}np`} cx="144" cy="160" r="3" fill="#fff" filter={`url(#${u}gl)`} style={{animationDelay:'0.75s'}}/>
+<circle className={`${u}np`} cx="130" cy="144" r="3" fill="#fff" filter={`url(#${u}gl)`} style={{animationDelay:'1.15s'}}/>
+</g>
+<path className={`${u}sd`} d="M110 81 L91 89 L91 116 C91 130 101 141 110 146 C119 141 129 130 129 116 L129 89 Z" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeLinecap="round"/>
+<g filter={`url(#${u}ss)`}><path d="M110 85 L95 92 L95 116 C95 128 103 137 110 141 C117 137 125 128 125 116 L125 92 Z" fill={`url(#${u}sf)`} stroke="rgba(255,255,255,0.85)" strokeWidth="2.5" strokeLinejoin="round"/></g>
+<g className={`${u}lg`}>
+<rect x="103" y="110" width="14" height="10" rx="2.5" fill={`url(#${u}lf)`} stroke="#fff" strokeWidth="1.8"/>
+<path className={`${u}sk`} d="M106 110 L106 104.5 C106 101 107.8 99 110 99 C112.2 99 114 101 114 104.5 L114 110" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round"/>
+<circle cx="110" cy="115" r="2" fill="rgba(80,50,160,0.7)"/><path d="M109 116.5 L110 119.5 L111 116.5 Z" fill="rgba(80,50,160,0.7)"/>
+</g>
+<g opacity="0.55">
+<circle className={`${u}np`} cx="96" cy="100" r="1.8" fill="#fff" style={{animationDelay:'0.1s'}}/>
+<circle className={`${u}np`} cx="124" cy="100" r="1.8" fill="#fff" style={{animationDelay:'0.5s'}}/>
+<circle className={`${u}np`} cx="97" cy="124" r="1.5" fill="#fff" style={{animationDelay:'0.3s'}}/>
+<circle className={`${u}np`} cx="123" cy="124" r="1.5" fill="#fff" style={{animationDelay:'0.7s'}}/>
+<circle className={`${u}np`} cx="110" cy="87" r="1.5" fill="#fff" style={{animationDelay:'0.9s'}}/>
+</g>
+<g className={`${u}aL`}><path className={`${u}alL`} d="M106 90 C100 66 88 44 78 32" fill="none" stroke="rgba(255,255,255,0.65)" strokeWidth="2.2" strokeLinecap="round"/><circle className={`${u}atL`} cx="78" cy="32" r="3" fill="rgba(255,255,255,0.8)" filter={`url(#${u}tg)`}/></g>
+<g className={`${u}aR`}><path className={`${u}alR`} d="M114 90 C120 66 132 44 142 32" fill="none" stroke="rgba(255,255,255,0.65)" strokeWidth="2.2" strokeLinecap="round"/><circle className={`${u}atR`} cx="142" cy="32" r="3" fill="rgba(255,255,255,0.8)" filter={`url(#${u}tg)`}/></g>
+</g>
+</svg>};
 const ButterflyLogo=({s=48,accentRgb,accent,accent2,text,warn,flap})=>{
   const sw=s>=30?2.5:s>=18?1.8:1.2;
   const w1=`rgba(${accentRgb},0.5)`;
@@ -2125,9 +2191,7 @@ html{scroll-behavior:smooth}
       {/* ═══ LEFT SIDEBAR ═══ */}
       <div style={{width:260,minWidth:260,height:"100%",background:T.dark?"rgba(255,255,255,0.015)":"rgba(0,0,0,0.02)",borderRight:`1px solid ${T.bdr}`,display:"flex",flexDirection:"column"}}>
         <div style={{padding:"14px 12px 10px",display:"flex",alignItems:"center",gap:8}}>
-          <div style={{width:56,height:56,borderRadius:12,background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,overflow:"hidden"}}>
-            <ShieldLogo s={50} accentRgb="255,255,255" accent="#fff" accent2="#fff" text="rgba(255,255,255,0.9)" warn="rgba(255,255,255,0.95)" uid="scSb"/>
-          </div>
+          <div style={{flexShrink:0,borderRadius:12,overflow:"hidden"}}><SCLogo s={56}/></div>
           <span style={{fontSize:15,fontWeight:700,fontFamily:`${F.heading},sans-serif`,letterSpacing:1}}>ShieldCraft</span>
         </div>
 
@@ -2579,9 +2643,7 @@ html{scroll-behavior:smooth}
 
         {/* ─── EMPTY STATE ─── */}
         {pmView!=="add"&&pmView!=="edit"&&pmView!=="generator"&&pmView!=="threat"&&!selCred&&<div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:12}}>
-          <div style={{width:100,height:100,borderRadius:22,background:`rgba(${T.accentRgb},0.08)`,display:"flex",alignItems:"center",justifyContent:"center"}}>
-            <ShieldLogo s={64} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} uid="scEmpty"/>
-          </div>
+          <div style={{borderRadius:22,overflow:"hidden"}}><SCLogo s={100}/></div>
           <div style={{fontSize:16,fontWeight:600,color:T.dim,marginTop:8}}>Select an item</div>
           <div style={{fontSize:13,color:T.faint}}>Choose from the list or create a new item</div>
         </div>}
@@ -2795,8 +2857,8 @@ html{scroll-behavior:smooth}
       </>,
       "password-manager":<>
         <div style={{display:"flex",alignItems:"center",gap:2,marginBottom:0,marginTop:-24,marginLeft:-6}}>
-          <div style={{animation:"shieldEntrance 0.8s ease-out",filter:`drop-shadow(0 4px 12px rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.3))`,marginRight:-2}}>
-            <ShieldLogo s={80} accentRgb={pgQuantumSafe?"16,185,129":T.accentRgb} accent={pgQuantumSafe?"#10b981":T.accent} accent2={pgQuantumSafe?"#059669":T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} pulse uid="scPub"/>
+          <div style={{animation:"shieldEntrance 0.8s ease-out",filter:`drop-shadow(0 4px 12px rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.3))`,marginRight:-2,borderRadius:16,overflow:"hidden"}}>
+            <SCLogo s={80}/>
           </div>
           <div style={{marginTop:-10}}>
             <span className="sc-grad-title" style={{display:"inline-block",fontSize:32,fontWeight:800,fontFamily:`${F.heading},sans-serif`,letterSpacing:2,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${pgQuantumSafe?"#10b981":T.accent} 70%,${pgQuantumSafe?"#059669":T.accent2||T.accent})`,lineHeight:1.2}}>ShieldCraft</span>
@@ -2824,7 +2886,7 @@ html{scroll-behavior:smooth}
         {pmShowLogin&&<div style={{position:"fixed",inset:0,zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.6)",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)"}} onClick={e=>{if(e.target===e.currentTarget)setPmShowLogin(false)}}>
           <div style={{width:380,maxWidth:"90vw",background:T.dark?"rgba(16,18,27,0.95)":"rgba(30,32,44,0.95)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:`1px solid rgba(${T.accentRgb},0.2)`,borderRadius:20,padding:"32px 28px",boxShadow:`0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(${T.accentRgb},0.08)`,position:"relative"}}>
             <button onClick={()=>setPmShowLogin(false)} style={{position:"absolute",top:12,right:14,background:"none",border:"none",color:T.dim,fontSize:20,cursor:"pointer",padding:"4px 8px",lineHeight:1}}>x</button>
-            <div style={{display:"flex",justifyContent:"center",marginBottom:8}}><div style={{animation:"shieldEntrance 0.6s ease-out"}}><ShieldLogo s={52} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} uid="scMdl"/></div></div>
+            <div style={{display:"flex",justifyContent:"center",marginBottom:8}}><div style={{animation:"shieldEntrance 0.6s ease-out",borderRadius:12,overflow:"hidden"}}><SCLogo s={52}/></div></div>
             <h2 style={{fontSize:20,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.text,margin:"0 0 4px",letterSpacing:1,textAlign:"center"}}>{pmSignupMode?"Create Account":"Login to ShieldCraft"}</h2>
             <p style={{fontSize:11,color:T.dim,margin:"0 0 20px",textAlign:"center"}}>{pmSignupMode?"Create a NotesCraft account to store passwords":"Use your NotesCraft credentials"}</p>
             {!pmLogin2FA?<div style={{display:"flex",flexDirection:"column",gap:10}}>
