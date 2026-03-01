@@ -2128,29 +2128,17 @@ html{scroll-behavior:smooth}
         </div>{/* end flex container */}
 
         {/* Bottom */}
-        <div style={{borderTop:`1px solid ${T.bdr}`,padding:"6px 10px 4px"}}>
-          {/* Network sync status */}
-          <div style={{display:"flex",alignItems:"center",gap:8,padding:"6px 8px",marginBottom:2}}>
-            <span style={{width:8,height:8,borderRadius:"50%",background:!ncOnline?"#ef4444":ncQueueCount>0?"#f59e0b":"#10b981",boxShadow:`0 0 6px ${!ncOnline?"rgba(239,68,68,0.5)":ncQueueCount>0?"rgba(245,158,11,0.5)":"rgba(16,185,129,0.5)"}`,flexShrink:0}}/>
-            <span style={{fontSize:11,color:T.dim}}>{!ncOnline?(ncQueueCount>0?`Offline · ${ncQueueCount} pending`:"Offline"):ncQueueCount>0?`${ncQueueCount} pending`:"Synced"}</span>
+        <div style={{borderTop:`1px solid rgba(${T.accentRgb},0.08)`,background:T.dark?"rgba(255,255,255,0.01)":"rgba(255,255,255,0.2)"}}>
+          <div style={{display:"flex",alignItems:"center",gap:6,padding:"8px 12px"}}>
+            <div style={{width:24,height:24,borderRadius:6,background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:11,fontWeight:700,flexShrink:0}}>{(pmUserRef.current||email||"?")[0].toUpperCase()}</div>
+            <span style={{fontSize:13,color:T.dim,flex:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{pmUserRef.current||email}</span>
+            <button onClick={()=>setPmShowThemes(true)} className="sidebar-icon-btn" style={{background:"none",border:"none",color:T.faint,cursor:"pointer",padding:2,display:"flex"}} title="Themes"><IC.Palette/></button>
+            <button onClick={()=>{setPmView("generator");setPmSelectedId(null)}} className="sidebar-icon-btn" style={{background:"none",border:"none",color:pmView==="generator"?T.accent:T.faint,cursor:"pointer",padding:2,display:"flex"}} title="Generator"><IC.Settings/></button>
+            <button onClick={()=>{setPmIsLoggedIn(false);setPmCredentials([]);pmStorageRef.current=null;pmUserRef.current=null;pmLockAllGhosts()}} className="sidebar-icon-btn" style={{background:"none",border:"none",color:T.faint,cursor:"pointer",padding:2,display:"flex"}} title="Lock ShieldCraft"><IC.Logout/></button>
           </div>
-          <button className={pmView==="generator"?"sc-vault-btn active":"sc-bottom-btn"} onClick={()=>{setPmView("generator");setPmSelectedId(null)}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",background:pmView==="generator"?`rgba(${T.accentRgb},0.1)`:"transparent",border:"none",borderRadius:8,color:pmView==="generator"?T.accent:T.dim,fontSize:13,fontFamily:"inherit",textAlign:"left",cursor:"pointer"}}>
-            <span>⚡</span><span>Generator</span>
-          </button>
-          <button className="sc-bottom-btn" onClick={()=>setPmShowThemes(true)} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",background:"transparent",border:"none",borderRadius:8,color:T.dim,fontSize:13,fontFamily:"inherit",textAlign:"left",cursor:"pointer"}}>
-            <span>🎨</span><span>Themes</span>
-          </button>
-          <button className="sc-bottom-btn" onClick={()=>{setPmIsLoggedIn(false);setPmCredentials([]);pmStorageRef.current=null;pmUserRef.current=null;pmLockAllGhosts()}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",background:"transparent",border:"none",borderRadius:8,color:T.dim,fontSize:13,fontFamily:"inherit",textAlign:"left",cursor:"pointer"}}>
-            <span>🔒</span><span>Lock ShieldCraft</span>
-          </button>
-          <button className="sc-bottom-btn" onClick={()=>{setInfoPage(null);setShowLanding(true)}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",marginBottom:4,background:"transparent",border:"none",borderRadius:8,color:T.dim,fontSize:13,fontFamily:"inherit",textAlign:"left",cursor:"pointer"}}>
-            <span>🦋</span><span>NotesCraft</span>
-          </button>
-          <div style={{display:"flex",alignItems:"center",gap:8,padding:"10px 8px 8px",borderTop:`1px solid ${T.bdr}`}}>
-            <div style={{width:32,height:32,borderRadius:"50%",background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:13,fontWeight:700,flexShrink:0}}>{(pmUserRef.current||email||"?")[0].toUpperCase()}</div>
-            <div style={{flex:1,overflow:"hidden"}}>
-              <div style={{fontSize:12,fontWeight:600,color:T.text,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{pmUserRef.current||email}</div>
-            </div>
+          <div style={{display:"flex",alignItems:"center",gap:6,padding:"4px 12px 8px"}}>
+            <div style={{width:6,height:6,borderRadius:"50%",background:!ncOnline?"#ef4444":ncQueueCount>0?"#f59e0b":"#10b981",boxShadow:`0 0 4px ${!ncOnline?"rgba(239,68,68,0.5)":ncQueueCount>0?"rgba(245,158,11,0.5)":"rgba(16,185,129,0.5)"}`}}/>
+            <span style={{fontSize:11,color:T.faint,flex:1}}>{!ncOnline?(ncQueueCount>0?`Offline · ${ncQueueCount} pending`:"Offline"):ncQueueCount>0?`${ncQueueCount} pending`:"Synced"}</span>
           </div>
         </div>
       </div>
