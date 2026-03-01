@@ -1,6 +1,6 @@
 import React,{ useState, useEffect, useRef, useCallback, useMemo } from "react";
 import zxcvbn from "zxcvbn";
-import { generateSalt, deriveKey, hashPassword, exportKey, importKey, generateTOTPSecret, verifyTOTP, generateTOTP, getTOTPRemaining, generateRecoveryCodes } from "./crypto.js";
+import { generateSalt, deriveKey, hashPassword, exportKey, importKey, generateTOTPSecret, verifyTOTP, generateTOTP, getTOTPRemaining, generateRecoveryCodes, encrypt, decrypt } from "./crypto.js";
 import { createSyncAdapter } from "./sync.js";
 import { EncryptedStorage } from "./storage.js";
 
@@ -555,6 +555,13 @@ export default function NotesCraft(){
   // Network sync state
   const[ncOnline,setNcOnline]=useState(typeof navigator!=='undefined'?navigator.onLine:true);
   const[ncQueueCount,setNcQueueCount]=useState(0);
+  // Import/Export state
+  const[pmImportData,setPmImportData]=useState(null);
+  const[pmImportErr,setPmImportErr]=useState("");
+  const[pmImportExTab,setPmImportExTab]=useState("import");
+  const[pmExportFormat,setPmExportFormat]=useState("csv");
+  const[pmExportDone,setPmExportDone]=useState(false);
+  const pmFileRef=useRef(null);
   // 2FA state
   const[twoFASetup,setTwoFASetup]=useState(null);
   const[twoFAStep,setTwoFAStep]=useState(1);
@@ -702,6 +709,109 @@ export default function NotesCraft(){
     const stRef=pmStorageRef.current||storageRef.current;
     const uRef=pmUserRef.current||(user&&email);
     if(stRef&&uRef){try{await stRef.setPasswords(typeof uRef==="string"?uRef:uRef.email||email,{__v:2,credentials:cr,vaultDefs:vd})}catch(e){console.error("PM save failed",e)}}
+  };
+  // ─── Import/Export helpers ───
+  const parseImportCSV=(text)=>{
+    const lines=text.split(/\r?\n/).filter(l=>l.trim());
+    if(lines.length<2)return null;
+    // Parse CSV line respecting quotes
+    const parseLine=(line)=>{
+      const r=[];let cur="",inQ=false;
+      for(let i=0;i<line.length;i++){
+        const ch=line[i];
+        if(ch==='"'){if(inQ&&line[i+1]==='"'){cur+='"';i++}else inQ=!inQ}
+        else if(ch===','&&!inQ){r.push(cur);cur=""}
+        else cur+=ch;
+      }
+      r.push(cur);return r.map(s=>s.trim());
+    };
+    const hdr=parseLine(lines[0]).map(h=>h.toLowerCase().replace(/[^a-z0-9_]/g,''));
+    // Detect source
+    let source="Unknown",colMap={};
+    if(hdr.includes('login_uri')||hdr.includes('login_username')){
+      source="Bitwarden";
+      colMap={name:hdr.indexOf('name'),url:hdr.indexOf('login_uri'),user:hdr.indexOf('login_username'),pw:hdr.indexOf('login_password'),notes:hdr.indexOf('notes'),totp:hdr.indexOf('login_totp'),folder:hdr.indexOf('folder')};
+    }else if(hdr.includes('title')&&hdr.includes('username')){
+      source="1Password";
+      colMap={name:hdr.indexOf('title'),url:hdr.indexOf('url'),user:hdr.indexOf('username'),pw:hdr.indexOf('password'),notes:hdr.indexOf('notes'),totp:hdr.indexOf('totp'),folder:hdr.indexOf('vault')};
+    }else if(hdr.includes('grouping')){
+      source="LastPass";
+      colMap={name:hdr.indexOf('name'),url:hdr.indexOf('url'),user:hdr.indexOf('username'),pw:hdr.indexOf('password'),notes:hdr.indexOf('extra'),totp:hdr.indexOf('totp'),folder:hdr.indexOf('grouping')};
+    }else if(hdr.includes('name')&&hdr.includes('url')&&hdr.includes('password')){
+      source="Chrome";
+      colMap={name:hdr.indexOf('name'),url:hdr.indexOf('url'),user:hdr.indexOf('username'),pw:hdr.indexOf('password'),notes:hdr.indexOf('note')===-1?hdr.indexOf('notes'):hdr.indexOf('note')};
+    }else{
+      source="Generic";
+      const find=(...ks)=>{for(const k of ks){const i=hdr.findIndex(h=>h.includes(k));if(i!==-1)return i}return -1};
+      colMap={name:find('name','site','title'),url:find('url','website','uri'),user:find('user','login','email'),pw:find('pass','pwd','password'),notes:find('note','extra','comment'),totp:find('totp','otp','2fa'),folder:find('folder','group','vault')};
+    }
+    const g=(row,k)=>colMap[k]!=null&&colMap[k]>=0&&colMap[k]<row.length?row[colMap[k]]:"";
+    const creds=[];
+    for(let i=1;i<lines.length;i++){
+      const row=parseLine(lines[i]);
+      if(row.length<2)continue;
+      const pw=g(row,'pw'),name=g(row,'name'),user=g(row,'user');
+      if(!pw&&!name&&!user)continue;
+      creds.push({id:"pm_"+crypto.randomUUID(),type:"login",siteName:name,siteUrl:g(row,'url'),username:user,password:pw,notes:g(row,'notes'),totpSecret:g(row,'totp'),folder:g(row,'folder'),starred:false,cardNumber:"",cardExpiry:"",cardCvv:"",cardHolder:"",fullName:"",phone:"",address:"",created:new Date().toISOString(),modified:new Date().toISOString()});
+    }
+    return{source,credentials:creds,count:creds.length};
+  };
+  const parseImportJSON=(text)=>{
+    const data=JSON.parse(text);
+    const arr=Array.isArray(data)?data:data.credentials||data.items||[];
+    const creds=arr.map(c=>({id:"pm_"+crypto.randomUUID(),type:c.type||"login",siteName:c.siteName||c.name||"",siteUrl:c.siteUrl||c.url||"",username:c.username||c.user||"",password:c.password||c.pw||"",notes:c.notes||"",totpSecret:c.totpSecret||c.totp||"",folder:c.folder||"",starred:!!c.starred,cardNumber:c.cardNumber||"",cardExpiry:c.cardExpiry||"",cardCvv:c.cardCvv||"",cardHolder:c.cardHolder||"",fullName:c.fullName||"",phone:c.phone||"",address:c.address||"",created:c.created||new Date().toISOString(),modified:new Date().toISOString()}));
+    return{source:"ShieldCraft JSON",credentials:creds,count:creds.length};
+  };
+  const handleImportFile=async(file)=>{
+    setPmImportErr("");setPmImportData(null);
+    try{
+      const text=await file.text();
+      const ext=file.name.split('.').pop().toLowerCase();
+      let result;
+      if(ext==='shieldcraft'){
+        const enc=JSON.parse(text);
+        const stRef=pmStorageRef.current||storageRef.current;
+        if(!stRef||!stRef.key){setPmImportErr("Must be logged in to import encrypted files");return}
+        const plain=await decrypt(stRef.key,enc);
+        result=parseImportJSON(plain);
+        result.source="ShieldCraft Encrypted";
+      }else if(ext==='csv'||ext==='txt'){
+        result=parseImportCSV(text);
+      }else{
+        result=parseImportJSON(text);
+      }
+      if(!result||!result.count){setPmImportErr("No credentials found in file");return}
+      setPmImportData(result);
+    }catch(e){setPmImportErr("Failed to parse file: "+e.message)}
+  };
+  const confirmImport=async()=>{
+    if(!pmImportData)return;
+    const merged=[...pmCredentials,...pmImportData.credentials];
+    await pmSave(merged);
+    setPmImportData(null);setPmImportErr("");
+  };
+  const doExport=async(format)=>{
+    const creds=pmCredentials;
+    let content,mime,ext;
+    if(format==="csv"){
+      const esc=(s)=>'"'+(s||"").replace(/"/g,'""')+'"';
+      const hdr="name,url,username,password,notes,totp,folder,type";
+      const rows=creds.map(c=>[esc(c.siteName),esc(c.siteUrl),esc(c.username),esc(c.password),esc(c.notes),esc(c.totpSecret),esc(c.folder),esc(c.type)].join(","));
+      content=hdr+"\n"+rows.join("\n");mime="text/csv";ext="csv";
+    }else if(format==="json"){
+      content=JSON.stringify(creds,null,2);mime="application/json";ext="json";
+    }else{
+      const stRef=pmStorageRef.current||storageRef.current;
+      if(!stRef||!stRef.key){setPmImportErr("Must be logged in to export encrypted");return}
+      const enc=await encrypt(stRef.key,JSON.stringify(creds));
+      content=JSON.stringify(enc);mime="application/json";ext="shieldcraft";
+    }
+    const blob=new Blob([content],{type:mime});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;a.download=`shieldcraft-export-${new Date().toISOString().slice(0,10)}.${ext}`;
+    document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+    setPmExportDone(true);setTimeout(()=>setPmExportDone(false),3000);
   };
   const pmAddCredential=()=>{
     const cred={id:"pm_"+crypto.randomUUID(),type:pmFormType,siteName:pmFormSite,siteUrl:pmFormUrl,username:pmFormUser,password:pmFormPw,notes:pmFormNotes,totpSecret:pmFormTotp,folder:pmFormFolder,starred:pmFormStarred,cardNumber:pmFormCardNum,cardExpiry:pmFormCardExp,cardCvv:pmFormCardCvv,cardHolder:pmFormCardHolder,fullName:pmFormFullName,phone:pmFormPhone,address:pmFormAddress,created:new Date().toISOString(),modified:new Date().toISOString()};
@@ -2004,7 +2114,7 @@ html{scroll-behavior:smooth}
 .sc-dd button{width:100%;display:flex;align-items:center;gap:10px;padding:8px 12px;background:transparent;border:none;border-radius:6px;color:${T.text};font-size:13px;font-family:inherit;cursor:pointer;text-align:left;transition:all 0.15s}
 .sc-dd button:hover{background:rgba(${T.accentRgb},0.08)}
 `;
-    const rpActive=pmSelectedId||pmView==="add"||pmView==="edit"||pmView==="generator"||pmView==="threat";
+    const rpActive=pmSelectedId||pmView==="add"||pmView==="edit"||pmView==="generator"||pmView==="threat"||pmView==="import-export";
     const gridWide=pmViewMode==="grid"&&!rpActive;
     return(<div style={{width:"100vw",height:"100vh",display:"flex",background:T.bg,fontFamily:`${F.body},sans-serif`,color:T.text,overflow:"hidden"}}>
       <style>{css}{vCss}</style>
@@ -2121,6 +2231,14 @@ html{scroll-behavior:smooth}
             <span style={{flex:1,fontWeight:500}}>Generator</span>
           </button>
 
+          {/* Import / Export */}
+          <button className={`sc-vault-btn${pmView==="import-export"?" active":""}`} onClick={()=>{setPmFolderFilter(null);setPmView("import-export");setPmSelectedId(null);setPmImportData(null);setPmImportErr("")}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",marginBottom:1,background:"transparent",border:"none",borderRadius:8,color:pmView==="import-export"?T.text:T.dim,fontSize:13,fontFamily:"inherit",cursor:"pointer",textAlign:"left"}}>
+            <span style={{width:28,height:28,borderRadius:8,background:"rgba(59,130,246,0.12)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,flexShrink:0}}>
+              <IC.Download/>
+            </span>
+            <span style={{flex:1,fontWeight:500}}>Import / Export</span>
+          </button>
+
           <div style={{height:1,background:T.bdr,margin:"8px 6px 4px"}}/>
 
           {/* Ghost Shield unlock */}
@@ -2150,7 +2268,7 @@ html{scroll-behavior:smooth}
       </div>
 
       {/* ═══ MIDDLE COLUMN ═══ */}
-      {pmView!=="threat"&&<div style={{...(gridWide?{flex:1,minWidth:350}:{width:350,minWidth:350}),height:"100%",borderRight:gridWide?"none":`1px solid ${T.bdr}`,display:"flex",flexDirection:"column",background:T.dark?"rgba(255,255,255,0.008)":"rgba(0,0,0,0.01)"}}>
+      {pmView!=="threat"&&pmView!=="import-export"&&<div style={{...(gridWide?{flex:1,minWidth:350}:{width:350,minWidth:350}),height:"100%",borderRight:gridWide?"none":`1px solid ${T.bdr}`,display:"flex",flexDirection:"column",background:T.dark?"rgba(255,255,255,0.008)":"rgba(0,0,0,0.01)"}}>
         <div style={{padding:"14px 16px 0"}}>
           <div style={{position:"relative",marginBottom:12}}>
             <span style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",color:T.dim,fontSize:14,pointerEvents:"none"}}>🔍</span>
@@ -2397,6 +2515,87 @@ html{scroll-behavior:smooth}
           </div>
         </div>}
 
+        {/* ─── IMPORT / EXPORT VIEW ─── */}
+        {pmView==="import-export"&&<div style={{flex:1,overflowY:"auto",padding:"32px 40px"}}>
+          <div style={{maxWidth:900,margin:"0 auto"}}>
+            <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:24}}>
+              <div style={{width:56,height:56,borderRadius:14,background:"rgba(59,130,246,0.08)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:28}}>
+                <IC.Download/>
+              </div>
+              <div><h2 style={{fontSize:22,fontWeight:700,fontFamily:`${F.heading},sans-serif`,margin:0}}>Import / Export</h2><div style={{fontSize:12,color:T.dim,marginTop:2}}>Migrate passwords or create backups</div></div>
+              <button onClick={()=>setPmView("list")} style={{marginLeft:"auto",padding:"7px 14px",background:"transparent",border:`1px solid ${T.bdr}`,borderRadius:8,color:T.dim,fontSize:12,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>Back</button>
+            </div>
+
+            {/* Tabs */}
+            <div style={{display:"flex",gap:0,marginBottom:24,background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.04)",borderRadius:10,padding:3,border:`1px solid ${T.bdr}`}}>
+              {["import","export"].map(tab=><button key={tab} onClick={()=>{setPmImportExTab(tab);setPmImportErr("");setPmImportData(null)}} style={{flex:1,padding:"10px 0",borderRadius:8,border:"none",background:pmImportExTab===tab?`rgba(${T.accentRgb},0.15)`:"transparent",color:pmImportExTab===tab?T.accent:T.dim,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5,transition:"all 0.2s"}}>{tab==="import"?"Import":"Export"}</button>)}
+            </div>
+
+            {/* ── IMPORT TAB ── */}
+            {pmImportExTab==="import"&&<div>
+              <div style={{padding:"12px 16px",borderRadius:12,background:T.dark?"rgba(59,130,246,0.06)":"rgba(59,130,246,0.04)",border:`1px solid rgba(59,130,246,0.15)`,marginBottom:20}}>
+                <div style={{fontSize:12,color:"#3b82f6",fontWeight:600,marginBottom:4}}>Supported Formats</div>
+                <div style={{fontSize:11,color:T.dim,lineHeight:1.6}}>CSV from Chrome, Bitwarden, 1Password, LastPass, or any password manager. JSON (ShieldCraft format). Encrypted .shieldcraft files.</div>
+              </div>
+
+              {/* Drop zone */}
+              <div onDragOver={e=>{e.preventDefault();e.currentTarget.style.borderColor=T.accent}} onDragLeave={e=>{e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.2)`}} onDrop={e=>{e.preventDefault();e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.2)`;const f=e.dataTransfer.files[0];if(f)handleImportFile(f)}} onClick={()=>pmFileRef.current&&pmFileRef.current.click()} style={{border:`2px dashed rgba(${T.accentRgb},0.2)`,borderRadius:16,padding:"48px 20px",textAlign:"center",cursor:"pointer",transition:"all 0.2s",background:T.dark?"rgba(255,255,255,0.02)":"rgba(0,0,0,0.02)"}}>
+                <input ref={pmFileRef} type="file" accept=".csv,.json,.txt,.shieldcraft" style={{display:"none"}} onChange={e=>{const f=e.target.files[0];if(f)handleImportFile(f);e.target.value=""}}/>
+                <div style={{fontSize:40,marginBottom:12,opacity:0.5}}>📂</div>
+                <div style={{fontSize:14,fontWeight:600,color:T.text,marginBottom:4}}>Drop file here or click to browse</div>
+                <div style={{fontSize:11,color:T.dim}}>Accepts .csv, .json, or .shieldcraft files</div>
+              </div>
+
+              {/* Error */}
+              {pmImportErr&&<div style={{marginTop:16,padding:"10px 14px",borderRadius:10,background:"rgba(239,68,68,0.08)",border:"1px solid rgba(239,68,68,0.2)",color:"#ef4444",fontSize:12}}>{pmImportErr}</div>}
+
+              {/* Preview */}
+              {pmImportData&&<div style={{marginTop:20}}>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
+                  <div>
+                    <div style={{fontSize:14,fontWeight:600,color:T.text}}>Found {pmImportData.count} credentials</div>
+                    <div style={{fontSize:11,color:T.dim,marginTop:2}}>Source: {pmImportData.source}</div>
+                  </div>
+                  <button onClick={confirmImport} style={{padding:"10px 24px",background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:10,color:"#fff",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit",boxShadow:`0 4px 16px rgba(${T.accentRgb},0.35)`}}>Import All</button>
+                </div>
+                <div style={{borderRadius:12,border:`1px solid ${T.bdr}`,overflow:"hidden"}}>
+                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",padding:"8px 14px",background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",fontSize:10,fontWeight:700,color:T.dim,textTransform:"uppercase",letterSpacing:0.5}}>
+                    <span>Name</span><span>Username</span><span>URL</span>
+                  </div>
+                  {pmImportData.credentials.slice(0,10).map((c,i)=><div key={i} style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",padding:"8px 14px",borderTop:`1px solid ${T.bdr}`,fontSize:12}}>
+                    <span style={{color:T.text,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{c.siteName||"—"}</span>
+                    <span style={{color:T.dim,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{c.username||"—"}</span>
+                    <span style={{color:T.faint,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{c.siteUrl||"—"}</span>
+                  </div>)}
+                  {pmImportData.count>10&&<div style={{padding:"8px 14px",textAlign:"center",fontSize:11,color:T.dim,borderTop:`1px solid ${T.bdr}`}}>...and {pmImportData.count-10} more</div>}
+                </div>
+              </div>}
+            </div>}
+
+            {/* ── EXPORT TAB ── */}
+            {pmImportExTab==="export"&&<div>
+              <div style={{padding:"12px 16px",borderRadius:12,background:"rgba(245,158,11,0.06)",border:"1px solid rgba(245,158,11,0.15)",marginBottom:20}}>
+                <div style={{fontSize:12,color:"#f59e0b",fontWeight:600,marginBottom:4}}>Security Warning</div>
+                <div style={{fontSize:11,color:T.dim,lineHeight:1.6}}>CSV and JSON exports contain your passwords in plaintext. Store the exported file securely and delete it when no longer needed. Use Encrypted format for maximum security.</div>
+              </div>
+
+              <div style={{fontSize:13,fontWeight:600,color:T.text,marginBottom:12}}>Choose export format</div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12,marginBottom:24}}>
+                {[{id:"csv",icon:"📊",name:"CSV",desc:"Universal format — works with Chrome, Bitwarden, 1Password, and more"},{id:"json",icon:"📋",name:"JSON",desc:"Full ShieldCraft format with all fields and metadata"},{id:"encrypted",icon:"🔒",name:"Encrypted",desc:"AES-256 encrypted — can only be imported back into ShieldCraft"}].map(fmt=><button key={fmt.id} onClick={()=>setPmExportFormat(fmt.id)} style={{padding:"20px 16px",borderRadius:14,border:`2px solid ${pmExportFormat===fmt.id?T.accent:`rgba(${T.accentRgb},0.12)`}`,background:pmExportFormat===fmt.id?`rgba(${T.accentRgb},0.06)`:"transparent",cursor:"pointer",textAlign:"center",transition:"all 0.2s"}}>
+                  <div style={{fontSize:28,marginBottom:8}}>{fmt.icon}</div>
+                  <div style={{fontSize:14,fontWeight:700,color:T.text,marginBottom:4}}>{fmt.name}</div>
+                  <div style={{fontSize:11,color:T.dim,lineHeight:1.5}}>{fmt.desc}</div>
+                </button>)}
+              </div>
+
+              <div style={{display:"flex",alignItems:"center",gap:16}}>
+                <button onClick={()=>doExport(pmExportFormat)} disabled={!pmCredentials.length} style={{padding:"12px 32px",background:pmCredentials.length?`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`:"rgba(128,128,128,0.2)",border:"none",borderRadius:10,color:pmCredentials.length?"#fff":T.dim,fontSize:14,fontWeight:700,cursor:pmCredentials.length?"pointer":"not-allowed",fontFamily:"inherit",boxShadow:pmCredentials.length?`0 4px 16px rgba(${T.accentRgb},0.35)`:"none"}}>Export {pmCredentials.length} Credentials</button>
+                {pmExportDone&&<span style={{fontSize:13,color:"#10b981",fontWeight:600}}>Downloaded!</span>}
+              </div>
+            </div>}
+          </div>
+        </div>}
+
         {/* ─── THREATSHIELD VIEW ─── */}
         {pmView==="threat"&&<div style={{flex:1,overflowY:"auto",padding:"32px 40px"}}>
           <div style={{maxWidth:900,margin:"0 auto"}}>
@@ -2429,7 +2628,7 @@ html{scroll-behavior:smooth}
         </div>}
 
         {/* ─── DETAIL VIEW ─── */}
-        {pmView!=="add"&&pmView!=="edit"&&pmView!=="generator"&&pmView!=="threat"&&selCred&&<div style={{flex:1,overflowY:"auto",padding:"32px 40px"}}>
+        {pmView!=="add"&&pmView!=="edit"&&pmView!=="generator"&&pmView!=="threat"&&pmView!=="import-export"&&selCred&&<div style={{flex:1,overflowY:"auto",padding:"32px 40px"}}>
           {selCred.breachCheck&&selCred.breachCheck.breached&&<div style={{display:"flex",alignItems:"center",gap:12,padding:"14px 16px",borderRadius:12,background:"rgba(239,68,68,0.06)",border:"1px solid rgba(239,68,68,0.2)",marginBottom:16}}><span style={{fontSize:20}}>⚠️</span><div style={{flex:1}}><div style={{fontSize:13,fontWeight:700,color:"#ef4444"}}>Password Compromised</div><div style={{fontSize:11,color:T.dim}}>Found in {selCred.breachCheck.count.toLocaleString()} known data breaches. Change your password immediately.</div></div><button onClick={()=>pmEditCredential(selCred)} style={{padding:"6px 14px",background:"rgba(239,68,68,0.1)",border:"1px solid rgba(239,68,68,0.3)",borderRadius:8,color:"#ef4444",fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>Change Password</button></div>}
           <div style={{marginBottom:28}}>
             <div style={{display:"flex",alignItems:"flex-start",gap:16,marginBottom:16}}>
@@ -2481,7 +2680,7 @@ html{scroll-behavior:smooth}
         </div>}
 
         {/* ─── EMPTY STATE ─── */}
-        {pmView!=="add"&&pmView!=="edit"&&pmView!=="generator"&&pmView!=="threat"&&!selCred&&!pmShowThemes&&<div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:12}}>
+        {pmView!=="add"&&pmView!=="edit"&&pmView!=="generator"&&pmView!=="threat"&&pmView!=="import-export"&&!selCred&&!pmShowThemes&&<div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:12}}>
           <div style={{width:100,height:100,borderRadius:22,background:`rgba(${T.accentRgb},0.08)`,display:"flex",alignItems:"center",justifyContent:"center"}}>
             <ShieldLogo s={64} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} uid="scEmpty"/>
           </div>
