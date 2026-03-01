@@ -178,7 +178,7 @@ const IC = {
 };
 
 /* Butterfly logo — geometric origami, exact match to reference */
-const SCLogo=({s=60,animate=true})=>{const u='scl'+Math.random().toString(36).slice(2,6);return<svg viewBox="0 0 220 220" width={s} height={s} xmlns="http://www.w3.org/2000/svg" draggable={false} onContextMenu={e=>e.preventDefault()} style={{userSelect:'none',WebkitUserDrag:'none',msUserSelect:'none'}}>
+let _sclId=0;const SCLogo=({s=60,animate=true})=>{const uRef=useRef('scl'+(_sclId++));const u=uRef.current;return<svg viewBox="0 0 220 220" width={s} height={s} xmlns="http://www.w3.org/2000/svg" draggable={false} onContextMenu={e=>e.preventDefault()} style={{display:'block',userSelect:'none',WebkitUserDrag:'none',msUserSelect:'none'}}>
 <defs>
 <linearGradient id={`${u}bg`} x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#00AAFF"/><stop offset="40%" stopColor="#6040E8"/><stop offset="100%" stopColor="#A030C8"/></linearGradient>
 <linearGradient id={`${u}sf`} x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor="rgba(180,220,255,0.55)"/><stop offset="100%" stopColor="rgba(120,160,255,0.35)"/></linearGradient>
@@ -2191,7 +2191,7 @@ html{scroll-behavior:smooth}
       {/* ═══ LEFT SIDEBAR ═══ */}
       <div style={{width:260,minWidth:260,height:"100%",background:T.dark?"rgba(255,255,255,0.015)":"rgba(0,0,0,0.02)",borderRight:`1px solid ${T.bdr}`,display:"flex",flexDirection:"column"}}>
         <div style={{padding:"14px 12px 10px",display:"flex",alignItems:"center",gap:8}}>
-          <div style={{flexShrink:0,borderRadius:12,overflow:"hidden"}}><SCLogo s={56}/></div>
+          <div style={{width:32,height:32,borderRadius:8,flexShrink:0,overflow:"hidden"}}><SCLogo s={32}/></div>
           <span style={{fontSize:15,fontWeight:700,fontFamily:`${F.heading},sans-serif`,letterSpacing:1}}>ShieldCraft</span>
         </div>
 
@@ -2643,7 +2643,7 @@ html{scroll-behavior:smooth}
 
         {/* ─── EMPTY STATE ─── */}
         {pmView!=="add"&&pmView!=="edit"&&pmView!=="generator"&&pmView!=="threat"&&!selCred&&<div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:12}}>
-          <div style={{borderRadius:22,overflow:"hidden"}}><SCLogo s={100}/></div>
+          <div style={{width:80,height:80,borderRadius:18,overflow:"hidden"}}><SCLogo s={80}/></div>
           <div style={{fontSize:16,fontWeight:600,color:T.dim,marginTop:8}}>Select an item</div>
           <div style={{fontSize:13,color:T.faint}}>Choose from the list or create a new item</div>
         </div>}
@@ -2857,8 +2857,8 @@ html{scroll-behavior:smooth}
       </>,
       "password-manager":<>
         <div style={{display:"flex",alignItems:"center",gap:2,marginBottom:0,marginTop:-24,marginLeft:-6}}>
-          <div style={{animation:"shieldEntrance 0.8s ease-out",filter:`drop-shadow(0 4px 12px rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.3))`,marginRight:-2,borderRadius:16,overflow:"hidden"}}>
-            <SCLogo s={80}/>
+          <div style={{animation:"shieldEntrance 0.8s ease-out",filter:`drop-shadow(0 4px 12px rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.3))`,marginRight:-2,width:72,height:72,borderRadius:16,overflow:"hidden"}}>
+            <SCLogo s={72}/>
           </div>
           <div style={{marginTop:-10}}>
             <span className="sc-grad-title" style={{display:"inline-block",fontSize:32,fontWeight:800,fontFamily:`${F.heading},sans-serif`,letterSpacing:2,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${pgQuantumSafe?"#10b981":T.accent} 70%,${pgQuantumSafe?"#059669":T.accent2||T.accent})`,lineHeight:1.2}}>ShieldCraft</span>
@@ -2886,7 +2886,7 @@ html{scroll-behavior:smooth}
         {pmShowLogin&&<div style={{position:"fixed",inset:0,zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.6)",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)"}} onClick={e=>{if(e.target===e.currentTarget)setPmShowLogin(false)}}>
           <div style={{width:380,maxWidth:"90vw",background:T.dark?"rgba(16,18,27,0.95)":"rgba(30,32,44,0.95)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:`1px solid rgba(${T.accentRgb},0.2)`,borderRadius:20,padding:"32px 28px",boxShadow:`0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(${T.accentRgb},0.08)`,position:"relative"}}>
             <button onClick={()=>setPmShowLogin(false)} style={{position:"absolute",top:12,right:14,background:"none",border:"none",color:T.dim,fontSize:20,cursor:"pointer",padding:"4px 8px",lineHeight:1}}>x</button>
-            <div style={{display:"flex",justifyContent:"center",marginBottom:8}}><div style={{animation:"shieldEntrance 0.6s ease-out",borderRadius:12,overflow:"hidden"}}><SCLogo s={52}/></div></div>
+            <div style={{display:"flex",justifyContent:"center",marginBottom:8}}><div style={{animation:"shieldEntrance 0.6s ease-out",width:52,height:52,borderRadius:12,overflow:"hidden"}}><SCLogo s={52}/></div></div>
             <h2 style={{fontSize:20,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.text,margin:"0 0 4px",letterSpacing:1,textAlign:"center"}}>{pmSignupMode?"Create Account":"Login to ShieldCraft"}</h2>
             <p style={{fontSize:11,color:T.dim,margin:"0 0 20px",textAlign:"center"}}>{pmSignupMode?"Create a NotesCraft account to store passwords":"Use your NotesCraft credentials"}</p>
             {!pmLogin2FA?<div style={{display:"flex",flexDirection:"column",gap:10}}>
