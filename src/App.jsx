@@ -552,6 +552,9 @@ export default function NotesCraft(){
   const[pmGhostNewCode,setPmGhostNewCode]=useState("");
   const pmStorageRef=useRef(null);
   const pmUserRef=useRef(null);
+  // Network sync state
+  const[ncOnline,setNcOnline]=useState(typeof navigator!=='undefined'?navigator.onLine:true);
+  const[ncQueueCount,setNcQueueCount]=useState(0);
   // 2FA state
   const[twoFASetup,setTwoFASetup]=useState(null);
   const[twoFAStep,setTwoFAStep]=useState(1);
@@ -777,6 +780,7 @@ export default function NotesCraft(){
     setPmLoginErr("");setPmLoginLoad(true);
     try{
       const adapter=await createSyncAdapter();
+      adapter._onStatusChange=(o,q)=>{setNcOnline(o);setNcQueueCount(q)};
       const em=pmLoginEmail.toLowerCase();
       const tempEs=new EncryptedStorage(adapter,null);
       const u=await tempEs.getUser(em);
@@ -810,6 +814,7 @@ export default function NotesCraft(){
     setPmLoginLoad(true);
     try{
       const adapter=await createSyncAdapter();
+      adapter._onStatusChange=(o,q)=>{setNcOnline(o);setNcQueueCount(q)};
       const em=pmLoginEmail.toLowerCase();
       const salt=generateSalt();
       const key=await deriveKey(pmLoginPw,salt);
@@ -884,6 +889,7 @@ export default function NotesCraft(){
       try{
         const key=await importKey(sess.key);
         const adapter=await createSyncAdapter();
+        adapter._onStatusChange=(o,q)=>{setNcOnline(o);setNcQueueCount(q)};
         const em=sess.email;
         const es=new EncryptedStorage(adapter,key);
         const u=await es.getUser(em);
@@ -943,6 +949,7 @@ export default function NotesCraft(){
     }catch{}
     try{
       const adapter=await createSyncAdapter();
+      adapter._onStatusChange=(o,q)=>{setNcOnline(o);setNcQueueCount(q)};
       const em=email.toLowerCase();
       // Generate salt, derive key, hash password
       const salt=generateSalt();
@@ -976,6 +983,7 @@ export default function NotesCraft(){
     setAuthLoad(true);
     try{
       const adapter=await createSyncAdapter();
+      adapter._onStatusChange=(o,q)=>{setNcOnline(o);setNcQueueCount(q)};
       const em=email.toLowerCase();
       // We need a temporary EncryptedStorage to look up user (with hashed key + migration)
       // For legacy lookup, we don't have a real key yet, but getUser doesn't need it
@@ -1051,7 +1059,8 @@ export default function NotesCraft(){
     flushSave();
     clearSession();
     if(reminderIntervalRef.current){clearInterval(reminderIntervalRef.current);reminderIntervalRef.current=null}
-    if(storageRef.current){storageRef.current.unsubscribe();storageRef.current=null}
+    if(storageRef.current){if(storageRef.current.adapter&&storageRef.current.adapter.destroy)storageRef.current.adapter.destroy();storageRef.current.unsubscribe();storageRef.current=null}
+    setNcOnline(true);setNcQueueCount(0);
     setUser(null);setAuthMode("login");setEmail("");setPw("");setUname("");
     setNotes([]);setSelId(null);setETitle("");setEBlocks([]);
     setQuotaGB(100);setStorageBytes(0);setQuotaWarn(null);setShowHistory(false);setHistoryPreview(null);
@@ -2118,6 +2127,11 @@ html{scroll-behavior:smooth}
 
         {/* Bottom */}
         <div style={{borderTop:`1px solid ${T.bdr}`,padding:"6px 10px 4px"}}>
+          {/* Network sync status */}
+          <div style={{display:"flex",alignItems:"center",gap:8,padding:"6px 8px",marginBottom:2}}>
+            <span style={{width:8,height:8,borderRadius:"50%",background:!ncOnline?"#ef4444":ncQueueCount>0?"#f59e0b":"#10b981",boxShadow:`0 0 6px ${!ncOnline?"rgba(239,68,68,0.5)":ncQueueCount>0?"rgba(245,158,11,0.5)":"rgba(16,185,129,0.5)"}`,flexShrink:0}}/>
+            <span style={{fontSize:11,color:T.dim}}>{!ncOnline?(ncQueueCount>0?`Offline · ${ncQueueCount} pending`:"Offline"):ncQueueCount>0?`${ncQueueCount} pending`:"Synced"}</span>
+          </div>
           <button className={pmView==="generator"?"sc-vault-btn active":"sc-bottom-btn"} onClick={()=>{setPmView("generator");setPmSelectedId(null)}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",background:pmView==="generator"?`rgba(${T.accentRgb},0.1)`:"transparent",border:"none",borderRadius:8,color:pmView==="generator"?T.accent:T.dim,fontSize:13,fontFamily:"inherit",textAlign:"left",cursor:"pointer"}}>
             <span>⚡</span><span>Generator</span>
           </button>
@@ -4198,15 +4212,15 @@ html{scroll-behavior:smooth}
             </div>
           </div>}
           {sidebarOpen&&<div style={{display:"flex",alignItems:"center",gap:6,padding:"6px 12px 8px"}}>
-            <div style={{width:6,height:6,borderRadius:"50%",background:syncSt==="ok"?T.ok:syncSt==="quota"?T.err:T.warn,boxShadow:`0 0 4px ${syncSt==="ok"?T.ok:syncSt==="quota"?T.err:T.warn}`,animation:syncSt==="saving"?"pulse 1s infinite":"none"}}/>
-            <span style={{fontSize:11,color:T.faint,flex:1}}>{syncSt==="ok"?"Synced":syncSt==="quota"?"Quota full":"Saving..."}</span>
+            <div style={{width:6,height:6,borderRadius:"50%",background:!ncOnline?"#ef4444":ncQueueCount>0?"#f59e0b":syncSt==="ok"?T.ok:syncSt==="quota"?T.err:T.warn,boxShadow:`0 0 4px ${!ncOnline?"rgba(239,68,68,0.5)":ncQueueCount>0?"rgba(245,158,11,0.5)":syncSt==="ok"?T.ok:syncSt==="quota"?T.err:T.warn}`,animation:syncSt==="saving"?"pulse 1s infinite":"none"}}/>
+            <span style={{fontSize:11,color:T.faint,flex:1}}>{!ncOnline?"Offline"+(ncQueueCount>0?` · ${ncQueueCount} pending`:""):ncQueueCount>0?`${ncQueueCount} pending`:syncSt==="ok"?"Synced":syncSt==="quota"?"Quota full":"Saving..."}</span>
             <span style={{color:T.faint,animation:syncSt==="saving"?"spin 1s linear infinite":"none",display:"flex"}}><IC.Sync/></span>
           </div>}
           {!sidebarOpen&&<div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6,padding:"4px 0 8px"}}>
             <button onClick={()=>setShowProfileMenu(true)} className="sidebar-icon-btn" style={{background:"none",border:"none",color:T.faint,cursor:"pointer",padding:2,display:"flex"}} title="Account Settings"><IC.Settings/></button>
             <button onClick={()=>setShowThemes(true)} className="sidebar-icon-btn" style={{background:"none",border:"none",color:T.faint,cursor:"pointer",padding:2,display:"flex"}} title="Themes"><IC.Palette/></button>
             <button onClick={doLogout} className="sidebar-icon-btn" style={{background:"none",border:"none",color:T.faint,cursor:"pointer",padding:2,display:"flex"}} title="Sign out"><IC.Logout/></button>
-            <div style={{width:6,height:6,borderRadius:"50%",background:syncSt==="ok"?T.ok:syncSt==="quota"?T.err:T.warn,boxShadow:`0 0 4px ${syncSt==="ok"?T.ok:syncSt==="quota"?T.err:T.warn}`}}/>
+            <div style={{width:6,height:6,borderRadius:"50%",background:!ncOnline?"#ef4444":ncQueueCount>0?"#f59e0b":syncSt==="ok"?T.ok:syncSt==="quota"?T.err:T.warn,boxShadow:`0 0 4px ${!ncOnline?"rgba(239,68,68,0.5)":ncQueueCount>0?"rgba(245,158,11,0.5)":syncSt==="ok"?T.ok:syncSt==="quota"?T.err:T.warn}`}} title={!ncOnline?"Offline":ncQueueCount>0?`${ncQueueCount} pending`:"Synced"}/>
           </div>}
         </div>
       </div>
