@@ -2022,7 +2022,7 @@ html{scroll-behavior:smooth}
           <div style={{padding:"0 10px"}}>
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"12px 6px 8px"}}>
               <span style={{fontSize:11,fontWeight:700,letterSpacing:1.2,color:T.dim,textTransform:"uppercase"}}>Vaults</span>
-              <button onClick={()=>setPmShowNewVault(!pmShowNewVault)} style={{width:22,height:22,borderRadius:6,background:`rgba(${T.accentRgb},0.12)`,border:"none",color:T.accent,fontSize:14,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}} title="Create vault">+</button>
+              <button onClick={()=>setPmShowNewVault(!pmShowNewVault)} style={{width:26,height:26,borderRadius:7,background:`rgba(${T.accentRgb},0.18)`,border:`1px solid rgba(${T.accentRgb},0.3)`,color:T.accent,fontSize:18,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",lineHeight:1}} title="Create vault">+</button>
             </div>
           </div>
           <div style={{flex:1,overflowY:"auto",padding:"0 10px"}}>
