@@ -2253,10 +2253,14 @@ html{scroll-behavior:smooth}
 
         {/* Bottom */}
         <div style={{borderTop:`1px solid rgba(${T.accentRgb},0.08)`,background:T.dark?"rgba(255,255,255,0.01)":"rgba(255,255,255,0.2)"}}>
-          <div style={{display:"flex",alignItems:"center",gap:6,padding:"8px 12px"}}>
-            <div style={{width:24,height:24,borderRadius:6,background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:11,fontWeight:700,flexShrink:0}}>{(pmUserRef.current||email||"?")[0].toUpperCase()}</div>
-            <span style={{fontSize:13,color:T.dim,flex:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{pmUserRef.current||email}</span>
-            <button onClick={()=>setShowProfileMenu(true)} className="sidebar-icon-btn" style={{background:"none",border:"none",color:T.faint,cursor:"pointer",padding:2,display:"flex"}} title="Account Settings"><IC.Settings/></button>
+          {/* NotesCraft link */}
+          <button className="sc-bottom-btn" onClick={()=>{setInfoPage(null);setShowLanding(true)}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 12px",background:"transparent",border:"none",borderRadius:8,color:T.dim,fontSize:13,fontFamily:"inherit",textAlign:"left",cursor:"pointer"}}>
+            <span>🦋</span><span>NotesCraft</span>
+          </button>
+          <div style={{display:"flex",alignItems:"center",gap:6,padding:"8px 12px",borderTop:`1px solid ${T.bdr}`}}>
+            <div style={{width:24,height:24,borderRadius:6,background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:11,fontWeight:700,flexShrink:0}}>{(user?.name||pmUserRef.current||email||"?")[0].toUpperCase()}</div>
+            <span style={{fontSize:13,color:T.dim,flex:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{user?.name||pmUserRef.current||email}</span>
+            <button onClick={()=>setPmShowThemes(true)} className="sidebar-icon-btn" style={{background:"none",border:"none",color:T.faint,cursor:"pointer",padding:2,display:"flex"}} title="Themes"><IC.Settings/></button>
             <button onClick={()=>setPmShowThemes(true)} className="sidebar-icon-btn" style={{background:"none",border:"none",color:T.faint,cursor:"pointer",padding:2,display:"flex"}} title="Themes"><IC.Palette/></button>
             <button onClick={()=>{setPmIsLoggedIn(false);setPmCredentials([]);pmStorageRef.current=null;pmUserRef.current=null;pmLockAllGhosts()}} className="sidebar-icon-btn" style={{background:"none",border:"none",color:T.faint,cursor:"pointer",padding:2,display:"flex"}} title="Lock ShieldCraft"><IC.Logout/></button>
           </div>
