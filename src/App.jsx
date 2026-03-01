@@ -2154,7 +2154,7 @@ html{scroll-behavior:smooth}
       </div>
 
       {/* ═══ MIDDLE COLUMN ═══ */}
-      <div style={{...(gridWide?{flex:1,minWidth:350}:{width:350,minWidth:350}),height:"100%",borderRight:gridWide?"none":`1px solid ${T.bdr}`,display:"flex",flexDirection:"column",background:T.dark?"rgba(255,255,255,0.008)":"rgba(0,0,0,0.01)"}}>
+      {pmView!=="threat"&&<div style={{...(gridWide?{flex:1,minWidth:350}:{width:350,minWidth:350}),height:"100%",borderRight:gridWide?"none":`1px solid ${T.bdr}`,display:"flex",flexDirection:"column",background:T.dark?"rgba(255,255,255,0.008)":"rgba(0,0,0,0.01)"}}>
         <div style={{padding:"14px 16px 0"}}>
           <div style={{position:"relative",marginBottom:12}}>
             <span style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",color:T.dim,fontSize:14,pointerEvents:"none"}}>🔍</span>
@@ -2229,31 +2229,31 @@ html{scroll-behavior:smooth}
             </div>
           }
         </div>
-      </div>
+      </div>}
 
       {/* ═══ RIGHT PANEL ═══ */}
-      {!gridWide&&<div style={{flex:1,height:"100%",display:"flex",flexDirection:"column",overflow:"hidden",position:"relative"}}>
-
-        {/* ─── THEME PICKER OVERLAY ─── */}
-        {pmShowThemes&&<div style={{position:"absolute",inset:0,zIndex:100,background:"rgba(0,0,0,0.5)",display:"flex",alignItems:"center",justifyContent:"center",backdropFilter:"blur(4px)"}} onClick={()=>setPmShowThemes(false)}>
-          <div style={{width:640,maxHeight:"80vh",background:T.bg,borderRadius:16,border:`1px solid ${T.bdr}`,overflow:"hidden",boxShadow:"0 20px 60px rgba(0,0,0,0.4)"}} onClick={e=>e.stopPropagation()}>
-            <div style={{padding:"18px 24px",borderBottom:`1px solid ${T.bdr}`,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-              <h2 style={{fontSize:18,fontWeight:700,fontFamily:`${F.heading},sans-serif`,margin:0}}>Choose Theme</h2>
-              <button onClick={()=>setPmShowThemes(false)} style={{background:"none",border:"none",color:T.dim,fontSize:20,cursor:"pointer",padding:4}}>×</button>
-            </div>
-            <div style={{padding:20,overflowY:"auto",maxHeight:"65vh",display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(130px,1fr))",gap:10}}>
-              {Object.values(THEMES).map(th=><button key={th.id} onClick={()=>{setThemeId(th.id)}} style={{padding:0,background:"transparent",border:themeId===th.id?`2px solid ${th.accent}`:`2px solid transparent`,borderRadius:10,cursor:"pointer",overflow:"hidden",textAlign:"center"}}>
-                <div style={{height:48,background:th.bg,display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>
-                  <div style={{width:14,height:14,borderRadius:"50%",background:th.accent,boxShadow:`0 0 8px ${th.accent}`}}/>
-                  {th.accent2&&<div style={{width:8,height:8,borderRadius:"50%",background:th.accent2}}/>}
-                </div>
-                <div style={{padding:"6px 4px",background:th.dark?"rgba(0,0,0,0.3)":"rgba(255,255,255,0.8)"}}>
-                  <div style={{fontSize:10,fontWeight:600,color:th.text,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{th.icon} {th.name}</div>
-                </div>
-              </button>)}
-            </div>
+      {/* ─── THEME PICKER OVERLAY (fixed, always accessible) ─── */}
+      {pmShowThemes&&<div style={{position:"fixed",inset:0,zIndex:9999,background:"rgba(0,0,0,0.5)",display:"flex",alignItems:"center",justifyContent:"center",backdropFilter:"blur(4px)"}} onClick={()=>setPmShowThemes(false)}>
+        <div style={{width:640,maxHeight:"80vh",background:T.bg,borderRadius:16,border:`1px solid ${T.bdr}`,overflow:"hidden",boxShadow:"0 20px 60px rgba(0,0,0,0.4)"}} onClick={e=>e.stopPropagation()}>
+          <div style={{padding:"18px 24px",borderBottom:`1px solid ${T.bdr}`,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+            <h2 style={{fontSize:18,fontWeight:700,fontFamily:`${F.heading},sans-serif`,margin:0}}>Choose Theme</h2>
+            <button onClick={()=>setPmShowThemes(false)} style={{background:"none",border:"none",color:T.dim,fontSize:20,cursor:"pointer",padding:4}}>×</button>
           </div>
-        </div>}
+          <div style={{padding:20,overflowY:"auto",maxHeight:"65vh",display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(130px,1fr))",gap:10}}>
+            {Object.values(THEMES).map(th=><button key={th.id} onClick={()=>{setThemeId(th.id)}} style={{padding:0,background:"transparent",border:themeId===th.id?`2px solid ${th.accent}`:`2px solid transparent`,borderRadius:10,cursor:"pointer",overflow:"hidden",textAlign:"center"}}>
+              <div style={{height:48,background:th.bg,display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>
+                <div style={{width:14,height:14,borderRadius:"50%",background:th.accent,boxShadow:`0 0 8px ${th.accent}`}}/>
+                {th.accent2&&<div style={{width:8,height:8,borderRadius:"50%",background:th.accent2}}/>}
+              </div>
+              <div style={{padding:"6px 4px",background:th.dark?"rgba(0,0,0,0.3)":"rgba(255,255,255,0.8)"}}>
+                <div style={{fontSize:10,fontWeight:600,color:th.text,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{th.icon} {th.name}</div>
+              </div>
+            </button>)}
+          </div>
+        </div>
+      </div>}
+
+      {!gridWide&&<div style={{flex:1,height:"100%",display:"flex",flexDirection:"column",overflow:"hidden",position:"relative"}}>
 
         {/* ─── ADD / EDIT FORM ─── */}
         {(pmView==="add"||pmView==="edit")&&<div style={{flex:1,overflowY:"auto",padding:"32px 40px"}}>
@@ -2403,7 +2403,7 @@ html{scroll-behavior:smooth}
 
         {/* ─── THREATSHIELD VIEW ─── */}
         {pmView==="threat"&&<div style={{flex:1,overflowY:"auto",padding:"32px 40px"}}>
-          <div style={{maxWidth:600,margin:"0 auto"}}>
+          <div style={{maxWidth:900,margin:"0 auto"}}>
             <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:24}}>
               <div style={{width:56,height:56,borderRadius:14,background:"rgba(239,68,68,0.08)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:28}}>🛡️</div>
               <div><h2 style={{fontSize:22,fontWeight:700,fontFamily:`${F.heading},sans-serif`,margin:0}}>ThreatShield</h2><div style={{fontSize:12,color:T.dim,marginTop:2}}>Dark Web Monitoring</div></div>
@@ -2485,7 +2485,7 @@ html{scroll-behavior:smooth}
         </div>}
 
         {/* ─── EMPTY STATE ─── */}
-        {pmView!=="add"&&pmView!=="edit"&&pmView!=="generator"&&!selCred&&!pmShowThemes&&<div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:12}}>
+        {pmView!=="add"&&pmView!=="edit"&&pmView!=="generator"&&pmView!=="threat"&&!selCred&&!pmShowThemes&&<div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:12}}>
           <div style={{width:100,height:100,borderRadius:22,background:`rgba(${T.accentRgb},0.08)`,display:"flex",alignItems:"center",justifyContent:"center"}}>
             <ShieldLogo s={64} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} uid="scEmpty"/>
           </div>
