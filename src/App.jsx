@@ -562,6 +562,9 @@ export default function NotesCraft(){
   const[pmExportFormat,setPmExportFormat]=useState("csv");
   const[pmExportDone,setPmExportDone]=useState(false);
   const pmFileRef=useRef(null);
+  // ShieldCraft settings modal
+  const[pmShowSettings,setPmShowSettings]=useState(false);
+  const[pmSettingsTab,setPmSettingsTab]=useState("account");
   // 2FA state
   const[twoFASetup,setTwoFASetup]=useState(null);
   const[twoFAStep,setTwoFAStep]=useState(1);
@@ -2114,7 +2117,7 @@ html{scroll-behavior:smooth}
 .sc-dd button{width:100%;display:flex;align-items:center;gap:10px;padding:8px 12px;background:transparent;border:none;border-radius:6px;color:${T.text};font-size:13px;font-family:inherit;cursor:pointer;text-align:left;transition:all 0.15s}
 .sc-dd button:hover{background:rgba(${T.accentRgb},0.08)}
 `;
-    const rpActive=pmSelectedId||pmView==="add"||pmView==="edit"||pmView==="generator"||pmView==="threat"||pmView==="import-export";
+    const rpActive=pmSelectedId||pmView==="add"||pmView==="edit"||pmView==="generator"||pmView==="threat";
     const gridWide=pmViewMode==="grid"&&!rpActive;
     return(<div style={{width:"100vw",height:"100vh",display:"flex",background:T.bg,fontFamily:`${F.body},sans-serif`,color:T.text,overflow:"hidden"}}>
       <style>{css}{vCss}</style>
@@ -2231,14 +2234,6 @@ html{scroll-behavior:smooth}
             <span style={{flex:1,fontWeight:500}}>Generator</span>
           </button>
 
-          {/* Import / Export */}
-          <button className={`sc-vault-btn${pmView==="import-export"?" active":""}`} onClick={()=>{setPmFolderFilter(null);setPmView("import-export");setPmSelectedId(null);setPmImportData(null);setPmImportErr("")}} style={{width:"100%",display:"flex",alignItems:"center",gap:10,padding:"8px 8px",marginBottom:1,background:"transparent",border:"none",borderRadius:8,color:pmView==="import-export"?T.text:T.dim,fontSize:13,fontFamily:"inherit",cursor:"pointer",textAlign:"left"}}>
-            <span style={{width:28,height:28,borderRadius:8,background:"rgba(59,130,246,0.12)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,flexShrink:0}}>
-              <IC.Download/>
-            </span>
-            <span style={{flex:1,fontWeight:500}}>Import / Export</span>
-          </button>
-
           <div style={{height:1,background:T.bdr,margin:"8px 6px 4px"}}/>
 
           {/* Ghost Shield unlock */}
@@ -2260,8 +2255,8 @@ html{scroll-behavior:smooth}
           <div style={{display:"flex",alignItems:"center",gap:6,padding:"8px 12px",borderTop:`1px solid ${T.bdr}`}}>
             <div style={{width:24,height:24,borderRadius:6,background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:11,fontWeight:700,flexShrink:0}}>{(user?.name||pmUserRef.current||email||"?")[0].toUpperCase()}</div>
             <span style={{fontSize:13,color:T.dim,flex:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{user?.name||pmUserRef.current||email}</span>
-            <button onClick={()=>setPmShowThemes(true)} className="sidebar-icon-btn" style={{background:"none",border:"none",color:T.faint,cursor:"pointer",padding:2,display:"flex"}} title="Themes"><IC.Settings/></button>
-            <button onClick={()=>setPmShowThemes(true)} className="sidebar-icon-btn" style={{background:"none",border:"none",color:T.faint,cursor:"pointer",padding:2,display:"flex"}} title="Themes"><IC.Palette/></button>
+            <button onClick={()=>{setPmShowSettings(true);setPmSettingsTab("account")}} className="sidebar-icon-btn" style={{background:"none",border:"none",color:T.faint,cursor:"pointer",padding:2,display:"flex"}} title="Settings"><IC.Settings/></button>
+            <button onClick={()=>{setPmShowSettings(true);setPmSettingsTab("themes")}} className="sidebar-icon-btn" style={{background:"none",border:"none",color:T.faint,cursor:"pointer",padding:2,display:"flex"}} title="Themes"><IC.Palette/></button>
             <button onClick={()=>{setPmIsLoggedIn(false);setPmCredentials([]);pmStorageRef.current=null;pmUserRef.current=null;pmLockAllGhosts()}} className="sidebar-icon-btn" style={{background:"none",border:"none",color:T.faint,cursor:"pointer",padding:2,display:"flex"}} title="Lock ShieldCraft"><IC.Logout/></button>
           </div>
           <div style={{display:"flex",alignItems:"center",gap:6,padding:"4px 12px 8px"}}>
@@ -2272,7 +2267,7 @@ html{scroll-behavior:smooth}
       </div>
 
       {/* ═══ MIDDLE COLUMN ═══ */}
-      {pmView!=="threat"&&pmView!=="import-export"&&<div style={{...(gridWide?{flex:1,minWidth:350}:{width:350,minWidth:350}),height:"100%",borderRight:gridWide?"none":`1px solid ${T.bdr}`,display:"flex",flexDirection:"column",background:T.dark?"rgba(255,255,255,0.008)":"rgba(0,0,0,0.01)"}}>
+      {pmView!=="threat"&&<div style={{...(gridWide?{flex:1,minWidth:350}:{width:350,minWidth:350}),height:"100%",borderRight:gridWide?"none":`1px solid ${T.bdr}`,display:"flex",flexDirection:"column",background:T.dark?"rgba(255,255,255,0.008)":"rgba(0,0,0,0.01)"}}>
         <div style={{padding:"14px 16px 0"}}>
           <div style={{position:"relative",marginBottom:12}}>
             <span style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",color:T.dim,fontSize:14,pointerEvents:"none"}}>🔍</span>
@@ -2351,26 +2346,6 @@ html{scroll-behavior:smooth}
 
       {/* ═══ RIGHT PANEL ═══ */}
       {/* ─── THEME PICKER OVERLAY (fixed, always accessible) ─── */}
-      {pmShowThemes&&<div style={{position:"fixed",inset:0,zIndex:9999,background:"rgba(0,0,0,0.5)",display:"flex",alignItems:"center",justifyContent:"center",backdropFilter:"blur(4px)"}} onClick={()=>setPmShowThemes(false)}>
-        <div style={{width:640,maxHeight:"80vh",background:T.bg,borderRadius:16,border:`1px solid ${T.bdr}`,overflow:"hidden",boxShadow:"0 20px 60px rgba(0,0,0,0.4)"}} onClick={e=>e.stopPropagation()}>
-          <div style={{padding:"18px 24px",borderBottom:`1px solid ${T.bdr}`,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-            <h2 style={{fontSize:18,fontWeight:700,fontFamily:`${F.heading},sans-serif`,margin:0}}>Choose Theme</h2>
-            <button onClick={()=>setPmShowThemes(false)} style={{background:"none",border:"none",color:T.dim,fontSize:20,cursor:"pointer",padding:4}}>×</button>
-          </div>
-          <div style={{padding:20,overflowY:"auto",maxHeight:"65vh",display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(130px,1fr))",gap:10}}>
-            {Object.values(THEMES).map(th=><button key={th.id} onClick={()=>{setThemeId(th.id)}} style={{padding:0,background:"transparent",border:themeId===th.id?`2px solid ${th.accent}`:`2px solid transparent`,borderRadius:10,cursor:"pointer",overflow:"hidden",textAlign:"center"}}>
-              <div style={{height:48,background:th.bg,display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>
-                <div style={{width:14,height:14,borderRadius:"50%",background:th.accent,boxShadow:`0 0 8px ${th.accent}`}}/>
-                {th.accent2&&<div style={{width:8,height:8,borderRadius:"50%",background:th.accent2}}/>}
-              </div>
-              <div style={{padding:"6px 4px",background:th.dark?"rgba(0,0,0,0.3)":"rgba(255,255,255,0.8)"}}>
-                <div style={{fontSize:10,fontWeight:600,color:th.text,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{th.icon} {th.name}</div>
-              </div>
-            </button>)}
-          </div>
-        </div>
-      </div>}
-
       {!gridWide&&<div style={{flex:1,height:"100%",display:"flex",flexDirection:"column",overflow:"hidden",position:"relative"}}>
 
         {/* ─── ADD / EDIT FORM ─── */}
@@ -2519,87 +2494,6 @@ html{scroll-behavior:smooth}
           </div>
         </div>}
 
-        {/* ─── IMPORT / EXPORT VIEW ─── */}
-        {pmView==="import-export"&&<div style={{flex:1,overflowY:"auto",padding:"32px 40px"}}>
-          <div style={{maxWidth:900,margin:"0 auto"}}>
-            <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:24}}>
-              <div style={{width:56,height:56,borderRadius:14,background:"rgba(59,130,246,0.08)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:28}}>
-                <IC.Download/>
-              </div>
-              <div><h2 style={{fontSize:22,fontWeight:700,fontFamily:`${F.heading},sans-serif`,margin:0}}>Import / Export</h2><div style={{fontSize:12,color:T.dim,marginTop:2}}>Migrate passwords or create backups</div></div>
-              <button onClick={()=>setPmView("list")} style={{marginLeft:"auto",padding:"7px 14px",background:"transparent",border:`1px solid ${T.bdr}`,borderRadius:8,color:T.dim,fontSize:12,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>Back</button>
-            </div>
-
-            {/* Tabs */}
-            <div style={{display:"flex",gap:0,marginBottom:24,background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.04)",borderRadius:10,padding:3,border:`1px solid ${T.bdr}`}}>
-              {["import","export"].map(tab=><button key={tab} onClick={()=>{setPmImportExTab(tab);setPmImportErr("");setPmImportData(null)}} style={{flex:1,padding:"10px 0",borderRadius:8,border:"none",background:pmImportExTab===tab?`rgba(${T.accentRgb},0.15)`:"transparent",color:pmImportExTab===tab?T.accent:T.dim,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5,transition:"all 0.2s"}}>{tab==="import"?"Import":"Export"}</button>)}
-            </div>
-
-            {/* ── IMPORT TAB ── */}
-            {pmImportExTab==="import"&&<div>
-              <div style={{padding:"12px 16px",borderRadius:12,background:T.dark?"rgba(59,130,246,0.06)":"rgba(59,130,246,0.04)",border:`1px solid rgba(59,130,246,0.15)`,marginBottom:20}}>
-                <div style={{fontSize:12,color:"#3b82f6",fontWeight:600,marginBottom:4}}>Supported Formats</div>
-                <div style={{fontSize:11,color:T.dim,lineHeight:1.6}}>CSV from Chrome, Bitwarden, 1Password, LastPass, or any password manager. JSON (ShieldCraft format). Encrypted .shieldcraft files.</div>
-              </div>
-
-              {/* Drop zone */}
-              <div onDragOver={e=>{e.preventDefault();e.currentTarget.style.borderColor=T.accent}} onDragLeave={e=>{e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.2)`}} onDrop={e=>{e.preventDefault();e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.2)`;const f=e.dataTransfer.files[0];if(f)handleImportFile(f)}} onClick={()=>pmFileRef.current&&pmFileRef.current.click()} style={{border:`2px dashed rgba(${T.accentRgb},0.2)`,borderRadius:16,padding:"48px 20px",textAlign:"center",cursor:"pointer",transition:"all 0.2s",background:T.dark?"rgba(255,255,255,0.02)":"rgba(0,0,0,0.02)"}}>
-                <input ref={pmFileRef} type="file" accept=".csv,.json,.txt,.shieldcraft" style={{display:"none"}} onChange={e=>{const f=e.target.files[0];if(f)handleImportFile(f);e.target.value=""}}/>
-                <div style={{fontSize:40,marginBottom:12,opacity:0.5}}>📂</div>
-                <div style={{fontSize:14,fontWeight:600,color:T.text,marginBottom:4}}>Drop file here or click to browse</div>
-                <div style={{fontSize:11,color:T.dim}}>Accepts .csv, .json, or .shieldcraft files</div>
-              </div>
-
-              {/* Error */}
-              {pmImportErr&&<div style={{marginTop:16,padding:"10px 14px",borderRadius:10,background:"rgba(239,68,68,0.08)",border:"1px solid rgba(239,68,68,0.2)",color:"#ef4444",fontSize:12}}>{pmImportErr}</div>}
-
-              {/* Preview */}
-              {pmImportData&&<div style={{marginTop:20}}>
-                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
-                  <div>
-                    <div style={{fontSize:14,fontWeight:600,color:T.text}}>Found {pmImportData.count} credentials</div>
-                    <div style={{fontSize:11,color:T.dim,marginTop:2}}>Source: {pmImportData.source}</div>
-                  </div>
-                  <button onClick={confirmImport} style={{padding:"10px 24px",background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:10,color:"#fff",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit",boxShadow:`0 4px 16px rgba(${T.accentRgb},0.35)`}}>Import All</button>
-                </div>
-                <div style={{borderRadius:12,border:`1px solid ${T.bdr}`,overflow:"hidden"}}>
-                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",padding:"8px 14px",background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",fontSize:10,fontWeight:700,color:T.dim,textTransform:"uppercase",letterSpacing:0.5}}>
-                    <span>Name</span><span>Username</span><span>URL</span>
-                  </div>
-                  {pmImportData.credentials.slice(0,10).map((c,i)=><div key={i} style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",padding:"8px 14px",borderTop:`1px solid ${T.bdr}`,fontSize:12}}>
-                    <span style={{color:T.text,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{c.siteName||"—"}</span>
-                    <span style={{color:T.dim,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{c.username||"—"}</span>
-                    <span style={{color:T.faint,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{c.siteUrl||"—"}</span>
-                  </div>)}
-                  {pmImportData.count>10&&<div style={{padding:"8px 14px",textAlign:"center",fontSize:11,color:T.dim,borderTop:`1px solid ${T.bdr}`}}>...and {pmImportData.count-10} more</div>}
-                </div>
-              </div>}
-            </div>}
-
-            {/* ── EXPORT TAB ── */}
-            {pmImportExTab==="export"&&<div>
-              <div style={{padding:"12px 16px",borderRadius:12,background:"rgba(245,158,11,0.06)",border:"1px solid rgba(245,158,11,0.15)",marginBottom:20}}>
-                <div style={{fontSize:12,color:"#f59e0b",fontWeight:600,marginBottom:4}}>Security Warning</div>
-                <div style={{fontSize:11,color:T.dim,lineHeight:1.6}}>CSV and JSON exports contain your passwords in plaintext. Store the exported file securely and delete it when no longer needed. Use Encrypted format for maximum security.</div>
-              </div>
-
-              <div style={{fontSize:13,fontWeight:600,color:T.text,marginBottom:12}}>Choose export format</div>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12,marginBottom:24}}>
-                {[{id:"csv",icon:"📊",name:"CSV",desc:"Universal format — works with Chrome, Bitwarden, 1Password, and more"},{id:"json",icon:"📋",name:"JSON",desc:"Full ShieldCraft format with all fields and metadata"},{id:"encrypted",icon:"🔒",name:"Encrypted",desc:"AES-256 encrypted — can only be imported back into ShieldCraft"}].map(fmt=><button key={fmt.id} onClick={()=>setPmExportFormat(fmt.id)} style={{padding:"20px 16px",borderRadius:14,border:`2px solid ${pmExportFormat===fmt.id?T.accent:`rgba(${T.accentRgb},0.12)`}`,background:pmExportFormat===fmt.id?`rgba(${T.accentRgb},0.06)`:"transparent",cursor:"pointer",textAlign:"center",transition:"all 0.2s"}}>
-                  <div style={{fontSize:28,marginBottom:8}}>{fmt.icon}</div>
-                  <div style={{fontSize:14,fontWeight:700,color:T.text,marginBottom:4}}>{fmt.name}</div>
-                  <div style={{fontSize:11,color:T.dim,lineHeight:1.5}}>{fmt.desc}</div>
-                </button>)}
-              </div>
-
-              <div style={{display:"flex",alignItems:"center",gap:16}}>
-                <button onClick={()=>doExport(pmExportFormat)} disabled={!pmCredentials.length} style={{padding:"12px 32px",background:pmCredentials.length?`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`:"rgba(128,128,128,0.2)",border:"none",borderRadius:10,color:pmCredentials.length?"#fff":T.dim,fontSize:14,fontWeight:700,cursor:pmCredentials.length?"pointer":"not-allowed",fontFamily:"inherit",boxShadow:pmCredentials.length?`0 4px 16px rgba(${T.accentRgb},0.35)`:"none"}}>Export {pmCredentials.length} Credentials</button>
-                {pmExportDone&&<span style={{fontSize:13,color:"#10b981",fontWeight:600}}>Downloaded!</span>}
-              </div>
-            </div>}
-          </div>
-        </div>}
-
         {/* ─── THREATSHIELD VIEW ─── */}
         {pmView==="threat"&&<div style={{flex:1,overflowY:"auto",padding:"32px 40px"}}>
           <div style={{maxWidth:900,margin:"0 auto"}}>
@@ -2632,7 +2526,7 @@ html{scroll-behavior:smooth}
         </div>}
 
         {/* ─── DETAIL VIEW ─── */}
-        {pmView!=="add"&&pmView!=="edit"&&pmView!=="generator"&&pmView!=="threat"&&pmView!=="import-export"&&selCred&&<div style={{flex:1,overflowY:"auto",padding:"32px 40px"}}>
+        {pmView!=="add"&&pmView!=="edit"&&pmView!=="generator"&&pmView!=="threat"&&selCred&&<div style={{flex:1,overflowY:"auto",padding:"32px 40px"}}>
           {selCred.breachCheck&&selCred.breachCheck.breached&&<div style={{display:"flex",alignItems:"center",gap:12,padding:"14px 16px",borderRadius:12,background:"rgba(239,68,68,0.06)",border:"1px solid rgba(239,68,68,0.2)",marginBottom:16}}><span style={{fontSize:20}}>⚠️</span><div style={{flex:1}}><div style={{fontSize:13,fontWeight:700,color:"#ef4444"}}>Password Compromised</div><div style={{fontSize:11,color:T.dim}}>Found in {selCred.breachCheck.count.toLocaleString()} known data breaches. Change your password immediately.</div></div><button onClick={()=>pmEditCredential(selCred)} style={{padding:"6px 14px",background:"rgba(239,68,68,0.1)",border:"1px solid rgba(239,68,68,0.3)",borderRadius:8,color:"#ef4444",fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>Change Password</button></div>}
           <div style={{marginBottom:28}}>
             <div style={{display:"flex",alignItems:"flex-start",gap:16,marginBottom:16}}>
@@ -2684,7 +2578,7 @@ html{scroll-behavior:smooth}
         </div>}
 
         {/* ─── EMPTY STATE ─── */}
-        {pmView!=="add"&&pmView!=="edit"&&pmView!=="generator"&&pmView!=="threat"&&pmView!=="import-export"&&!selCred&&!pmShowThemes&&<div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:12}}>
+        {pmView!=="add"&&pmView!=="edit"&&pmView!=="generator"&&pmView!=="threat"&&!selCred&&<div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:12}}>
           <div style={{width:100,height:100,borderRadius:22,background:`rgba(${T.accentRgb},0.08)`,display:"flex",alignItems:"center",justifyContent:"center"}}>
             <ShieldLogo s={64} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} uid="scEmpty"/>
           </div>
@@ -2692,6 +2586,137 @@ html{scroll-behavior:smooth}
           <div style={{fontSize:13,color:T.faint}}>Choose from the list or create a new item</div>
         </div>}
 
+      </div>}
+
+      {/* ═══════ SHIELDCRAFT SETTINGS MODAL ═══════ */}
+      {pmShowSettings&&<div style={{position:"fixed",inset:0,zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.5)",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)"}} onClick={()=>{setPmShowSettings(false);setPmImportData(null);setPmImportErr("")}}>
+        <div style={{width:520,maxWidth:"92vw",maxHeight:"85vh",background:T.dark?"rgba(16,18,27,0.97)":"rgba(255,255,255,0.97)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:`1px solid ${T.bdr}`,borderRadius:16,display:"flex",flexDirection:"column",overflow:"hidden",boxShadow:`0 20px 60px rgba(0,0,0,0.4),0 0 40px rgba(${T.accentRgb},0.08)`}} onClick={e=>e.stopPropagation()}>
+          {/* Header */}
+          <div style={{padding:"20px 24px 16px",borderBottom:`1px solid ${T.bdr}`,display:"flex",alignItems:"center",gap:12}}>
+            <div style={{width:44,height:44,borderRadius:12,background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:20,fontWeight:700,flexShrink:0}}>{(user?.name||pmUserRef.current||email||"?")[0].toUpperCase()}</div>
+            <div style={{flex:1,minWidth:0}}>
+              <div style={{fontSize:16,fontWeight:700,color:T.text,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{user?.name||pmUserRef.current||"User"}</div>
+              <div style={{fontSize:12,color:T.dim,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{pmUserRef.current||user?.email||email}</div>
+            </div>
+            <button onClick={()=>{setPmShowSettings(false);setPmImportData(null);setPmImportErr("")}} style={{background:"none",border:"none",color:T.dim,cursor:"pointer",padding:4,display:"flex",opacity:.7}}><IC.X/></button>
+          </div>
+
+          {/* Tab navigation */}
+          <div style={{display:"flex",borderBottom:`1px solid ${T.bdr}`,padding:"0 24px"}}>
+            {[{id:"account",label:"Account"},{id:"themes",label:"Themes"},{id:"import-export",label:"Import / Export"}].map(tab=>(
+              <button key={tab.id} onClick={()=>{setPmSettingsTab(tab.id);if(tab.id==="import-export"){setPmImportErr("");setPmImportData(null)}}}
+                style={{padding:"10px 16px",fontSize:12,fontWeight:600,color:pmSettingsTab===tab.id?T.accent:T.dim,background:"none",border:"none",borderBottom:pmSettingsTab===tab.id?`2px solid ${T.accent}`:"2px solid transparent",cursor:"pointer",fontFamily:"inherit",transition:"all 0.2s",letterSpacing:0.3}}>
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Tab content */}
+          <div style={{padding:24,overflowY:"auto",flex:1}}>
+
+            {/* ── Account Tab ── */}
+            {pmSettingsTab==="account"&&<div style={{display:"flex",flexDirection:"column",gap:12}}>
+              {[
+                {label:"Name",value:user?.name||pmUserRef.current||"—",icon:<IC.User/>},
+                {label:"Email",value:pmUserRef.current||user?.email||email||"—",icon:<IC.Mail/>},
+                {label:"Encryption",value:"AES-256 End-to-End",icon:<IC.Shield/>},
+                {label:"Total Credentials",value:String(pmCredentials.length),icon:<IC.Lock/>},
+                {label:"Vaults",value:String(Object.keys(pmVaultDefs).length),icon:<IC.Folder/>},
+                {label:"Sync Status",value:!ncOnline?(ncQueueCount>0?`Offline - ${ncQueueCount} pending`:"Offline"):ncQueueCount>0?`${ncQueueCount} pending`:"Synced",icon:<IC.Sync/>},
+              ].map((item,i)=>(
+                <div key={i} style={{display:"flex",alignItems:"center",gap:12,padding:"12px 14px",borderRadius:10,background:T.dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`}}>
+                  <span style={{color:T.accent,display:"flex",flexShrink:0}}>{item.icon}</span>
+                  <div style={{flex:1,minWidth:0}}>
+                    <div style={{fontSize:11,color:T.dim,fontWeight:700,letterSpacing:0.4,marginBottom:3,textTransform:"uppercase"}}>{item.label}</div>
+                    <div style={{fontSize:14,color:T.text,fontWeight:600,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{item.value}</div>
+                  </div>
+                </div>
+              ))}
+              <button onClick={()=>{setPmIsLoggedIn(false);setPmCredentials([]);pmStorageRef.current=null;pmUserRef.current=null;pmLockAllGhosts();setPmShowSettings(false)}} style={{width:"100%",padding:"10px 0",marginTop:8,borderRadius:8,fontSize:12,fontWeight:700,background:"rgba(239,68,68,0.08)",border:"1px solid rgba(239,68,68,0.2)",color:"#ef4444",cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>
+                <IC.Logout/> Lock ShieldCraft
+              </button>
+            </div>}
+
+            {/* ── Themes Tab ── */}
+            {pmSettingsTab==="themes"&&<div>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(120px,1fr))",gap:10}}>
+                {Object.values(THEMES).map(th=><button key={th.id} onClick={()=>{setThemeId(th.id)}} style={{padding:0,background:"transparent",border:themeId===th.id?`2px solid ${th.accent}`:`2px solid transparent`,borderRadius:10,cursor:"pointer",overflow:"hidden",textAlign:"center"}}>
+                  <div style={{height:44,background:th.bg,display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>
+                    <div style={{width:14,height:14,borderRadius:"50%",background:th.accent,boxShadow:`0 0 8px ${th.accent}`}}/>
+                    {th.accent2&&<div style={{width:8,height:8,borderRadius:"50%",background:th.accent2}}/>}
+                  </div>
+                  <div style={{padding:"5px 4px",background:th.dark?"rgba(0,0,0,0.3)":"rgba(255,255,255,0.8)"}}>
+                    <div style={{fontSize:10,fontWeight:600,color:th.text,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{th.icon} {th.name}</div>
+                  </div>
+                </button>)}
+              </div>
+            </div>}
+
+            {/* ── Import / Export Tab ── */}
+            {pmSettingsTab==="import-export"&&<div>
+              {/* Sub-tabs */}
+              <div style={{display:"flex",gap:0,marginBottom:20,background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.04)",borderRadius:10,padding:3,border:`1px solid ${T.bdr}`}}>
+                {["import","export"].map(tab=><button key={tab} onClick={()=>{setPmImportExTab(tab);setPmImportErr("");setPmImportData(null)}} style={{flex:1,padding:"9px 0",borderRadius:8,border:"none",background:pmImportExTab===tab?`rgba(${T.accentRgb},0.15)`:"transparent",color:pmImportExTab===tab?T.accent:T.dim,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5,transition:"all 0.2s"}}>{tab==="import"?"Import":"Export"}</button>)}
+              </div>
+
+              {/* Import */}
+              {pmImportExTab==="import"&&<div>
+                <div style={{padding:"10px 14px",borderRadius:10,background:T.dark?"rgba(59,130,246,0.06)":"rgba(59,130,246,0.04)",border:"1px solid rgba(59,130,246,0.15)",marginBottom:16}}>
+                  <div style={{fontSize:11,color:"#3b82f6",fontWeight:600,marginBottom:3}}>Supported Formats</div>
+                  <div style={{fontSize:10,color:T.dim,lineHeight:1.6}}>CSV from Chrome, Bitwarden, 1Password, LastPass. JSON (ShieldCraft). Encrypted .shieldcraft files.</div>
+                </div>
+                <div onDragOver={e=>{e.preventDefault();e.currentTarget.style.borderColor=T.accent}} onDragLeave={e=>{e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.2)`}} onDrop={e=>{e.preventDefault();e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.2)`;const f=e.dataTransfer.files[0];if(f)handleImportFile(f)}} onClick={()=>pmFileRef.current&&pmFileRef.current.click()} style={{border:`2px dashed rgba(${T.accentRgb},0.2)`,borderRadius:14,padding:"36px 16px",textAlign:"center",cursor:"pointer",transition:"all 0.2s",background:T.dark?"rgba(255,255,255,0.02)":"rgba(0,0,0,0.02)"}}>
+                  <input ref={pmFileRef} type="file" accept=".csv,.json,.txt,.shieldcraft" style={{display:"none"}} onChange={e=>{const f=e.target.files[0];if(f)handleImportFile(f);e.target.value=""}}/>
+                  <div style={{fontSize:32,marginBottom:8,opacity:0.5}}>📂</div>
+                  <div style={{fontSize:13,fontWeight:600,color:T.text,marginBottom:3}}>Drop file here or click to browse</div>
+                  <div style={{fontSize:10,color:T.dim}}>Accepts .csv, .json, or .shieldcraft files</div>
+                </div>
+                {pmImportErr&&<div style={{marginTop:12,padding:"8px 12px",borderRadius:8,background:"rgba(239,68,68,0.08)",border:"1px solid rgba(239,68,68,0.2)",color:"#ef4444",fontSize:11}}>{pmImportErr}</div>}
+                {pmImportData&&<div style={{marginTop:16}}>
+                  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
+                    <div>
+                      <div style={{fontSize:13,fontWeight:600,color:T.text}}>Found {pmImportData.count} credentials</div>
+                      <div style={{fontSize:10,color:T.dim,marginTop:2}}>Source: {pmImportData.source}</div>
+                    </div>
+                    <button onClick={()=>{confirmImport();setPmShowSettings(false)}} style={{padding:"8px 20px",background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:8,color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit",boxShadow:`0 4px 12px rgba(${T.accentRgb},0.3)`}}>Import All</button>
+                  </div>
+                  <div style={{borderRadius:10,border:`1px solid ${T.bdr}`,overflow:"hidden"}}>
+                    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",padding:"6px 12px",background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",fontSize:9,fontWeight:700,color:T.dim,textTransform:"uppercase",letterSpacing:0.5}}>
+                      <span>Name</span><span>Username</span><span>URL</span>
+                    </div>
+                    {pmImportData.credentials.slice(0,6).map((c,i)=><div key={i} style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",padding:"6px 12px",borderTop:`1px solid ${T.bdr}`,fontSize:11}}>
+                      <span style={{color:T.text,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{c.siteName||"—"}</span>
+                      <span style={{color:T.dim,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{c.username||"—"}</span>
+                      <span style={{color:T.faint,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{c.siteUrl||"—"}</span>
+                    </div>)}
+                    {pmImportData.count>6&&<div style={{padding:"6px 12px",textAlign:"center",fontSize:10,color:T.dim,borderTop:`1px solid ${T.bdr}`}}>...and {pmImportData.count-6} more</div>}
+                  </div>
+                </div>}
+              </div>}
+
+              {/* Export */}
+              {pmImportExTab==="export"&&<div>
+                <div style={{padding:"10px 14px",borderRadius:10,background:"rgba(245,158,11,0.06)",border:"1px solid rgba(245,158,11,0.15)",marginBottom:16}}>
+                  <div style={{fontSize:11,color:"#f59e0b",fontWeight:600,marginBottom:3}}>Security Warning</div>
+                  <div style={{fontSize:10,color:T.dim,lineHeight:1.6}}>CSV and JSON exports contain passwords in plaintext. Store securely and delete when no longer needed.</div>
+                </div>
+                <div style={{fontSize:12,fontWeight:600,color:T.text,marginBottom:10}}>Choose export format</div>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:20}}>
+                  {[{id:"csv",icon:"📊",name:"CSV",desc:"Universal — works with Chrome, Bitwarden, 1Password"},{id:"json",icon:"📋",name:"JSON",desc:"Full ShieldCraft format with all fields"},{id:"encrypted",icon:"🔒",name:"Encrypted",desc:"AES-256 encrypted — ShieldCraft only"}].map(fmt=><button key={fmt.id} onClick={()=>setPmExportFormat(fmt.id)} style={{padding:"14px 10px",borderRadius:12,border:`2px solid ${pmExportFormat===fmt.id?T.accent:`rgba(${T.accentRgb},0.12)`}`,background:pmExportFormat===fmt.id?`rgba(${T.accentRgb},0.06)`:"transparent",cursor:"pointer",textAlign:"center",transition:"all 0.2s"}}>
+                    <div style={{fontSize:22,marginBottom:6}}>{fmt.icon}</div>
+                    <div style={{fontSize:12,fontWeight:700,color:T.text,marginBottom:3}}>{fmt.name}</div>
+                    <div style={{fontSize:10,color:T.dim,lineHeight:1.4}}>{fmt.desc}</div>
+                  </button>)}
+                </div>
+                <div style={{display:"flex",alignItems:"center",gap:12}}>
+                  <button onClick={()=>doExport(pmExportFormat)} disabled={!pmCredentials.length} style={{padding:"10px 28px",background:pmCredentials.length?`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`:"rgba(128,128,128,0.2)",border:"none",borderRadius:8,color:pmCredentials.length?"#fff":T.dim,fontSize:13,fontWeight:700,cursor:pmCredentials.length?"pointer":"not-allowed",fontFamily:"inherit",boxShadow:pmCredentials.length?`0 4px 12px rgba(${T.accentRgb},0.3)`:"none"}}>Export {pmCredentials.length} Credentials</button>
+                  {pmExportDone&&<span style={{fontSize:12,color:"#10b981",fontWeight:600}}>Downloaded!</span>}
+                </div>
+              </div>}
+            </div>}
+
+          </div>
+        </div>
       </div>}
 
       {/* ═══════ GHOST SHIELD UNLOCK MODAL (dashboard) ═══════ */}
