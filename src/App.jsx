@@ -2545,7 +2545,7 @@ html{scroll-behavior:smooth}
                 {[{k:"random",icon:"\u{1F3B2}",label:"Random"},{k:"memorable",icon:"\uD83D\uDCA1",label:"Memorable"},{k:"pin",icon:"#\uFE0F\u20E3",label:"PIN"}].map(m=>{const act=pgMode===m.k;const ac=pgQuantumSafe?"#10b981":T.accent;const acR=pgQuantumSafe?"16,185,129":T.accentRgb;return<button key={m.k} onClick={()=>setPgMode(m.k)} className={`pg-mode-btn ${act?(pgQuantumSafe?"pg-mode-active-qm":"pg-mode-active"):(pgQuantumSafe?"pg-mode-inactive pg-mode-inactive-qm":"pg-mode-inactive")}`} style={{flex:1,padding:"9px 0",borderRadius:10}}><span className="pg-icon">{m.icon}</span>{m.label}</button>})}
               </div>
               {pgMode==="random"&&<div style={{display:"flex",flexDirection:"column",gap:12}}>
-                <div><div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><label style={{fontSize:12,fontWeight:600,color:T.text}}>Length</label><span style={{fontSize:13,fontWeight:700,color:pgQuantumSafe?"#10b981":T.accent}}>{pgLen}</span></div><input type="range" min={pgQuantumSafe?65:8} max={256} value={pgLen} onChange={e=>setPgLen(+e.target.value)} className={pgQuantumSafe?"pg-slider-qm":"pg-slider"}/></div>
+                <div><div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><label style={{fontSize:12,fontWeight:600,color:T.text}}>Length</label><span style={{fontSize:13,fontWeight:700,color:pgQuantumSafe?"#10b981":T.accent}}>{pgLen}</span></div><input type="range" min={pgQuantumSafe?65:8} max={512} value={pgLen} onChange={e=>setPgLen(+e.target.value)} className={pgQuantumSafe?"pg-slider-qm":"pg-slider"}/></div>
                 <div style={{display:"flex",flexWrap:"wrap",gap:10}}>
                   {[{l:"Uppercase",v:pgUpper,s:setPgUpper},{l:"Lowercase",v:pgLower,s:setPgLower},{l:"Digits",v:pgDigits,s:setPgDigits},{l:"Symbols",v:pgSymbols,s:setPgSymbols},{l:"No ambiguous",v:pgNoAmbig,s:setPgNoAmbig}].map((o,i)=><label key={i} style={{display:"flex",alignItems:"center",gap:6,fontSize:11,color:T.text,cursor:"pointer"}}><div onClick={()=>o.s(!o.v)} style={{width:16,height:16,borderRadius:4,border:`1.5px solid ${o.v?(pgQuantumSafe?"#10b981":T.accent):`rgba(${T.accentRgb},0.3)`}`,background:o.v?`rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.15)`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}>{o.v&&<span style={{color:pgQuantumSafe?"#10b981":T.accent,fontSize:9}}>✓</span>}</div>{o.l}</label>)}
                 </div>
@@ -2990,7 +2990,7 @@ html{scroll-behavior:smooth}
                     <label style={{fontSize:12,fontWeight:600,color:T.text}}>Length</label>
                     <span style={{fontSize:13,fontWeight:700,color:pgQuantumSafe?"#10b981":T.accent}}>{pgLen}</span>
                   </div>
-                  <input type="range" min={pgQuantumSafe?65:8} max={256} value={pgLen} onChange={e=>setPgLen(+e.target.value)} className={pgQuantumSafe?"pg-slider-qm":"pg-slider"}/>
+                  <input type="range" min={pgQuantumSafe?65:8} max={512} value={pgLen} onChange={e=>setPgLen(+e.target.value)} className={pgQuantumSafe?"pg-slider-qm":"pg-slider"}/>
                 </div>
                 <div style={{display:"flex",flexWrap:"wrap",gap:10}}>
                   {[{label:"Uppercase",val:pgUpper,set:setPgUpper,lock:pgQuantumSafe},{label:"Lowercase",val:pgLower,set:setPgLower,lock:pgQuantumSafe},{label:"Digits",val:pgDigits,set:setPgDigits,lock:pgQuantumSafe},{label:"Symbols",val:pgSymbols,set:setPgSymbols,lock:pgQuantumSafe},{label:"No ambiguous",val:pgNoAmbig,set:setPgNoAmbig}].map((o,i)=>
@@ -3403,7 +3403,7 @@ html{scroll-behavior:smooth}
             <div style={{position:"absolute",left:-260,top:130,width:245,height:190,pointerEvents:"none",animation:"neoFloat1 6s ease-in-out infinite",zIndex:2}}>
               <div style={{width:"100%",height:"100%",borderRadius:6,padding:"18px 18px",border:"2px solid rgba(16,185,129,0.8)",background:"rgba(16,185,129,0.1)",boxShadow:"0 0 15px rgba(16,185,129,0.35),0 0 30px rgba(16,185,129,0.18),inset 0 0 15px rgba(16,185,129,0.08)",transform:"rotate(-8deg)",display:"flex",flexDirection:"column",overflow:"hidden"}}>
                 <div style={{fontSize:17,fontWeight:900,color:"#10b981",marginBottom:8,fontFamily:"monospace",letterSpacing:1}}>⚛️ Quantum-Safe</div>
-                <div style={{fontSize:13.5,color:"rgba(255,255,255,0.88)",lineHeight:1.65,fontFamily:"monospace",flex:1,overflow:"hidden"}}>One and only password generator with Grover-aware effective{"\n"}bits calculation —{"\n"}models real quantum{"\n"}attack cost, not just{"\n"}classical brute-force</div>
+                <div style={{fontSize:13.5,color:"rgba(255,255,255,0.88)",lineHeight:1.65,fontFamily:"monospace",flex:1,overflow:"hidden"}}>Only password generator with Grover-aware effective{"\n"}bits calculation —{"\n"}models real quantum{"\n"}attack cost, not just{"\n"}classical brute-force</div>
               </div>
             </div>
             <div style={{position:"absolute",right:-255,top:310,width:240,height:180,pointerEvents:"none",animation:"neoFloat2 7s ease-in-out infinite 1s",zIndex:2}}>
