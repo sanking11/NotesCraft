@@ -2205,7 +2205,7 @@ html{scroll-behavior:smooth}
       {/* ═══ LEFT SIDEBAR ═══ */}
       <div style={{width:260,minWidth:260,height:"100%",background:T.dark?"rgba(255,255,255,0.015)":"rgba(0,0,0,0.02)",borderRight:`1px solid ${T.bdr}`,display:"flex",flexDirection:"column"}}>
         <div style={{padding:"14px 12px 10px",display:"flex",alignItems:"center",gap:8}}>
-          <div style={{width:32,height:32,borderRadius:8,flexShrink:0,overflow:"hidden"}}><SCLogo s={32} accent={T.accent} accent2={T.accent2||T.accent}/></div>
+          <div style={{width:40,height:40,borderRadius:10,flexShrink:0,overflow:"hidden"}}><SCLogo s={40} accent={T.accent} accent2={T.accent2||T.accent}/></div>
           <span style={{fontSize:15,fontWeight:700,fontFamily:`${F.heading},sans-serif`,letterSpacing:1}}>ShieldCraft</span>
         </div>
 
