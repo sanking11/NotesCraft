@@ -178,11 +178,11 @@ const IC = {
 };
 
 /* Butterfly logo — geometric origami, exact match to reference */
-let _sclId=0;const SCLogo=({s=60,animate=true})=>{const uRef=useRef('scl'+(_sclId++));const u=uRef.current;return<svg viewBox="0 0 220 220" width={s} height={s} xmlns="http://www.w3.org/2000/svg" draggable={false} onContextMenu={e=>e.preventDefault()} style={{display:'block',userSelect:'none',WebkitUserDrag:'none',msUserSelect:'none'}}>
+let _sclId=0;const SCLogo=({s=60,animate=true,accent,accent2})=>{const uRef=useRef('scl'+(_sclId++));const u=uRef.current;const a1=accent||'#6040E8';const a2=accent2||accent||'#A030C8';return<svg viewBox="0 0 220 220" width={s} height={s} xmlns="http://www.w3.org/2000/svg" draggable={false} onContextMenu={e=>e.preventDefault()} style={{display:'block',userSelect:'none',WebkitUserDrag:'none',msUserSelect:'none'}}>
 <defs>
-<linearGradient id={`${u}bg`} x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#00AAFF"/><stop offset="40%" stopColor="#6040E8"/><stop offset="100%" stopColor="#A030C8"/></linearGradient>
-<linearGradient id={`${u}sf`} x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor="rgba(180,220,255,0.55)"/><stop offset="100%" stopColor="rgba(120,160,255,0.35)"/></linearGradient>
-<linearGradient id={`${u}lf`} x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor="rgba(255,255,255,0.85)"/><stop offset="100%" stopColor="rgba(200,220,255,0.7)"/></linearGradient>
+<linearGradient id={`${u}bg`} x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor={a1}/><stop offset="100%" stopColor={a2}/></linearGradient>
+<linearGradient id={`${u}sf`} x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor="rgba(255,255,255,0.55)"/><stop offset="100%" stopColor="rgba(255,255,255,0.3)"/></linearGradient>
+<linearGradient id={`${u}lf`} x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor="rgba(255,255,255,0.95)"/><stop offset="100%" stopColor="rgba(255,255,255,0.8)"/></linearGradient>
 <filter id={`${u}gl`}><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <filter id={`${u}tg`}><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <filter id={`${u}sh`}><feDropShadow dx="0" dy="1.5" stdDeviation="3" floodColor="#000" floodOpacity="0.35"/></filter>
@@ -193,7 +193,7 @@ let _sclId=0;const SCLogo=({s=60,animate=true})=>{const uRef=useRef('scl'+(_sclI
 @keyframes ${u}fL{0%,100%{transform:scaleX(1)}50%{transform:scaleX(0.85)}}
 @keyframes ${u}fR{0%,100%{transform:scaleX(1)}50%{transform:scaleX(0.85)}}
 @keyframes ${u}np{0%,100%{opacity:0.3}50%{opacity:1}}
-@keyframes ${u}ml{0%,100%{opacity:0.1}50%{opacity:0.5}}
+@keyframes ${u}ml{0%,100%{opacity:0.25}50%{opacity:0.7}}
 @keyframes ${u}lg{0%,100%{filter:none}50%{filter:url(#${u}gl)}}
 @keyframes ${u}sk{0%,65%{transform:translateY(0) rotate(0)}72%,88%{transform:translateY(-3px) rotate(-10deg)}100%{transform:translateY(0) rotate(0)}}
 @keyframes ${u}ip{0%{stroke-opacity:0.15;stroke-width:1.2}30%{stroke-opacity:0.55;stroke-width:1.8}60%{stroke-opacity:0.2;stroke-width:1.2}100%{stroke-opacity:0.15;stroke-width:1.2}}
@@ -221,10 +221,10 @@ let _sclId=0;const SCLogo=({s=60,animate=true})=>{const uRef=useRef('scl'+(_sclI
 <rect x="5" y="5" width="210" height="210" rx="42" fill={`url(#${u}bg)`}/>
 <g clipPath={`url(#${u}cl)`}>
 <g className={`${u}wL`} filter={`url(#${u}sh)`}>
-<path d="M106 88 C78 58 28 48 22 84 C16 116 46 126 80 122 L106 113 Z" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.55)" strokeWidth="2.5" strokeLinejoin="round"/>
-<path className={`${u}iL`} d="M103 93 C82 72 48 66 44 88 C40 108 58 114 78 112 L103 106 Z" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.35)" strokeLinejoin="round"/>
-<path d="M106 122 C80 126 46 136 44 160 C42 176 60 180 78 172 C92 165 106 150 106 146 Z" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.45)" strokeWidth="2.5" strokeLinejoin="round"/>
-<path className={`${u}iL`} d="M104 128 C84 132 58 140 57 158 C56 168 68 172 80 165 C90 160 104 148 104 144 Z" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.3)" strokeLinejoin="round" style={{animationDelay:'0.5s'}}/>
+<path d="M106 88 C78 58 28 48 22 84 C16 116 46 126 80 122 L106 113 Z" fill="rgba(255,255,255,0.38)" stroke="rgba(255,255,255,0.85)" strokeWidth="2.5" strokeLinejoin="round"/>
+<path className={`${u}iL`} d="M103 93 C82 72 48 66 44 88 C40 108 58 114 78 112 L103 106 Z" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.6)" strokeLinejoin="round"/>
+<path d="M106 122 C80 126 46 136 44 160 C42 176 60 180 78 172 C92 165 106 150 106 146 Z" fill="rgba(255,255,255,0.3)" stroke="rgba(255,255,255,0.75)" strokeWidth="2.5" strokeLinejoin="round"/>
+<path className={`${u}iL`} d="M104 128 C84 132 58 140 57 158 C56 168 68 172 80 165 C90 160 104 148 104 144 Z" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.5)" strokeLinejoin="round" style={{animationDelay:'0.5s'}}/>
 <line className={`${u}ml`} x1="44" y1="86" x2="66" y2="100" stroke="#fff" strokeWidth="1"/>
 <line className={`${u}ml`} x1="66" y1="100" x2="50" y2="112" stroke="#fff" strokeWidth="1" style={{animationDelay:'0.3s'}}/>
 <line className={`${u}ml`} x1="44" y1="86" x2="50" y2="112" stroke="#fff" strokeWidth="1" style={{animationDelay:'0.6s'}}/>
@@ -239,10 +239,10 @@ let _sclId=0;const SCLogo=({s=60,animate=true})=>{const uRef=useRef('scl'+(_sclI
 <circle className={`${u}np`} cx="90" cy="144" r="3" fill="#fff" filter={`url(#${u}gl)`} style={{animationDelay:'1s'}}/>
 </g>
 <g className={`${u}wR`} filter={`url(#${u}sh)`}>
-<path d="M114 88 C142 58 192 48 198 84 C204 116 174 126 140 122 L114 113 Z" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.55)" strokeWidth="2.5" strokeLinejoin="round"/>
-<path className={`${u}iR`} d="M117 93 C138 72 172 66 176 88 C180 108 162 114 142 112 L117 106 Z" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.35)" strokeLinejoin="round"/>
-<path d="M114 122 C140 126 174 136 176 160 C178 176 160 180 142 172 C128 165 114 150 114 146 Z" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.45)" strokeWidth="2.5" strokeLinejoin="round"/>
-<path className={`${u}iR`} d="M116 128 C136 132 162 140 163 158 C164 168 152 172 140 165 C130 160 116 148 116 144 Z" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.3)" strokeLinejoin="round" style={{animationDelay:'0.5s'}}/>
+<path d="M114 88 C142 58 192 48 198 84 C204 116 174 126 140 122 L114 113 Z" fill="rgba(255,255,255,0.38)" stroke="rgba(255,255,255,0.85)" strokeWidth="2.5" strokeLinejoin="round"/>
+<path className={`${u}iR`} d="M117 93 C138 72 172 66 176 88 C180 108 162 114 142 112 L117 106 Z" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.6)" strokeLinejoin="round"/>
+<path d="M114 122 C140 126 174 136 176 160 C178 176 160 180 142 172 C128 165 114 150 114 146 Z" fill="rgba(255,255,255,0.3)" stroke="rgba(255,255,255,0.75)" strokeWidth="2.5" strokeLinejoin="round"/>
+<path className={`${u}iR`} d="M116 128 C136 132 162 140 163 158 C164 168 152 172 140 165 C130 160 116 148 116 144 Z" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.5)" strokeLinejoin="round" style={{animationDelay:'0.5s'}}/>
 <line className={`${u}ml`} x1="176" y1="86" x2="154" y2="100" stroke="#fff" strokeWidth="1" style={{animationDelay:'0.15s'}}/>
 <line className={`${u}ml`} x1="154" y1="100" x2="170" y2="112" stroke="#fff" strokeWidth="1" style={{animationDelay:'0.45s'}}/>
 <line className={`${u}ml`} x1="176" y1="86" x2="170" y2="112" stroke="#fff" strokeWidth="1" style={{animationDelay:'0.75s'}}/>
@@ -263,15 +263,15 @@ let _sclId=0;const SCLogo=({s=60,animate=true})=>{const uRef=useRef('scl'+(_sclI
 <path className={`${u}sk`} d="M106 110 L106 104.5 C106 101 107.8 99 110 99 C112.2 99 114 101 114 104.5 L114 110" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round"/>
 <circle cx="110" cy="115" r="2" fill="rgba(80,50,160,0.7)"/><path d="M109 116.5 L110 119.5 L111 116.5 Z" fill="rgba(80,50,160,0.7)"/>
 </g>
-<g opacity="0.55">
+<g opacity="0.8">
 <circle className={`${u}np`} cx="96" cy="100" r="1.8" fill="#fff" style={{animationDelay:'0.1s'}}/>
 <circle className={`${u}np`} cx="124" cy="100" r="1.8" fill="#fff" style={{animationDelay:'0.5s'}}/>
 <circle className={`${u}np`} cx="97" cy="124" r="1.5" fill="#fff" style={{animationDelay:'0.3s'}}/>
 <circle className={`${u}np`} cx="123" cy="124" r="1.5" fill="#fff" style={{animationDelay:'0.7s'}}/>
 <circle className={`${u}np`} cx="110" cy="87" r="1.5" fill="#fff" style={{animationDelay:'0.9s'}}/>
 </g>
-<g className={`${u}aL`}><path className={`${u}alL`} d="M106 90 C100 66 88 44 78 32" fill="none" stroke="rgba(255,255,255,0.65)" strokeWidth="2.2" strokeLinecap="round"/><circle className={`${u}atL`} cx="78" cy="32" r="3" fill="rgba(255,255,255,0.8)" filter={`url(#${u}tg)`}/></g>
-<g className={`${u}aR`}><path className={`${u}alR`} d="M114 90 C120 66 132 44 142 32" fill="none" stroke="rgba(255,255,255,0.65)" strokeWidth="2.2" strokeLinecap="round"/><circle className={`${u}atR`} cx="142" cy="32" r="3" fill="rgba(255,255,255,0.8)" filter={`url(#${u}tg)`}/></g>
+<g className={`${u}aL`}><path className={`${u}alL`} d="M106 90 C100 66 88 44 78 32" fill="none" stroke="rgba(255,255,255,0.85)" strokeWidth="2.5" strokeLinecap="round"/><circle className={`${u}atL`} cx="78" cy="32" r="3.5" fill="rgba(255,255,255,0.95)" filter={`url(#${u}tg)`}/></g>
+<g className={`${u}aR`}><path className={`${u}alR`} d="M114 90 C120 66 132 44 142 32" fill="none" stroke="rgba(255,255,255,0.85)" strokeWidth="2.5" strokeLinecap="round"/><circle className={`${u}atR`} cx="142" cy="32" r="3.5" fill="rgba(255,255,255,0.95)" filter={`url(#${u}tg)`}/></g>
 </g>
 </svg>};
 const ButterflyLogo=({s=48,accentRgb,accent,accent2,text,warn,flap})=>{
@@ -2191,7 +2191,7 @@ html{scroll-behavior:smooth}
       {/* ═══ LEFT SIDEBAR ═══ */}
       <div style={{width:260,minWidth:260,height:"100%",background:T.dark?"rgba(255,255,255,0.015)":"rgba(0,0,0,0.02)",borderRight:`1px solid ${T.bdr}`,display:"flex",flexDirection:"column"}}>
         <div style={{padding:"14px 12px 10px",display:"flex",alignItems:"center",gap:8}}>
-          <div style={{width:32,height:32,borderRadius:8,flexShrink:0,overflow:"hidden"}}><SCLogo s={32}/></div>
+          <div style={{width:32,height:32,borderRadius:8,flexShrink:0,overflow:"hidden"}}><SCLogo s={32} accent={T.accent} accent2={T.accent2||T.accent}/></div>
           <span style={{fontSize:15,fontWeight:700,fontFamily:`${F.heading},sans-serif`,letterSpacing:1}}>ShieldCraft</span>
         </div>
 
@@ -2643,7 +2643,7 @@ html{scroll-behavior:smooth}
 
         {/* ─── EMPTY STATE ─── */}
         {pmView!=="add"&&pmView!=="edit"&&pmView!=="generator"&&pmView!=="threat"&&!selCred&&<div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:12}}>
-          <div style={{width:80,height:80,borderRadius:18,overflow:"hidden"}}><SCLogo s={80}/></div>
+          <div style={{width:80,height:80,borderRadius:18,overflow:"hidden"}}><SCLogo s={80} accent={T.accent} accent2={T.accent2||T.accent}/></div>
           <div style={{fontSize:16,fontWeight:600,color:T.dim,marginTop:8}}>Select an item</div>
           <div style={{fontSize:13,color:T.faint}}>Choose from the list or create a new item</div>
         </div>}
@@ -2858,7 +2858,7 @@ html{scroll-behavior:smooth}
       "password-manager":<>
         <div style={{display:"flex",alignItems:"center",gap:2,marginBottom:0,marginTop:-24,marginLeft:-6}}>
           <div style={{animation:"shieldEntrance 0.8s ease-out",filter:`drop-shadow(0 4px 12px rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.3))`,marginRight:-2,width:72,height:72,borderRadius:16,overflow:"hidden"}}>
-            <SCLogo s={72}/>
+            <SCLogo s={72} accent={pgQuantumSafe?"#10b981":T.accent} accent2={pgQuantumSafe?"#059669":(T.accent2||T.accent)}/>
           </div>
           <div style={{marginTop:-10}}>
             <span className="sc-grad-title" style={{display:"inline-block",fontSize:32,fontWeight:800,fontFamily:`${F.heading},sans-serif`,letterSpacing:2,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${pgQuantumSafe?"#10b981":T.accent} 70%,${pgQuantumSafe?"#059669":T.accent2||T.accent})`,lineHeight:1.2}}>ShieldCraft</span>
@@ -2886,7 +2886,7 @@ html{scroll-behavior:smooth}
         {pmShowLogin&&<div style={{position:"fixed",inset:0,zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.6)",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)"}} onClick={e=>{if(e.target===e.currentTarget)setPmShowLogin(false)}}>
           <div style={{width:380,maxWidth:"90vw",background:T.dark?"rgba(16,18,27,0.95)":"rgba(30,32,44,0.95)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:`1px solid rgba(${T.accentRgb},0.2)`,borderRadius:20,padding:"32px 28px",boxShadow:`0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(${T.accentRgb},0.08)`,position:"relative"}}>
             <button onClick={()=>setPmShowLogin(false)} style={{position:"absolute",top:12,right:14,background:"none",border:"none",color:T.dim,fontSize:20,cursor:"pointer",padding:"4px 8px",lineHeight:1}}>x</button>
-            <div style={{display:"flex",justifyContent:"center",marginBottom:8}}><div style={{animation:"shieldEntrance 0.6s ease-out",width:52,height:52,borderRadius:12,overflow:"hidden"}}><SCLogo s={52}/></div></div>
+            <div style={{display:"flex",justifyContent:"center",marginBottom:8}}><div style={{animation:"shieldEntrance 0.6s ease-out",width:52,height:52,borderRadius:12,overflow:"hidden"}}><SCLogo s={52} accent={T.accent} accent2={T.accent2||T.accent}/></div></div>
             <h2 style={{fontSize:20,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.text,margin:"0 0 4px",letterSpacing:1,textAlign:"center"}}>{pmSignupMode?"Create Account":"Login to ShieldCraft"}</h2>
             <p style={{fontSize:11,color:T.dim,margin:"0 0 20px",textAlign:"center"}}>{pmSignupMode?"Create a NotesCraft account to store passwords":"Use your NotesCraft credentials"}</p>
             {!pmLogin2FA?<div style={{display:"flex",flexDirection:"column",gap:10}}>
