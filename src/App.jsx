@@ -2597,7 +2597,7 @@ html{scroll-behavior:smooth}
                 <div onClick={()=>setPgQuantumSafe(!pgQuantumSafe)} style={{width:44,height:24,borderRadius:12,background:pgQuantumSafe?"rgba(16,185,129,0.35)":`rgba(${T.accentRgb},0.15)`,border:pgQuantumSafe?"1.5px solid rgba(16,185,129,0.6)":`1.5px solid rgba(${T.accentRgb},0.4)`,position:"relative",cursor:"pointer",transition:"all 0.4s",flexShrink:0,boxShadow:pgQuantumSafe?"0 0 16px rgba(16,185,129,0.4),inset 0 0 10px rgba(16,185,129,0.1)":`0 0 10px rgba(${T.accentRgb},0.15)`}}>
                   <div style={{width:18,height:18,borderRadius:"50%",background:pgQuantumSafe?"#10b981":T.accent,position:"absolute",top:2,left:pgQuantumSafe?23:2,transition:"all 0.3s cubic-bezier(0.4,0,0.2,1)",boxShadow:pgQuantumSafe?"0 0 10px rgba(16,185,129,0.8)":`0 0 8px rgba(${T.accentRgb},0.4)`,opacity:pgQuantumSafe?1:0.7}}/>
                 </div>
-                <span style={{fontSize:13,fontWeight:700,color:pgQuantumSafe?"#10b981":T.text,textShadow:pgQuantumSafe?"0 0 10px rgba(16,185,129,0.4)":"none"}}>⚛️ Turn On Quantum Resistant Mode</span>
+                <span style={{fontSize:13,fontWeight:700,color:pgQuantumSafe?"#10b981":T.text,textShadow:pgQuantumSafe?"0 0 10px rgba(16,185,129,0.4)":"none"}}>⚛️ Quantum Resistant Mode</span>
                 <span style={{fontSize:9,color:pgQuantumSafe?"rgba(16,185,129,0.6)":T.dim,marginLeft:"auto"}}>(enforces min {pgMode==="random"?"65 chars + all charsets":pgMode==="pin"?"39 digits":"10 words"} for 128+ bit entropy)</span>
               </label>
             </div>
@@ -3400,8 +3400,8 @@ html{scroll-behavior:smooth}
           </div>
           {/* Floating neon side cards */}
           {infoPage==="password-manager"&&<>
-            <div style={{position:"absolute",left:-260,top:130,width:245,height:190,pointerEvents:"none",animation:"neoFloat1 6s ease-in-out infinite",zIndex:2}}>
-              <div style={{width:"100%",height:"100%",borderRadius:6,padding:"18px 18px",border:"2px solid rgba(16,185,129,0.8)",background:"rgba(16,185,129,0.1)",boxShadow:"0 0 15px rgba(16,185,129,0.35),0 0 30px rgba(16,185,129,0.18),inset 0 0 15px rgba(16,185,129,0.08)",transform:"rotate(-8deg)",display:"flex",flexDirection:"column",overflow:"hidden"}}>
+            <div style={{position:"absolute",left:-280,top:130,width:270,height:210,pointerEvents:"none",animation:"neoFloat1 6s ease-in-out infinite",zIndex:2}}>
+              <div style={{width:"100%",height:"100%",borderRadius:6,padding:"20px 20px",border:"2px solid rgba(16,185,129,0.8)",background:"rgba(16,185,129,0.1)",boxShadow:"0 0 15px rgba(16,185,129,0.35),0 0 30px rgba(16,185,129,0.18),inset 0 0 15px rgba(16,185,129,0.08)",transform:"rotate(-8deg)",display:"flex",flexDirection:"column",overflow:"hidden"}}>
                 <div style={{fontSize:17,fontWeight:900,color:"#10b981",marginBottom:8,fontFamily:"monospace",letterSpacing:1}}>⚛️ Quantum-Safe</div>
                 <div style={{fontSize:13.5,color:"rgba(255,255,255,0.88)",lineHeight:1.65,fontFamily:"monospace",flex:1,overflow:"hidden"}}>Only password generator with Grover-aware effective{"\n"}bits calculation —{"\n"}models real quantum{"\n"}attack cost, not just{"\n"}classical brute-force</div>
               </div>
