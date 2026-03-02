@@ -2907,7 +2907,7 @@ html{scroll-behavior:smooth}
       </>,
       "password-manager":<>
         <div style={{display:"flex",alignItems:"center",gap:2,marginBottom:0,marginTop:-24,marginLeft:-6}}>
-          <div style={{animation:"shieldEntrance 0.8s ease-out",filter:`drop-shadow(0 4px 12px rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.3))`,marginRight:-2,width:72,height:72,borderRadius:16,overflow:"hidden"}}>
+          <div style={{animation:"shieldEntrance 0.8s ease-out",filter:`drop-shadow(0 4px 12px rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.3))${pgQuantumSafe?" hue-rotate(100deg) saturate(1.3)":""}`,marginRight:-2,width:72,height:72,borderRadius:16,overflow:"hidden",transition:"filter 0.4s"}}>
             <SCLogo s={72}/>
           </div>
           <div style={{marginTop:-10}}>
