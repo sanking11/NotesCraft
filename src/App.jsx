@@ -3129,7 +3129,12 @@ html{scroll-behavior:smooth}
       </>,
       "security-blog":<>{(()=>{
         const blogArticles=[
-          {slug:"csprng-vs-prng",tag:"Security Deep-Dive",title:"Cryptographic vs Normal Password Generators",subtitle:"Why the random numbers behind your passwords matter more than you think — explained with entropy, physics, and a cup of hot coffee.",icon:"🔐",date:"February 2026"}
+          {slug:"csprng-vs-prng",tag:"Security Deep-Dive",title:"Cryptographic vs Normal Password Generators",subtitle:"Why the random numbers behind your passwords matter more than you think — explained with entropy, physics, and a cup of hot coffee.",icon:"🔐",date:"February 2026"},
+          {slug:"quantum-threat-to-passwords",tag:"Quantum Computing",title:"How Quantum Computers Will Break Your Passwords",subtitle:"Grover's algorithm halves your password entropy overnight. Here's what that actually means and how to prepare for the post-quantum era.",icon:"⚛️",date:"March 2026"},
+          {slug:"ai-password-cracking",tag:"AI & Security",title:"AI-Powered Password Cracking: Neural Networks vs Your Secrets",subtitle:"From PassGAN to transformer-based guessers — how machine learning is changing the password cracking landscape and what it means for your security.",icon:"🤖",date:"March 2026"},
+          {slug:"post-quantum-cryptography",tag:"Quantum Research",title:"Post-Quantum Cryptography: The New Standards Protecting Your Future",subtitle:"NIST has finalized its post-quantum algorithms. A deep dive into lattice-based cryptography, CRYSTALS-Kyber, and why RSA's days are numbered.",icon:"🛡️",date:"March 2026"},
+          {slug:"quantum-entanglement-communication",tag:"Physics & Security",title:"Quantum Entanglement: Unhackable Communication Is Real",subtitle:"Einstein called it 'spooky action at a distance.' Today it powers quantum key distribution networks spanning entire countries.",icon:"🔗",date:"March 2026"},
+          {slug:"physics-of-true-randomness",tag:"Physics Deep-Dive",title:"The Physics of True Randomness: From Radioactive Decay to Your Password",subtitle:"Why true randomness can only come from quantum mechanics — and how your device harvests chaos from the physical universe to generate unbreakable passwords.",icon:"🌌",date:"March 2026"}
         ];
         const activeArticle=blogArticles.find(a=>a.slug===blogArticle);
         const shareLink=(slug)=>{const url=window.location.origin+window.location.pathname+"#blog/"+slug;navigator.clipboard.writeText(url).then(()=>{setAuthErr("Link copied!");setTimeout(()=>setAuthErr(""),2000)})};
@@ -3367,6 +3372,294 @@ html{scroll-behavior:smooth}
           </button>
         </div>
           </>}
+
+          {/* Article: quantum-threat-to-passwords */}
+          {activeArticle.slug==="quantum-threat-to-passwords"&&<>
+        <div style={{textAlign:"center",marginBottom:40}}>
+          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:T.accent,marginBottom:16}}>Quantum Computing</span>
+          <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>
+            How <span style={{background:`linear-gradient(135deg,#10b981,#059669)`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Quantum Computers</span> Will Break Your Passwords
+          </h2>
+          <p style={{fontSize:14,color:"#8892a4",maxWidth:500,margin:"0 auto",lineHeight:1.6}}>Grover's algorithm halves your password entropy overnight. Here's what that actually means.</p>
+        </div>
+
+        <h2 style={infoH2}>The Quantum Threat Is Not Science Fiction</h2>
+        <p style={infoP}>Classical computers try passwords one at a time — or in parallel across many cores. A 128-bit password has 2¹²⁸ possible combinations. Even at a trillion guesses per second, that takes longer than the age of the universe.</p>
+        <p style={infoP}>Quantum computers change the math. <strong style={{color:T.text}}>Grover's search algorithm</strong>, published in 1996 by Lov Grover at Bell Labs, provides a provable quadratic speedup for searching unsorted databases. For password cracking, this means a 128-bit password effectively becomes <strong style={{color:"#10b981"}}>64-bit</strong> against a quantum attacker.</p>
+
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,margin:"24px 0"}}>
+          <div style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderTop:"3px solid #10b981",borderRadius:14,padding:"20px 18px",textAlign:"center"}}>
+            <div style={{fontSize:10,color:"#8892a4",textTransform:"uppercase",letterSpacing:1.5,marginBottom:6}}>Classical Attack</div>
+            <div style={{fontFamily:"monospace",fontSize:28,fontWeight:700,color:T.dark?T.text:"#e2e8f0"}}>2<sup>128</sup></div>
+            <div style={{fontSize:11,color:"#8892a4",marginTop:4}}>operations needed</div>
+          </div>
+          <div style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderTop:"3px solid #f59e0b",borderRadius:14,padding:"20px 18px",textAlign:"center"}}>
+            <div style={{fontSize:10,color:"#8892a4",textTransform:"uppercase",letterSpacing:1.5,marginBottom:6}}>Quantum Attack (Grover)</div>
+            <div style={{fontFamily:"monospace",fontSize:28,fontWeight:700,color:"#f59e0b"}}>2<sup>64</sup></div>
+            <div style={{fontSize:11,color:"#8892a4",marginTop:4}}>operations needed</div>
+          </div>
+        </div>
+
+        <h2 style={infoH2}>How Grover's Algorithm Actually Works</h2>
+        <p style={infoP}>Imagine you have a phone book with a billion names, and you're looking for one specific person. A classical computer reads entries one by one. Grover's algorithm uses <strong style={{color:T.text}}>quantum superposition</strong> to check many entries simultaneously, and <strong style={{color:T.text}}>amplitude amplification</strong> to boost the probability of the correct answer.</p>
+        <p style={infoP}>After approximately √N iterations (where N is the total search space), the correct answer emerges with high probability. For a 128-bit key, that's √(2¹²⁸) = 2⁶⁴ operations — still enormous, but tractable for future quantum machines.</p>
+
+        <div style={{background:`rgba(${T.accentRgb},0.06)`,borderLeft:`3px solid ${T.accent}`,padding:"16px 18px",borderRadius:"0 12px 12px 0",margin:"20px 0"}}>
+          <strong style={{color:T.accent,fontSize:13}}>Key Insight:</strong>
+          <p style={{fontSize:13,color:"#8892a4",lineHeight:1.7,margin:"8px 0 0"}}>Grover's speedup is <strong style={{color:T.text}}>quadratic, not exponential</strong>. This means doubling your password length is enough to restore the original security level. A 256-bit key remains secure even against quantum computers — it reduces to 128 effective bits, which is still unbreakable.</p>
+        </div>
+
+        <h2 style={infoH2}>What About Shor's Algorithm?</h2>
+        <p style={infoP}>While Grover targets symmetric encryption and passwords, <strong style={{color:T.text}}>Shor's algorithm</strong> is far more devastating to public-key cryptography. It can factor large numbers in polynomial time, breaking RSA, ECC, and Diffie-Hellman completely.</p>
+
+        <div style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:14,overflow:"hidden",margin:"20px 0"}}>
+          <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+            <thead><tr style={{background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.06)"}}>
+              <th style={{textAlign:"left",padding:"12px 16px",fontWeight:600,fontSize:11,letterSpacing:1,textTransform:"uppercase",color:T.dark?T.text:"#e2e8f0",borderBottom:`1px solid ${T.bdr}`}}>Algorithm</th>
+              <th style={{textAlign:"left",padding:"12px 16px",fontWeight:600,fontSize:11,letterSpacing:1,textTransform:"uppercase",color:"#8892a4",borderBottom:`1px solid ${T.bdr}`}}>Targets</th>
+              <th style={{textAlign:"left",padding:"12px 16px",fontWeight:600,fontSize:11,letterSpacing:1,textTransform:"uppercase",color:"#8892a4",borderBottom:`1px solid ${T.bdr}`}}>Impact</th>
+            </tr></thead>
+            <tbody>
+              {[["Grover's","Symmetric keys, passwords, hashes","Halves effective key length (quadratic)"],["Shor's","RSA, ECC, Diffie-Hellman","Breaks completely (exponential speedup)"],["BHT","Hash collisions","Speeds up collision finding"]].map((row,i)=><tr key={i} style={{borderBottom:i<2?`1px solid ${T.bdr}`:"none"}}>
+                <td style={{padding:"10px 16px",fontWeight:600,color:T.dark?T.text:"#e2e8f0"}}>{row[0]}</td>
+                <td style={{padding:"10px 16px",color:"#8892a4"}}>{row[1]}</td>
+                <td style={{padding:"10px 16px",color:"#f59e0b"}}>{row[2]}</td>
+              </tr>)}
+            </tbody>
+          </table>
+        </div>
+
+        <h2 style={infoH2}>Timeline: When Should You Worry?</h2>
+        <p style={infoP}>Current quantum computers (2026) have around 1,000-1,500 qubits with high error rates. Breaking AES-128 via Grover's requires millions of <strong style={{color:T.text}}>error-corrected logical qubits</strong>. Most experts estimate this capability arriving between 2035-2045.</p>
+        <p style={infoP}>But the threat is already real: <strong style={{color:T.text}}>"Harvest now, decrypt later"</strong> attacks mean adversaries can store your encrypted data today and decrypt it once quantum computers mature. If your data needs to stay secret for 10+ years, the quantum threat is here now.</p>
+
+        <div style={{height:1,background:`linear-gradient(90deg,transparent,${T.bdr},transparent)`,margin:"32px 0"}}/>
+
+        <h2 style={infoH2}>How ShieldCraft Prepares You</h2>
+        <p style={infoP}>ShieldCraft's <strong style={{color:"#10b981"}}>Quantum Resistant mode</strong> uses Grover-aware entropy calculations. Instead of just measuring classical brute-force difficulty, it models the effective bits after quantum attack — ensuring your passwords remain strong even in a post-quantum world.</p>
+        <p style={infoP}>When quantum mode is enabled, minimum password lengths increase to maintain at least 128 effective bits (256 classical bits), providing security that will outlast the quantum transition.</p>
+
+        <div style={{textAlign:"center",marginTop:32,fontSize:12,color:"#4a5568"}}>The quantum era isn't coming. It's already being prepared for.</div>
+          </>}
+
+          {/* Article: ai-password-cracking */}
+          {activeArticle.slug==="ai-password-cracking"&&<>
+        <div style={{textAlign:"center",marginBottom:40}}>
+          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:T.accent,marginBottom:16}}>AI & Security</span>
+          <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>
+            <span style={{background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>AI-Powered</span> Password Cracking
+          </h2>
+          <p style={{fontSize:14,color:"#8892a4",maxWidth:500,margin:"0 auto",lineHeight:1.6}}>How neural networks are learning human password patterns — and why truly random passwords are your only defense.</p>
+        </div>
+
+        <h2 style={infoH2}>Beyond Brute Force: AI Learns How You Think</h2>
+        <p style={infoP}>Traditional password cracking uses two approaches: <strong style={{color:T.text}}>brute force</strong> (trying every combination) and <strong style={{color:T.text}}>dictionary attacks</strong> (trying common passwords and variations). Both are predictable and well-defended against.</p>
+        <p style={infoP}>AI-powered cracking introduces a third paradigm: <strong style={{color:T.text}}>generative models that learn human password creation patterns</strong>. These models study millions of leaked passwords and learn the subtle ways humans construct "random" passwords — favorite substitutions (@ for a, 3 for e), common structures (Word+Number+Symbol), and cultural patterns.</p>
+
+        <h2 style={infoH2}>PassGAN: The Password-Generating Adversarial Network</h2>
+        <p style={infoP}>Published in 2019, <strong style={{color:T.text}}>PassGAN</strong> used a Generative Adversarial Network (GAN) trained on leaked password databases. The generator learns to produce password guesses that match real human password distributions, while the discriminator learns to distinguish generated passwords from real ones.</p>
+
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,margin:"24px 0"}}>
+          <div style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderTop:`3px solid ${T.accent}`,borderRadius:14,padding:"20px 18px"}}>
+            <div style={{fontSize:14,fontWeight:700,color:T.dark?T.text:"#e2e8f0",marginBottom:8}}>Traditional Rules</div>
+            <p style={{fontSize:12,color:"#8892a4",margin:0,lineHeight:1.6}}>Manually crafted transformation rules: capitalize first letter, append numbers, replace letters with symbols. Limited by human imagination.</p>
+          </div>
+          <div style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderTop:"3px solid #f59e0b",borderRadius:14,padding:"20px 18px"}}>
+            <div style={{fontSize:14,fontWeight:700,color:T.dark?T.text:"#e2e8f0",marginBottom:8}}>AI-Generated Guesses</div>
+            <p style={{fontSize:12,color:"#8892a4",margin:0,lineHeight:1.6}}>Learns patterns automatically from data. Discovers non-obvious correlations, cultural biases, and structural preferences humans can't articulate.</p>
+          </div>
+        </div>
+
+        <h2 style={infoH2}>Transformer Models: The New Frontier (2024-2026)</h2>
+        <p style={infoP}>The latest research applies <strong style={{color:T.text}}>transformer architectures</strong> — the same technology behind GPT and Claude — to password cracking. These models treat passwords as sequences and learn the probability distribution of the next character given previous ones.</p>
+        <p style={infoP}>Key findings from recent papers:</p>
+
+        <div style={{display:"flex",flexDirection:"column",gap:10,margin:"16px 0"}}>
+          {[{stat:"27%",desc:"of human-created passwords cracked by AI that traditional tools missed"},{stat:"60%",desc:"of 8-character passwords with common patterns cracked in under 1 hour"},{stat:"0%",desc:"success rate against truly random CSPRNG-generated passwords of 16+ characters"}].map((item,i)=>
+            <div key={i} style={{display:"flex",alignItems:"center",gap:16,background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:10,padding:"14px 18px"}}>
+              <span style={{fontFamily:"monospace",fontSize:24,fontWeight:700,color:i===2?"#10b981":T.accent,flexShrink:0,width:60,textAlign:"center"}}>{item.stat}</span>
+              <span style={{fontSize:12,color:"#8892a4",lineHeight:1.5}}>{item.desc}</span>
+            </div>
+          )}
+        </div>
+
+        <div style={{background:`rgba(16,185,129,0.06)`,borderLeft:"3px solid #10b981",padding:"16px 18px",borderRadius:"0 12px 12px 0",margin:"20px 0"}}>
+          <strong style={{color:"#10b981",fontSize:13}}>The Good News:</strong>
+          <p style={{fontSize:13,color:"#8892a4",lineHeight:1.7,margin:"8px 0 0"}}>AI is brilliant at exploiting human patterns — but it cannot defeat <strong style={{color:T.text}}>true mathematical randomness</strong>. A CSPRNG-generated password has no patterns to learn from. No amount of training data helps an AI predict the output of <code style={{background:T.dark?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.06)",padding:"2px 6px",borderRadius:4,fontSize:12}}>crypto.getRandomValues()</code>.</p>
+        </div>
+
+        <h2 style={infoH2}>Why Human "Random" Isn't Random</h2>
+        <p style={infoP}>When asked to create a random password, humans exhibit consistent biases: starting with uppercase, ending with numbers, using keyboard patterns (qwerty, 123), substituting vowels with similar numbers, and choosing words from a limited mental dictionary. AI models exploit exactly these biases.</p>
+        <p style={infoP}>The solution is simple: <strong style={{color:T.text}}>let a machine generate your passwords</strong>. ShieldCraft uses <code style={{background:T.dark?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.06)",padding:"2px 6px",borderRadius:4,fontSize:12}}>crypto.getRandomValues()</code> — a CSPRNG — ensuring every character is independently and uniformly chosen with no learnable patterns.</p>
+
+        <div style={{textAlign:"center",marginTop:32,fontSize:12,color:"#4a5568"}}>The best defense against AI is removing the human from the equation.</div>
+          </>}
+
+          {/* Article: post-quantum-cryptography */}
+          {activeArticle.slug==="post-quantum-cryptography"&&<>
+        <div style={{textAlign:"center",marginBottom:40}}>
+          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:T.accent,marginBottom:16}}>Quantum Research</span>
+          <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>
+            <span style={{background:"linear-gradient(135deg,#10b981,#06b6d4)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Post-Quantum Cryptography</span>: The New Standards
+          </h2>
+          <p style={{fontSize:14,color:"#8892a4",maxWidth:500,margin:"0 auto",lineHeight:1.6}}>NIST has finalized algorithms that will protect our data in the quantum era. Here's what you need to know.</p>
+        </div>
+
+        <h2 style={infoH2}>Why We Need New Algorithms</h2>
+        <p style={infoP}>Today's internet security relies on mathematical problems that classical computers find impossibly hard: factoring large primes (RSA), computing discrete logarithms (Diffie-Hellman), and solving elliptic curve problems (ECC). Shor's algorithm solves all of these efficiently on a quantum computer.</p>
+        <p style={infoP}>In August 2024, NIST finalized three post-quantum cryptography standards after an 8-year international competition. These algorithms are based on mathematical problems that are believed to be hard for <strong style={{color:T.text}}>both classical and quantum computers</strong>.</p>
+
+        <div style={{display:"flex",flexDirection:"column",gap:12,margin:"24px 0"}}>
+          {[
+            {name:"ML-KEM (CRYSTALS-Kyber)",type:"Key Encapsulation",basis:"Module Lattices",status:"FIPS 203 — Finalized",color:"#10b981",desc:"The primary algorithm for establishing shared secrets. Based on the hardness of the Module Learning With Errors (MLWE) problem. Fast, compact keys, and well-studied security margins."},
+            {name:"ML-DSA (CRYSTALS-Dilithium)",type:"Digital Signatures",basis:"Module Lattices",status:"FIPS 204 — Finalized",color:T.accent,desc:"The primary algorithm for digital signatures. Also lattice-based, providing strong security with reasonable signature sizes. Replaces RSA and ECDSA for signing."},
+            {name:"SLH-DSA (SPHINCS+)",type:"Digital Signatures",basis:"Hash Functions",status:"FIPS 205 — Finalized",color:"#f59e0b",desc:"A backup signature scheme based purely on hash functions — the most conservative choice. Larger signatures but relies on minimal assumptions. If lattices break, this survives."}
+          ].map((algo,i)=><div key={i} style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderLeft:`3px solid ${algo.color}`,borderRadius:14,padding:"20px 18px"}}>
+            <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:8,flexWrap:"wrap"}}>
+              <span style={{fontSize:15,fontWeight:700,color:T.dark?T.text:"#e2e8f0"}}>{algo.name}</span>
+              <span style={{fontSize:9,fontWeight:600,letterSpacing:1.5,textTransform:"uppercase",color:algo.color,background:`rgba(${algo.color==="#10b981"?"16,185,129":algo.color==="#f59e0b"?"245,158,11":T.accentRgb},0.12)`,padding:"2px 8px",borderRadius:4}}>{algo.type}</span>
+            </div>
+            <div style={{fontSize:10,color:algo.color,fontWeight:600,letterSpacing:1,marginBottom:8}}>{algo.status} — Based on: {algo.basis}</div>
+            <p style={{fontSize:12,color:"#8892a4",margin:0,lineHeight:1.6}}>{algo.desc}</p>
+          </div>)}
+        </div>
+
+        <h2 style={infoH2}>Lattice-Based Cryptography: The Core Idea</h2>
+        <p style={infoP}>Most post-quantum algorithms rely on <strong style={{color:T.text}}>lattice problems</strong> — mathematical structures in high-dimensional space. The fundamental hard problem is the <strong style={{color:T.text}}>Shortest Vector Problem (SVP)</strong>: given a lattice (a regular grid of points in many dimensions), find the shortest non-zero vector.</p>
+        <p style={infoP}>In 2 or 3 dimensions, this is easy to visualize and solve. But in hundreds of dimensions, even quantum computers cannot find efficient shortcuts. No known quantum algorithm provides a significant speedup for lattice problems — making them ideal foundations for post-quantum security.</p>
+
+        <h2 style={infoH2}>The Migration Timeline</h2>
+        <div style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:14,padding:20,margin:"20px 0"}}>
+          {[
+            {year:"2024",event:"NIST finalizes ML-KEM, ML-DSA, SLH-DSA standards",done:true},
+            {year:"2025",event:"Major browsers and TLS libraries begin PQC integration",done:true},
+            {year:"2026",event:"Hybrid classical+PQC modes become default in new deployments",done:true},
+            {year:"2030",event:"NIST target: federal systems must support PQC",done:false},
+            {year:"2035",event:"Full deprecation of RSA-2048 and classical-only systems",done:false}
+          ].map((item,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:14,padding:"10px 0",borderBottom:i<4?`1px solid ${T.bdr}`:"none"}}>
+            <div style={{width:8,height:8,borderRadius:"50%",background:item.done?"#10b981":"rgba(255,255,255,0.15)",boxShadow:item.done?"0 0 8px rgba(16,185,129,0.5)":"none",flexShrink:0}}/>
+            <span style={{fontFamily:"monospace",fontSize:12,fontWeight:700,color:item.done?"#10b981":T.dim,width:40,flexShrink:0}}>{item.year}</span>
+            <span style={{fontSize:12,color:item.done?(T.dark?T.text:"#e2e8f0"):"#8892a4"}}>{item.event}</span>
+          </div>)}
+        </div>
+
+        <p style={infoP}>The transition is happening now. Every new encrypted system should plan for post-quantum algorithms. The cost of migrating later — after quantum computers arrive — is catastrophic. The cost of migrating now is manageable.</p>
+
+        <div style={{textAlign:"center",marginTop:32,fontSize:12,color:"#4a5568"}}>The post-quantum future is being built today, one algorithm at a time.</div>
+          </>}
+
+          {/* Article: quantum-entanglement-communication */}
+          {activeArticle.slug==="quantum-entanglement-communication"&&<>
+        <div style={{textAlign:"center",marginBottom:40}}>
+          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:T.accent,marginBottom:16}}>Physics & Security</span>
+          <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>
+            <span style={{background:`linear-gradient(135deg,#8b5cf6,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Quantum Entanglement</span>: Unhackable Communication
+          </h2>
+          <p style={{fontSize:14,color:"#8892a4",maxWidth:500,margin:"0 auto",lineHeight:1.6}}>Einstein called it 'spooky action at a distance.' Today it powers communication networks that are physically impossible to eavesdrop on.</p>
+        </div>
+
+        <h2 style={infoH2}>What Is Quantum Entanglement?</h2>
+        <p style={infoP}>When two particles become <strong style={{color:T.text}}>entangled</strong>, measuring one instantly determines the state of the other — regardless of distance. This isn't communication faster than light; it's a correlation baked into the quantum state at creation. But it has a remarkable security property:</p>
+        <p style={infoP}><strong style={{color:T.accent}}>Any attempt to observe or copy the quantum state destroys it.</strong> This is the <strong style={{color:T.text}}>No-Cloning Theorem</strong> — a fundamental law of quantum mechanics that makes eavesdropping physically detectable.</p>
+
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12,margin:"24px 0"}}>
+          {[{emoji:"🔗",title:"Entangle",desc:"Two photons are generated in an entangled state — their properties are correlated"},{emoji:"📡",title:"Distribute",desc:"One photon is sent to each party over fiber optic or satellite link"},{emoji:"🔑",title:"Measure",desc:"Both parties measure their photons, generating a shared secret key"}].map((step,i)=>
+            <div key={i} style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:14,padding:"18px 14px",textAlign:"center"}}>
+              <div style={{fontSize:28,marginBottom:8}}>{step.emoji}</div>
+              <div style={{fontSize:13,fontWeight:700,color:T.dark?T.text:"#e2e8f0",marginBottom:6}}>{step.title}</div>
+              <p style={{fontSize:11,color:"#8892a4",margin:0,lineHeight:1.5}}>{step.desc}</p>
+            </div>
+          )}
+        </div>
+
+        <h2 style={infoH2}>Quantum Key Distribution (QKD)</h2>
+        <p style={infoP}><strong style={{color:T.text}}>BB84</strong>, proposed by Bennett and Brassard in 1984, was the first quantum key distribution protocol. It uses the polarization states of individual photons to generate a shared secret key between two parties.</p>
+        <p style={infoP}>The security guarantee is extraordinary: if an eavesdropper (Eve) intercepts photons between Alice and Bob, the <strong style={{color:T.text}}>Heisenberg Uncertainty Principle</strong> forces her measurements to disturb the quantum states. Alice and Bob detect this disturbance as an abnormally high error rate — and they know someone is listening.</p>
+
+        <div style={{background:`rgba(139,92,246,0.06)`,borderLeft:"3px solid #8b5cf6",padding:"16px 18px",borderRadius:"0 12px 12px 0",margin:"20px 0"}}>
+          <strong style={{color:"#8b5cf6",fontSize:13}}>Physics Guarantee:</strong>
+          <p style={{fontSize:13,color:"#8892a4",lineHeight:1.7,margin:"8px 0 0"}}>Unlike mathematical encryption (which could be broken by a clever algorithm), QKD security comes from the <strong style={{color:T.text}}>laws of physics themselves</strong>. To break it, you would need to violate quantum mechanics — which would overturn our entire understanding of the universe.</p>
+        </div>
+
+        <h2 style={infoH2}>Real-World Quantum Networks (2026)</h2>
+        <p style={infoP}>Quantum communication isn't theoretical anymore. Active networks include:</p>
+        <div style={{display:"flex",flexDirection:"column",gap:8,margin:"16px 0"}}>
+          {[
+            {country:"🇨🇳 China",detail:"Beijing-Shanghai QKD backbone (2,000 km) + Micius satellite enabling intercontinental quantum key exchange"},
+            {country:"🇪🇺 Europe",detail:"EuroQCI initiative connecting all 27 EU member states with quantum-secured links by 2030"},
+            {country:"🇺🇸 USA",detail:"DOE quantum network testbeds across national laboratories; commercial QKD services in select cities"},
+            {country:"🇰🇷 South Korea",detail:"SK Telecom operating commercial QKD network protecting financial and government communications"}
+          ].map((net,i)=><div key={i} style={{display:"flex",gap:12,background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:10,padding:"12px 16px",alignItems:"flex-start"}}>
+            <span style={{fontSize:13,flexShrink:0,fontWeight:700,color:T.dark?T.text:"#e2e8f0"}}>{net.country}</span>
+            <span style={{fontSize:12,color:"#8892a4",lineHeight:1.5}}>{net.detail}</span>
+          </div>)}
+        </div>
+
+        <h2 style={infoH2}>Limitations & The Hybrid Future</h2>
+        <p style={infoP}>QKD has practical challenges: photon loss over long distances (max ~100 km without quantum repeaters), expensive infrastructure, and low key generation rates. Current systems generate keys at kilobits per second — enough for key exchange, but not for bulk encryption.</p>
+        <p style={infoP}>The future is <strong style={{color:T.text}}>hybrid</strong>: quantum key distribution for the most sensitive key exchanges, combined with post-quantum algorithms (like ML-KEM) for everyday encryption. Together, they provide <strong style={{color:T.text}}>defense in depth</strong> against both quantum computing and theoretical mathematical breakthroughs.</p>
+
+        <div style={{textAlign:"center",marginTop:32,fontSize:12,color:"#4a5568"}}>The universe itself guarantees your privacy — if you use the right physics.</div>
+          </>}
+
+          {/* Article: physics-of-true-randomness */}
+          {activeArticle.slug==="physics-of-true-randomness"&&<>
+        <div style={{textAlign:"center",marginBottom:40}}>
+          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:T.accent,marginBottom:16}}>Physics Deep-Dive</span>
+          <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>
+            The Physics of <span style={{background:"linear-gradient(135deg,#f59e0b,#ef4444)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>True Randomness</span>
+          </h2>
+          <p style={{fontSize:14,color:"#8892a4",maxWidth:500,margin:"0 auto",lineHeight:1.6}}>Why true randomness can only come from quantum mechanics — and how your device harvests chaos from the universe.</p>
+        </div>
+
+        <h2 style={infoH2}>The Determinism Problem</h2>
+        <p style={infoP}>Classical physics is <strong style={{color:T.text}}>deterministic</strong>. If you knew the position and velocity of every particle in the universe, you could (in theory) predict the entire future. A coin flip isn't truly random — it's just too complex to calculate. A computer algorithm is even worse: given the same starting state, it produces the exact same output every time.</p>
+        <p style={infoP}>This is a fundamental problem for cryptography. If your random number generator is deterministic, your passwords are deterministic — and potentially predictable.</p>
+
+        <h2 style={infoH2}>Quantum Mechanics: Where Randomness Is Fundamental</h2>
+        <p style={infoP}>Quantum mechanics introduced something revolutionary: <strong style={{color:T.text}}>irreducible randomness</strong>. When you measure a quantum property (like a photon's polarization through a filter at 45°), the outcome is genuinely random — not because we lack information, but because <strong style={{color:T.accent}}>the universe hasn't decided yet</strong> until the measurement occurs.</p>
+
+        {[
+          {emoji:"☢️",title:"Radioactive Decay",body:"When a radioactive atom decays is fundamentally unpredictable. You can know the half-life (statistical average), but the exact moment any individual atom decays is pure quantum randomness. Some hardware random number generators use Geiger counters measuring decay events as their entropy source.",simple:"Imagine a room full of identical popcorn kernels on a hot plate. You know roughly half will pop in the next minute, but you can never predict which specific kernel pops next. That's radioactive decay — and it's one of nature's purest sources of randomness."},
+          {emoji:"💡",title:"Photon Shot Noise",body:"When light hits a detector, individual photons arrive at random intervals following a Poisson distribution. This 'shot noise' is a quantum effect — the randomness comes from the discrete nature of light itself. Many quantum random number generators (QRNGs) use this principle, splitting photons on a beam splitter and detecting which path they take.",simple:"Imagine rain falling on a tin roof. Each individual raindrop hits at a random moment. You can predict the average rate, but never the exact timing of the next drop. Photons behave the same way — and that unpredictable timing becomes the raw material for random numbers."},
+          {emoji:"🌡️",title:"Thermal Noise (Johnson-Nyquist Noise)",body:"Every electrical resistor generates tiny random voltage fluctuations due to the thermal motion of electrons. This Johnson-Nyquist noise has a quantum component and is used by many hardware random number generators, including those in your CPU. Intel's RDRAND instruction samples this noise.",simple:"The electrons in every wire are constantly jiggling because of heat — even at room temperature. That jiggling creates tiny, unpredictable electrical signals. Your computer's processor measures these signals millions of times per second and uses them to generate random numbers. Your passwords are literally born from atomic vibrations."}
+        ].map((fact,i)=><div key={i} style={{background:`linear-gradient(135deg,${T.dark?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.04)"},${T.dark?"rgba(255,255,255,0.02)":"rgba(0,0,0,0.02)"})`,border:`1px solid rgba(${T.accentRgb},0.2)`,borderRadius:18,padding:"24px 22px",margin:"20px 0",position:"relative",overflow:"hidden"}}>
+          <div style={{position:"absolute",top:-30,right:-30,width:120,height:120,background:`radial-gradient(circle,rgba(${T.accentRgb},0.1),transparent 70%)`,pointerEvents:"none"}}/>
+          <div style={{fontSize:28,marginBottom:10}}>{fact.emoji}</div>
+          <h4 style={{fontFamily:`${F.heading},sans-serif`,fontSize:16,color:T.accent,marginBottom:10}}>{fact.title}</h4>
+          <p style={{fontSize:13,color:"#8892a4",lineHeight:1.7,marginBottom:10}}>{fact.body}</p>
+          <div style={{background:`rgba(${T.accentRgb},0.06)`,borderLeft:`3px solid ${T.accent}`,padding:"10px 14px",borderRadius:"0 8px 8px 0",fontSize:12,color:"#8892a4",lineHeight:1.7}}>
+            <strong style={{color:T.accent}}>In simple words: </strong>{fact.simple}
+          </div>
+        </div>)}
+
+        <h2 style={infoH2}>How Your Device Collects Entropy</h2>
+        <p style={infoP}>Modern operating systems maintain an <strong style={{color:T.text}}>entropy pool</strong> — a reservoir of randomness collected from multiple physical sources:</p>
+
+        <div style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:14,padding:20,margin:"20px 0"}}>
+          {[
+            {source:"CPU thermal noise",api:"RDRAND / RDSEED instructions",os:"Hardware (Intel, AMD, ARM)"},
+            {source:"Interrupt timing jitter",api:"/dev/urandom, BCryptGenRandom",os:"Linux, Windows kernel"},
+            {source:"Mouse/keyboard timing",api:"CryptoAPI, /dev/random",os:"All desktop OS"},
+            {source:"Disk I/O timing",api:"Entropy pool mixing",os:"Linux, macOS"},
+            {source:"Network packet timing",api:"Entropy pool mixing",os:"All networked OS"}
+          ].map((item,i)=><div key={i} style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10,padding:"8px 0",borderBottom:i<4?`1px solid ${T.bdr}`:"none",fontSize:11}}>
+            <span style={{color:T.dark?T.text:"#e2e8f0",fontWeight:600}}>{item.source}</span>
+            <span style={{color:"#8892a4",fontFamily:"monospace",fontSize:10}}>{item.api}</span>
+            <span style={{color:T.dim}}>{item.os}</span>
+          </div>)}
+        </div>
+
+        <p style={infoP}>When you call <code style={{background:T.dark?"rgba(255,255,255,0.06)":"rgba(0,0,0,0.06)",padding:"2px 6px",borderRadius:4,fontSize:12}}>crypto.getRandomValues()</code> in your browser, it requests bytes from this entropy pool. The OS mixes all physical sources through a cryptographic hash, ensuring that even if one source is compromised, the output remains unpredictable.</p>
+
+        <div style={{background:`rgba(245,158,11,0.06)`,borderLeft:"3px solid #f59e0b",padding:"16px 18px",borderRadius:"0 12px 12px 0",margin:"20px 0"}}>
+          <strong style={{color:"#f59e0b",fontSize:13}}>Mind-Bending Fact:</strong>
+          <p style={{fontSize:13,color:"#8892a4",lineHeight:1.7,margin:"8px 0 0"}}>Every password ShieldCraft generates carries a trace of <strong style={{color:T.text}}>genuine quantum randomness</strong> from the physical universe — thermal vibrations of electrons, timing jitter from electrical signals, and the fundamental uncertainty of nature itself. Your password is as random as the universe allows anything to be.</p>
+        </div>
+
+        <div style={{textAlign:"center",marginTop:32,fontSize:12,color:"#4a5568"}}>True randomness isn't generated. It's harvested from the fabric of reality.</div>
+          </>}
+
         </>;
       })()}</>
     };
@@ -3448,9 +3741,14 @@ html{scroll-behavior:smooth}
             </div>
           </div>}
         </div>
-        <footer style={{position:"relative",zIndex:1,padding:"30px 24px 24px",borderTop:`1px solid rgba(${T.accentRgb},0.15)`,textAlign:"center",background:`rgba(${T.dark?"0,0,0":"10,10,18"},0.12)`,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)"}}>
-          <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:20,flexWrap:"wrap",marginBottom:16}}>
-            {["about","privacy","terms","password-manager","security-blog"].map(p=><button key={p} onClick={()=>{setInfoPage(p);window.scrollTo(0,0)}} style={{fontSize:12,color:infoPage===p?T.accent:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:infoPage===p?700:400,letterSpacing:1}}>{p==="terms"?"Terms of Service":p==="privacy"?"Privacy Policy":p==="password-manager"?"ShieldCraft":p==="security-blog"?"Blog":p.charAt(0).toUpperCase()+p.slice(1)}</button>)}
+        <footer style={{position:"relative",zIndex:1,padding:"40px 24px 30px",borderTop:`1px solid rgba(${T.accentRgb},0.15)`,textAlign:"center",background:`rgba(${T.dark?"0,0,0":"10,10,18"},0.12)`,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)"}}>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,marginBottom:12}}>
+            <ButterflyLogo s={22} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn}/>
+            <span style={{fontSize:14,fontWeight:700,letterSpacing:3,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0"}}>NOTESCRAFT</span>
+          </div>
+          <p style={{fontSize:12,color:"#8896a4",marginBottom:20,maxWidth:400,margin:"0 auto 20px",lineHeight:1.7}}>Privacy isn't a feature we added. It's the reason we built this.</p>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:20,flexWrap:"wrap",marginBottom:24}}>
+            {["about","privacy","terms","password-manager","security-blog"].map(p=><button key={p} onClick={()=>{setInfoPage(p);setBlogArticle(null);window.scrollTo(0,0)}} style={{fontSize:12,color:infoPage===p?T.accent:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:infoPage===p?700:400,letterSpacing:1}}>{p==="terms"?"Terms of Service":p==="privacy"?"Privacy Policy":p==="password-manager"?"ShieldCraft":p==="security-blog"?"Blog":p.charAt(0).toUpperCase()+p.slice(1)}</button>)}
           </div>
           <p style={{fontSize:11,color:"#7a8898",letterSpacing:0.8,display:"flex",alignItems:"center",justifyContent:"center",gap:6,flexWrap:"wrap",lineHeight:2,margin:0}}>
             <span style={{fontStyle:"italic"}}>Designed and Developed by</span>
