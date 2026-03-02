@@ -434,6 +434,7 @@ function generateMemorablePw(wordCount,addDigit,addSymbol,sepKey="hyphens",custo
   _hashPw(pw).then(h=>{_prevHashes.add(h);if(_prevHashes.size>500)_prevHashes.clear()});
   return pw;
 }
+function generatePin(len){let p="";for(let i=0;i<len;i++)p+=secRand(10);return p}
 
 function calcPwStrength(pw){
   if(!pw)return{label:"",color:"#666",percent:0,time:"",qTime:"",qColor:"#666",bits:0,qBits:0,qResist:false};
@@ -572,7 +573,7 @@ export default function NotesCraft(){
   const genScrambleRef=React.useRef(null);
   const[genCopied,setGenCopied]=useState(false);
   // Password Generator state
-  const[pgMode,setPgMode]=useState("memorable");
+  const[pgMode,setPgMode]=useState("random");
   const[pgLen,setPgLen]=useState(20);
   const[pgWords,setPgWords]=useState(4);
   const[pgUpper,setPgUpper]=useState(true);
@@ -580,6 +581,7 @@ export default function NotesCraft(){
   const[pgDigits,setPgDigits]=useState(true);
   const[pgSymbols,setPgSymbols]=useState(true);
   const[pgNoAmbig,setPgNoAmbig]=useState(false);
+  const[pgPinLen,setPgPinLen]=useState(6);
   const[pgSep,setPgSep]=useState("hyphens");
   const[pgCustomWords,setPgCustomWords]=useState("");
   const[pgUseCustom,setPgUseCustom]=useState(false);
@@ -805,6 +807,7 @@ export default function NotesCraft(){
   useEffect(()=>{
     if(!pgQuantumSafe)return;
     if(pgMode==="random"){setPgLen(65);setPgUpper(true);setPgLower(true);setPgDigits(true);setPgSymbols(true)}
+    else if(pgMode==="pin"){setPgPinLen(39)}
     else{setPgWords(10);setPgDigits(true);setPgSymbols(true)}
   },[pgQuantumSafe,pgMode]);
   // Password Manager — CRUD helpers
@@ -1089,9 +1092,9 @@ export default function NotesCraft(){
     if(infoPage!=="password-manager")return;
     const cw=pgUseCustom?pgCustomWords:"";
     if(cw){const err=validateCustomWords(cw);setPgCustomErr(err);if(err)return;}else{setPgCustomErr("")}
-    const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep,cw);
+    const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):pgMode==="pin"?generatePin(pgPinLen):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep,cw);
     setPgResult(pw);setPgStrength(calcPwStrength(pw));setPgCopied(false);
-  },[pgMode,pgLen,pgWords,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig,pgSep,pgCustomWords,pgUseCustom,pgQuantumSafe,infoPage]);
+  },[pgMode,pgLen,pgWords,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig,pgSep,pgCustomWords,pgUseCustom,pgQuantumSafe,pgPinLen,infoPage]);
 
   useEffect(()=>{
     if(sessionRestored.current)return;
@@ -2528,20 +2531,21 @@ html{scroll-behavior:smooth}
               <div style={{position:"relative",zIndex:1,fontSize:(pgDisplay||pgResult).length>30?14:18,fontFamily:"monospace",fontWeight:600,color:pgScrambling?(pgQuantumSafe?"#10b981":T.accent):T.text,wordBreak:"break-all",lineHeight:1.6,letterSpacing:0.5,minHeight:28,paddingRight:90}}>{pgHidden&&!pgScrambling?"•".repeat(Math.min((pgDisplay||pgResult).length,40)):(pgDisplay||pgResult)}</div>
               <div style={{position:"absolute",top:14,right:14,zIndex:2,display:"flex",gap:8}}>
                 <button onClick={()=>setPgHidden(!pgHidden)} style={{width:36,height:36,borderRadius:"50%",background:`rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.15)`,border:`2px solid rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.5)`,color:pgQuantumSafe?"#10b981":T.accent,fontSize:14,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}} title={pgHidden?"Show":"Hide"}>{pgHidden?"🙈":"🐵"}</button>
-                <button onClick={()=>{const cw=pgUseCustom?pgCustomWords:"";if(cw){const err=validateCustomWords(cw);setPgCustomErr(err);if(err)return}else{setPgCustomErr("")}const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep,cw);setPgResult(pw);setPgStrength(calcPwStrength(pw));setPgCopied(false);setPgHidden(false)}} style={{width:36,height:36,borderRadius:"50%",background:`rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.15)`,border:`2px solid rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.5)`,color:pgQuantumSafe?"#10b981":T.accent,fontSize:18,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}} title="Regenerate">&#x21bb;</button>
+                <button onClick={()=>{const cw=pgUseCustom?pgCustomWords:"";if(cw){const err=validateCustomWords(cw);setPgCustomErr(err);if(err)return}else{setPgCustomErr("")}const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):pgMode==="pin"?generatePin(pgPinLen):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep,cw);setPgResult(pw);setPgStrength(calcPwStrength(pw));setPgCopied(false);setPgHidden(false)}} style={{width:36,height:36,borderRadius:"50%",background:`rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.15)`,border:`2px solid rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.5)`,color:pgQuantumSafe?"#10b981":T.accent,fontSize:18,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}} title="Regenerate">&#x21bb;</button>
               </div>
             </div>
             {/* Settings panel */}
             <div style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.02)",border:`1px solid ${T.bdr}`,padding:"18px 20px",borderRadius:14,marginBottom:16}}>
               <div style={{display:"flex",gap:6,marginBottom:14}}>
-                {["random","memorable"].map(m=><button key={m} onClick={()=>setPgMode(m)} style={{flex:1,padding:"8px 0",borderRadius:8,border:`1px solid ${pgMode===m?(pgQuantumSafe?"#10b981":T.accent):`rgba(${T.accentRgb},0.15)`}`,background:pgMode===m?`rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.12)`:"transparent",color:pgMode===m?(pgQuantumSafe?"#10b981":T.accent):T.dim,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>{m==="random"?"Random":"Memorable"}</button>)}
+                {[{k:"random",icon:"\u{1F500}",label:"Random"},{k:"memorable",icon:"\uD83D\uDCA1",label:"Memorable"},{k:"pin",icon:"#",label:"PIN"}].map(m=><button key={m.k} onClick={()=>setPgMode(m.k)} style={{flex:1,padding:"8px 0",borderRadius:8,border:`1px solid ${pgMode===m.k?(pgQuantumSafe?"#10b981":T.accent):`rgba(${T.accentRgb},0.15)`}`,background:pgMode===m.k?`rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.12)`:"transparent",color:pgMode===m.k?(pgQuantumSafe?"#10b981":T.accent):T.dim,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>{m.icon+" "+m.label}</button>)}
               </div>
-              {pgMode==="random"?<div style={{display:"flex",flexDirection:"column",gap:12}}>
+              {pgMode==="random"&&<div style={{display:"flex",flexDirection:"column",gap:12}}>
                 <div><div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><label style={{fontSize:12,fontWeight:600,color:T.text}}>Length</label><span style={{fontSize:13,fontWeight:700,color:pgQuantumSafe?"#10b981":T.accent}}>{pgLen}</span></div><input type="range" min={pgQuantumSafe?65:8} max={256} value={pgLen} onChange={e=>setPgLen(+e.target.value)} className={pgQuantumSafe?"pg-slider-qm":"pg-slider"}/></div>
                 <div style={{display:"flex",flexWrap:"wrap",gap:10}}>
                   {[{l:"Uppercase",v:pgUpper,s:setPgUpper},{l:"Lowercase",v:pgLower,s:setPgLower},{l:"Digits",v:pgDigits,s:setPgDigits},{l:"Symbols",v:pgSymbols,s:setPgSymbols},{l:"No ambiguous",v:pgNoAmbig,s:setPgNoAmbig}].map((o,i)=><label key={i} style={{display:"flex",alignItems:"center",gap:6,fontSize:11,color:T.text,cursor:"pointer"}}><div onClick={()=>o.s(!o.v)} style={{width:16,height:16,borderRadius:4,border:`1.5px solid ${o.v?(pgQuantumSafe?"#10b981":T.accent):`rgba(${T.accentRgb},0.3)`}`,background:o.v?`rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.15)`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}>{o.v&&<span style={{color:pgQuantumSafe?"#10b981":T.accent,fontSize:9}}>✓</span>}</div>{o.l}</label>)}
                 </div>
-              </div>:<div style={{display:"flex",flexDirection:"column",gap:12}}>
+              </div>}
+              {pgMode==="memorable"&&<div style={{display:"flex",flexDirection:"column",gap:12}}>
                 <div><div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><label style={{fontSize:12,fontWeight:600,color:T.text}}>Words</label><span style={{fontSize:13,fontWeight:700,color:pgQuantumSafe?"#10b981":T.accent}}>{pgWords}</span></div><input type="range" min={pgQuantumSafe?10:2} max={pgQuantumSafe?20:8} value={pgWords} onChange={e=>setPgWords(+e.target.value)} className={pgQuantumSafe?"pg-slider-qm":"pg-slider"}/></div>
                 <div style={{display:"flex",flexWrap:"wrap",gap:10}}>
                   <label style={{display:"flex",alignItems:"center",gap:6,fontSize:11,color:T.text,cursor:"pointer"}}><div onClick={()=>setPgDigits(!pgDigits)} style={{width:16,height:16,borderRadius:4,border:`1.5px solid ${pgDigits?(pgQuantumSafe?"#10b981":T.accent):`rgba(${T.accentRgb},0.3)`}`,background:pgDigits?`rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.15)`:"transparent",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}>{pgDigits&&<span style={{color:pgQuantumSafe?"#10b981":T.accent,fontSize:9}}>✓</span>}</div>Number</label>
@@ -2550,6 +2554,10 @@ html{scroll-behavior:smooth}
                 </div>
                 <div><label style={{fontSize:12,fontWeight:600,color:T.text,display:"block",marginBottom:4}}>Separator</label><select value={pgSep} onChange={e=>setPgSep(e.target.value)} style={{padding:"8px 12px",borderRadius:8,background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${T.accentRgb},0.15)`,color:T.text,fontSize:12,fontFamily:"inherit",outline:"none"}}>{[{l:"Hyphens",v:"-"},{l:"Spaces",v:" "},{l:"Dots",v:"."},{l:"Underscores",v:"_"},{l:"None",v:""}].map(s=><option key={s.v} value={s.v}>{s.l}</option>)}</select></div>
                 {pgUseCustom&&<div><input type="text" value={pgCustomWords} onChange={e=>{setPgCustomWords(e.target.value);const err=validateCustomWords(e.target.value);setPgCustomErr(err)}} placeholder="e.g. cyber vault omega" style={{width:"100%",padding:"9px 12px",borderRadius:8,background:"rgba(255,255,255,0.04)",border:`1.5px solid ${pgCustomErr?"#ef4444":`rgba(${T.accentRgb},0.15)`}`,color:T.text,fontSize:12,fontFamily:"inherit",outline:"none",boxSizing:"border-box"}} onFocus={e=>{if(!pgCustomErr)e.currentTarget.style.borderColor=T.accent}} onBlur={e=>{if(!pgCustomErr)e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.15)`}}/>{pgCustomErr&&<p style={{fontSize:10,color:"#ef4444",margin:"4px 0 0",fontWeight:500}}>{pgCustomErr}</p>}</div>}
+              </div>}
+              {pgMode==="pin"&&<div style={{display:"flex",flexDirection:"column",gap:12}}>
+                <div><div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><label style={{fontSize:12,fontWeight:600,color:T.text}}>PIN Length</label><span style={{fontSize:13,fontWeight:700,color:pgQuantumSafe?"#10b981":T.accent}}>{pgPinLen}</span></div><input type="range" min={pgQuantumSafe?39:4} max={pgQuantumSafe?50:12} value={pgPinLen} onChange={e=>setPgPinLen(+e.target.value)} className={pgQuantumSafe?"pg-slider-qm":"pg-slider"}/></div>
+                <p style={{fontSize:10,color:T.dim,margin:0}}>Generates a numeric-only PIN code (0-9). Ideal for bank PINs, device unlock codes, and verification codes.</p>
               </div>}
             </div>
             {/* Copy + Download */}
@@ -2585,7 +2593,7 @@ html{scroll-behavior:smooth}
                   <div style={{width:18,height:18,borderRadius:"50%",background:pgQuantumSafe?"#10b981":T.accent,position:"absolute",top:2,left:pgQuantumSafe?23:2,transition:"all 0.3s cubic-bezier(0.4,0,0.2,1)",boxShadow:pgQuantumSafe?"0 0 10px rgba(16,185,129,0.8)":`0 0 8px rgba(${T.accentRgb},0.4)`,opacity:pgQuantumSafe?1:0.7}}/>
                 </div>
                 <span style={{fontSize:13,fontWeight:700,color:pgQuantumSafe?"#10b981":T.text,textShadow:pgQuantumSafe?"0 0 10px rgba(16,185,129,0.4)":"none"}}>⚛️ Turn On Quantum Resistant Mode</span>
-                <span style={{fontSize:9,color:pgQuantumSafe?"rgba(16,185,129,0.6)":T.dim,marginLeft:"auto"}}>(enforces min {pgMode==="random"?"65 chars + all charsets":"10 words"} for 128+ bit entropy)</span>
+                <span style={{fontSize:9,color:pgQuantumSafe?"rgba(16,185,129,0.6)":T.dim,marginLeft:"auto"}}>(enforces min {pgMode==="random"?"65 chars + all charsets":pgMode==="pin"?"39 digits":"10 words"} for 128+ bit entropy)</span>
               </label>
             </div>
             {pgQuantumSafe&&<div style={{marginBottom:12,padding:"14px 16px",borderRadius:10,background:"rgba(245,158,11,0.05)",border:"1px solid rgba(245,158,11,0.18)",fontSize:10,lineHeight:1.7,color:T.dim}}>
@@ -2902,7 +2910,7 @@ html{scroll-behavior:smooth}
             <p style={{fontSize:9,color:pgQuantumSafe?"rgba(16,185,129,0.6)":T.dim,margin:"1px 0 0",letterSpacing:1.2,fontWeight:500}}> Password Generator Tool by NotesCraft</p>
           </div>
         </div>
-        <p style={{...infoP,color:"rgba(176,190,201,0.8)",marginTop:-6,fontSize:12}}>Generate strong passwords and securely store your credentials with end-to-end encryption.</p>
+        <p style={{...infoP,color:"rgba(176,190,201,0.8)",marginTop:8,fontSize:12}}>Generate strong passwords and securely store your credentials with end-to-end encryption.</p>
 
 
         {/* ═══════ GHOST SHIELD UNLOCK MODAL ═══════ */}
@@ -2957,7 +2965,7 @@ html{scroll-behavior:smooth}
               style={{width:40,height:40,borderRadius:"50%",background:pgQuantumSafe?"linear-gradient(135deg,rgba(16,185,129,0.25),rgba(16,185,129,0.1))":`linear-gradient(135deg,rgba(${T.accentRgb},0.25),rgba(${T.accentRgb},0.1))`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:pgQuantumSafe?"2px solid rgba(16,185,129,0.6)":`2px solid rgba(${T.accentRgb},0.5)`,color:pgQuantumSafe?"#10b981":T.accent,fontSize:16,fontWeight:900,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.3s",boxShadow:pgQuantumSafe?"0 0 16px rgba(16,185,129,0.4),0 0 30px rgba(16,185,129,0.15),inset 0 0 10px rgba(16,185,129,0.15)":`0 0 16px rgba(${T.accentRgb},0.35),0 0 30px rgba(${T.accentRgb},0.12),inset 0 0 10px rgba(${T.accentRgb},0.12)`}} title={pgHidden?"Show Password":"Hide Password"}
               onMouseEnter={e=>{const g=pgQuantumSafe;e.currentTarget.style.boxShadow=g?"0 0 24px rgba(16,185,129,0.7),0 0 40px rgba(16,185,129,0.25),inset 0 0 12px rgba(16,185,129,0.2)":`0 0 24px rgba(${T.accentRgb},0.65),0 0 40px rgba(${T.accentRgb},0.2),inset 0 0 12px rgba(${T.accentRgb},0.15)`;e.currentTarget.style.transform="scale(1.12)"}}
               onMouseLeave={e=>{const g=pgQuantumSafe;e.currentTarget.style.boxShadow=g?"0 0 16px rgba(16,185,129,0.4),0 0 30px rgba(16,185,129,0.15),inset 0 0 10px rgba(16,185,129,0.15)":`0 0 16px rgba(${T.accentRgb},0.35),0 0 30px rgba(${T.accentRgb},0.12),inset 0 0 10px rgba(${T.accentRgb},0.12)`;e.currentTarget.style.transform="scale(1)"}}>{pgHidden?"🙈":"🐵"}</button>
-            <button onClick={e=>{const btn=e.currentTarget;btn.style.animation="pgSpin 0.4s ease-out";setTimeout(()=>{btn.style.animation=""},400);const cw=pgUseCustom?pgCustomWords:"";if(cw){const err=validateCustomWords(cw);setPgCustomErr(err);if(err)return}else{setPgCustomErr("")}const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep,cw);setPgResult(pw);setPgStrength(calcPwStrength(pw));setPgCopied(false);setPgHidden(false)}}
+            <button onClick={e=>{const btn=e.currentTarget;btn.style.animation="pgSpin 0.4s ease-out";setTimeout(()=>{btn.style.animation=""},400);const cw=pgUseCustom?pgCustomWords:"";if(cw){const err=validateCustomWords(cw);setPgCustomErr(err);if(err)return}else{setPgCustomErr("")}const pw=pgMode==="random"?generateRandomPw(pgLen,pgUpper,pgLower,pgDigits,pgSymbols,pgNoAmbig):pgMode==="pin"?generatePin(pgPinLen):generateMemorablePw(pgWords,pgDigits,pgSymbols,pgSep,cw);setPgResult(pw);setPgStrength(calcPwStrength(pw));setPgCopied(false);setPgHidden(false)}}
               style={{width:40,height:40,borderRadius:"50%",background:pgQuantumSafe?"linear-gradient(135deg,rgba(16,185,129,0.25),rgba(16,185,129,0.1))":`linear-gradient(135deg,rgba(${T.accentRgb},0.25),rgba(${T.accentRgb},0.1))`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:pgQuantumSafe?"2px solid rgba(16,185,129,0.6)":`2px solid rgba(${T.accentRgb},0.5)`,color:pgQuantumSafe?"#10b981":T.accent,fontSize:20,fontWeight:900,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.3s",boxShadow:pgQuantumSafe?"0 0 16px rgba(16,185,129,0.4),0 0 30px rgba(16,185,129,0.15),inset 0 0 10px rgba(16,185,129,0.15)":`0 0 16px rgba(${T.accentRgb},0.35),0 0 30px rgba(${T.accentRgb},0.12),inset 0 0 10px rgba(${T.accentRgb},0.12)`}} title="Regenerate"
               onMouseEnter={e=>{const g=pgQuantumSafe;e.currentTarget.style.boxShadow=g?"0 0 24px rgba(16,185,129,0.7),0 0 40px rgba(16,185,129,0.25),inset 0 0 12px rgba(16,185,129,0.2)":`0 0 24px rgba(${T.accentRgb},0.65),0 0 40px rgba(${T.accentRgb},0.2),inset 0 0 12px rgba(${T.accentRgb},0.15)`;e.currentTarget.style.transform="scale(1.12)"}}
               onMouseLeave={e=>{const g=pgQuantumSafe;e.currentTarget.style.boxShadow=g?"0 0 16px rgba(16,185,129,0.4),0 0 30px rgba(16,185,129,0.15),inset 0 0 10px rgba(16,185,129,0.15)":`0 0 16px rgba(${T.accentRgb},0.35),0 0 30px rgba(${T.accentRgb},0.12),inset 0 0 10px rgba(${T.accentRgb},0.12)`;e.currentTarget.style.transform="scale(1)"}}>&#x21bb;</button>
@@ -2968,7 +2976,7 @@ html{scroll-behavior:smooth}
         <div style={{background:pgQuantumSafe?"rgba(16,185,129,0.05)":"rgba(255,255,255,0.06)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:pgQuantumSafe?`1.5px solid rgba(16,185,129,0.4)`:`1.5px solid rgba(${T.accentRgb},0.3)`,borderRadius:16,padding:"18px 26px",marginBottom:20,position:"relative",transition:"all 0.4s",boxShadow:pgQuantumSafe?"0 6px 25px rgba(0,0,0,0.2),0 0 15px rgba(16,185,129,0.12),inset 0 1px 0 rgba(255,255,255,0.08)":`0 6px 25px rgba(0,0,0,0.2),0 0 15px rgba(${T.accentRgb},0.1),inset 0 1px 0 rgba(255,255,255,0.08)`}}>
           <div style={{display:"grid",gridTemplateColumns:"130px 1fr",gap:16,alignItems:"start"}}>
             <div style={{display:"flex",flexDirection:"column",gap:3,background:pgQuantumSafe?"rgba(16,185,129,0.04)":"rgba(255,255,255,0.06)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",borderRadius:12,padding:5,border:pgQuantumSafe?"1.5px solid rgba(16,185,129,0.25)":`1.5px solid rgba(${T.accentRgb},0.2)`,boxShadow:pgQuantumSafe?"0 4px 20px rgba(0,0,0,0.2),0 0 12px rgba(16,185,129,0.06),inset 0 1px 0 rgba(255,255,255,0.08)":`0 4px 20px rgba(0,0,0,0.2),inset 0 1px 0 rgba(255,255,255,0.08)`,transition:"all 0.4s"}}>
-              {["random","memorable"].map(m=><button key={m} onClick={()=>setPgMode(m)} className={`pg-mode-btn ${pgMode===m?(pgQuantumSafe?"pg-mode-active-qm":"pg-mode-active"):(pgQuantumSafe?"pg-mode-inactive pg-mode-inactive-qm":"pg-mode-inactive")}`}>{m==="random"?"Random":"Memorable"}</button>)}
+              {[{k:"random",icon:"\u{1F500}",label:"Random"},{k:"memorable",icon:"\uD83D\uDCA1",label:"Memorable"},{k:"pin",icon:"#",label:"PIN"}].map(m=><button key={m.k} onClick={()=>setPgMode(m.k)} className={`pg-mode-btn ${pgMode===m.k?(pgQuantumSafe?"pg-mode-active-qm":"pg-mode-active"):(pgQuantumSafe?"pg-mode-inactive pg-mode-inactive-qm":"pg-mode-inactive")}`}>{m.icon+" "+m.label}</button>)}
             </div>
             <div>
               {pgMode==="random"&&<div style={{display:"flex",flexDirection:"column",gap:12}}>
@@ -3015,6 +3023,16 @@ html{scroll-behavior:smooth}
                   <input type="text" value={pgCustomWords} onChange={e=>{setPgCustomWords(e.target.value);const err=validateCustomWords(e.target.value);setPgCustomErr(err)}} placeholder="e.g. cyber vault omega — separate with spaces or commas" style={{width:"100%",padding:"9px 12px",borderRadius:8,background:"rgba(255,255,255,0.04)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid ${pgCustomErr?T.err||"#ef4444":`rgba(${T.accentRgb},0.15)`}`,color:T.text,fontSize:12,fontFamily:"inherit",outline:"none",boxSizing:"border-box",letterSpacing:0.3,transition:"all 0.3s",boxShadow:`inset 0 1px 0 rgba(255,255,255,0.03)`}} onFocus={e=>{if(!pgCustomErr){e.currentTarget.style.borderColor=T.accent;e.currentTarget.style.boxShadow=`0 0 12px rgba(${T.accentRgb},0.15),inset 0 1px 0 rgba(255,255,255,0.03)`}}} onBlur={e=>{if(!pgCustomErr){e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.15)`;e.currentTarget.style.boxShadow=`inset 0 1px 0 rgba(255,255,255,0.03)`}}}/>
                   {pgCustomErr&&<p style={{fontSize:10,color:T.err||"#ef4444",margin:"4px 0 0",fontWeight:500}}>{pgCustomErr}</p>}
                 </div>}
+              </div>}
+              {pgMode==="pin"&&<div style={{display:"flex",flexDirection:"column",gap:12}}>
+                <div>
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
+                    <label style={{fontSize:12,fontWeight:600,color:T.text}}>PIN Length</label>
+                    <span style={{fontSize:13,fontWeight:700,color:pgQuantumSafe?"#10b981":T.accent}}>{pgPinLen}</span>
+                  </div>
+                  <input type="range" min={pgQuantumSafe?39:4} max={pgQuantumSafe?50:12} value={pgPinLen} onChange={e=>setPgPinLen(+e.target.value)} className={pgQuantumSafe?"pg-slider-qm":"pg-slider"}/>
+                </div>
+                <p style={{fontSize:10,color:T.dim,margin:0,lineHeight:1.5}}>Generates a numeric-only PIN code (0-9). Ideal for bank PINs, device unlock codes, and verification codes.</p>
               </div>}
             </div>
           </div>
@@ -3082,7 +3100,7 @@ html{scroll-behavior:smooth}
               <div style={{width:18,height:18,borderRadius:"50%",background:pgQuantumSafe?"#10b981":T.accent,position:"absolute",top:2,left:pgQuantumSafe?23:2,transition:"all 0.3s cubic-bezier(0.4,0,0.2,1)",boxShadow:pgQuantumSafe?"0 0 10px rgba(16,185,129,0.8),0 0 20px rgba(16,185,129,0.4)":`0 0 8px rgba(${T.accentRgb},0.4),0 1px 3px rgba(0,0,0,0.3)`,opacity:pgQuantumSafe?1:0.7}}/>
             </div>
             <span style={{fontSize:13,fontWeight:700,color:pgQuantumSafe?"#10b981":T.text,textShadow:pgQuantumSafe?"0 0 10px rgba(16,185,129,0.4)":"none",transition:"all 0.3s"}}>⚛️ Turn On Quantum Resistant Mode</span>
-            <span style={{fontSize:9,color:pgQuantumSafe?"rgba(16,185,129,0.6)":T.dim,marginLeft:"auto",transition:"color 0.3s"}}>(enforces min {pgMode==="random"?"65 chars + all charsets":"10 words"} for 128+ bit entropy)</span>
+            <span style={{fontSize:9,color:pgQuantumSafe?"rgba(16,185,129,0.6)":T.dim,marginLeft:"auto",transition:"color 0.3s"}}>(enforces min {pgMode==="random"?"65 chars + all charsets":pgMode==="pin"?"39 digits":"10 words"} for 128+ bit entropy)</span>
           </label>
         </div>
         {pgQuantumSafe&&<div style={{marginBottom:12,padding:"14px 16px",borderRadius:10,background:"rgba(245,158,11,0.05)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:"1px solid rgba(245,158,11,0.18)",fontSize:10,lineHeight:1.7,color:T.dim,boxShadow:"0 2px 12px rgba(0,0,0,0.1),inset 0 0 12px rgba(245,158,11,0.03)"}}>
@@ -3380,7 +3398,7 @@ html{scroll-behavior:smooth}
             <div style={{position:"absolute",left:-260,top:130,width:245,height:190,pointerEvents:"none",animation:"neoFloat1 6s ease-in-out infinite",zIndex:2}}>
               <div style={{width:"100%",height:"100%",borderRadius:6,padding:"18px 18px",border:"2px solid rgba(16,185,129,0.8)",background:"rgba(16,185,129,0.1)",boxShadow:"0 0 15px rgba(16,185,129,0.35),0 0 30px rgba(16,185,129,0.18),inset 0 0 15px rgba(16,185,129,0.08)",transform:"rotate(-8deg)",display:"flex",flexDirection:"column",overflow:"hidden"}}>
                 <div style={{fontSize:17,fontWeight:900,color:"#10b981",marginBottom:8,fontFamily:"monospace",letterSpacing:1}}>⚛️ Quantum-Safe</div>
-                <div style={{fontSize:13.5,color:"rgba(255,255,255,0.88)",lineHeight:1.65,fontFamily:"monospace",flex:1,overflow:"hidden"}}>Only password genrator with Grover-aware effective{"\n"}bits calculation —{"\n"}models real quantum{"\n"}attack cost, not just{"\n"}classical brute-force</div>
+                <div style={{fontSize:13.5,color:"rgba(255,255,255,0.88)",lineHeight:1.65,fontFamily:"monospace",flex:1,overflow:"hidden"}}>One and only password generator with Grover-aware effective{"\n"}bits calculation —{"\n"}models real quantum{"\n"}attack cost, not just{"\n"}classical brute-force</div>
               </div>
             </div>
             <div style={{position:"absolute",right:-255,top:310,width:240,height:180,pointerEvents:"none",animation:"neoFloat2 7s ease-in-out infinite 1s",zIndex:2}}>
