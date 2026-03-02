@@ -177,7 +177,10 @@ const IC = {
   Danger:()=><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
 };
 
-/* 3D Shield logo — circuit cube, glitch asterisk, P2P nodes */
+/* Qubit superposition symbol — cycles between *, 0, 1 with glitch effect */
+const QubitSymbol=({animate,u})=>{const[symbol,setSymbol]=useState("*");const[glitching,setGlitching]=useState(false);const intervalRef=useRef(null);useEffect(()=>{if(!animate){setSymbol("*");setGlitching(false);return}const cycle=()=>{const delay=2000+Math.random()*3000;intervalRef.current=setTimeout(()=>{setGlitching(true);const symbols=["0","1","*","1","0","*","0","1","*"];let i=0;const glitchInt=setInterval(()=>{setSymbol(symbols[i%symbols.length]);i++;if(i>=6+Math.floor(Math.random()*4)){clearInterval(glitchInt);const r=Math.random();setSymbol(r<0.6?"*":r<0.8?"0":"1");setTimeout(()=>{setGlitching(false);if(r>=0.6){setTimeout(()=>setSymbol("*"),800+Math.random()*1200)}},100);cycle()}},70)},delay)};cycle();return()=>{clearTimeout(intervalRef.current)}},[animate]);const isA=symbol==="*";return<g>{glitching&&<><text x="136" y="132" textAnchor="middle" dominantBaseline="central" fill="#ff3030" fontSize={isA?"36":"26"} fontFamily="monospace" fontWeight="900" opacity="0.4" dx="2" dy="-1" filter={`url(#${u}gR)`}>{symbol}</text><text x="136" y="132" textAnchor="middle" dominantBaseline="central" fill="#00ffff" fontSize={isA?"36":"26"} fontFamily="monospace" fontWeight="900" opacity="0.4" dx="-2" dy="1" filter={`url(#${u}gC)`}>{symbol}</text></>}<text x="136" y={isA?"129":"132"} textAnchor="middle" dominantBaseline="central" fill="#fff" fontSize={isA?"36":"26"} fontFamily="monospace" fontWeight="900" filter={`url(#${u}ag)`} style={{transition:glitching?'none':'all 0.15s',opacity:glitching?(Math.random()>0.3?1:0.3):1}}>{symbol}</text></g>};
+
+/* 3D Shield logo — circuit cube, qubit symbol, P2P nodes */
 let _sclId=0;const SCLogo=({s=60,animate=true})=>{const uRef=useRef('scl'+(_sclId++));const u=uRef.current;return<svg viewBox="0 0 240 260" width={s} height={s*1.08} xmlns="http://www.w3.org/2000/svg" draggable={false} onContextMenu={e=>e.preventDefault()} style={{display:'block',userSelect:'none',WebkitUserDrag:'none',msUserSelect:'none'}}>
 <defs>
 <linearGradient id={`${u}shF`} x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#00CCFF"/><stop offset="100%" stopColor="#7050FF"/></linearGradient>
@@ -209,9 +212,6 @@ let _sclId=0;const SCLogo=({s=60,animate=true})=>{const uRef=useRef('scl'+(_sclI
 @keyframes ${u}orb{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
 @keyframes ${u}cFl{0%{stroke-dashoffset:20}100%{stroke-dashoffset:0}}
 @keyframes ${u}cNP{0%,100%{opacity:0.4;r:1.8}50%{opacity:1;r:2.5}}
-@keyframes ${u}aG{0%,92%,100%{transform:translate(0,0);opacity:1}93%{transform:translate(3px,-1px);opacity:0.7}94%{transform:translate(-2px,2px);opacity:0.5}95%{transform:translate(0,0);opacity:0}96%{transform:translate(1px,-2px);opacity:0.8}97%{transform:translate(-3px,1px);opacity:0.6}98%{transform:translate(2px,0);opacity:1}}
-@keyframes ${u}aFl{0%,88%,92%,96%,100%{opacity:1}89%{opacity:0.3}90%{opacity:0.8}91%{opacity:0.1}93%{opacity:0.6}94%{opacity:0}95%{opacity:0.9}}
-@keyframes ${u}aS{0%,90%,100%{transform:scale(1)}92%{transform:scale(1.15)}94%{transform:scale(0.9)}96%{transform:scale(1.05)}}
 .${u}sd{stroke-dasharray:10 6;animation:${animate?`${u}dF 4s linear infinite`:'none'}}
 .${u}nP{animation:${animate?`${u}nP 1.4s ease-in-out infinite`:'none'}}
 .${u}dFl{stroke-dasharray:5 4;animation:${animate?`${u}dFl 1.2s linear infinite`:'none'}}
@@ -221,9 +221,6 @@ let _sclId=0;const SCLogo=({s=60,animate=true})=>{const uRef=useRef('scl'+(_sclI
 .${u}orb{transform-origin:120px 120px;animation:${animate?`${u}orb 7s linear infinite`:'none'}}
 .${u}cFl{stroke-dasharray:4 3;animation:${animate?`${u}cFl 2s linear infinite`:'none'}}
 .${u}cNo{animation:${animate?`${u}cNP 2s ease-in-out infinite`:'none'}}
-.${u}aM{transform-origin:136px 126px;animation:${animate?`${u}aG 4s ease-in-out infinite,${u}aS 4s ease-in-out infinite`:'none'}}
-.${u}aGR{animation:${animate?`${u}aFl 4s ease-in-out infinite 0.05s`:'none'}}
-.${u}aGC{animation:${animate?`${u}aFl 4s ease-in-out infinite 0.1s`:'none'}}
 `}</style>
 {/* 3D SHIELD DEPTH */}
 <g filter={`url(#${u}s3)`}>
@@ -303,22 +300,8 @@ let _sclId=0;const SCLogo=({s=60,animate=true})=>{const uRef=useRef('scl'+(_sclI
 </g>
 <line x1="122" y1="86" x2="150" y2="100" stroke="rgba(255,255,255,0.3)" strokeWidth="1"/>
 <line x1="96" y1="100" x2="122" y2="86" stroke="rgba(255,255,255,0.2)" strokeWidth="1"/>
-{/* GLITCH ASTERISK */}
-<g className={`${u}aGR`} opacity="0" filter={`url(#${u}gR)`}>
-<line x1="136" y1="116" x2="136" y2="136" stroke="#ff3030" strokeWidth="3" strokeLinecap="round"/>
-<line x1="128" y1="120" x2="144" y2="132" stroke="#ff3030" strokeWidth="3" strokeLinecap="round"/>
-<line x1="144" y1="120" x2="128" y2="132" stroke="#ff3030" strokeWidth="3" strokeLinecap="round"/>
-</g>
-<g className={`${u}aGC`} opacity="0" filter={`url(#${u}gC)`}>
-<line x1="136" y1="116" x2="136" y2="136" stroke="#00ffff" strokeWidth="3" strokeLinecap="round"/>
-<line x1="128" y1="120" x2="144" y2="132" stroke="#00ffff" strokeWidth="3" strokeLinecap="round"/>
-<line x1="144" y1="120" x2="128" y2="132" stroke="#00ffff" strokeWidth="3" strokeLinecap="round"/>
-</g>
-<g className={`${u}aM`} filter={`url(#${u}ag)`}>
-<line x1="136" y1="116" x2="136" y2="136" stroke="#fff" strokeWidth="3" strokeLinecap="round"/>
-<line x1="128" y1="120" x2="144" y2="132" stroke="#fff" strokeWidth="3" strokeLinecap="round"/>
-<line x1="144" y1="120" x2="128" y2="132" stroke="#fff" strokeWidth="3" strokeLinecap="round"/>
-</g>
+{/* QUBIT SUPERPOSITION SYMBOL */}
+<QubitSymbol animate={animate} u={u}/>
 </g>
 {/* Scatter dots */}
 <g clipPath={`url(#${u}sb)`} opacity="0.4">
