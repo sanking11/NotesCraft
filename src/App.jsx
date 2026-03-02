@@ -177,115 +177,155 @@ const IC = {
   Danger:()=><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
 };
 
-/* Butterfly logo — geometric origami, exact match to reference */
-let _sclId=0;const SCLogo=({s=60,animate=true,accent,accent2})=>{const uRef=useRef('scl'+(_sclId++));const u=uRef.current;const a1=accent||'#6040E8';const a2=accent2||accent||'#A030C8';return<svg viewBox="0 0 220 220" width={s} height={s} xmlns="http://www.w3.org/2000/svg" draggable={false} onContextMenu={e=>e.preventDefault()} style={{display:'block',userSelect:'none',WebkitUserDrag:'none',msUserSelect:'none'}}>
+/* 3D Shield logo — circuit cube, glitch asterisk, P2P nodes */
+let _sclId=0;const SCLogo=({s=60,animate=true})=>{const uRef=useRef('scl'+(_sclId++));const u=uRef.current;return<svg viewBox="0 0 240 260" width={s} height={s*1.08} xmlns="http://www.w3.org/2000/svg" draggable={false} onContextMenu={e=>e.preventDefault()} style={{display:'block',userSelect:'none',WebkitUserDrag:'none',msUserSelect:'none'}}>
 <defs>
-<linearGradient id={`${u}bg`} x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor={a1}/><stop offset="100%" stopColor={a2}/></linearGradient>
-<linearGradient id={`${u}sf`} x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor="rgba(180,220,255,0.5)"/><stop offset="100%" stopColor="rgba(120,160,255,0.25)"/></linearGradient>
-<linearGradient id={`${u}lf`} x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor="rgba(255,255,255,0.85)"/><stop offset="100%" stopColor="rgba(200,220,255,0.7)"/></linearGradient>
+<linearGradient id={`${u}shF`} x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#00CCFF"/><stop offset="100%" stopColor="#7050FF"/></linearGradient>
+<linearGradient id={`${u}shS`} x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#003870"/><stop offset="100%" stopColor="#2A1880"/></linearGradient>
+<linearGradient id={`${u}shR`} x1="100%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor="#004888"/><stop offset="100%" stopColor="#351CA0"/></linearGradient>
+<linearGradient id={`${u}shT`} x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stopColor="#50F0FF"/><stop offset="100%" stopColor="#A080FF"/></linearGradient>
+<linearGradient id={`${u}shFF`} x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="rgba(0,200,255,0.18)"/><stop offset="50%" stopColor="rgba(100,60,255,0.1)"/><stop offset="100%" stopColor="rgba(160,50,200,0.08)"/></linearGradient>
+<linearGradient id={`${u}cF`} x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#8070FF"/><stop offset="100%" stopColor="#5845E0"/></linearGradient>
+<linearGradient id={`${u}cS`} x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stopColor="#3020A0"/><stop offset="100%" stopColor="#221070"/></linearGradient>
+<linearGradient id={`${u}cT`} x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stopColor="#70E0FF"/><stop offset="100%" stopColor="#A0B0FF"/></linearGradient>
+<linearGradient id={`${u}cH`} x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="rgba(255,255,255,0.15)"/><stop offset="100%" stopColor="rgba(255,255,255,0)"/></linearGradient>
 <filter id={`${u}gl`}><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-<filter id={`${u}tg`}><feGaussianBlur stdDeviation="3.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-<filter id={`${u}sh`}><feDropShadow dx="0" dy="1" stdDeviation="2" floodColor="#000" floodOpacity="0.3"/></filter>
-<filter id={`${u}ss`}><feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="rgba(0,60,160,0.4)" floodOpacity="0.5"/></filter>
-<clipPath id={`${u}cl`}><rect x="5" y="5" width="210" height="210" rx="42"/></clipPath>
-<clipPath id={`${u}sc`}><path d="M110 22 L50 50 L50 130 C50 168 80 192 110 204 C140 192 170 168 170 130 L170 50 Z"/></clipPath>
+<filter id={`${u}ag`}><feGaussianBlur stdDeviation="3" in="SourceGraphic" result="blur"/><feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.5  0 0 0 0 0.95  0 0 0 0 1  0 0 0 1.5 0" result="glow"/><feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id={`${u}gR`}><feOffset dx="2" dy="0" in="SourceGraphic" result="r"/><feColorMatrix in="r" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.4 0"/></filter>
+<filter id={`${u}gC`}><feOffset dx="-2" dy="0" in="SourceGraphic" result="c"/><feColorMatrix in="c" type="matrix" values="0 0 0 0 0  0 1 0 0 0.8  0 0 1 0 1  0 0 0 0.4 0"/></filter>
+<filter id={`${u}dg`}><feGaussianBlur stdDeviation="3" in="SourceGraphic" result="blur"/><feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.2  0 0 0 0 0.85  0 0 0 0 1  0 0 0 0.8 0" result="glow"/><feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id={`${u}cg`}><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id={`${u}s3`}><feDropShadow dx="5" dy="8" stdDeviation="10" floodColor="rgba(15,5,50,0.45)"/></filter>
+<filter id={`${u}cs`}><feDropShadow dx="3" dy="5" stdDeviation="5" floodColor="rgba(15,5,50,0.5)"/></filter>
+<filter id={`${u}si`}><feDropShadow dx="-2" dy="-2" stdDeviation="4" floodColor="rgba(0,200,255,0.15)"/></filter>
+<clipPath id={`${u}sb`}><path d="M120 18 L42 52 L42 142 C42 184 78 212 120 226 C162 212 198 184 198 142 L198 52 Z"/></clipPath>
 </defs>
 <style>{`
-@keyframes ${u}df{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-500}}
-@keyframes ${u}fL{0%,100%{transform:scaleX(1)}50%{transform:scaleX(0.84)}}
-@keyframes ${u}fR{0%,100%{transform:scaleX(1)}50%{transform:scaleX(0.84)}}
-@keyframes ${u}np{0%,100%{opacity:0.3}50%{opacity:1}}
-@keyframes ${u}ml{0%,100%{opacity:0.1}50%{opacity:0.5}}
-@keyframes ${u}lg{0%,100%{filter:none}50%{filter:url(#${u}gl)}}
-@keyframes ${u}sk{0%,65%{transform:translateY(0) rotate(0)}72%,88%{transform:translateY(-3px) rotate(-10deg)}100%{transform:translateY(0) rotate(0)}}
-@keyframes ${u}ip{0%{stroke-opacity:0.15;stroke-width:1.2}30%{stroke-opacity:0.5;stroke-width:1.6}60%{stroke-opacity:0.2;stroke-width:1.2}100%{stroke-opacity:0.15;stroke-width:1.2}}
-@keyframes ${u}is{0%{stroke-dashoffset:150}100%{stroke-dashoffset:0}}
-@keyframes ${u}as{0%,100%{transform:rotate(0deg)}25%{transform:rotate(4deg)}75%{transform:rotate(-4deg)}}
-@keyframes ${u}at{0%,100%{opacity:0.5;r:2.5}50%{opacity:1;r:3.5}}
-@keyframes ${u}ap{0%,100%{stroke-opacity:0.5;stroke-width:1.8}50%{stroke-opacity:0.9;stroke-width:2.3}}
-.${u}sd{stroke-dasharray:8 5;animation:${animate?`${u}df 6s linear infinite`:'none'}}
-.${u}wL{transform-origin:110px 108px;animation:${animate?`${u}fL 1.2s ease-in-out infinite`:'none'}}
-.${u}wR{transform-origin:110px 108px;animation:${animate?`${u}fR 1.2s ease-in-out infinite 0.06s`:'none'}}
-.${u}np{animation:${animate?`${u}np 1.2s ease-in-out infinite`:'none'}}
-.${u}ml{animation:${animate?`${u}ml 1.2s ease-in-out infinite`:'none'}}
-.${u}lg{animation:${animate?`${u}lg 2s ease-in-out infinite`:'none'}}
-.${u}sk{transform-origin:110px 112px;animation:${animate?`${u}sk 3s ease-in-out infinite`:'none'}}
-.${u}iL{stroke-dasharray:150;animation:${animate?`${u}ip 1.5s ease-in-out infinite,${u}is 2s linear infinite`:'none'}}
-.${u}iR{stroke-dasharray:150;animation:${animate?`${u}ip 1.5s ease-in-out infinite 0.15s,${u}is 2s linear infinite 0.15s`:'none'}}
-.${u}aL{transform-origin:108px 82px;animation:${animate?`${u}as 1.4s ease-in-out infinite`:'none'}}
-.${u}aR{transform-origin:112px 82px;animation:${animate?`${u}as 1.4s ease-in-out infinite 0.2s`:'none'}}
-.${u}alL{animation:${animate?`${u}ap 1.4s ease-in-out infinite`:'none'}}
-.${u}alR{animation:${animate?`${u}ap 1.4s ease-in-out infinite 0.2s`:'none'}}
-.${u}atL{animation:${animate?`${u}at 1.4s ease-in-out infinite`:'none'}}
-.${u}atR{animation:${animate?`${u}at 1.4s ease-in-out infinite 0.2s`:'none'}}
+@keyframes ${u}dF{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-500}}
+@keyframes ${u}nP{0%,100%{opacity:0.5;transform:scale(1)}50%{opacity:1;transform:scale(1.3)}}
+@keyframes ${u}dFl{0%{stroke-dashoffset:16}100%{stroke-dashoffset:0}}
+@keyframes ${u}rP{0%{r:28;opacity:0.35;stroke-width:2}100%{r:65;opacity:0;stroke-width:0.5}}
+@keyframes ${u}cuF{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes ${u}orb{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+@keyframes ${u}cFl{0%{stroke-dashoffset:20}100%{stroke-dashoffset:0}}
+@keyframes ${u}cNP{0%,100%{opacity:0.4;r:1.8}50%{opacity:1;r:2.5}}
+@keyframes ${u}aG{0%,92%,100%{transform:translate(0,0);opacity:1}93%{transform:translate(3px,-1px);opacity:0.7}94%{transform:translate(-2px,2px);opacity:0.5}95%{transform:translate(0,0);opacity:0}96%{transform:translate(1px,-2px);opacity:0.8}97%{transform:translate(-3px,1px);opacity:0.6}98%{transform:translate(2px,0);opacity:1}}
+@keyframes ${u}aFl{0%,88%,92%,96%,100%{opacity:1}89%{opacity:0.3}90%{opacity:0.8}91%{opacity:0.1}93%{opacity:0.6}94%{opacity:0}95%{opacity:0.9}}
+@keyframes ${u}aS{0%,90%,100%{transform:scale(1)}92%{transform:scale(1.15)}94%{transform:scale(0.9)}96%{transform:scale(1.05)}}
+.${u}sd{stroke-dasharray:10 6;animation:${animate?`${u}dF 4s linear infinite`:'none'}}
+.${u}nP{animation:${animate?`${u}nP 1.4s ease-in-out infinite`:'none'}}
+.${u}dFl{stroke-dasharray:5 4;animation:${animate?`${u}dFl 1.2s linear infinite`:'none'}}
+.${u}rP{animation:${animate?`${u}rP 2.5s ease-out infinite`:'none'}}
+.${u}rP2{animation:${animate?`${u}rP 2.5s ease-out infinite 1.25s`:'none'}}
+.${u}cuF{transform-origin:120px 120px;animation:${animate?`${u}cuF 2.8s ease-in-out infinite`:'none'}}
+.${u}orb{transform-origin:120px 120px;animation:${animate?`${u}orb 7s linear infinite`:'none'}}
+.${u}cFl{stroke-dasharray:4 3;animation:${animate?`${u}cFl 2s linear infinite`:'none'}}
+.${u}cNo{animation:${animate?`${u}cNP 2s ease-in-out infinite`:'none'}}
+.${u}aM{transform-origin:136px 126px;animation:${animate?`${u}aG 4s ease-in-out infinite,${u}aS 4s ease-in-out infinite`:'none'}}
+.${u}aGR{animation:${animate?`${u}aFl 4s ease-in-out infinite 0.05s`:'none'}}
+.${u}aGC{animation:${animate?`${u}aFl 4s ease-in-out infinite 0.1s`:'none'}}
 `}</style>
-<rect x="5" y="5" width="210" height="210" rx="42" fill={`url(#${u}bg)`}/>
-<g clipPath={`url(#${u}cl)`}>
-{/* Animated dashed outline */}
-<path className={`${u}sd`} d="M110 18 L46 48 L46 132 C46 172 78 196 110 208 C142 196 174 172 174 132 L174 48 Z" fill="none" stroke="rgba(255,255,255,0.55)" strokeWidth="2.5" strokeLinecap="round"/>
-{/* Big shield */}
-<g filter={`url(#${u}ss)`}><path d="M110 22 L50 50 L50 130 C50 168 80 192 110 204 C140 192 170 168 170 130 L170 50 Z" fill={`url(#${u}sf)`} stroke="rgba(255,255,255,0.8)" strokeWidth="2.5" strokeLinejoin="round"/></g>
-{/* Butterfly inside shield */}
-<g clipPath={`url(#${u}sc)`}>
-{/* Left wings */}
-<g className={`${u}wL`} filter={`url(#${u}sh)`}>
-<path d="M106 92 C88 72 58 65 54 86 C50 104 68 112 86 110 L106 104 Z" fill="rgba(255,255,255,0.22)" stroke="rgba(255,255,255,0.7)" strokeWidth="2.5" strokeLinejoin="round"/>
-<path className={`${u}iL`} d="M104 96 C90 80 66 76 62 90 C59 104 72 108 84 107 L104 102 Z" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.45)" strokeLinejoin="round"/>
-<path d="M106 112 C88 116 62 124 60 142 C58 154 70 158 82 152 C92 147 106 136 106 133 Z" fill="rgba(255,255,255,0.17)" stroke="rgba(255,255,255,0.6)" strokeWidth="2.5" strokeLinejoin="round"/>
-<path className={`${u}iL`} d="M104 117 C90 120 68 127 67 141 C66 150 74 153 84 148 C90 144 104 136 104 133 Z" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.38)" strokeLinejoin="round" style={{animationDelay:'0.5s'}}/>
-<line className={`${u}ml`} x1="58" y1="86" x2="74" y2="96" stroke="#fff" strokeWidth="1.2"/>
-<line className={`${u}ml`} x1="74" y1="96" x2="62" y2="106" stroke="#fff" strokeWidth="1.2" style={{animationDelay:'0.3s'}}/>
-<line className={`${u}ml`} x1="58" y1="86" x2="62" y2="106" stroke="#fff" strokeWidth="1.2" style={{animationDelay:'0.6s'}}/>
-<line className={`${u}ml`} x1="74" y1="96" x2="90" y2="102" stroke="#fff" strokeWidth="1.2" style={{animationDelay:'0.2s'}}/>
-<line className={`${u}ml`} x1="68" y1="130" x2="80" y2="146" stroke="#fff" strokeWidth="1.2" style={{animationDelay:'0.4s'}}/>
-<line className={`${u}ml`} x1="80" y1="146" x2="92" y2="134" stroke="#fff" strokeWidth="1.2" style={{animationDelay:'0.7s'}}/>
-<circle className={`${u}np`} cx="58" cy="86" r="3.5" fill="#fff" filter={`url(#${u}gl)`} style={{animationDelay:'0s'}}/>
-<circle className={`${u}np`} cx="74" cy="96" r="3.5" fill="#fff" filter={`url(#${u}gl)`} style={{animationDelay:'0.4s'}}/>
-<circle className={`${u}np`} cx="62" cy="106" r="3.5" fill="#fff" filter={`url(#${u}gl)`} style={{animationDelay:'0.8s'}}/>
-<circle className={`${u}np`} cx="68" cy="130" r="3.5" fill="#fff" filter={`url(#${u}gl)`} style={{animationDelay:'0.2s'}}/>
-<circle className={`${u}np`} cx="80" cy="146" r="3.5" fill="#fff" filter={`url(#${u}gl)`} style={{animationDelay:'0.6s'}}/>
-<circle className={`${u}np`} cx="92" cy="134" r="3.5" fill="#fff" filter={`url(#${u}gl)`} style={{animationDelay:'1s'}}/>
+{/* 3D SHIELD DEPTH */}
+<g filter={`url(#${u}s3)`}>
+<path d="M120 18 L42 52 L42 142 C42 184 78 212 120 226 L134 221 L134 213 C96 200 58 178 58 140 L58 58 L120 30 Z" fill={`url(#${u}shS)`} stroke="#0a0830" strokeWidth="2" strokeLinejoin="round"/>
+<path d="M198 52 L212 46 L212 140 C212 180 178 206 134 221 L120 226 C160 212 198 184 198 142 Z" fill={`url(#${u}shR)`} stroke="#0a0830" strokeWidth="2" strokeLinejoin="round"/>
+<path d="M120 18 L198 52 L212 46 L134 12 Z" fill={`url(#${u}shT)`} stroke="#0a0830" strokeWidth="2" strokeLinejoin="round"/>
+<path d="M120 226 L134 221 L134 213 L120 218 Z" fill={`url(#${u}shS)`} stroke="#0a0830" strokeWidth="1.5" strokeLinejoin="round"/>
 </g>
-{/* Right wings */}
-<g className={`${u}wR`} filter={`url(#${u}sh)`}>
-<path d="M114 92 C132 72 162 65 166 86 C170 104 152 112 134 110 L114 104 Z" fill="rgba(255,255,255,0.22)" stroke="rgba(255,255,255,0.7)" strokeWidth="2.5" strokeLinejoin="round"/>
-<path className={`${u}iR`} d="M116 96 C130 80 154 76 158 90 C161 104 148 108 136 107 L116 102 Z" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.45)" strokeLinejoin="round"/>
-<path d="M114 112 C132 116 158 124 160 142 C162 154 150 158 138 152 C128 147 114 136 114 133 Z" fill="rgba(255,255,255,0.17)" stroke="rgba(255,255,255,0.6)" strokeWidth="2.5" strokeLinejoin="round"/>
-<path className={`${u}iR`} d="M116 117 C130 120 152 127 153 141 C154 150 146 153 136 148 C130 144 116 136 116 133 Z" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.38)" strokeLinejoin="round" style={{animationDelay:'0.5s'}}/>
-<line className={`${u}ml`} x1="162" y1="86" x2="146" y2="96" stroke="#fff" strokeWidth="1.2" style={{animationDelay:'0.15s'}}/>
-<line className={`${u}ml`} x1="146" y1="96" x2="158" y2="106" stroke="#fff" strokeWidth="1.2" style={{animationDelay:'0.45s'}}/>
-<line className={`${u}ml`} x1="162" y1="86" x2="158" y2="106" stroke="#fff" strokeWidth="1.2" style={{animationDelay:'0.75s'}}/>
-<line className={`${u}ml`} x1="146" y1="96" x2="130" y2="102" stroke="#fff" strokeWidth="1.2" style={{animationDelay:'0.35s'}}/>
-<line className={`${u}ml`} x1="152" y1="130" x2="140" y2="146" stroke="#fff" strokeWidth="1.2" style={{animationDelay:'0.55s'}}/>
-<line className={`${u}ml`} x1="140" y1="146" x2="128" y2="134" stroke="#fff" strokeWidth="1.2" style={{animationDelay:'0.85s'}}/>
-<circle className={`${u}np`} cx="162" cy="86" r="3.5" fill="#fff" filter={`url(#${u}gl)`} style={{animationDelay:'0.15s'}}/>
-<circle className={`${u}np`} cx="146" cy="96" r="3.5" fill="#fff" filter={`url(#${u}gl)`} style={{animationDelay:'0.55s'}}/>
-<circle className={`${u}np`} cx="158" cy="106" r="3.5" fill="#fff" filter={`url(#${u}gl)`} style={{animationDelay:'0.95s'}}/>
-<circle className={`${u}np`} cx="152" cy="130" r="3.5" fill="#fff" filter={`url(#${u}gl)`} style={{animationDelay:'0.35s'}}/>
-<circle className={`${u}np`} cx="140" cy="146" r="3.5" fill="#fff" filter={`url(#${u}gl)`} style={{animationDelay:'0.75s'}}/>
-<circle className={`${u}np`} cx="128" cy="134" r="3.5" fill="#fff" filter={`url(#${u}gl)`} style={{animationDelay:'1.15s'}}/>
+{/* 3D SHIELD FRONT */}
+<g filter={`url(#${u}si)`}>
+<path d="M120 18 L42 52 L42 142 C42 184 78 212 120 226 C162 212 198 184 198 142 L198 52 Z" fill={`url(#${u}shFF)`} stroke={`url(#${u}shF)`} strokeWidth="3.5" strokeLinejoin="round"/>
 </g>
-{/* Body */}
-<rect x="107" y="82" width="6" height="65" rx="3" fill="rgba(255,255,255,0.3)" stroke="rgba(255,255,255,0.6)" strokeWidth="1.2"/>
-{/* Antennae */}
-<g className={`${u}aL`}><path className={`${u}alL`} d="M108 82 C105 66 96 52 90 44" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2.2" strokeLinecap="round"/><circle className={`${u}atL`} cx="90" cy="44" r="3.5" fill="rgba(255,255,255,0.85)" filter={`url(#${u}tg)`}/></g>
-<g className={`${u}aR`}><path className={`${u}alR`} d="M112 82 C115 66 124 52 130 44" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2.2" strokeLinecap="round"/><circle className={`${u}atR`} cx="130" cy="44" r="3.5" fill="rgba(255,255,255,0.85)" filter={`url(#${u}tg)`}/></g>
+<path d="M120 22 L48 54 L48 100 C60 90 90 70 120 65 C140 62 160 68 176 82 L198 56 Z" fill="rgba(255,255,255,0.04)" stroke="none"/>
+{/* GLOWING DASHED OUTLINE */}
+<g filter={`url(#${u}dg)`}>
+<path className={`${u}sd`} d="M120 10 L34 46 L34 144 C34 192 74 220 120 234 C166 220 206 192 206 144 L206 46 Z" fill="none" stroke="#00DDFF" strokeWidth="2.5" strokeLinecap="round" opacity="0.85"/>
 </g>
-{/* Lock */}
-<g className={`${u}lg`}>
-<rect x="100" y="112" width="20" height="16" rx="4" fill={`url(#${u}lf)`} stroke="#fff" strokeWidth="2"/>
-<path className={`${u}sk`} d="M104.5 112 L104.5 104 C104.5 99 107 96.5 110 96.5 C113 96.5 115.5 99 115.5 104 L115.5 112" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"/>
-<circle cx="110" cy="120" r="2.8" fill="rgba(80,50,160,0.7)"/><path d="M108.5 121.5 L110 126 L111.5 121.5 Z" fill="rgba(80,50,160,0.7)"/>
+{/* INSIDE SHIELD (clipped) */}
+<g clipPath={`url(#${u}sb)`}>
+<circle className={`${u}rP`} cx="120" cy="120" fill="none" stroke="#00CCFF" r="28"/>
+<circle className={`${u}rP2`} cx="120" cy="120" fill="none" stroke="#7050FF" r="28"/>
+{/* Data flow lines */}
+<line className={`${u}dFl`} x1="62" y1="78" x2="96" y2="105" stroke="#00CCFF" strokeWidth="2" style={{animationDelay:'0s'}}/>
+<line className={`${u}dFl`} x1="178" y1="78" x2="152" y2="100" stroke="#00CCFF" strokeWidth="2" style={{animationDelay:'0.3s'}}/>
+<line className={`${u}dFl`} x1="65" y1="155" x2="96" y2="140" stroke="#7050FF" strokeWidth="2" style={{animationDelay:'0.5s'}}/>
+<line className={`${u}dFl`} x1="175" y1="155" x2="152" y2="140" stroke="#7050FF" strokeWidth="2" style={{animationDelay:'0.8s'}}/>
+<line className={`${u}dFl`} x1="120" y1="58" x2="122" y2="86" stroke="#40E0FF" strokeWidth="1.8" style={{animationDelay:'0.2s'}}/>
+<line className={`${u}dFl`} x1="120" y1="195" x2="122" y2="155" stroke="#C040FF" strokeWidth="1.8" style={{animationDelay:'0.6s'}}/>
+{/* P2P nodes */}
+{[[62,78,'0s','#00CCFF'],[120,58,'0.2s','#40E0FF'],[178,78,'0.4s','#00CCFF'],[65,155,'0.3s','#7050FF'],[175,155,'0.5s','#7050FF'],[120,195,'0.7s','#C040FF']].map(([cx,cy,d,c],i)=><g key={i} className={`${u}nP`} style={{animationDelay:d,transformOrigin:`${cx}px ${cy}px`}}><circle cx={cx} cy={cy} r="6" fill="none" stroke={c} strokeWidth="2.5" opacity="0.7"/><circle cx={cx} cy={cy} r="3" fill={c} filter={`url(#${u}gl)`}/></g>)}
+{/* Orbital ring */}
+<g className={`${u}orb`}>
+<circle cx="120" cy="120" r="48" fill="none" stroke={`url(#${u}shF)`} strokeWidth="1.2" opacity="0.3" strokeDasharray="4 5"/>
+<circle cx="168" cy="118" r="2.5" fill="#C040FF" filter={`url(#${u}gl)`}/>
+<circle cx="72" cy="122" r="2" fill="#00CCFF" filter={`url(#${u}gl)`}/>
+</g>
+</g>
+{/* 3D CUBE WITH CIRCUITRY */}
+<g className={`${u}cuF`} filter={`url(#${u}cs)`}>
+{/* LEFT SIDE */}
+<path d="M96 100 L96 142 L122 158 L122 116 Z" fill={`url(#${u}cS)`} stroke="#0a0830" strokeWidth="2.5" strokeLinejoin="round"/>
+<g filter={`url(#${u}cg)`} opacity="0.7">
+<polyline className={`${u}cFl`} points="100,108 100,118 108,122 108,132" fill="none" stroke="#00CCFF" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" style={{animationDelay:'0s'}}/>
+<polyline className={`${u}cFl`} points="104,112 112,116 112,126 118,130" fill="none" stroke="#40E0FF" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" style={{animationDelay:'0.5s'}}/>
+<line className={`${u}cFl`} x1="98" y1="135" x2="110" y2="142" stroke="#00CCFF" strokeWidth="1" strokeLinecap="round" style={{animationDelay:'0.3s'}}/>
+<circle className={`${u}cNo`} cx="100" cy="108" r="1.8" fill="#00CCFF" style={{animationDelay:'0s'}}/>
+<circle className={`${u}cNo`} cx="108" cy="122" r="1.8" fill="#40E0FF" style={{animationDelay:'0.3s'}}/>
+<circle className={`${u}cNo`} cx="108" cy="132" r="1.8" fill="#00CCFF" style={{animationDelay:'0.6s'}}/>
+<circle className={`${u}cNo`} cx="112" cy="116" r="1.5" fill="#40E0FF" style={{animationDelay:'0.2s'}}/>
+<circle className={`${u}cNo`} cx="118" cy="130" r="1.5" fill="#00CCFF" style={{animationDelay:'0.5s'}}/>
+</g>
+{/* TOP */}
+<path d="M96 100 L122 86 L150 100 L122 116 Z" fill={`url(#${u}cT)`} stroke="#0a0830" strokeWidth="2.5" strokeLinejoin="round"/>
+<g filter={`url(#${u}cg)`} opacity="0.5">
+<polyline className={`${u}cFl`} points="108,94 118,89 128,94 128,100" fill="none" stroke="#3030A0" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" style={{animationDelay:'0.2s'}}/>
+<polyline className={`${u}cFl`} points="104,98 114,93 124,98 134,96" fill="none" stroke="#4040B0" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" style={{animationDelay:'0.7s'}}/>
+<line className={`${u}cFl`} x1="118" y1="96" x2="140" y2="98" stroke="#3030A0" strokeWidth="1" strokeLinecap="round" style={{animationDelay:'0.4s'}}/>
+<circle className={`${u}cNo`} cx="108" cy="94" r="1.5" fill="#5050C0" style={{animationDelay:'0.1s'}}/>
+<circle className={`${u}cNo`} cx="128" cy="94" r="1.5" fill="#5050C0" style={{animationDelay:'0.4s'}}/>
+<circle className={`${u}cNo`} cx="118" cy="89" r="1.5" fill="#4040B0" style={{animationDelay:'0.7s'}}/>
+<circle className={`${u}cNo`} cx="134" cy="96" r="1.5" fill="#5050C0" style={{animationDelay:'0.3s'}}/>
+</g>
+{/* FRONT FACE */}
+<path d="M122 116 L150 100 L150 142 L122 158 Z" fill={`url(#${u}cF)`} stroke="#0a0830" strokeWidth="2.5" strokeLinejoin="round"/>
+<path d="M122 116 L150 100 L150 118 L132 128 Z" fill={`url(#${u}cH)`} stroke="none"/>
+<g filter={`url(#${u}cg)`} opacity="0.6">
+<polyline className={`${u}cFl`} points="128,120 128,130 136,134 136,148" fill="none" stroke="#B0C0FF" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" style={{animationDelay:'0.1s'}}/>
+<polyline className={`${u}cFl`} points="144,106 144,116 138,120 138,128" fill="none" stroke="#A0B0FF" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" style={{animationDelay:'0.6s'}}/>
+<polyline className={`${u}cFl`} points="126,140 134,144 142,140 146,144" fill="none" stroke="#B0C0FF" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" style={{animationDelay:'0.4s'}}/>
+<line className={`${u}cFl`} x1="132" y1="150" x2="144" y2="144" stroke="#A0B0FF" strokeWidth="1" strokeLinecap="round" style={{animationDelay:'0.8s'}}/>
+<circle className={`${u}cNo`} cx="128" cy="120" r="1.8" fill="#C0D0FF" style={{animationDelay:'0.1s'}}/>
+<circle className={`${u}cNo`} cx="136" cy="134" r="1.8" fill="#B0C0FF" style={{animationDelay:'0.4s'}}/>
+<circle className={`${u}cNo`} cx="136" cy="148" r="1.8" fill="#C0D0FF" style={{animationDelay:'0.7s'}}/>
+<circle className={`${u}cNo`} cx="144" cy="106" r="1.5" fill="#A0B0FF" style={{animationDelay:'0.2s'}}/>
+<circle className={`${u}cNo`} cx="138" cy="120" r="1.5" fill="#B0C0FF" style={{animationDelay:'0.5s'}}/>
+<circle className={`${u}cNo`} cx="146" cy="144" r="1.5" fill="#C0D0FF" style={{animationDelay:'0.8s'}}/>
+</g>
+<line x1="122" y1="86" x2="150" y2="100" stroke="rgba(255,255,255,0.3)" strokeWidth="1"/>
+<line x1="96" y1="100" x2="122" y2="86" stroke="rgba(255,255,255,0.2)" strokeWidth="1"/>
+{/* GLITCH ASTERISK */}
+<g className={`${u}aGR`} opacity="0" filter={`url(#${u}gR)`}>
+<line x1="136" y1="116" x2="136" y2="136" stroke="#ff3030" strokeWidth="3" strokeLinecap="round"/>
+<line x1="128" y1="120" x2="144" y2="132" stroke="#ff3030" strokeWidth="3" strokeLinecap="round"/>
+<line x1="144" y1="120" x2="128" y2="132" stroke="#ff3030" strokeWidth="3" strokeLinecap="round"/>
+</g>
+<g className={`${u}aGC`} opacity="0" filter={`url(#${u}gC)`}>
+<line x1="136" y1="116" x2="136" y2="136" stroke="#00ffff" strokeWidth="3" strokeLinecap="round"/>
+<line x1="128" y1="120" x2="144" y2="132" stroke="#00ffff" strokeWidth="3" strokeLinecap="round"/>
+<line x1="144" y1="120" x2="128" y2="132" stroke="#00ffff" strokeWidth="3" strokeLinecap="round"/>
+</g>
+<g className={`${u}aM`} filter={`url(#${u}ag)`}>
+<line x1="136" y1="116" x2="136" y2="136" stroke="#fff" strokeWidth="3" strokeLinecap="round"/>
+<line x1="128" y1="120" x2="144" y2="132" stroke="#fff" strokeWidth="3" strokeLinecap="round"/>
+<line x1="144" y1="120" x2="128" y2="132" stroke="#fff" strokeWidth="3" strokeLinecap="round"/>
+</g>
 </g>
 {/* Scatter dots */}
-<g opacity="0.6">
-<circle className={`${u}np`} cx="56" cy="64" r="2.5" fill="#fff" style={{animationDelay:'0.1s'}}/>
-<circle className={`${u}np`} cx="164" cy="64" r="2.5" fill="#fff" style={{animationDelay:'0.5s'}}/>
-<circle className={`${u}np`} cx="48" cy="110" r="2" fill="#fff" style={{animationDelay:'0.3s'}}/>
-<circle className={`${u}np`} cx="172" cy="110" r="2" fill="#fff" style={{animationDelay:'0.7s'}}/>
-<circle className={`${u}np`} cx="70" cy="178" r="2" fill="#fff" style={{animationDelay:'0.9s'}}/>
-<circle className={`${u}np`} cx="150" cy="178" r="2" fill="#fff" style={{animationDelay:'0.4s'}}/>
-</g>
+<g clipPath={`url(#${u}sb)`} opacity="0.4">
+<circle className={`${u}nP`} cx="55" cy="65" r="2" fill="#00CCFF" style={{animationDelay:'0.1s'}}/>
+<circle className={`${u}nP`} cx="185" cy="65" r="2" fill="#9070FF" style={{animationDelay:'0.5s'}}/>
+<circle className={`${u}nP`} cx="75" cy="190" r="1.8" fill="#7050FF" style={{animationDelay:'0.3s'}}/>
+<circle className={`${u}nP`} cx="165" cy="190" r="1.8" fill="#C040FF" style={{animationDelay:'0.7s'}}/>
 </g>
 </svg>};
 const ButterflyLogo=({s=48,accentRgb,accent,accent2,text,warn,flap})=>{
@@ -2205,7 +2245,7 @@ html{scroll-behavior:smooth}
       {/* ═══ LEFT SIDEBAR ═══ */}
       <div style={{width:260,minWidth:260,height:"100%",background:T.dark?"rgba(255,255,255,0.015)":"rgba(0,0,0,0.02)",borderRight:`1px solid ${T.bdr}`,display:"flex",flexDirection:"column"}}>
         <div style={{padding:"14px 12px 10px",display:"flex",alignItems:"center",gap:8}}>
-          <div style={{width:40,height:40,borderRadius:10,flexShrink:0,overflow:"hidden"}}><SCLogo s={40} accent={T.accent} accent2={T.accent2||T.accent}/></div>
+          <div style={{width:40,height:40,borderRadius:10,flexShrink:0,overflow:"hidden",background:"linear-gradient(135deg,#0a0a1a,#12102a)",display:"flex",alignItems:"center",justifyContent:"center"}}><SCLogo s={36}/></div>
           <span style={{fontSize:15,fontWeight:700,fontFamily:`${F.heading},sans-serif`,letterSpacing:1}}>ShieldCraft</span>
         </div>
 
@@ -2657,7 +2697,7 @@ html{scroll-behavior:smooth}
 
         {/* ─── EMPTY STATE ─── */}
         {pmView!=="add"&&pmView!=="edit"&&pmView!=="generator"&&pmView!=="threat"&&!selCred&&<div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:12}}>
-          <div style={{width:80,height:80,borderRadius:18,overflow:"hidden"}}><SCLogo s={80} accent={T.accent} accent2={T.accent2||T.accent}/></div>
+          <div style={{width:80,height:80,borderRadius:18,overflow:"hidden",background:"linear-gradient(135deg,#0a0a1a,#12102a)",display:"flex",alignItems:"center",justifyContent:"center"}}><SCLogo s={72}/></div>
           <div style={{fontSize:16,fontWeight:600,color:T.dim,marginTop:8}}>Select an item</div>
           <div style={{fontSize:13,color:T.faint}}>Choose from the list or create a new item</div>
         </div>}
@@ -2872,7 +2912,7 @@ html{scroll-behavior:smooth}
       "password-manager":<>
         <div style={{display:"flex",alignItems:"center",gap:2,marginBottom:0,marginTop:-24,marginLeft:-6}}>
           <div style={{animation:"shieldEntrance 0.8s ease-out",filter:`drop-shadow(0 4px 12px rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.3))`,marginRight:-2,width:72,height:72,borderRadius:16,overflow:"hidden"}}>
-            <SCLogo s={72} accent={pgQuantumSafe?"#10b981":T.accent} accent2={pgQuantumSafe?"#059669":(T.accent2||T.accent)}/>
+            <SCLogo s={72}/>
           </div>
           <div style={{marginTop:-10}}>
             <span className="sc-grad-title" style={{display:"inline-block",fontSize:32,fontWeight:800,fontFamily:`${F.heading},sans-serif`,letterSpacing:2,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${pgQuantumSafe?"#10b981":T.accent} 70%,${pgQuantumSafe?"#059669":T.accent2||T.accent})`,lineHeight:1.2}}>ShieldCraft</span>
@@ -2900,7 +2940,7 @@ html{scroll-behavior:smooth}
         {pmShowLogin&&<div style={{position:"fixed",inset:0,zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.6)",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)"}} onClick={e=>{if(e.target===e.currentTarget)setPmShowLogin(false)}}>
           <div style={{width:380,maxWidth:"90vw",background:T.dark?"rgba(16,18,27,0.95)":"rgba(30,32,44,0.95)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:`1px solid rgba(${T.accentRgb},0.2)`,borderRadius:20,padding:"32px 28px",boxShadow:`0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(${T.accentRgb},0.08)`,position:"relative"}}>
             <button onClick={()=>setPmShowLogin(false)} style={{position:"absolute",top:12,right:14,background:"none",border:"none",color:T.dim,fontSize:20,cursor:"pointer",padding:"4px 8px",lineHeight:1}}>x</button>
-            <div style={{display:"flex",justifyContent:"center",marginBottom:8}}><div style={{animation:"shieldEntrance 0.6s ease-out",width:52,height:52,borderRadius:12,overflow:"hidden"}}><SCLogo s={52} accent={T.accent} accent2={T.accent2||T.accent}/></div></div>
+            <div style={{display:"flex",justifyContent:"center",marginBottom:8}}><div style={{animation:"shieldEntrance 0.6s ease-out",width:52,height:52,borderRadius:12,overflow:"hidden",background:"linear-gradient(135deg,#0a0a1a,#12102a)",display:"flex",alignItems:"center",justifyContent:"center"}}><SCLogo s={46}/></div></div>
             <h2 style={{fontSize:20,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.text,margin:"0 0 4px",letterSpacing:1,textAlign:"center"}}>{pmSignupMode?"Create Account":"Login to ShieldCraft"}</h2>
             <p style={{fontSize:11,color:T.dim,margin:"0 0 20px",textAlign:"center"}}>{pmSignupMode?"Create a NotesCraft account to store passwords":"Use your NotesCraft credentials"}</p>
             {!pmLogin2FA?<div style={{display:"flex",flexDirection:"column",gap:10}}>
