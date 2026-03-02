@@ -587,6 +587,7 @@ export default function NotesCraft(){
   const[pgUseCustom,setPgUseCustom]=useState(false);
   const[pgCustomErr,setPgCustomErr]=useState("");
   const[pgQuantumSafe,setPgQuantumSafe]=useState(false);
+  const[pgHiddenCards,setPgHiddenCards]=useState({});
   const[pgResult,setPgResult]=useState("");
   const[pgDisplay,setPgDisplay]=useState("");
   const[pgScrambling,setPgScrambling]=useState(false);
@@ -3412,24 +3413,27 @@ html{scroll-behavior:smooth}
           </div>
           {/* Floating neon side cards */}
           {infoPage==="password-manager"&&<>
-            <div style={{position:"absolute",left:-280,top:130,width:270,height:210,pointerEvents:"none",animation:"neoFloat1 6s ease-in-out infinite",zIndex:2}}>
-              <div style={{width:"100%",height:"100%",borderRadius:6,padding:"20px 20px",border:"2px solid rgba(16,185,129,0.8)",background:"rgba(16,185,129,0.1)",boxShadow:"0 0 15px rgba(16,185,129,0.35),0 0 30px rgba(16,185,129,0.18),inset 0 0 15px rgba(16,185,129,0.08)",transform:"rotate(-8deg)",display:"flex",flexDirection:"column",overflow:"hidden"}}>
+            {!pgHiddenCards.qs&&<div style={{position:"absolute",left:-280,top:130,width:270,height:210,animation:"neoFloat1 6s ease-in-out infinite",zIndex:2,transition:"opacity 0.4s,transform 0.4s"}}>
+              <div style={{width:"100%",height:"100%",borderRadius:6,padding:"20px 20px",border:"2px solid rgba(16,185,129,0.8)",background:"rgba(16,185,129,0.1)",boxShadow:"0 0 15px rgba(16,185,129,0.35),0 0 30px rgba(16,185,129,0.18),inset 0 0 15px rgba(16,185,129,0.08)",transform:"rotate(-8deg)",display:"flex",flexDirection:"column",overflow:"hidden",position:"relative"}}>
+                <button onClick={()=>setPgHiddenCards(p=>({...p,qs:true}))} style={{position:"absolute",top:4,right:6,background:"none",border:"none",color:"rgba(16,185,129,0.5)",fontSize:14,cursor:"pointer",padding:"2px 5px",lineHeight:1,borderRadius:4,transition:"color 0.2s"}} onMouseEnter={e=>e.currentTarget.style.color="rgba(16,185,129,1)"} onMouseLeave={e=>e.currentTarget.style.color="rgba(16,185,129,0.5)"} title="Hide card">✕</button>
                 <div style={{fontSize:17,fontWeight:900,color:"#10b981",marginBottom:8,fontFamily:"monospace",letterSpacing:1}}>⚛️ Quantum-Safe</div>
                 <div style={{fontSize:13.5,color:"rgba(255,255,255,0.88)",lineHeight:1.65,fontFamily:"monospace",flex:1,overflow:"hidden"}}>Only password generator with Grover-aware effective{"\n"}bits calculation —{"\n"}models real quantum{"\n"}attack cost, not just{"\n"}classical brute-force</div>
               </div>
-            </div>
-            <div style={{position:"absolute",right:-255,top:310,width:240,height:180,pointerEvents:"none",animation:"neoFloat2 7s ease-in-out infinite 1s",zIndex:2}}>
-              <div style={{width:"100%",height:"100%",borderRadius:6,padding:"18px 18px",border:`2px solid rgba(${T.accentRgb},0.8)`,background:`rgba(${T.accentRgb},0.1)`,boxShadow:`0 0 15px rgba(${T.accentRgb},0.35),0 0 30px rgba(${T.accentRgb},0.18),inset 0 0 15px rgba(${T.accentRgb},0.08)`,transform:"rotate(6deg)",display:"flex",flexDirection:"column",overflow:"hidden"}}>
+            </div>}
+            {!pgHiddenCards.mx&&<div style={{position:"absolute",right:-255,top:310,width:240,height:180,animation:"neoFloat2 7s ease-in-out infinite 1s",zIndex:2,transition:"opacity 0.4s,transform 0.4s"}}>
+              <div style={{width:"100%",height:"100%",borderRadius:6,padding:"18px 18px",border:`2px solid rgba(${T.accentRgb},0.8)`,background:`rgba(${T.accentRgb},0.1)`,boxShadow:`0 0 15px rgba(${T.accentRgb},0.35),0 0 30px rgba(${T.accentRgb},0.18),inset 0 0 15px rgba(${T.accentRgb},0.08)`,transform:"rotate(6deg)",display:"flex",flexDirection:"column",overflow:"hidden",position:"relative"}}>
+                <button onClick={()=>setPgHiddenCards(p=>({...p,mx:true}))} style={{position:"absolute",top:4,right:6,background:"none",border:"none",color:`rgba(${T.accentRgb},0.5)`,fontSize:14,cursor:"pointer",padding:"2px 5px",lineHeight:1,borderRadius:4,transition:"color 0.2s"}} onMouseEnter={e=>e.currentTarget.style.color=T.accent} onMouseLeave={e=>e.currentTarget.style.color=`rgba(${T.accentRgb},0.5)`} title="Hide card">✕</button>
                 <div style={{fontSize:17,fontWeight:900,color:T.accent,marginBottom:8,fontFamily:"monospace",letterSpacing:1}}>🔑 512-Char Max</div>
                 <div style={{fontSize:13.5,color:"rgba(255,255,255,0.88)",lineHeight:1.65,fontFamily:"monospace",flex:1,overflow:"hidden"}}>Most generators cap{"\n"}at 64-128 chars.{"\n"}Only password generator{"\n"}allowing ultra-long{"\n"}passwords for max{"\n"}entropy & future-proof</div>
               </div>
-            </div>
-            <div style={{position:"absolute",left:-250,top:400,width:240,height:175,pointerEvents:"none",animation:"neoFloat3 8s ease-in-out infinite 0.5s",zIndex:2}}>
-              <div style={{width:"100%",height:"100%",borderRadius:6,padding:"18px 18px",border:"2px solid rgba(245,158,11,0.8)",background:"rgba(245,158,11,0.1)",boxShadow:"0 0 15px rgba(245,158,11,0.35),0 0 30px rgba(245,158,11,0.18),inset 0 0 15px rgba(245,158,11,0.08)",transform:"rotate(5deg)",display:"flex",flexDirection:"column",overflow:"hidden"}}>
+            </div>}
+            {!pgHiddenCards.fr&&<div style={{position:"absolute",left:-250,top:400,width:240,height:175,animation:"neoFloat3 8s ease-in-out infinite 0.5s",zIndex:2,transition:"opacity 0.4s,transform 0.4s"}}>
+              <div style={{width:"100%",height:"100%",borderRadius:6,padding:"18px 18px",border:"2px solid rgba(245,158,11,0.8)",background:"rgba(245,158,11,0.1)",boxShadow:"0 0 15px rgba(245,158,11,0.35),0 0 30px rgba(245,158,11,0.18),inset 0 0 15px rgba(245,158,11,0.08)",transform:"rotate(5deg)",display:"flex",flexDirection:"column",overflow:"hidden",position:"relative"}}>
+                <button onClick={()=>setPgHiddenCards(p=>({...p,fr:true}))} style={{position:"absolute",top:4,right:6,background:"none",border:"none",color:"rgba(245,158,11,0.5)",fontSize:14,cursor:"pointer",padding:"2px 5px",lineHeight:1,borderRadius:4,transition:"color 0.2s"}} onMouseEnter={e=>e.currentTarget.style.color="#f59e0b"} onMouseLeave={e=>e.currentTarget.style.color="rgba(245,158,11,0.5)"} title="Hide card">✕</button>
                 <div style={{fontSize:17,fontWeight:900,color:"#f59e0b",marginBottom:8,fontFamily:"monospace",letterSpacing:1}}>🛡️ 100% Free</div>
                 <div style={{fontSize:13.5,color:"rgba(255,255,255,0.88)",lineHeight:1.65,fontFamily:"monospace",flex:1,overflow:"hidden"}}>One and only free{"\n"}Quantum Resistant{"\n"}password generator{"\n"}tool — no signup,{"\n"}no limits, no ads</div>
               </div>
-            </div>
+            </div>}
           </>}
           {infoPage==="password-manager"&&<div onClick={()=>{setInfoPage("security-blog");window.scrollTo(0,0)}} style={{marginTop:32,borderRadius:16,overflow:"hidden",cursor:"pointer",border:`1px solid rgba(${T.accentRgb},0.2)`,background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.06)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",transition:"all 0.3s",boxShadow:`0 4px 24px rgba(0,0,0,0.2)`}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.boxShadow=`0 8px 32px rgba(${T.accentRgb},0.25)`}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="0 4px 24px rgba(0,0,0,0.2)"}}>
             <div style={{height:160,background:`linear-gradient(135deg,rgba(${T.accentRgb},0.3) 0%,rgba(${T.accentRgb},0.05) 50%,rgba(139,92,246,0.2) 100%)`,display:"flex",alignItems:"center",justifyContent:"center",position:"relative",overflow:"hidden"}}>
