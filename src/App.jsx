@@ -2857,53 +2857,65 @@ html{scroll-behavior:smooth}
     const infoPages={
       about:<>
         <h1 style={infoH}>About NotesCraft</h1>
-        <p style={infoP}>NotesCraft is a privacy-first encrypted notes application designed for people who believe their thoughts deserve the same protection as their most sensitive data.</p>
+        <p style={infoP}>NotesCraft is a privacy-first encrypted productivity suite — combining note-taking, calendar management, and a full-featured password manager into one zero-knowledge platform. Your thoughts, schedules, and credentials all deserve the same protection.</p>
         <h2 style={infoH2}>Our Mission</h2>
-        <p style={infoP}>Privacy isn't a feature we added — it's the reason we built this. Every word you write is encrypted on your device before it ever touches the network. We can't read your notes, and neither can anyone else.</p>
-        <h2 style={infoH2}>What We Offer</h2>
+        <p style={infoP}>Privacy isn't a feature we added — it's the reason we built this. Every word you write, every event you schedule, and every password you store is encrypted on your device before it ever touches the network. We can't read your data, and neither can anyone else.</p>
+        <h2 style={infoH2}>NotesCraft — Encrypted Notes</h2>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,margin:"16px 0"}}>
-          {[["End-to-End Encryption","AES-256 encryption happens on your device. Your data is unreadable to everyone — including us."],["Cross-Device Sync","Access your notes from any device. Encrypted data syncs securely through the cloud."],["Rich Text & Markdown","Full formatting toolbar, code blocks, checklists, and markdown support for expressive writing."],["Calendar & Reminders","Built-in calendar with event scheduling, reminders, and task management — all encrypted."],["Custom Themes","Personalize your workspace with 50+ themes, accent colors, and font combinations."],["Zero-Knowledge Architecture","We never store your encryption keys. Only you can decrypt your data."]].map(([t,d],i)=><div key={i} style={{...infoGlass,padding:"20px 18px",borderRadius:14}}><div style={{fontSize:13,fontWeight:700,color:T.dark?T.text:"#e2e8f0",marginBottom:6}}>{t}</div><div style={{fontSize:12,lineHeight:1.7,color:"#94a3b8"}}>{d}</div></div>)}
+          {[["End-to-End Encryption","AES-256-GCM encryption with PBKDF2 key derivation. Your data is encrypted before it leaves your device — unreadable to everyone, including us."],["Cross-Device Sync","Access your notes from any device. Encrypted data syncs securely through the cloud via our relay server."],["Rich Text & Markdown","Full formatting toolbar, code blocks, checklists, and markdown support for expressive writing."],["Calendar & Reminders","Built-in calendar with event scheduling, reminders, and task management — all encrypted."],["50+ Custom Themes","Personalize your workspace with 50+ themes, accent colors, custom fonts, and dark/light modes."],["Zero-Knowledge Architecture","We never store your encryption keys. Only you can decrypt your data — not even under legal compulsion."]].map(([t,d],i)=><div key={i} style={{...infoGlass,padding:"20px 18px",borderRadius:14}}><div style={{fontSize:13,fontWeight:700,color:T.dark?T.text:"#e2e8f0",marginBottom:6}}>{t}</div><div style={{fontSize:12,lineHeight:1.7,color:"#94a3b8"}}>{d}</div></div>)}
+        </div>
+        <h2 style={infoH2}>ShieldCraft — Password Manager</h2>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,margin:"16px 0"}}>
+          {[["Password Generator","Three modes — Random (up to 512 chars), Memorable (word-based), and PIN. Cryptographically secure using crypto.getRandomValues()."],["Quantum Resistant Mode","Grover-aware entropy calculator that models real quantum attack cost — not just classical brute-force estimates."],["Vault Organization","Organize credentials into custom vaults. Ghost Shield lets you hide sensitive vaults behind a name + 6-digit passcode."],["Breach Monitoring","ThreatShield scans your passwords against the Have I Been Pwned database to detect compromised credentials."],["TOTP 2FA Support","Built-in authenticator for time-based one-time passwords. Store and generate 2FA codes alongside your logins."],["Import & Export","Import from Chrome, Bitwarden, 1Password, LastPass, or CSV. Export as CSV, JSON, or encrypted .shieldcraft backup."],["20+ Credential Types","Store logins, cards, notes, identities, API keys, SSH keys, WiFi passwords, crypto wallets, licenses, and more."],["Encrypted Storage","All credentials encrypted with the same AES-256-GCM architecture as NotesCraft. Zero-knowledge by design."]].map(([t,d],i)=><div key={i} style={{...infoGlass,padding:"20px 18px",borderRadius:14}}><div style={{fontSize:13,fontWeight:700,color:T.dark?T.text:"#e2e8f0",marginBottom:6}}>{t}</div><div style={{fontSize:12,lineHeight:1.7,color:"#94a3b8"}}>{d}</div></div>)}
         </div>
         <h2 style={infoH2}>Built With Love</h2>
-        <p style={infoP}>Designed and developed by <span style={{fontWeight:800,color:T.accent,letterSpacing:2,fontFamily:`${F.heading},sans-serif`}}>SUNNY</span> — with a passion for privacy, clean design, and great user experiences. NotesCraft is built on encrypted architecture, powered by AES-256 encryption, and crafted to be the most beautiful encrypted notes app you've ever used.</p>
+        <p style={infoP}>Designed and developed by <span style={{fontWeight:800,color:T.accent,letterSpacing:2,fontFamily:`${F.heading},sans-serif`}}>SUNNY</span> — with a passion for privacy, clean design, and great user experiences. NotesCraft is built on zero-knowledge architecture, powered by AES-256-GCM encryption, and crafted to be the most beautiful encrypted productivity suite you've ever used.</p>
       </>,
       privacy:<>
         <h1 style={infoH}>Privacy Policy</h1>
-        <p style={{...infoP,fontStyle:"italic",opacity:0.7}}>Last updated: February 2026</p>
-        <p style={infoP}>At NotesCraft, privacy isn't just a policy — it's our entire architecture. This document explains how we handle (or rather, don't handle) your data.</p>
+        <p style={{...infoP,fontStyle:"italic",opacity:0.7}}>Last updated: March 2026</p>
+        <p style={infoP}>At NotesCraft, privacy isn't just a policy — it's our entire architecture. This document explains how we handle (or rather, don't handle) your data across all our services: NotesCraft notes, calendar, and ShieldCraft password manager.</p>
         <h2 style={infoH2}>Zero Data Collection</h2>
-        <p style={infoP}>We do not use analytics, tracking pixels, cookies for advertising, or any third-party data collection tools. We don't know how you use the app, what you write, or when you use it.</p>
+        <p style={infoP}>We do not use analytics, tracking pixels, cookies for advertising, or any third-party data collection tools. We don't know how you use the app, what you write, what passwords you store, or when you use it.</p>
         <h2 style={infoH2}>End-to-End Encryption</h2>
-        <p style={infoP}>All your notes, calendar events, and attachments are encrypted on your device using AES-256 encryption before being transmitted or stored. Your encryption key is derived from your password and never leaves your device. We have zero ability to read your data.</p>
+        <p style={infoP}>All your notes, calendar events, attachments, and ShieldCraft credentials (passwords, TOTP secrets, card details, identities, and all other credential types) are encrypted on your device using AES-256-GCM encryption with PBKDF2 key derivation before being transmitted or stored. Your encryption key never leaves your device. We have zero ability to read your data.</p>
         <h2 style={infoH2}>Zero-Knowledge Architecture</h2>
-        <p style={infoP}>Our servers only ever see encrypted blobs. We cannot decrypt, read, analyze, or share your content — even if compelled by law — because we simply don't have the keys.</p>
-        <h2 style={infoH2}>Data Storage</h2>
-        <p style={infoP}>Your encrypted data is stored securely in the cloud solely for the purpose of cross-device synchronization. The stored data is meaningless without your encryption key, which only you possess.</p>
+        <p style={infoP}>Our servers only ever see encrypted blobs. We cannot decrypt, read, analyze, or share your content — even if compelled by law — because we simply don't have the keys. This applies equally to notes, calendar events, and all password manager data.</p>
+        <h2 style={infoH2}>Password Manager (ShieldCraft)</h2>
+        <p style={infoP}>ShieldCraft stores all credentials locally on your device and syncs only encrypted blobs. Password generation (Random, Memorable, and PIN modes) happens entirely client-side using cryptographically secure random number generation (crypto.getRandomValues). Generated passwords are never transmitted or logged. Breach monitoring via ThreatShield uses k-anonymity (only partial SHA-1 hashes are sent) — your actual passwords never leave your device.</p>
+        <h2 style={infoH2}>Ghost Shield Vaults</h2>
+        <p style={infoP}>Hidden vaults created through Ghost Shield are protected by a vault name and 6-digit passcode, encrypted separately from your main vault. We have no ability to reveal, access, or recover Ghost Shield vaults.</p>
+        <h2 style={infoH2}>Data Storage & Sync</h2>
+        <p style={infoP}>Your encrypted data is stored securely in the cloud solely for the purpose of cross-device synchronization. The stored data is meaningless without your encryption key, which only you possess. Import and export operations (CSV, JSON, encrypted .shieldcraft) are processed entirely on your device.</p>
         <h2 style={infoH2}>No Third-Party Sharing</h2>
-        <p style={infoP}>We do not sell, share, or provide your data to any third parties. There is no advertising, no data brokers, and no partnerships that involve your information.</p>
+        <p style={infoP}>We do not sell, share, or provide your data to any third parties. There is no advertising, no data brokers, and no partnerships that involve your information. The only external service we interact with is the Have I Been Pwned API for breach checking, and only partial hashes are sent — never your actual data.</p>
         <h2 style={infoH2}>Account Deletion</h2>
-        <p style={infoP}>You can delete your account at any time. When you do, all your encrypted data is permanently removed from our servers. This action is irreversible.</p>
+        <p style={infoP}>You can delete your account at any time. When you do, all your encrypted data — notes, calendar events, and all ShieldCraft credentials — is permanently removed from our servers. This action is irreversible.</p>
         <h2 style={infoH2}>Contact</h2>
         <p style={infoP}>If you have questions about this privacy policy, reach out through the app or email <a href="mailto:privacy@notecraft.app" style={{color:T.accent,textDecoration:"none"}}>privacy@notecraft.app</a>.</p>
       </>,
       terms:<>
         <h1 style={infoH}>Terms of Service</h1>
-        <p style={{...infoP,fontStyle:"italic",opacity:0.7}}>Last updated: February 2026</p>
-        <p style={infoP}>By using NotesCraft, you agree to the following terms. Please read them carefully.</p>
+        <p style={{...infoP,fontStyle:"italic",opacity:0.7}}>Last updated: March 2026</p>
+        <p style={infoP}>By using NotesCraft and its integrated services (including ShieldCraft password manager), you agree to the following terms. Please read them carefully.</p>
         <h2 style={infoH2}>1. Acceptance of Terms</h2>
-        <p style={infoP}>By accessing or using NotesCraft, you agree to be bound by these Terms of Service. If you do not agree, please do not use the application.</p>
+        <p style={infoP}>By accessing or using NotesCraft and ShieldCraft, you agree to be bound by these Terms of Service. If you do not agree, please do not use the application.</p>
         <h2 style={infoH2}>2. Service Description</h2>
-        <p style={infoP}>NotesCraft is an encrypted notes application that provides end-to-end encrypted note-taking, calendar management, and file storage with cross-device synchronization.</p>
+        <p style={infoP}>NotesCraft is an encrypted productivity suite that provides: (a) end-to-end encrypted note-taking with rich text editing and markdown support; (b) encrypted calendar management with event scheduling and reminders; (c) ShieldCraft — a full-featured password manager with credential storage, password generation (Random, Memorable, and PIN modes), TOTP 2FA authenticator, breach monitoring, vault organization, Ghost Shield hidden vaults, and import/export capabilities; and (d) cross-device synchronization for all services.</p>
         <h2 style={infoH2}>3. User Responsibilities</h2>
-        <p style={infoP}>You are responsible for maintaining the security of your account credentials. You must provide accurate information when creating an account. You agree not to use the service for any illegal or unauthorized purpose.</p>
+        <p style={infoP}>You are responsible for maintaining the security of your account credentials, including your master password, Ghost Shield vault passcodes, and any exported backup files. You must provide accurate information when creating an account. You agree not to use the service for any illegal or unauthorized purpose. You acknowledge that credentials stored in ShieldCraft are your responsibility to back up.</p>
         <h2 style={infoH2}>4. Encryption & Password</h2>
-        <p style={infoP}>Your data is encrypted using a key derived from your password. <strong style={{color:"#e2e8f0"}}>If you lose your password, your data cannot be recovered.</strong> We do not store your password or encryption keys. You are solely responsible for remembering your credentials.</p>
-        <h2 style={infoH2}>5. Service Availability</h2>
-        <p style={infoP}>NotesCraft is provided "as is" without warranties of any kind. We strive for high availability but do not guarantee uninterrupted access. We may modify, suspend, or discontinue features at any time.</p>
-        <h2 style={infoH2}>6. Limitation of Liability</h2>
-        <p style={infoP}>To the maximum extent permitted by law, NotesCraft and its developer shall not be liable for any indirect, incidental, or consequential damages arising from your use of the service, including data loss due to forgotten passwords.</p>
-        <h2 style={infoH2}>7. Changes to Terms</h2>
-        <p style={infoP}>We reserve the right to update these terms at any time. Continued use of NotesCraft after changes constitutes acceptance of the updated terms.</p>
+        <p style={infoP}>All data — notes, calendar events, and ShieldCraft credentials — is encrypted using AES-256-GCM with a key derived from your password via PBKDF2. <strong style={{color:"#e2e8f0"}}>If you lose your password, your data cannot be recovered.</strong> We do not store your password, encryption keys, or Ghost Shield passcodes. You are solely responsible for remembering your credentials. Exported .shieldcraft files are encrypted with your session key — if you lose access, those backups become unrecoverable.</p>
+        <h2 style={infoH2}>5. Password Generator & Security Tools</h2>
+        <p style={infoP}>ShieldCraft's password generator, quantum resistance estimates, and breach monitoring tools are provided for informational purposes. Quantum resistance calculations model Grover's search algorithm and are theoretical projections — no guarantees are made regarding actual post-quantum security. Breach monitoring uses the Have I Been Pwned API with k-anonymity; results reflect known breaches and may not be exhaustive.</p>
+        <h2 style={infoH2}>6. Service Availability</h2>
+        <p style={infoP}>NotesCraft and ShieldCraft are provided "as is" without warranties of any kind. We strive for high availability but do not guarantee uninterrupted access. We may modify, suspend, or discontinue features at any time.</p>
+        <h2 style={infoH2}>7. Limitation of Liability</h2>
+        <p style={infoP}>To the maximum extent permitted by law, NotesCraft and its developer shall not be liable for any indirect, incidental, or consequential damages arising from your use of the service, including but not limited to: data loss due to forgotten passwords, compromised accounts resulting from weak passwords you chose to use, or losses arising from reliance on quantum resistance estimates or breach monitoring results.</p>
+        <h2 style={infoH2}>8. Import & Export</h2>
+        <p style={infoP}>You may import credentials from third-party password managers (Chrome, Bitwarden, 1Password, LastPass, CSV) and export your data in CSV, JSON, or encrypted formats. Plaintext exports (CSV, JSON) contain sensitive data — you are solely responsible for securing exported files. We are not liable for data exposure resulting from mishandled exports.</p>
+        <h2 style={infoH2}>9. Changes to Terms</h2>
+        <p style={infoP}>We reserve the right to update these terms at any time. Continued use of NotesCraft and ShieldCraft after changes constitutes acceptance of the updated terms.</p>
       </>,
       "password-manager":<>
         <div style={{display:"flex",alignItems:"center",gap:2,marginBottom:0,marginTop:-24,marginLeft:-6}}>
