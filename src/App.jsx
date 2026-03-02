@@ -2236,7 +2236,7 @@ html{scroll-behavior:smooth}
       {/* ═══ LEFT SIDEBAR ═══ */}
       <div style={{width:260,minWidth:260,height:"100%",background:T.dark?"rgba(255,255,255,0.015)":"rgba(0,0,0,0.02)",borderRight:`1px solid ${T.bdr}`,display:"flex",flexDirection:"column"}}>
         <div style={{padding:"14px 12px 10px",display:"flex",alignItems:"center",gap:8}}>
-          <div style={{width:40,height:40,borderRadius:10,flexShrink:0,overflow:"hidden",background:"linear-gradient(135deg,#0a0a1a,#12102a)",display:"flex",alignItems:"center",justifyContent:"center"}}><SCLogo s={36}/></div>
+          <div style={{width:40,height:40,borderRadius:10,flexShrink:0,overflow:"hidden",background:"linear-gradient(135deg,#0a0a1a,#12102a)",display:"flex",alignItems:"center",justifyContent:"center",filter:"hue-rotate(-50deg) saturate(1.5) brightness(1.05)"}}><SCLogo s={36}/></div>
           <span style={{fontSize:15,fontWeight:700,fontFamily:`${F.heading},sans-serif`,letterSpacing:1}}>ShieldCraft</span>
         </div>
 
@@ -2693,7 +2693,7 @@ html{scroll-behavior:smooth}
 
         {/* ─── EMPTY STATE ─── */}
         {pmView!=="add"&&pmView!=="edit"&&pmView!=="generator"&&pmView!=="threat"&&!selCred&&<div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:12}}>
-          <div style={{width:80,height:80,borderRadius:18,overflow:"hidden",background:"linear-gradient(135deg,#0a0a1a,#12102a)",display:"flex",alignItems:"center",justifyContent:"center"}}><SCLogo s={72}/></div>
+          <div style={{width:80,height:80,borderRadius:18,overflow:"hidden",background:"linear-gradient(135deg,#0a0a1a,#12102a)",display:"flex",alignItems:"center",justifyContent:"center",filter:"hue-rotate(-50deg) saturate(1.5) brightness(1.05)"}}><SCLogo s={72}/></div>
           <div style={{fontSize:16,fontWeight:600,color:T.dim,marginTop:8}}>Select an item</div>
           <div style={{fontSize:13,color:T.faint}}>Choose from the list or create a new item</div>
         </div>}
@@ -2919,7 +2919,7 @@ html{scroll-behavior:smooth}
       </>,
       "password-manager":<>
         <div style={{display:"flex",alignItems:"center",gap:2,marginBottom:0,marginTop:-24,marginLeft:-6}}>
-          <div style={{animation:"shieldEntrance 0.8s ease-out",filter:`drop-shadow(0 4px 12px rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.3))${pgQuantumSafe?" hue-rotate(-50deg) saturate(1.4)":""}`,marginRight:-2,width:72,height:72,borderRadius:16,overflow:"hidden",transition:"filter 0.4s"}}>
+          <div style={{animation:"shieldEntrance 0.8s ease-out",filter:`drop-shadow(0 4px 12px rgba(16,185,129,0.3)) hue-rotate(-50deg) saturate(1.5) brightness(1.05)`,marginRight:-2,width:72,height:72,borderRadius:16,overflow:"hidden",transition:"filter 0.4s"}}>
             <SCLogo s={72}/>
           </div>
           <div style={{marginTop:-10}}>
@@ -2948,7 +2948,7 @@ html{scroll-behavior:smooth}
         {pmShowLogin&&<div style={{position:"fixed",inset:0,zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.6)",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)"}} onClick={e=>{if(e.target===e.currentTarget)setPmShowLogin(false)}}>
           <div style={{width:380,maxWidth:"90vw",background:T.dark?"rgba(16,18,27,0.95)":"rgba(30,32,44,0.95)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:`1px solid rgba(${T.accentRgb},0.2)`,borderRadius:20,padding:"32px 28px",boxShadow:`0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(${T.accentRgb},0.08)`,position:"relative"}}>
             <button onClick={()=>setPmShowLogin(false)} style={{position:"absolute",top:12,right:14,background:"none",border:"none",color:T.dim,fontSize:20,cursor:"pointer",padding:"4px 8px",lineHeight:1}}>x</button>
-            <div style={{display:"flex",justifyContent:"center",marginBottom:8}}><div style={{animation:"shieldEntrance 0.6s ease-out",width:52,height:52,borderRadius:12,overflow:"hidden",background:"linear-gradient(135deg,#0a0a1a,#12102a)",display:"flex",alignItems:"center",justifyContent:"center"}}><SCLogo s={46}/></div></div>
+            <div style={{display:"flex",justifyContent:"center",marginBottom:8}}><div style={{animation:"shieldEntrance 0.6s ease-out",width:52,height:52,borderRadius:12,overflow:"hidden",background:"linear-gradient(135deg,#0a0a1a,#12102a)",display:"flex",alignItems:"center",justifyContent:"center",filter:"hue-rotate(-50deg) saturate(1.5) brightness(1.05)"}}><SCLogo s={46}/></div></div>
             <h2 style={{fontSize:20,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.text,margin:"0 0 4px",letterSpacing:1,textAlign:"center"}}>{pmSignupMode?"Create Account":"Login to ShieldCraft"}</h2>
             <p style={{fontSize:11,color:T.dim,margin:"0 0 20px",textAlign:"center"}}>{pmSignupMode?"Create a NotesCraft account to store passwords":"Use your NotesCraft credentials"}</p>
             {!pmLogin2FA?<div style={{display:"flex",flexDirection:"column",gap:10}}>
