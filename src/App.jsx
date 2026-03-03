@@ -3297,7 +3297,7 @@ html{scroll-behavior:smooth}
         const tickerText=blogArticles.map(a=>a.title.toUpperCase()).join("  •  ");
         const artIdx=activeArticle?blogArticles.findIndex(a=>a.slug===activeArticle.slug):-1;
         const blogContentRef=React.createRef();
-        const blogOvBg=(()=>{const d=blogDynBg;const isL=blogArticleTheme==='light';const base=isL?(blogReadingView?'#faf8f0':'#f8f9fa'):(blogReadingView?(T.dark?'#1a1a1a':'#1a1a1a'):(T.dark?T.bg:'#0a0a12'));if(!d)return base;if(isL)return`linear-gradient(180deg, rgba(${d.r},${d.g},${d.b},0.18) 0%, rgba(${d.r},${d.g},${d.b},0.06) 40%, transparent 100%), ${base}`;return`linear-gradient(180deg, rgba(${d.r},${d.g},${d.b},0.35) 0%, rgba(${d.r},${d.g},${d.b},0.1) 35%, transparent 100%), ${base}`})();
+        const blogOvBg=(()=>{const d=blogDynBg;const isL=blogArticleTheme==='light';const bR=isL?(blogReadingView?250:248):(blogReadingView?26:10);const bG=isL?(blogReadingView?248:249):(blogReadingView?26:10);const bB=isL?(blogReadingView?240:250):(blogReadingView?26:18);const base=`rgb(${bR},${bG},${bB})`;if(!d)return base;const mx=(c,b,t)=>Math.round(b+(c-b)*t);if(isL)return`linear-gradient(180deg, rgb(${mx(d.r,bR,0.25)},${mx(d.g,bG,0.25)},${mx(d.b,bB,0.25)}) 0%, rgb(${mx(d.r,bR,0.08)},${mx(d.g,bG,0.08)},${mx(d.b,bB,0.08)}) 55%, ${base} 100%)`;return`linear-gradient(180deg, rgb(${mx(d.r,bR,0.45)},${mx(d.g,bG,0.45)},${mx(d.b,bB,0.45)}) 0%, rgb(${mx(d.r,bR,0.15)},${mx(d.g,bG,0.15)},${mx(d.b,bB,0.15)}) 55%, ${base} 100%)`})();
         return<>
           {/* Top 3 Hero Columns */}
           <div className="blog-hero-wrap">
