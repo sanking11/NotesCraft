@@ -3134,19 +3134,43 @@ html{scroll-behavior:smooth}
           {slug:"ai-password-cracking",tag:"AI & Security",title:"AI-Powered Password Cracking: Neural Networks vs Your Secrets",subtitle:"From PassGAN to transformer-based guessers — how machine learning is changing the password cracking landscape and what it means for your security.",icon:"🤖",date:"March 2026"},
           {slug:"post-quantum-cryptography",tag:"Quantum Research",title:"Post-Quantum Cryptography: The New Standards Protecting Your Future",subtitle:"NIST has finalized its post-quantum algorithms. A deep dive into lattice-based cryptography, CRYSTALS-Kyber, and why RSA's days are numbered.",icon:"🛡️",date:"March 2026"},
           {slug:"quantum-entanglement-communication",tag:"Physics & Security",title:"Quantum Entanglement: Unhackable Communication Is Real",subtitle:"Einstein called it 'spooky action at a distance.' Today it powers quantum key distribution networks spanning entire countries.",icon:"🔗",date:"March 2026"},
-          {slug:"physics-of-true-randomness",tag:"Physics Deep-Dive",title:"The Physics of True Randomness: From Radioactive Decay to Your Password",subtitle:"Why true randomness can only come from quantum mechanics — and how your device harvests chaos from the physical universe to generate unbreakable passwords.",icon:"🌌",date:"March 2026"}
+          {slug:"physics-of-true-randomness",tag:"Physics Deep-Dive",title:"The Physics of True Randomness: From Radioactive Decay to Your Password",subtitle:"Why true randomness can only come from quantum mechanics — and how your device harvests chaos from the physical universe to generate unbreakable passwords.",icon:"🌌",date:"March 2026"},
+          {slug:"ai-weapons-ethics",tag:"AI & Ethics",title:"When AI Chooses Targets: The Ethics of Autonomous Military Systems",subtitle:"From battlefield targeting to kill chain automation — the rise of AI in military decision-making raises questions humanity isn't ready to answer.",icon:"⚔️",date:"March 2026",img:"military"},
+          {slug:"ai-supercharging-hackers",tag:"Cybersecurity",title:"Vibe Hacking: How AI Tools Are Supercharging Cyber Attacks",subtitle:"Attackers are using LLMs to write malware, craft phishing emails, and automate social engineering at a scale never seen before.",icon:"💀",date:"March 2026",img:"hacker"},
+          {slug:"biological-computing",tag:"Neuroscience",title:"Human Brain Cells Are Running Software — And Playing Doom",subtitle:"Cortical Labs taught living neurons to play video games. The implications for computing, AI, and consciousness are staggering.",icon:"🧠",date:"March 2026",img:"brain"},
+          {slug:"ai-hallucination-crisis",tag:"AI & Trust",title:"The AI Hallucination Crisis: When Machines Fabricate Reality",subtitle:"From fake quotes in journalism to invented medical advice — AI hallucinations are eroding digital trust at an alarming rate.",icon:"👁️",date:"March 2026",img:"eye"},
+          {slug:"robot-workforce",tag:"Robotics",title:"The Robot Workforce: Delivery Bots, Factory Arms, and the Jobs They're Taking",subtitle:"Autonomous delivery robots are replacing human drivers in cities worldwide. This is just the beginning of the largest workforce disruption in history.",icon:"🦾",date:"March 2026",img:"robot"},
+          {slug:"jwst-universe-secrets",tag:"Space & Physics",title:"James Webb Is Rewriting the Universe: Latest Discoveries from Deep Space",subtitle:"From the atmospheres of distant planets to the earliest galaxies ever seen — JWST is challenging everything we thought we knew.",icon:"🔭",date:"March 2026",img:"telescope"},
+          {slug:"star-explosion-betelgeuse",tag:"Astrophysics",title:"A Star Is About to Explode: The Betelgeuse Countdown",subtitle:"Growing evidence suggests one of the brightest stars in our sky may go supernova — an event visible in broad daylight from Earth.",icon:"💥",date:"March 2026",img:"star"},
+          {slug:"space-launches-atmosphere",tag:"Climate & Space",title:"Rockets Are Punching Holes in Our Atmosphere",subtitle:"With 200+ launches per year, scientists warn that rocket exhaust is depleting the ozone layer and altering Earth's upper atmosphere.",icon:"🚀",date:"March 2026",img:"rocket"},
+          {slug:"lab-grown-brains",tag:"Biotech",title:"Lab-Grown Brains Are Getting Smarter — And That's Terrifying",subtitle:"Neural organoids are developing electrical activity resembling premature infants. The ethics of creating consciousness in a dish.",icon:"🧬",date:"March 2026",img:"dna"},
+          {slug:"3d-printing-revolution",tag:"Engineering",title:"MIT's 3D Printer Can Build Working Motors in Hours",subtitle:"A new multi-material 3D printer fabricates fully functional electromechanical devices — motors, actuators, and robots — in a single session.",icon:"⚙️",date:"March 2026",img:"gear"}
         ];
         const activeArticle=blogArticles.find(a=>a.slug===blogArticle);
         const shareLink=(slug)=>{const url=window.location.origin+window.location.pathname+"#blog/"+slug;navigator.clipboard.writeText(url).then(()=>{setAuthErr("Link copied!");setTimeout(()=>setAuthErr(""),2000)})};
+        const blogImg=(key,w=750,h=180)=>{const ac=T.accent;const acR=T.accentRgb;const imgs={
+          military:<svg viewBox="0 0 750 180" width={w} height={h} style={{display:"block"}}><defs><linearGradient id="bm1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="rgba(239,68,68,0.3)"/><stop offset="100%" stopColor="rgba(139,92,246,0.2)"/></linearGradient></defs><rect fill="url(#bm1)" width="750" height="180" rx="0"/>{[80,200,350,500,650].map((x,i)=><circle key={i} cx={x} cy={90} r={12+i*3} fill="none" stroke="rgba(239,68,68,0.3)" strokeWidth="1.5" strokeDasharray="4 4"/>)}<path d="M120 90L300 50L480 110L650 40" fill="none" stroke="rgba(239,68,68,0.5)" strokeWidth="2" strokeDasharray="6 4"/>{[120,300,480,650].map((x,i)=><circle key={i} cx={x} cy={[90,50,110,40][i]} r="4" fill="#ef4444" opacity="0.7"/>)}<text x="375" y="155" textAnchor="middle" fill="rgba(239,68,68,0.25)" fontSize="11" fontFamily="monospace" letterSpacing="3">AUTONOMOUS TARGETING NETWORK</text></svg>,
+          hacker:<svg viewBox="0 0 750 180" width={w} height={h} style={{display:"block"}}><defs><linearGradient id="bh1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="rgba(16,185,129,0.25)"/><stop offset="100%" stopColor="rgba(6,182,212,0.15)"/></linearGradient></defs><rect fill="url(#bh1)" width="750" height="180" rx="0"/>{Array.from({length:30},(_,i)=><text key={i} x={25*i} y={15+Math.floor(i/6)*32} fill="rgba(16,185,129,0.2)" fontSize="10" fontFamily="monospace">{["01","10","11","00","01","10"][i%6]}</text>)}<rect x="180" y="30" width="390" height="120" rx="8" fill="rgba(0,0,0,0.3)" stroke="rgba(16,185,129,0.4)" strokeWidth="1.5"/><text x="200" y="58" fill="#10b981" fontSize="11" fontFamily="monospace" opacity="0.8">$ exploit --target=* --ai-assist</text><text x="200" y="78" fill="rgba(16,185,129,0.5)" fontSize="11" fontFamily="monospace">[████████████░░] 87% complete</text><text x="200" y="98" fill="rgba(16,185,129,0.4)" fontSize="10" fontFamily="monospace">→ 2,847 credentials extracted</text><text x="200" y="118" fill="rgba(16,185,129,0.4)" fontSize="10" fontFamily="monospace">→ neural phishing engine: active</text><text x="200" y="138" fill="rgba(239,68,68,0.6)" fontSize="10" fontFamily="monospace">⚠ WARNING: AI-AUGMENTED THREAT</text></svg>,
+          brain:<svg viewBox="0 0 750 180" width={w} height={h} style={{display:"block"}}><defs><linearGradient id="bb1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="rgba(236,72,153,0.25)"/><stop offset="100%" stopColor="rgba(139,92,246,0.2)"/></linearGradient></defs><rect fill="url(#bb1)" width="750" height="180" rx="0"/>{Array.from({length:12},(_,i)=><g key={i}><circle cx={180+Math.cos(i*0.52)*120} cy={90+Math.sin(i*0.52)*55} r="6" fill="rgba(236,72,153,0.4)"/>{i<11&&<line x1={180+Math.cos(i*0.52)*120} y1={90+Math.sin(i*0.52)*55} x2={180+Math.cos((i+1)*0.52)*120} y2={90+Math.sin((i+1)*0.52)*55} stroke="rgba(236,72,153,0.2)" strokeWidth="1"/>}</g>)}{Array.from({length:8},(_,i)=><g key={i}><circle cx={520+Math.cos(i*0.78)*80} cy={90+Math.sin(i*0.78)*50} r="4" fill="rgba(139,92,246,0.5)"/><line x1={520+Math.cos(i*0.78)*80} y1={90+Math.sin(i*0.78)*50} x2={520} y2={90} stroke="rgba(139,92,246,0.2)" strokeWidth="1"/></g>)}<text x="180" y="170" textAnchor="middle" fill="rgba(236,72,153,0.3)" fontSize="9" fontFamily="monospace">NEURAL NETWORK</text><text x="520" y="170" textAnchor="middle" fill="rgba(139,92,246,0.3)" fontSize="9" fontFamily="monospace">SILICON CHIP</text><path d="M310 90 Q375 50 440 90 Q375 130 310 90Z" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="1" strokeDasharray="4 3"/></svg>,
+          eye:<svg viewBox="0 0 750 180" width={w} height={h} style={{display:"block"}}><defs><linearGradient id="be1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="rgba(251,146,60,0.2)"/><stop offset="100%" stopColor="rgba(239,68,68,0.2)"/></linearGradient></defs><rect fill="url(#be1)" width="750" height="180" rx="0"/><ellipse cx="375" cy="90" rx="160" ry="60" fill="none" stroke="rgba(251,146,60,0.4)" strokeWidth="2"/><circle cx="375" cy="90" r="30" fill="rgba(251,146,60,0.15)" stroke="rgba(251,146,60,0.5)" strokeWidth="1.5"/><circle cx="375" cy="90" r="12" fill="rgba(251,146,60,0.3)"/>{[0,60,120,180,240,300].map((a,i)=><line key={i} x1={375+Math.cos(a*Math.PI/180)*35} y1={90+Math.sin(a*Math.PI/180)*35} x2={375+Math.cos(a*Math.PI/180)*55} y2={90+Math.sin(a*Math.PI/180)*55} stroke="rgba(251,146,60,0.3)" strokeWidth="1"/>)}<text x="375" y="165" textAnchor="middle" fill="rgba(251,146,60,0.25)" fontSize="10" fontFamily="monospace" letterSpacing="4">HALLUCINATION DETECTED</text>{[150,220,530,600].map((x,i)=><text key={i} x={x} y={50+i*30} fill="rgba(239,68,68,0.15)" fontSize="22" fontFamily="monospace">?</text>)}</svg>,
+          robot:<svg viewBox="0 0 750 180" width={w} height={h} style={{display:"block"}}><defs><linearGradient id="br1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="rgba(99,102,241,0.2)"/><stop offset="100%" stopColor="rgba(6,182,212,0.15)"/></linearGradient></defs><rect fill="url(#br1)" width="750" height="180" rx="0"/>{[120,280,440,600].map((x,i)=><g key={i}><rect x={x-20} y={40} width="40" height="55" rx="6" fill="rgba(99,102,241,0.15)" stroke="rgba(99,102,241,0.4)" strokeWidth="1.5"/><circle cx={x-8} cy={58} r="4" fill="rgba(6,182,212,0.5)"/><circle cx={x+8} cy={58} r="4" fill="rgba(6,182,212,0.5)"/><rect x={x-12} y={72} width="24" height="3" rx="1" fill="rgba(99,102,241,0.3)"/><line x1={x} y1={95} x2={x} y2={120} stroke="rgba(99,102,241,0.3)" strokeWidth="1.5"/><circle cx={x} cy={125} r="8" fill="none" stroke="rgba(99,102,241,0.25)" strokeWidth="1"/></g>)}<path d="M140 130 L280 130" stroke="rgba(99,102,241,0.15)" strokeWidth="1" strokeDasharray="4 3"/><path d="M300 130 L440 130" stroke="rgba(99,102,241,0.15)" strokeWidth="1" strokeDasharray="4 3"/><path d="M460 130 L600 130" stroke="rgba(99,102,241,0.15)" strokeWidth="1" strokeDasharray="4 3"/><text x="375" y="165" textAnchor="middle" fill="rgba(99,102,241,0.25)" fontSize="10" fontFamily="monospace" letterSpacing="3">AUTONOMOUS FLEET ACTIVE</text></svg>,
+          telescope:<svg viewBox="0 0 750 180" width={w} height={h} style={{display:"block"}}><defs><radialGradient id="bt1" cx="50%" cy="50%"><stop offset="0%" stopColor="rgba(99,102,241,0.3)"/><stop offset="100%" stopColor="rgba(15,23,42,0.8)"/></radialGradient></defs><rect fill="url(#bt1)" width="750" height="180" rx="0"/>{Array.from({length:40},(_,i)=><circle key={i} cx={Math.random()*750} cy={Math.random()*180} r={Math.random()*1.5+0.3} fill="rgba(255,255,255,0.4)"/>)}<circle cx="200" cy="70" r="25" fill="rgba(251,146,60,0.1)" stroke="rgba(251,146,60,0.4)" strokeWidth="1.5"/><circle cx="200" cy="70" r="10" fill="rgba(251,146,60,0.2)"/><circle cx="500" cy="50" r="15" fill="rgba(99,102,241,0.15)" stroke="rgba(99,102,241,0.4)" strokeWidth="1"/><circle cx="380" cy="120" r="35" fill="rgba(6,182,212,0.06)" stroke="rgba(6,182,212,0.3)" strokeWidth="1"/>{[{x:380,y:120,r:42},{x:380,y:120,r:50}].map((c,i)=><circle key={i} cx={c.x} cy={c.y} r={c.r} fill="none" stroke="rgba(6,182,212,0.15)" strokeWidth="0.5"/>)}<text x="375" y="172" textAnchor="middle" fill="rgba(99,102,241,0.2)" fontSize="10" fontFamily="monospace" letterSpacing="3">DEEP FIELD OBSERVATION</text></svg>,
+          star:<svg viewBox="0 0 750 180" width={w} height={h} style={{display:"block"}}><defs><radialGradient id="bs1" cx="50%" cy="50%"><stop offset="0%" stopColor="rgba(239,68,68,0.4)"/><stop offset="30%" stopColor="rgba(251,146,60,0.2)"/><stop offset="100%" stopColor="rgba(15,23,42,0.8)"/></radialGradient></defs><rect fill="url(#bs1)" width="750" height="180" rx="0"/>{Array.from({length:30},(_,i)=><circle key={i} cx={Math.random()*750} cy={Math.random()*180} r={Math.random()*1+0.3} fill="rgba(255,255,255,0.3)"/>)}<circle cx="375" cy="90" r="35" fill="rgba(239,68,68,0.2)"/><circle cx="375" cy="90" r="20" fill="rgba(251,146,60,0.3)"/><circle cx="375" cy="90" r="8" fill="rgba(255,200,100,0.6)"/>{[0,45,90,135,180,225,270,315].map((a,i)=><line key={i} x1={375+Math.cos(a*Math.PI/180)*40} y1={90+Math.sin(a*Math.PI/180)*40} x2={375+Math.cos(a*Math.PI/180)*75} y2={90+Math.sin(a*Math.PI/180)*75} stroke="rgba(251,146,60,0.2)" strokeWidth="1"/>)}<text x="375" y="172" textAnchor="middle" fill="rgba(239,68,68,0.25)" fontSize="10" fontFamily="monospace" letterSpacing="3">SUPERNOVA IMMINENT</text></svg>,
+          rocket:<svg viewBox="0 0 750 180" width={w} height={h} style={{display:"block"}}><defs><linearGradient id="bk1" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stopColor="rgba(6,182,212,0.25)"/><stop offset="100%" stopColor="rgba(15,23,42,0.8)"/></linearGradient></defs><rect fill="url(#bk1)" width="750" height="180" rx="0"/><path d="M0 145 Q187 135 375 140 Q562 145 750 138" fill="none" stroke="rgba(6,182,212,0.3)" strokeWidth="1"/><path d="M0 155 Q187 150 375 152 Q562 155 750 150" fill="none" stroke="rgba(6,182,212,0.2)" strokeWidth="0.5"/>{[180,375,570].map((x,i)=><g key={i}><polygon points={`${x},${30+i*10} ${x-8},${60+i*10} ${x+8},${60+i*10}`} fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" strokeWidth="1"/><line x1={x} y1={60+i*10} x2={x} y2={130+i*3} stroke="rgba(251,146,60,0.3)" strokeWidth="2" strokeDasharray="3 4"/>{[0,1,2].map(j=><circle key={j} cx={x+(-1+j)*6} cy={130+i*3+j*4} r={3-j} fill={`rgba(251,146,60,${0.3-j*0.1})`}/>)}</g>)}<text x="375" y="172" textAnchor="middle" fill="rgba(6,182,212,0.25)" fontSize="10" fontFamily="monospace" letterSpacing="3">ATMOSPHERIC IMPACT ZONE</text></svg>,
+          dna:<svg viewBox="0 0 750 180" width={w} height={h} style={{display:"block"}}><defs><linearGradient id="bd1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="rgba(139,92,246,0.25)"/><stop offset="100%" stopColor="rgba(236,72,153,0.15)"/></linearGradient></defs><rect fill="url(#bd1)" width="750" height="180" rx="0"/>{Array.from({length:18},(_,i)=>{const x=100+i*32;const y1=50+Math.sin(i*0.5)*30;const y2=130+Math.sin(i*0.5+Math.PI)*30;return<g key={i}><circle cx={x} cy={y1} r="4" fill="rgba(139,92,246,0.5)"/><circle cx={x} cy={y2} r="4" fill="rgba(236,72,153,0.5)"/>{i%2===0&&<line x1={x} y1={y1+4} x2={x} y2={y2-4} stroke="rgba(255,255,255,0.1)" strokeWidth="1"/>}</g>})}<text x="375" y="170" textAnchor="middle" fill="rgba(139,92,246,0.25)" fontSize="10" fontFamily="monospace" letterSpacing="3">NEURAL ORGANOID GROWTH</text></svg>,
+          gear:<svg viewBox="0 0 750 180" width={w} height={h} style={{display:"block"}}><defs><linearGradient id="bg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="rgba(245,158,11,0.2)"/><stop offset="100%" stopColor="rgba(99,102,241,0.15)"/></linearGradient></defs><rect fill="url(#bg1)" width="750" height="180" rx="0"/>{[{cx:250,cy:90,r:35,t:12},{cx:480,cy:70,r:25,t:10},{cx:420,cy:120,r:20,t:8}].map((g,gi)=><g key={gi}>{Array.from({length:g.t},(_,i)=>{const a=i*(360/g.t)*Math.PI/180;return<rect key={i} x={g.cx+Math.cos(a)*g.r-4} y={g.cy+Math.sin(a)*g.r-4} width="8" height="8" rx="1" fill="rgba(245,158,11,0.2)" transform={`rotate(${i*(360/g.t)},${g.cx+Math.cos(a)*g.r},${g.cy+Math.sin(a)*g.r})`}/>})}<circle cx={g.cx} cy={g.cy} r={g.r-5} fill="none" stroke="rgba(245,158,11,0.3)" strokeWidth="1.5"/><circle cx={g.cx} cy={g.cy} r={g.r*0.3} fill="rgba(245,158,11,0.15)"/></g>)}<text x="375" y="172" textAnchor="middle" fill="rgba(245,158,11,0.25)" fontSize="10" fontFamily="monospace" letterSpacing="3">MULTI-MATERIAL FABRICATION</text></svg>
+        };return imgs[key]||null};
 
         // Blog listing
         if(!activeArticle)return<>
           <h1 style={infoH}>Security Blog</h1>
-          <p style={infoP}>In-depth articles about cryptography, password security, and privacy.</p>
+          <p style={infoP}>In-depth articles about cryptography, password security, privacy, and the future of technology.</p>
           <div style={{display:"flex",flexDirection:"column",gap:16,marginTop:24}}>
-            {blogArticles.map(a=><div key={a.slug} onClick={()=>{setBlogArticle(a.slug);window.scrollTo(0,0)}} style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:16,padding:"24px 22px",cursor:"pointer",transition:"all 0.3s",position:"relative",overflow:"hidden"}}
+            {blogArticles.map(a=><div key={a.slug} onClick={()=>{setBlogArticle(a.slug);window.scrollTo(0,0)}} style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:16,cursor:"pointer",transition:"all 0.3s",position:"relative",overflow:"hidden"}}
               onMouseEnter={e=>{e.currentTarget.style.borderColor=T.accent;e.currentTarget.style.transform="translateY(-2px)"}}
               onMouseLeave={e=>{e.currentTarget.style.borderColor=T.bdr;e.currentTarget.style.transform="translateY(0)"}}>
+              {a.img&&<div style={{width:"100%",height:140,overflow:"hidden",borderRadius:"16px 16px 0 0",position:"relative"}}>{blogImg(a.img,750,140)}<div style={{position:"absolute",bottom:0,left:0,right:0,height:40,background:"linear-gradient(transparent,rgba(0,0,0,0.5))",pointerEvents:"none"}}/></div>}
+              <div style={{padding:"20px 22px",position:"relative"}}>
               <div style={{position:"absolute",top:-30,right:-30,width:120,height:120,background:`radial-gradient(circle,rgba(${T.accentRgb},0.08),transparent 70%)`,pointerEvents:"none"}}/>
               <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}>
                 <span style={{fontSize:28}}>{a.icon}</span>
@@ -3161,6 +3185,7 @@ html{scroll-behavior:smooth}
                 <button onClick={e=>{e.stopPropagation();shareLink(a.slug)}} style={{marginLeft:"auto",background:`rgba(${T.accentRgb},0.1)`,border:`1px solid rgba(${T.accentRgb},0.3)`,borderRadius:6,padding:"5px 12px",fontSize:11,fontWeight:600,color:T.accent,cursor:"pointer",fontFamily:"inherit",transition:"all 0.2s"}}
                   onMouseEnter={e=>e.currentTarget.style.background=`rgba(${T.accentRgb},0.2)`}
                   onMouseLeave={e=>e.currentTarget.style.background=`rgba(${T.accentRgb},0.1)`}>Share Link</button>
+              </div>
               </div>
             </div>)}
           </div>
@@ -3658,6 +3683,244 @@ html{scroll-behavior:smooth}
         </div>
 
         <div style={{textAlign:"center",marginTop:32,fontSize:12,color:"#4a5568"}}>True randomness isn't generated. It's harvested from the fabric of reality.</div>
+          </>}
+
+          {/* Article: ai-weapons-ethics */}
+          {activeArticle.slug==="ai-weapons-ethics"&&<>
+        <div style={{borderRadius:16,overflow:"hidden",marginBottom:32}}>{blogImg("military")}</div>
+        <div style={{textAlign:"center",marginBottom:40}}>
+          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:"#ef4444",marginBottom:16}}>AI & Ethics</span>
+          <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>When <span style={{color:"#ef4444"}}>AI Chooses Targets</span>: The Ethics of Autonomous Military Systems</h2>
+          <p style={{fontSize:14,color:"#8892a4",maxWidth:500,margin:"0 auto",lineHeight:1.6}}>The rise of AI in military decision-making raises questions humanity isn't ready to answer.</p>
+        </div>
+        <h2 style={infoH2}>AI on the Battlefield Is No Longer Hypothetical</h2>
+        <p style={infoP}>In early 2026, reports confirmed that AI systems — including large language models — are being used by military forces to assist in target selection, intelligence analysis, and kill chain acceleration. What was once a theoretical ethics debate is now operational reality.</p>
+        <p style={infoP}>The core concern isn't that AI is "choosing" to kill. It's that AI systems can process vast amounts of surveillance data, satellite imagery, and signals intelligence to generate <strong style={{color:T.text}}>target recommendations at machine speed</strong> — far faster than human operators can meaningfully review them.</p>
+        <h2 style={infoH2}>The Speed vs. Oversight Dilemma</h2>
+        <p style={infoP}>Military AI creates a fundamental tension: its value comes from speed, but meaningful human oversight requires time. When an AI system flags 200 potential targets in minutes — a task that would take human analysts weeks — the pressure to approve recommendations without deep scrutiny becomes enormous.</p>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,margin:"24px 0"}}>
+          {[{title:"Arguments For AI Targeting",items:["Reduces civilian casualties via precision","Processes data humans physically cannot","Removes emotional decision-making","Faster response to imminent threats"],color:T.accent},{title:"Arguments Against",items:["Removes moral agency from lethal decisions","Algorithmic bias in training data","Accountability gaps — who is responsible?","Escalation risk from speed of engagement"],color:"#ef4444"}].map((col,i)=><div key={i} style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderTop:`3px solid ${col.color}`,borderRadius:14,padding:"20px 18px"}}>
+            <div style={{fontSize:14,fontWeight:700,color:col.color,marginBottom:10}}>{col.title}</div>
+            {col.items.map((item,j)=><div key={j} style={{fontSize:12,color:"#8892a4",lineHeight:1.8,paddingLeft:12,position:"relative"}}><span style={{position:"absolute",left:0,color:col.color}}>•</span>{item}</div>)}
+          </div>)}
+        </div>
+        <h2 style={infoH2}>The Accountability Black Hole</h2>
+        <p style={infoP}>When an autonomous system makes a lethal error — who bears responsibility? The programmer who wrote the algorithm? The commander who activated it? The data scientists who trained the model? International humanitarian law requires a <strong style={{color:T.text}}>responsible human in the chain of command</strong> for every use of lethal force. AI targeting systems blur this chain beyond recognition.</p>
+        <p style={infoP}>The broader question extends beyond military applications: as AI systems make increasingly consequential decisions in healthcare, criminal justice, and infrastructure, the same accountability gaps will emerge everywhere.</p>
+        <div style={{textAlign:"center",marginTop:32,fontSize:12,color:"#4a5568"}}>The question isn't whether AI can choose targets. It's whether we should let it.</div>
+          </>}
+
+          {/* Article: ai-supercharging-hackers */}
+          {activeArticle.slug==="ai-supercharging-hackers"&&<>
+        <div style={{borderRadius:16,overflow:"hidden",marginBottom:32}}>{blogImg("hacker")}</div>
+        <div style={{textAlign:"center",marginBottom:40}}>
+          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:"#10b981",marginBottom:16}}>Cybersecurity</span>
+          <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}><span style={{color:"#10b981"}}>Vibe Hacking</span>: How AI Tools Are Supercharging Cyber Attacks</h2>
+          <p style={{fontSize:14,color:"#8892a4",maxWidth:500,margin:"0 auto",lineHeight:1.6}}>Attackers are using LLMs to write malware, craft phishing emails, and automate social engineering at unprecedented scale.</p>
+        </div>
+        <h2 style={infoH2}>The Democratization of Hacking</h2>
+        <p style={infoP}>Until recently, sophisticated cyber attacks required years of technical expertise. AI has collapsed that barrier. With LLMs, a novice can generate working exploit code, craft convincing phishing emails in any language, and automate reconnaissance — all through natural language prompts. Security researchers call this <strong style={{color:"#10b981"}}>"vibe hacking"</strong>: attacking systems by vibes rather than deep technical knowledge.</p>
+        <h2 style={infoH2}>How Attackers Are Using AI</h2>
+        <div style={{display:"flex",flexDirection:"column",gap:12,margin:"20px 0"}}>
+          {[{icon:"📧",name:"AI Phishing",desc:"LLMs generate personalized phishing emails that are grammatically perfect, contextually relevant, and nearly indistinguishable from legitimate communications. Open rates have increased 3x."},{icon:"🦠",name:"AI-Generated Malware",desc:"Polymorphic malware that rewrites its own code on every execution using LLMs, evading signature-based detection. Each instance is unique."},{icon:"🎭",name:"Deepfake Social Engineering",desc:"Voice cloning and video deepfakes used for CEO fraud, fake video calls, and identity impersonation. A single 3-second audio clip is enough to clone a voice."},{icon:"🔍",name:"Automated Reconnaissance",desc:"AI agents that crawl social media, corporate sites, and leaked databases to build detailed target profiles — then generate custom attack plans."}].map((item,i)=><div key={i} style={{display:"flex",gap:14,background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:12,padding:"16px 18px"}}>
+            <span style={{fontSize:24,flexShrink:0}}>{item.icon}</span>
+            <div><div style={{fontSize:13,fontWeight:700,color:T.dark?T.text:"#e2e8f0",marginBottom:4}}>{item.name}</div><p style={{fontSize:12,color:"#8892a4",margin:0,lineHeight:1.6}}>{item.desc}</p></div>
+          </div>)}
+        </div>
+        <h2 style={infoH2}>Defense: Why Strong Passwords Matter More Than Ever</h2>
+        <p style={infoP}>AI-powered attacks make weak passwords catastrophically dangerous. An AI can correlate your leaked data from multiple breaches, predict password patterns based on your social media, and crack dictionary-based passwords almost instantly. The only defense is <strong style={{color:T.text}}>true cryptographic randomness</strong> — passwords that give AI nothing to learn from.</p>
+        <div style={{background:`rgba(16,185,129,0.06)`,borderLeft:"3px solid #10b981",padding:"16px 18px",borderRadius:"0 12px 12px 0",margin:"20px 0"}}>
+          <strong style={{color:"#10b981",fontSize:13}}>Your Defense:</strong>
+          <p style={{fontSize:13,color:"#8892a4",lineHeight:1.7,margin:"8px 0 0"}}>Use CSPRNG-generated passwords (like ShieldCraft produces), enable 2FA everywhere, and never reuse passwords. AI can't crack what has no pattern to exploit.</p>
+        </div>
+        <div style={{textAlign:"center",marginTop:32,fontSize:12,color:"#4a5568"}}>The hackers have AI now. Make sure your passwords don't care.</div>
+          </>}
+
+          {/* Article: biological-computing */}
+          {activeArticle.slug==="biological-computing"&&<>
+        <div style={{borderRadius:16,overflow:"hidden",marginBottom:32}}>{blogImg("brain")}</div>
+        <div style={{textAlign:"center",marginBottom:40}}>
+          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:"#ec4899",marginBottom:16}}>Neuroscience</span>
+          <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>Human <span style={{color:"#ec4899"}}>Brain Cells</span> Are Running Software</h2>
+          <p style={{fontSize:14,color:"#8892a4",maxWidth:500,margin:"0 auto",lineHeight:1.6}}>Cortical Labs taught living neurons to play Doom. The implications for computing and consciousness are staggering.</p>
+        </div>
+        <h2 style={infoH2}>DishBrain: Where Biology Meets Silicon</h2>
+        <p style={infoP}>In a Melbourne lab, researchers at Cortical Labs grew approximately 800,000 human brain cells on a multi-electrode array — a chip that both stimulates and reads electrical activity from neurons. They then connected this biological processor to the classic video game Doom.</p>
+        <p style={infoP}>The neurons learned. Not through programming, but through a biological drive called the <strong style={{color:T.text}}>Free Energy Principle</strong> — neurons naturally seek to minimize unpredictable stimulation. When neurons moved the in-game character correctly, they received structured electrical feedback. When they failed, they received random noise. Within minutes, the neurons began playing the game with measurable skill improvement.</p>
+        <h2 style={infoH2}>Biological vs Silicon Computing</h2>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,margin:"24px 0"}}>
+          <div style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderTop:"3px solid #ec4899",borderRadius:14,padding:"20px 18px"}}>
+            <div style={{fontSize:14,fontWeight:700,color:"#ec4899",marginBottom:8}}>Biological Neurons</div>
+            <div style={{fontSize:12,color:"#8892a4",lineHeight:1.8}}>• ~20 watts power consumption (entire brain)<br/>• Massively parallel (86 billion neurons)<br/>• Self-repairing and adaptive<br/>• Learns from minimal examples<br/>• 100 trillion synaptic connections</div>
+          </div>
+          <div style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderTop:`3px solid ${T.accent}`,borderRadius:14,padding:"20px 18px"}}>
+            <div style={{fontSize:14,fontWeight:700,color:T.accent,marginBottom:8}}>Silicon Processors</div>
+            <div style={{fontSize:12,color:"#8892a4",lineHeight:1.8}}>• ~300 watts (GPU for AI training)<br/>• Sequential with parallel cores<br/>• No self-repair capability<br/>• Requires massive training data<br/>• Fixed architecture after fabrication</div>
+          </div>
+        </div>
+        <h2 style={infoH2}>The Consciousness Question</h2>
+        <p style={infoP}>This raises a profound question: if human neurons can learn to play a game in a dish, at what point does a biological computing system become <strong style={{color:T.text}}>conscious</strong>? Current DishBrain systems are far too simple for awareness, but as these systems scale to millions, then billions of neurons — the ethical boundaries become increasingly unclear.</p>
+        <div style={{textAlign:"center",marginTop:32,fontSize:12,color:"#4a5568"}}>The next computer might not be built. It might be grown.</div>
+          </>}
+
+          {/* Article: ai-hallucination-crisis */}
+          {activeArticle.slug==="ai-hallucination-crisis"&&<>
+        <div style={{borderRadius:16,overflow:"hidden",marginBottom:32}}>{blogImg("eye")}</div>
+        <div style={{textAlign:"center",marginBottom:40}}>
+          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:"#f59e0b",marginBottom:16}}>AI & Trust</span>
+          <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>The AI <span style={{color:"#f59e0b"}}>Hallucination</span> Crisis</h2>
+          <p style={{fontSize:14,color:"#8892a4",maxWidth:500,margin:"0 auto",lineHeight:1.6}}>From fake quotes in journalism to invented medical advice — AI hallucinations are eroding digital trust.</p>
+        </div>
+        <h2 style={infoH2}>When AI Confidently Lies</h2>
+        <p style={infoP}>In early 2026, a major tech publication fired a reporter after discovering that AI tools had fabricated quotes attributed to real people in published articles. The quotes sounded perfectly plausible — they just never happened. This incident highlights a growing crisis: <strong style={{color:T.text}}>AI hallucinations are invisible to the untrained eye</strong> because they're presented with the same confidence as factual information.</p>
+        <h2 style={infoH2}>The Scale of the Problem</h2>
+        <div style={{display:"flex",flexDirection:"column",gap:10,margin:"20px 0"}}>
+          {[{stat:"15-25%",desc:"of AI-generated factual claims contain inaccuracies (varies by model and domain)"},{stat:"73%",desc:"of users trust AI outputs without verification, according to 2025 surveys"},{stat:"40%",desc:"of AI-suggested medical information contains potentially dangerous errors"},{stat:"∞",desc:"difficulty for users to distinguish hallucinated content from real facts"}].map((item,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:16,background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:10,padding:"14px 18px"}}>
+            <span style={{fontFamily:"monospace",fontSize:22,fontWeight:700,color:"#f59e0b",flexShrink:0,width:70,textAlign:"center"}}>{item.stat}</span>
+            <span style={{fontSize:12,color:"#8892a4",lineHeight:1.5}}>{item.desc}</span>
+          </div>)}
+        </div>
+        <h2 style={infoH2}>Why Hallucinations Happen</h2>
+        <p style={infoP}>LLMs don't "know" anything — they predict the most likely next token based on statistical patterns in training data. When asked about something outside their training, or when multiple conflicting patterns exist, they generate <strong style={{color:T.text}}>plausible-sounding fiction</strong>. The model has no concept of truth — only probability.</p>
+        <p style={infoP}>This is fundamentally different from human error. A human who doesn't know something can say "I don't know." Current AI systems are architecturally incapable of recognizing the boundary between their knowledge and their imagination.</p>
+        <h2 style={infoH2}>The Trust Implication for Security</h2>
+        <p style={infoP}>For security tools, hallucinations are catastrophic. If an AI password strength checker hallucinates that a weak password is "very strong," or a breach monitor fabricates an "all clear" response, the consequences are real. This is why ShieldCraft's security calculations use <strong style={{color:T.text}}>deterministic mathematical formulas</strong> — not AI predictions — for entropy calculation, strength assessment, and breach monitoring.</p>
+        <div style={{textAlign:"center",marginTop:32,fontSize:12,color:"#4a5568"}}>Trust math, not predictions. Trust entropy, not confidence scores.</div>
+          </>}
+
+          {/* Article: robot-workforce */}
+          {activeArticle.slug==="robot-workforce"&&<>
+        <div style={{borderRadius:16,overflow:"hidden",marginBottom:32}}>{blogImg("robot")}</div>
+        <div style={{textAlign:"center",marginBottom:40}}>
+          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:"#6366f1",marginBottom:16}}>Robotics</span>
+          <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>The <span style={{color:"#6366f1"}}>Robot Workforce</span>: When Automation Takes Over</h2>
+          <p style={{fontSize:14,color:"#8892a4",maxWidth:500,margin:"0 auto",lineHeight:1.6}}>Autonomous delivery robots are replacing human drivers. This is just the beginning.</p>
+        </div>
+        <h2 style={infoH2}>From Drivers to Robot Fleet Managers</h2>
+        <p style={infoP}>Across major cities, former delivery drivers are transitioning to new roles: managing fleets of autonomous delivery robots. The robots handle the physical delivery; humans handle exceptions, maintenance, and customer issues remotely. It's a microcosm of the larger automation story — not total replacement, but radical transformation of what "work" means.</p>
+        <h2 style={infoH2}>The Automation Timeline</h2>
+        <div style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:14,padding:20,margin:"20px 0"}}>
+          {[{year:"2020",event:"First autonomous delivery pilots in limited zones",pct:10},{year:"2023",event:"Warehouse robots become standard in major fulfillment centers",pct:35},{year:"2025",event:"Sidewalk delivery robots operating in 50+ US cities",pct:55},{year:"2026",event:"Former drivers retrained as fleet operators and technicians",pct:70},{year:"2030",event:"Projected: 30% of logistics roles fully automated",pct:85}].map((item,i)=><div key={i} style={{marginBottom:12}}>
+            <div style={{display:"flex",justifyContent:"space-between",fontSize:11,color:"#8892a4",marginBottom:4}}><span style={{fontFamily:"monospace",fontWeight:700,color:i<=3?"#6366f1":T.dim}}>{item.year}</span><span>{item.event}</span></div>
+            <div style={{height:6,background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",borderRadius:3,overflow:"hidden"}}><div style={{height:"100%",borderRadius:3,background:i<=3?"linear-gradient(90deg,#6366f1,#818cf8)":"linear-gradient(90deg,rgba(99,102,241,0.3),rgba(129,140,248,0.3))",width:item.pct+"%",transition:"width 0.5s"}}/></div>
+          </div>)}
+        </div>
+        <p style={infoP}>The robots themselves generate massive amounts of data — navigation logs, delivery patterns, maintenance records — all of which need to be secured. As robotic systems become infrastructure, their cybersecurity becomes critical. A compromised delivery fleet isn't just a business problem — it's a public safety issue.</p>
+        <div style={{textAlign:"center",marginTop:32,fontSize:12,color:"#4a5568"}}>The future of work isn't human vs. robot. It's human with robot.</div>
+          </>}
+
+          {/* Article: jwst-universe-secrets */}
+          {activeArticle.slug==="jwst-universe-secrets"&&<>
+        <div style={{borderRadius:16,overflow:"hidden",marginBottom:32}}>{blogImg("telescope")}</div>
+        <div style={{textAlign:"center",marginBottom:40}}>
+          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:"#6366f1",marginBottom:16}}>Space & Physics</span>
+          <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>James Webb Is <span style={{background:"linear-gradient(135deg,#6366f1,#06b6d4)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Rewriting the Universe</span></h2>
+          <p style={{fontSize:14,color:"#8892a4",maxWidth:500,margin:"0 auto",lineHeight:1.6}}>From planetary atmospheres to the earliest galaxies — JWST is challenging everything we thought we knew.</p>
+        </div>
+        <h2 style={infoH2}>Seeing the Invisible</h2>
+        <p style={infoP}>The James Webb Space Telescope observes in infrared — light invisible to human eyes but carrying information that visible-light telescopes miss entirely. This allows JWST to peer through cosmic dust clouds, analyze the atmospheres of exoplanets, and see galaxies so distant their light has been redshifted beyond the visible spectrum.</p>
+        <h2 style={infoH2}>Key Discoveries (2022-2026)</h2>
+        <div style={{display:"flex",flexDirection:"column",gap:12,margin:"20px 0"}}>
+          {[{title:"Impossibly Early Galaxies",desc:"JWST found fully formed galaxies existing just 300 million years after the Big Bang — far earlier than models predicted. This challenges our understanding of how quickly cosmic structure can form.",color:"#f59e0b"},{title:"Exoplanet Atmospheres",desc:"For the first time, JWST detected CO₂, water vapor, and methane in the atmospheres of planets orbiting other stars — key biosignature molecules in the search for life.",color:"#10b981"},{title:"Uranus and Neptune Revealed",desc:"Detailed infrared observations of the ice giants revealed complex atmospheric dynamics, ring structures, and seasonal changes invisible to previous telescopes.",color:"#06b6d4"},{title:"The Hubble Tension Deepens",desc:"JWST's precise measurements of cosmic expansion confirm that the universe is expanding faster than our models predict — a discrepancy that may require entirely new physics to explain.",color:"#8b5cf6"}].map((item,i)=><div key={i} style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderLeft:`3px solid ${item.color}`,borderRadius:14,padding:"16px 18px"}}>
+            <div style={{fontSize:14,fontWeight:700,color:item.color,marginBottom:6}}>{item.title}</div>
+            <p style={{fontSize:12,color:"#8892a4",margin:0,lineHeight:1.6}}>{item.desc}</p>
+          </div>)}
+        </div>
+        <p style={infoP}>JWST generates approximately 60 GB of data per day, transmitted from its orbit at the L2 Lagrange point, 1.5 million km from Earth. Processing this data requires sophisticated algorithms and, increasingly, machine learning models trained to identify patterns in the infrared spectrum.</p>
+        <div style={{textAlign:"center",marginTop:32,fontSize:12,color:"#4a5568"}}>The universe is stranger, older, and more beautiful than we imagined.</div>
+          </>}
+
+          {/* Article: star-explosion-betelgeuse */}
+          {activeArticle.slug==="star-explosion-betelgeuse"&&<>
+        <div style={{borderRadius:16,overflow:"hidden",marginBottom:32}}>{blogImg("star")}</div>
+        <div style={{textAlign:"center",marginBottom:40}}>
+          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:"#ef4444",marginBottom:16}}>Astrophysics</span>
+          <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>A Star Is About to <span style={{color:"#ef4444"}}>Explode</span></h2>
+          <p style={{fontSize:14,color:"#8892a4",maxWidth:500,margin:"0 auto",lineHeight:1.6}}>Growing evidence suggests Betelgeuse may go supernova — an event visible in broad daylight from Earth.</p>
+        </div>
+        <h2 style={infoH2}>Betelgeuse: A Dying Giant</h2>
+        <p style={infoP}>Betelgeuse, the bright red star in Orion's shoulder, is a <strong style={{color:T.text}}>red supergiant</strong> roughly 700 light-years from Earth. It's about 15-20 times the mass of our Sun and has expanded to a diameter that would engulf Jupiter's orbit if placed at our solar system's center. Since 2019, astronomers have observed unprecedented dimming events and surface activity suggesting the star is in its final evolutionary stages.</p>
+        <h2 style={infoH2}>What Would a Supernova Look Like?</h2>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,margin:"24px 0"}}>
+          {[{title:"Peak Brightness",value:"Magnitude -12.4",desc:"As bright as the full Moon, visible in daylight for weeks"},{title:"Duration",value:"~3 months visible",desc:"Would fade over several months, visible to naked eye for a year"},{title:"Distance",value:"700 light-years",desc:"Far enough to pose zero radiation danger to Earth"},{title:"Frequency",value:"~50 years/galaxy",desc:"A Milky Way supernova visible to naked eye happens roughly once per century"}].map((item,i)=><div key={i} style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:14,padding:"16px 14px",textAlign:"center"}}>
+            <div style={{fontSize:10,color:"#8892a4",textTransform:"uppercase",letterSpacing:1.5,marginBottom:4}}>{item.title}</div>
+            <div style={{fontFamily:"monospace",fontSize:18,fontWeight:700,color:"#ef4444",marginBottom:4}}>{item.value}</div>
+            <div style={{fontSize:11,color:"#8892a4"}}>{item.desc}</div>
+          </div>)}
+        </div>
+        <h2 style={infoH2}>When Will It Happen?</h2>
+        <p style={infoP}>The honest answer: somewhere between tonight and 100,000 years from now. Stellar evolution models suggest Betelgeuse has exhausted its hydrogen and helium fuel and is burning heavier elements in increasingly rapid cycles. The Great Dimming of 2019-2020 was caused by a massive surface eruption that ejected material into space, partially obscuring the star. Such events are accelerating.</p>
+        <p style={infoP}>If Betelgeuse has already exploded, we wouldn't know yet — the light hasn't reached us. When it does, it will be the most spectacular astronomical event in recorded human history.</p>
+        <div style={{textAlign:"center",marginTop:32,fontSize:12,color:"#4a5568"}}>Somewhere in the constellation Orion, a clock is ticking.</div>
+          </>}
+
+          {/* Article: space-launches-atmosphere */}
+          {activeArticle.slug==="space-launches-atmosphere"&&<>
+        <div style={{borderRadius:16,overflow:"hidden",marginBottom:32}}>{blogImg("rocket")}</div>
+        <div style={{textAlign:"center",marginBottom:40}}>
+          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:"#06b6d4",marginBottom:16}}>Climate & Space</span>
+          <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>Rockets Are <span style={{color:"#06b6d4"}}>Punching Holes</span> in Our Atmosphere</h2>
+          <p style={{fontSize:14,color:"#8892a4",maxWidth:500,margin:"0 auto",lineHeight:1.6}}>With 200+ launches per year, scientists warn about ozone depletion and upper atmosphere alteration.</p>
+        </div>
+        <h2 style={infoH2}>The Hidden Cost of the Space Economy</h2>
+        <p style={infoP}>Space launches have increased dramatically: from ~90 per year in 2020 to over 230 in 2025, with projections exceeding 400 by 2030. Each launch injects exhaust directly into the stratosphere and mesosphere — atmospheric layers where pollutants persist for years and where the ozone layer resides.</p>
+        <h2 style={infoH2}>What Rockets Leave Behind</h2>
+        <div style={{display:"flex",flexDirection:"column",gap:10,margin:"20px 0"}}>
+          {[{compound:"Black Carbon (Soot)",source:"Kerosene fuels (Falcon 9, Electron)",effect:"Absorbs sunlight in upper atmosphere, warming the stratosphere. 500x more warming impact than ground-level soot."},{compound:"Alumina Particles (Al₂O₃)",source:"Solid rocket boosters (SLS, shuttle-derived)",effect:"Catalytically destroys ozone molecules. Each particle can destroy thousands of O₃ molecules over its atmospheric lifetime."},{compound:"Water Vapor & NOₓ",source:"All combustion engines",effect:"At stratospheric altitudes, water vapor and nitrogen oxides participate in ozone depletion chemistry."},{compound:"Re-entry Debris",source:"Returning stages & deorbiting satellites",effect:"Vaporizing metal creates nanoparticles of aluminum, titanium, and exotic alloys with unknown atmospheric chemistry."}].map((item,i)=><div key={i} style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:10,padding:"14px 16px"}}>
+            <div style={{fontSize:13,fontWeight:700,color:"#06b6d4",marginBottom:2}}>{item.compound}</div>
+            <div style={{fontSize:10,color:T.dim,marginBottom:6}}>Source: {item.source}</div>
+            <p style={{fontSize:12,color:"#8892a4",margin:0,lineHeight:1.5}}>{item.effect}</p>
+          </div>)}
+        </div>
+        <p style={infoP}>A 2025 study published in Nature estimated that if launch rates reach 1,000 per year (plausible by 2035), <strong style={{color:T.text}}>the ozone layer could thin by 1-3%</strong> — partially reversing decades of recovery since the Montreal Protocol banned CFCs. The irony of destroying Earth's atmosphere while reaching for space is not lost on researchers.</p>
+        <div style={{textAlign:"center",marginTop:32,fontSize:12,color:"#4a5568"}}>Every launch reaches for the stars — and leaves a scar on the sky.</div>
+          </>}
+
+          {/* Article: lab-grown-brains */}
+          {activeArticle.slug==="lab-grown-brains"&&<>
+        <div style={{borderRadius:16,overflow:"hidden",marginBottom:32}}>{blogImg("dna")}</div>
+        <div style={{textAlign:"center",marginBottom:40}}>
+          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:"#8b5cf6",marginBottom:16}}>Biotech</span>
+          <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>Lab-Grown <span style={{color:"#8b5cf6"}}>Brains</span> Are Getting Smarter</h2>
+          <p style={{fontSize:14,color:"#8892a4",maxWidth:500,margin:"0 auto",lineHeight:1.6}}>Neural organoids are developing electrical activity resembling premature infants. The ethics of creating consciousness in a dish.</p>
+        </div>
+        <h2 style={infoH2}>What Are Brain Organoids?</h2>
+        <p style={infoP}>Brain organoids are three-dimensional clusters of human neurons grown from stem cells in a lab dish. Starting from skin cells reprogrammed into stem cells, researchers guide them to differentiate into various brain cell types. After several months, these pea-sized structures develop layered architecture resembling a fetal brain, form synaptic connections, and generate spontaneous electrical activity.</p>
+        <h2 style={infoH2}>The Complexity Milestone</h2>
+        <p style={infoP}>In 2025-2026, multiple labs reported organoids exhibiting <strong style={{color:T.text}}>coordinated oscillatory patterns</strong> — brain waves — similar to those seen in premature infants at 25-28 weeks gestation. This wasn't random firing; it was structured, rhythmic electrical activity suggesting nascent neural network formation.</p>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12,margin:"24px 0"}}>
+          {[{stage:"2013-2018",desc:"First organoids: ~100K cells, minimal structure, no coordinated activity",color:T.dim},{stage:"2019-2023",desc:"Layered structure, retinal organoids, basic sensory response",color:"#8b5cf6"},{stage:"2024-2026",desc:"Brain waves, 2M+ cells, multi-region assembloids, learning behavior",color:"#ec4899"}].map((item,i)=><div key={i} style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:14,padding:"14px 12px",textAlign:"center"}}>
+            <div style={{fontFamily:"monospace",fontSize:11,fontWeight:700,color:item.color,marginBottom:6}}>{item.stage}</div>
+            <p style={{fontSize:11,color:"#8892a4",margin:0,lineHeight:1.5}}>{item.desc}</p>
+          </div>)}
+        </div>
+        <h2 style={infoH2}>The Ethics Abyss</h2>
+        <p style={infoP}>If a brain organoid develops brain waves, can it feel pain? Can it suffer? Does it have any form of subjective experience? Currently, there's no way to ask — and no scientific consensus on what markers would indicate consciousness in a dish. Yet the experiments continue, growing larger and more complex with each generation.</p>
+        <p style={infoP}>Some researchers argue for <strong style={{color:T.text}}>precautionary ethical frameworks</strong>: treat organoids as potentially sentient once they reach certain complexity thresholds, even if we can't prove sentience. Others argue this would halt research that could cure Alzheimer's, Parkinson's, and epilepsy.</p>
+        <div style={{textAlign:"center",marginTop:32,fontSize:12,color:"#4a5568"}}>We're learning to grow minds. We haven't learned what that means yet.</div>
+          </>}
+
+          {/* Article: 3d-printing-revolution */}
+          {activeArticle.slug==="3d-printing-revolution"&&<>
+        <div style={{borderRadius:16,overflow:"hidden",marginBottom:32}}>{blogImg("gear")}</div>
+        <div style={{textAlign:"center",marginBottom:40}}>
+          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:"#f59e0b",marginBottom:16}}>Engineering</span>
+          <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>MIT's 3D Printer Can Build <span style={{color:"#f59e0b"}}>Working Motors</span> in Hours</h2>
+          <p style={{fontSize:14,color:"#8892a4",maxWidth:500,margin:"0 auto",lineHeight:1.6}}>A new multi-material printer fabricates fully functional electromechanical devices in a single session.</p>
+        </div>
+        <h2 style={infoH2}>From Plastic Trinkets to Functional Machines</h2>
+        <p style={infoP}>Traditional 3D printers work with a single material — usually plastic. MIT's new system prints with <strong style={{color:T.text}}>multiple materials simultaneously</strong>: conductive metals for wiring, rigid polymers for structure, flexible materials for joints, and magnetic materials for motor cores. The result: a complete, functional electromechanical device printed in one session with no assembly required.</p>
+        <h2 style={infoH2}>What It Can Print</h2>
+        <div style={{display:"flex",flexDirection:"column",gap:10,margin:"20px 0"}}>
+          {[{name:"Electric Motors",time:"~4 hours",desc:"Complete rotary motor with copper coils, magnetic core, and housing — ready to spin on power application"},{name:"Actuated Robots",time:"~8 hours",desc:"Walking robots with embedded motors, flexible legs, and rigid body — straight from the printer to locomotion"},{name:"Sensor Arrays",time:"~2 hours",desc:"Flexible sensor surfaces with embedded conductive traces, printed directly onto curved surfaces"},{name:"Drone Components",time:"~6 hours",desc:"Structural frame with integrated motor mounts, wiring channels, and flexible landing gear"}].map((item,i)=><div key={i} style={{display:"flex",gap:14,background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:12,padding:"14px 16px",alignItems:"center"}}>
+            <div style={{textAlign:"center",flexShrink:0,width:70}}><div style={{fontFamily:"monospace",fontSize:12,fontWeight:700,color:"#f59e0b"}}>{item.time}</div></div>
+            <div><div style={{fontSize:13,fontWeight:700,color:T.dark?T.text:"#e2e8f0",marginBottom:2}}>{item.name}</div><p style={{fontSize:11,color:"#8892a4",margin:0,lineHeight:1.5}}>{item.desc}</p></div>
+          </div>)}
+        </div>
+        <h2 style={infoH2}>The Implications Are Enormous</h2>
+        <p style={infoP}>This technology points toward a future where hardware prototyping becomes as fast as software iteration. Instead of weeks of manufacturing, assembly, and testing — a design goes from CAD file to functioning device in hours. For robotics, medical devices, aerospace, and consumer electronics, the speed-to-prototype compression is revolutionary.</p>
+        <p style={infoP}>The security implications are also significant: if anyone can print functional electronic devices, the barrier to creating surveillance hardware, signal jammers, or lock-picking tools drops dramatically. The same technology that enables rapid innovation also enables rapid creation of attack tools.</p>
+        <div style={{textAlign:"center",marginTop:32,fontSize:12,color:"#4a5568"}}>The factory of the future fits on a desk. So does the weapons lab.</div>
           </>}
 
         </>;
