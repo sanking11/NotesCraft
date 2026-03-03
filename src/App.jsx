@@ -2166,6 +2166,17 @@ html{scroll-behavior:smooth}
 .pg-mode-active{background:rgba(${T.accentRgb},0.2);color:${T.accent};font-weight:700;box-shadow:0 0 16px rgba(${T.accentRgb},0.3),inset 0 0 12px rgba(${T.accentRgb},0.1);border:1.5px solid rgba(${T.accentRgb},0.45);text-shadow:0 0 8px rgba(${T.accentRgb},0.4)}
 .pg-mode-inactive{background:rgba(255,255,255,0.02);color:${T.dim};font-weight:500;border:1.5px solid transparent}
 .pg-mode-inactive:hover{background:rgba(${T.accentRgb},0.08);color:${T.accent};border-color:rgba(${T.accentRgb},0.2)}
+.blog-hero-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;height:78vh;margin:0 -32px 32px;overflow:hidden;animation:blogFadeIn 0.8s cubic-bezier(0.22,1,0.36,1) both}
+.blog-hero-col{position:relative;overflow:hidden;cursor:pointer}
+.blog-hero-col-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform 0.8s cubic-bezier(0.22,1,0.36,1),filter 0.8s;filter:brightness(0.55) saturate(1.1)}
+.blog-hero-col:hover .blog-hero-col-bg{transform:scale(1.06);filter:brightness(0.35) saturate(1.2)}
+.blog-hero-col-info{position:absolute;bottom:0;left:0;right:0;padding:28px 24px;z-index:2;background:linear-gradient(0deg,rgba(0,0,0,0.85) 0%,rgba(0,0,0,0.4) 50%,transparent 100%)}
+.blog-hero-col-title{font-size:clamp(16px,2.2vw,26px);font-weight:900;color:#fff;line-height:1.12;text-transform:uppercase;letter-spacing:-0.3px;text-shadow:0 2px 20px rgba(0,0,0,0.8)}
+.blog-hero-col-tag{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:10px;display:block}
+.blog-hero-col:hover .blog-hero-col-tag{color:${T.accent}}
+.blog-hero-ticker{position:absolute;bottom:0;left:0;right:0;height:28px;background:rgba(0,0,0,0.7);display:flex;align-items:center;overflow:hidden;z-index:3}
+.blog-hero-ticker span{display:inline-block;white-space:nowrap;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);animation:blogTickerScroll 30s linear infinite}
+@keyframes blogTickerScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .blog-card{position:relative;border-radius:16px;overflow:hidden;cursor:pointer;aspect-ratio:3/4;background:#111;transition:transform 0.4s cubic-bezier(0.22,1,0.36,1),box-shadow 0.4s}
 .blog-card:hover{transform:translateY(-8px) scale(1.02);box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(${T.accentRgb},0.15)}
 .blog-card-img{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform 0.6s cubic-bezier(0.22,1,0.36,1),filter 0.6s;filter:brightness(0.6) saturate(1.1)}
@@ -2179,10 +2190,19 @@ html{scroll-behavior:smooth}
 .blog-card:hover .blog-card-title{transform:translateY(-4px)}
 .blog-card-meta{display:flex;align-items:center;gap:8px;margin-top:10px;opacity:0;transform:translateY(8px);transition:all 0.4s 0.15s}
 .blog-card:hover .blog-card-meta{opacity:1;transform:translateY(0)}
+@keyframes blogFadeIn{from{opacity:0}to{opacity:1}}
 @keyframes blogArticleIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes blogSplitIn{from{opacity:0;transform:scale(0.97)}to{opacity:1;transform:scale(1)}}
 .blog-article-enter{animation:blogArticleIn 0.6s cubic-bezier(0.22,1,0.36,1) both}
-@media(max-width:900px){.blog-grid-wrap{grid-template-columns:repeat(2,1fr)!important}}
-@media(max-width:560px){.blog-grid-wrap{grid-template-columns:1fr!important}}`;
+.blog-split{display:grid;grid-template-columns:1fr 1fr;min-height:70vh;margin:0 -32px 0;overflow:hidden;animation:blogSplitIn 0.7s cubic-bezier(0.22,1,0.36,1) both}
+.blog-split-img{background-size:cover;background-position:center;position:relative;min-height:70vh}
+.blog-split-right{display:flex;flex-direction:column;justify-content:center;padding:48px 44px;position:relative;background:rgba(0,0,0,0.3)}
+.blog-split-right::before{content:'';position:absolute;top:0;right:0;bottom:0;width:1px;background:linear-gradient(180deg,transparent,rgba(${T.accentRgb},0.3),transparent)}
+.blog-read-btn{display:inline-flex;align-items:center;gap:14px;margin-top:32px;cursor:pointer;background:none;border:none;padding:0;font-family:inherit}
+.blog-read-btn:hover .blog-read-arrow{transform:translateX(4px);background:${T.accent};border-color:${T.accent}}
+.blog-read-arrow{width:48px;height:48px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;transition:all 0.3s;color:#fff}
+@media(max-width:900px){.blog-hero-wrap{grid-template-columns:1fr!important;height:auto!important}.blog-hero-col{height:50vh}.blog-grid-wrap{grid-template-columns:repeat(2,1fr)!important}.blog-split{grid-template-columns:1fr!important}.blog-split-img{min-height:40vh}}
+@media(max-width:560px){.blog-grid-wrap{grid-template-columns:1fr!important}.blog-split-right{padding:28px 20px}}`;
 
   const inp={background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.5)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid rgba(${T.accentRgb},0.15)`,borderRadius:10,color:T.text,fontSize:14,fontFamily:`${F.body},sans-serif`,outline:"none",boxSizing:"border-box",transition:"all 0.3s",boxShadow:`0 2px 10px rgba(0,0,0,0.1), inset 0 0 10px rgba(${T.accentRgb},0.02)`};
   const glass={background:T.dark?"rgba(255,255,255,0.03)":"rgba(255,255,255,0.4)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid rgba(${T.accentRgb},0.12)`,boxShadow:`0 8px 32px rgba(0,0,0,0.15), inset 0 0 0 1px rgba(255,255,255,${T.dark?0.03:0.2})`};
@@ -3179,11 +3199,27 @@ html{scroll-behavior:smooth}
         };return imgs[key]||null};
 
         // Blog listing
-        if(!activeArticle)return<>
-          <h1 style={infoH}>Security Blog</h1>
-          <p style={infoP}>In-depth articles about cryptography, password security, privacy, and the future of technology.</p>
-          <div className="blog-grid-wrap" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:16,marginTop:24}}>
-            {blogArticles.map((a,idx)=><div key={a.slug} className="blog-card" onClick={()=>{setBlogArticle(a.slug);window.scrollTo(0,0)}} style={{animationDelay:idx*0.06+"s",animation:`blogArticleIn 0.5s cubic-bezier(0.22,1,0.36,1) ${idx*0.06}s both`}}>
+        if(!activeArticle){
+        const heroArticles=blogArticles.slice(0,3);
+        const restArticles=blogArticles.slice(3);
+        const tickerText=blogArticles.map(a=>a.title.toUpperCase()).join("  •  ");
+        return<>
+          {/* Top 3 Hero Columns */}
+          <div className="blog-hero-wrap">
+            {heroArticles.map((a,idx)=><div key={a.slug} className="blog-hero-col" onClick={()=>{setBlogArticle(a.slug);window.scrollTo(0,0)}}>
+              <div className="blog-hero-col-bg" style={{backgroundImage:`url(${a.photo.replace("w=800","w=1200")})`}}/>
+              <div className="blog-hero-col-info">
+                <span className="blog-hero-col-tag">{a.tag}</span>
+                <div className="blog-hero-col-title" style={{fontFamily:`${F.heading},sans-serif`}}>{a.title}</div>
+              </div>
+            </div>)}
+            <div className="blog-hero-ticker"><span>{tickerText+"  •  "+tickerText}</span></div>
+          </div>
+
+          {/* Remaining articles grid */}
+          <h2 style={{fontSize:16,fontWeight:700,color:T.dark?T.text:"#e2e8f0",margin:"32px 0 16px",letterSpacing:1,textTransform:"uppercase",fontFamily:`${F.heading},sans-serif`}}>More Articles</h2>
+          <div className="blog-grid-wrap" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:16}}>
+            {restArticles.map((a,idx)=><div key={a.slug} className="blog-card" onClick={()=>{setBlogArticle(a.slug);window.scrollTo(0,0)}} style={{animation:`blogArticleIn 0.5s cubic-bezier(0.22,1,0.36,1) ${idx*0.06}s both`}}>
               <div className="blog-card-img" style={{backgroundImage:`url(${a.photo})`}}/>
               <div className="blog-card-overlay">
                 <span className="blog-card-tag">{a.tag}</span>
@@ -3196,16 +3232,35 @@ html{scroll-behavior:smooth}
               </div>
             </div>)}
           </div>
-        </>;
+        </>;}
 
-        // Individual article view
+        // Individual article view — Split hero + full content
+        const artIdx=blogArticles.findIndex(a=>a.slug===activeArticle.slug);
+        const blogContentRef=React.createRef();
         return<div className="blog-article-enter">
-          <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:24}}>
-            <button onClick={()=>{setBlogArticle(null);window.scrollTo(0,0)}} style={{background:`rgba(${T.accentRgb},0.08)`,border:`1px solid rgba(${T.accentRgb},0.3)`,borderRadius:8,padding:"6px 14px",color:T.accent,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",transition:"all 0.2s"}}>&#8592; All Articles</button>
-            <button onClick={()=>shareLink(activeArticle.slug)} style={{marginLeft:"auto",background:`rgba(${T.accentRgb},0.1)`,border:`1px solid rgba(${T.accentRgb},0.3)`,borderRadius:8,padding:"6px 14px",fontSize:12,fontWeight:600,color:T.accent,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",gap:6,transition:"all 0.2s"}}
-              onMouseEnter={e=>e.currentTarget.style.background=`rgba(${T.accentRgb},0.2)`}
-              onMouseLeave={e=>e.currentTarget.style.background=`rgba(${T.accentRgb},0.1)`}>Share Article</button>
+          {/* Split hero: image left, preview right */}
+          <div className="blog-split" style={{margin:"0 -32px"}}>
+            <div className="blog-split-img" style={{backgroundImage:`url(${activeArticle.photo.replace("w=800","w=1400&q=95")})`}}/>
+            <div className="blog-split-right">
+              <button onClick={()=>{setBlogArticle(null);window.scrollTo(0,0)}} style={{position:"absolute",top:20,right:20,width:40,height:40,borderRadius:"50%",background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.15)",color:"#fff",fontSize:18,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.3s",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)"}} onMouseEnter={e=>{e.currentTarget.style.background="rgba(255,255,255,0.15)"}} onMouseLeave={e=>{e.currentTarget.style.background="rgba(255,255,255,0.08)"}}>&#10005;</button>
+              <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:24}}>
+                <span style={{fontSize:13,fontWeight:600,color:"rgba(255,255,255,0.4)",letterSpacing:1}}>{artIdx+1} — {blogArticles.length}</span>
+                <span style={{width:8,height:8,borderRadius:"50%",background:T.accent}}/>
+                <span style={{fontSize:11,fontWeight:700,letterSpacing:2,textTransform:"uppercase",color:T.accent}}>{activeArticle.tag}</span>
+              </div>
+              <h1 style={{fontSize:"clamp(24px,3.5vw,42px)",fontWeight:900,color:"#fff",lineHeight:1.08,fontFamily:`${F.heading},sans-serif`,textTransform:"uppercase",letterSpacing:"-0.5px",margin:"0 0 20px"}}>{activeArticle.title}</h1>
+              <p style={{fontSize:14,color:"rgba(255,255,255,0.5)",lineHeight:1.7,margin:"0 0 8px",maxWidth:420}}>{activeArticle.subtitle}</p>
+              <div style={{fontSize:11,color:"rgba(255,255,255,0.3)",marginBottom:8}}>{activeArticle.date} • {activeArticle.icon}</div>
+              <button className="blog-read-btn" onClick={()=>blogContentRef.current?.scrollIntoView({behavior:"smooth"})}>
+                <span style={{fontSize:18,fontWeight:700,color:"#fff",fontFamily:`${F.heading},sans-serif`}}>Read full Article</span>
+                <span className="blog-read-arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+              </button>
+              <button onClick={()=>shareLink(activeArticle.slug)} style={{marginTop:16,background:"none",border:"none",padding:0,fontSize:11,fontWeight:600,color:"rgba(255,255,255,0.3)",cursor:"pointer",fontFamily:"inherit",letterSpacing:1,transition:"color 0.2s"}} onMouseEnter={e=>{e.currentTarget.style.color=T.accent}} onMouseLeave={e=>{e.currentTarget.style.color="rgba(255,255,255,0.3)"}}>SHARE ARTICLE ↗</button>
+            </div>
           </div>
+
+          {/* Full article content */}
+          <div ref={blogContentRef} style={{paddingTop:40}}>
 
           {/* Article: csprng-vs-prng */}
           {activeArticle.slug==="csprng-vs-prng"&&<>
@@ -3930,6 +3985,7 @@ html{scroll-behavior:smooth}
         <div style={{textAlign:"center",marginTop:32,fontSize:12,color:"#4a5568"}}>The factory of the future fits on a desk. So does the weapons lab.</div>
           </>}
 
+          </div>{/* close blogContentRef */}
         </div>;
       })()}</>
     };
