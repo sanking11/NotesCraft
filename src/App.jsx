@@ -2254,18 +2254,18 @@ html{scroll-behavior:smooth}
 .blog-overlay.visible .blog-ov-right{transform:translateX(0)}
 .blog-overlay.fullscreen .blog-ov-left{display:none}
 .blog-overlay.fullscreen .blog-ov-right{flex:0 0 100%}
-.blog-overlay.fullscreen .blog-ov-hero::before{display:none}
 .blog-ov-right::-webkit-scrollbar{width:3px}
 .blog-ov-right::-webkit-scrollbar-thumb{background:rgba(${T.accentRgb},0.2);border-radius:2px}
-.blog-ov-hero{padding:48px 44px;min-height:100vh;display:flex;flex-direction:column;justify-content:center}
-.blog-ov-hero::before{content:'';position:absolute;top:0;left:0;bottom:0;width:1px;background:linear-gradient(180deg,transparent,rgba(${T.accentRgb},0.3),transparent)}
-.blog-read-btn{display:inline-flex;align-items:center;gap:14px;margin-top:32px;cursor:pointer;background:none;border:none;padding:0;font-family:inherit}
+.blog-ov-hero{padding:48px 44px 32px;display:flex;flex-direction:column}
+.blog-read-btn{display:inline-flex;align-items:center;gap:14px;margin-top:40px;cursor:pointer;background:rgba(${T.accentRgb},0.08);border:1.5px solid rgba(${T.accentRgb},0.3);border-radius:14px;padding:16px 28px;font-family:inherit;transition:all 0.3s}
+.blog-read-btn:hover{background:rgba(${T.accentRgb},0.15);border-color:${T.accent}}
 .blog-read-btn:hover .blog-read-arrow{transform:translateX(4px);background:${T.accent};border-color:${T.accent}}
-.blog-read-arrow{width:48px;height:48px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;transition:all 0.3s;color:#fff}
-#blog-close-btn{position:fixed;top:18px;right:18px;width:38px;height:38px;border-radius:50%;border:1.5px solid rgba(${T.accentRgb},0.3);background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;color:rgba(255,255,255,0.6);z-index:3000;opacity:0;transform:scale(0.7);pointer-events:none;transition:opacity 0.25s 0.38s,transform 0.25s 0.38s,background 0.15s}
-.blog-overlay.visible #blog-close-btn{opacity:1;transform:scale(1);pointer-events:all}
-#blog-close-btn:hover{background:rgba(${T.accentRgb},0.2);color:#fff}
-@media(max-width:900px){.blog-hero-wrap{grid-template-columns:1fr!important;height:auto!important}.blog-hero-col{height:50vh}.blog-grid-wrap{grid-template-columns:repeat(2,1fr)!important}.blog-ov-left{display:none}.blog-ov-right{flex:0 0 100%}.blog-ov-hero{padding:28px 20px;min-height:auto;padding-top:80px}}
+.blog-read-arrow{width:42px;height:42px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;transition:all 0.3s;color:#fff}
+.blog-ov-toolbar{position:fixed;top:18px;right:18px;display:flex;gap:8px;z-index:3000;opacity:0;transform:translateY(-10px);pointer-events:none;transition:opacity 0.25s 0.38s,transform 0.25s 0.38s}
+.blog-overlay.visible .blog-ov-toolbar{opacity:1;transform:translateY(0);pointer-events:all}
+.blog-ov-toolbar button{width:38px;height:38px;border-radius:50%;border:1.5px solid rgba(${T.accentRgb},0.3);background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;color:rgba(255,255,255,0.6);transition:all 0.15s}
+.blog-ov-toolbar button:hover{background:rgba(${T.accentRgb},0.2);color:#fff}
+@media(max-width:900px){.blog-hero-wrap{grid-template-columns:1fr!important;height:auto!important}.blog-hero-col{height:50vh}.blog-grid-wrap{grid-template-columns:repeat(2,1fr)!important}.blog-ov-left{display:none}.blog-ov-right{flex:0 0 100%}.blog-ov-hero{padding:28px 20px}}
 @media(max-width:560px){.blog-grid-wrap{grid-template-columns:1fr!important}}`;
 
   const inp={background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.5)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid rgba(${T.accentRgb},0.15)`,borderRadius:10,color:T.text,fontSize:14,fontFamily:`${F.body},sans-serif`,outline:"none",boxSizing:"border-box",transition:"all 0.3s",boxShadow:`0 2px 10px rgba(0,0,0,0.1), inset 0 0 10px rgba(${T.accentRgb},0.02)`};
@@ -3309,25 +3309,25 @@ html{scroll-behavior:smooth}
           <div className={`blog-overlay${blogArticle?' visible':''}${blogFullArticle?' fullscreen':''}`}>
             <div className="blog-ov-left" />
             <div className="blog-ov-right">
-              <button id="blog-close-btn" onClick={closeBlogArticle}>&#10005;</button>
+              <div className="blog-ov-toolbar">
+                <button title="Fullscreen" onClick={()=>readFullArticle(blogContentRef)}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg></button>
+                <button title="Close" onClick={closeBlogArticle}>&#10005;</button>
+              </div>
               {activeArticle&&<>
-              <div className="blog-ov-hero" style={{position:'relative'}}>
+              <div className="blog-ov-hero">
                 <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:24}}>
                   <span style={{fontSize:13,fontWeight:600,color:"rgba(255,255,255,0.4)",letterSpacing:1}}>{artIdx+1} — {blogArticles.length}</span>
                   <span style={{width:8,height:8,borderRadius:"50%",background:T.accent}}/>
                   <span style={{fontSize:11,fontWeight:700,letterSpacing:2,textTransform:"uppercase",color:T.accent}}>{activeArticle.tag}</span>
                 </div>
                 <h1 style={{fontSize:"clamp(24px,3.5vw,42px)",fontWeight:900,color:"#fff",lineHeight:1.08,fontFamily:`${F.heading},sans-serif`,textTransform:"uppercase",letterSpacing:"-0.5px",margin:"0 0 20px"}}>{activeArticle.title}</h1>
-                <p style={{fontSize:14,color:"rgba(255,255,255,0.5)",lineHeight:1.7,margin:"0 0 8px",maxWidth:420}}>{activeArticle.subtitle}</p>
-                <div style={{fontSize:11,color:"rgba(255,255,255,0.3)",marginBottom:8}}>{activeArticle.date} • {activeArticle.icon}</div>
-                <button onClick={()=>shareLink(activeArticle.slug)} style={{marginTop:16,background:"none",border:"none",padding:0,fontSize:11,fontWeight:600,color:"rgba(255,255,255,0.3)",cursor:"pointer",fontFamily:"inherit",letterSpacing:1,transition:"color 0.2s"}} onMouseEnter={e=>{e.currentTarget.style.color=T.accent}} onMouseLeave={e=>{e.currentTarget.style.color="rgba(255,255,255,0.3)"}}>SHARE ARTICLE ↗</button>
-                <div style={{flex:1}} />
-                <button className="blog-read-btn" onClick={()=>readFullArticle(blogContentRef)}>
-                  <span style={{fontSize:18,fontWeight:700,color:"#fff",fontFamily:`${F.heading},sans-serif`}}>Read full Article</span>
-                  <span className="blog-read-arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
-                </button>
+                <p style={{fontSize:14,color:"rgba(255,255,255,0.5)",lineHeight:1.7,margin:"0 0 12px",maxWidth:520}}>{activeArticle.subtitle}</p>
+                <div style={{display:"flex",alignItems:"center",gap:16,marginTop:8}}>
+                  <span style={{fontSize:11,color:"rgba(255,255,255,0.3)"}}>{activeArticle.date} • {activeArticle.icon}</span>
+                  <button onClick={()=>shareLink(activeArticle.slug)} style={{background:"none",border:"none",padding:0,fontSize:11,fontWeight:600,color:"rgba(255,255,255,0.3)",cursor:"pointer",fontFamily:"inherit",letterSpacing:1,transition:"color 0.2s"}} onMouseEnter={e=>{e.currentTarget.style.color=T.accent}} onMouseLeave={e=>{e.currentTarget.style.color="rgba(255,255,255,0.3)"}}>SHARE ↗</button>
+                </div>
               </div>
-              <div ref={blogContentRef} className="blog-content-section" style={{padding:"40px 32px 32px",maxWidth:800,margin:"0 auto"}}>
+              <div ref={blogContentRef} className="blog-content-section" style={{padding:"40px 44px 48px",maxWidth:780,margin:"0 auto",boxSizing:"border-box"}}>
 
           {/* Article: csprng-vs-prng */}
           {activeArticle.slug==="csprng-vs-prng"&&<>
@@ -4052,6 +4052,12 @@ html{scroll-behavior:smooth}
         <div style={{textAlign:"center",marginTop:32,fontSize:12,color:"#4a5568"}}>The factory of the future fits on a desk. So does the weapons lab.</div>
           </>}
 
+          <div style={{display:"flex",justifyContent:"center",padding:"48px 0 24px"}}>
+            <button className="blog-read-btn" onClick={()=>readFullArticle(blogContentRef)}>
+              <span style={{fontSize:16,fontWeight:700,color:"#fff",fontFamily:`${F.heading},sans-serif`}}>Read full Article</span>
+              <span className="blog-read-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg></span>
+            </button>
+          </div>
           </div>{/* close blogContentRef */}
               </>}
             </div>{/* close blog-ov-right */}
@@ -4067,7 +4073,7 @@ html{scroll-behavior:smooth}
           <div style={{position:"absolute",width:600,height:600,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.2) 0%,transparent 70%)",filter:"blur(60px)",top:"-15%",left:"-10%",animation:"ldOrb1 25s ease-in-out infinite"}}/>
           <div style={{position:"absolute",width:500,height:500,borderRadius:"50%",background:`radial-gradient(circle,rgba(${T.accentRgb},0.18) 0%,transparent 70%)`,filter:"blur(45px)",bottom:"-10%",right:"-5%",animation:"ldOrb2 30s ease-in-out infinite"}}/>
         </div>
-        <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:blogArticle?5000:100,padding:"16px 40px",display:"flex",alignItems:"center",justifyContent:"space-between",background:`linear-gradient(180deg,${T.dark?T.bg:"#0a0a12"} 0%,transparent 100%)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)"}}>
+        <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:100,display:blogArticle?"none":"flex",padding:"16px 40px",alignItems:"center",justifyContent:"space-between",background:`linear-gradient(180deg,${T.dark?T.bg:"#0a0a12"} 0%,transparent 100%)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)"}}>
           <div style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer"}} onClick={()=>{setBlogArticle(null);setBlogFullArticle(false);blogBusyRef.current=false;blogCardRectRef.current=null;setInfoPage(null)}}>
             <ButterflyLogo s={28} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} flap/>
             <span style={{fontSize:18,fontWeight:800,letterSpacing:3,fontFamily:`${F.heading},sans-serif`,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>NOTESCRAFT</span>
@@ -4077,7 +4083,7 @@ html{scroll-behavior:smooth}
             <button onClick={()=>{if(blogArticle){closeBlogArticle()}else{setInfoPage(null)}}} style={{background:`rgba(${T.accentRgb},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,borderRadius:8,padding:"8px 20px",color:T.dark?T.text:"#e2e8f0",fontSize:13,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1}}>{blogArticle?"← Blog":"← Back"}</button>
           </div>
         </nav>
-        <div style={{position:"relative",zIndex:blogArticle?3000:1,maxWidth:infoPage==="security-blog"?"100%":800,margin:"0 auto",padding:infoPage==="security-blog"?"80px 0 60px":"100px 24px 60px"}}>
+        <div style={{position:"relative",zIndex:1,maxWidth:infoPage==="security-blog"?"100%":800,margin:"0 auto",padding:infoPage==="security-blog"?"80px 0 60px":"100px 24px 60px"}}>
           {infoPage==="password-manager"&&<>
             <div style={{position:"absolute",width:600,height:600,borderRadius:"50%",background:pgQuantumSafe?"radial-gradient(circle,rgba(16,185,129,0.25) 0%,rgba(16,185,129,0.08) 40%,transparent 70%)":`radial-gradient(circle,rgba(${T.accentRgb},0.25) 0%,rgba(${T.accentRgb},0.08) 40%,transparent 70%)`,filter:"blur(60px)",top:"-5%",left:"-20%",pointerEvents:"none",animation:"ldOrb1 20s ease-in-out infinite",transition:"background 0.8s"}}/>
             <div style={{position:"absolute",width:500,height:500,borderRadius:"50%",background:pgQuantumSafe?"radial-gradient(circle,rgba(16,185,129,0.2) 0%,rgba(16,185,129,0.05) 40%,transparent 70%)":"radial-gradient(circle,rgba(139,92,246,0.22) 0%,rgba(139,92,246,0.06) 40%,transparent 70%)",filter:"blur(50px)",bottom:"5%",right:"-15%",pointerEvents:"none",animation:"ldOrb2 25s ease-in-out infinite",transition:"background 0.8s"}}/>
