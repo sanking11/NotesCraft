@@ -2172,16 +2172,16 @@ html{scroll-behavior:smooth}
 .blog-hero-col{position:relative;overflow:hidden;cursor:pointer}
 .blog-hero-col-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform 0.8s cubic-bezier(0.22,1,0.36,1),filter 0.8s;filter:brightness(0.55) saturate(1.1)}
 .blog-hero-col:hover .blog-hero-col-bg{transform:scale(1.06);filter:brightness(0.35) saturate(1.2)}
-.blog-hero-col-info{position:absolute;bottom:0;left:0;right:0;padding:32px 28px;z-index:2;background:linear-gradient(0deg,rgba(0,0,0,0.9) 0%,rgba(0,0,0,0.5) 60%,transparent 100%);opacity:0;transform:translateY(20px);transition:opacity 0.5s cubic-bezier(0.22,1,0.36,1),transform 0.5s cubic-bezier(0.22,1,0.36,1)}
+.blog-hero-col-info{position:absolute;bottom:30px;left:0;right:0;padding:32px 20px;z-index:2;background:linear-gradient(0deg,rgba(0,0,0,0.9) 0%,rgba(0,0,0,0.5) 60%,transparent 100%);opacity:0;transform:translateY(20px);transition:opacity 0.5s cubic-bezier(0.22,1,0.36,1),transform 0.5s cubic-bezier(0.22,1,0.36,1)}
 .blog-hero-col:hover .blog-hero-col-info{opacity:1;transform:translateY(0)}
-.blog-hero-col-title{font-size:clamp(28px,4.5vw,56px);font-weight:900;color:#fff;line-height:1.05;text-transform:uppercase;letter-spacing:-1px;text-shadow:0 4px 30px rgba(0,0,0,0.9)}
+.blog-hero-col-title{font-size:clamp(24px,3.2vw,44px);font-weight:900;color:#fff;line-height:1.08;text-transform:uppercase;letter-spacing:-0.5px;text-shadow:0 4px 30px rgba(0,0,0,0.9);word-break:break-word;overflow-wrap:break-word}
 .blog-hero-col-tag{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:${T.accent};margin-bottom:10px;display:block}
 .blog-hero-ticker{position:absolute;bottom:0;left:0;right:0;height:28px;background:rgba(0,0,0,0.7);display:flex;align-items:center;overflow:hidden;z-index:3}
 .blog-hero-ticker span{display:inline-block;white-space:nowrap;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);animation:blogTickerScroll 30s linear infinite}
 @keyframes blogTickerScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.blog-row-scroll{position:absolute;bottom:0;left:0;right:0;height:26px;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;overflow:hidden;z-index:4;opacity:0;transform:translateY(100%);transition:opacity 0.35s,transform 0.35s cubic-bezier(0.22,1,0.36,1)}
+.blog-row-scroll{position:absolute;bottom:0;left:0;right:0;height:26px;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;overflow:hidden;z-index:4;opacity:0;transform:translateY(100%);transition:opacity 0.35s,transform 0.35s cubic-bezier(0.22,1,0.36,1);padding:0 12px}
 .blog-hero-col:hover .blog-row-scroll,.blog-card:hover .blog-row-scroll{opacity:1;transform:translateY(0)}
-.blog-row-scroll-inner{display:inline-flex;align-items:center;white-space:nowrap;animation:blogRowScroll 18s linear infinite;padding-right:60px}
+.blog-row-scroll-inner{display:inline-flex;align-items:center;white-space:nowrap;animation:blogRowScroll 20s linear infinite;gap:0}.blog-row-scroll-inner>*{flex-shrink:0}
 .blog-row-scroll-inner span{font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.5)}
 .blog-row-scroll-inner .brs-tag{color:${T.accent};font-weight:700}
 .blog-row-scroll-inner .brs-dot{width:5px;height:5px;border-radius:50%;background:${T.accent};margin:0 10px;flex-shrink:0;opacity:0.7}
