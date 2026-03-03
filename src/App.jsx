@@ -2165,7 +2165,24 @@ html{scroll-behavior:smooth}
 .pg-mode-btn:active{transform:scale(0.96);transition:transform 0.1s}
 .pg-mode-active{background:rgba(${T.accentRgb},0.2);color:${T.accent};font-weight:700;box-shadow:0 0 16px rgba(${T.accentRgb},0.3),inset 0 0 12px rgba(${T.accentRgb},0.1);border:1.5px solid rgba(${T.accentRgb},0.45);text-shadow:0 0 8px rgba(${T.accentRgb},0.4)}
 .pg-mode-inactive{background:rgba(255,255,255,0.02);color:${T.dim};font-weight:500;border:1.5px solid transparent}
-.pg-mode-inactive:hover{background:rgba(${T.accentRgb},0.08);color:${T.accent};border-color:rgba(${T.accentRgb},0.2)}`;
+.pg-mode-inactive:hover{background:rgba(${T.accentRgb},0.08);color:${T.accent};border-color:rgba(${T.accentRgb},0.2)}
+.blog-card{position:relative;border-radius:16px;overflow:hidden;cursor:pointer;aspect-ratio:3/4;background:#111;transition:transform 0.4s cubic-bezier(0.22,1,0.36,1),box-shadow 0.4s}
+.blog-card:hover{transform:translateY(-8px) scale(1.02);box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(${T.accentRgb},0.15)}
+.blog-card-img{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform 0.6s cubic-bezier(0.22,1,0.36,1),filter 0.6s;filter:brightness(0.6) saturate(1.1)}
+.blog-card:hover .blog-card-img{transform:scale(1.08);filter:brightness(0.4) saturate(1.2)}
+.blog-card-overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;background:linear-gradient(0deg,rgba(0,0,0,0.85) 0%,rgba(0,0,0,0.3) 40%,transparent 100%);z-index:1}
+.blog-card-subtitle{max-height:0;opacity:0;overflow:hidden;transition:max-height 0.5s cubic-bezier(0.22,1,0.36,1),opacity 0.4s 0.1s;font-size:11px;color:rgba(255,255,255,0.7);line-height:1.5;margin-top:0}
+.blog-card:hover .blog-card-subtitle{max-height:100px;opacity:1;margin-top:8px}
+.blog-card-tag{display:inline-block;padding:3px 10px;border-radius:999px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.9);margin-bottom:10px;transition:all 0.3s;transform:translateY(10px);opacity:0}
+.blog-card:hover .blog-card-tag{transform:translateY(0);opacity:1}
+.blog-card-title{font-size:16px;font-weight:800;color:#fff;line-height:1.25;text-shadow:0 2px 12px rgba(0,0,0,0.6);transition:transform 0.4s}
+.blog-card:hover .blog-card-title{transform:translateY(-4px)}
+.blog-card-meta{display:flex;align-items:center;gap:8px;margin-top:10px;opacity:0;transform:translateY(8px);transition:all 0.4s 0.15s}
+.blog-card:hover .blog-card-meta{opacity:1;transform:translateY(0)}
+@keyframes blogArticleIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.blog-article-enter{animation:blogArticleIn 0.6s cubic-bezier(0.22,1,0.36,1) both}
+@media(max-width:900px){.blog-grid-wrap{grid-template-columns:repeat(2,1fr)!important}}
+@media(max-width:560px){.blog-grid-wrap{grid-template-columns:1fr!important}}`;
 
   const inp={background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.5)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid rgba(${T.accentRgb},0.15)`,borderRadius:10,color:T.text,fontSize:14,fontFamily:`${F.body},sans-serif`,outline:"none",boxSizing:"border-box",transition:"all 0.3s",boxShadow:`0 2px 10px rgba(0,0,0,0.1), inset 0 0 10px rgba(${T.accentRgb},0.02)`};
   const glass={background:T.dark?"rgba(255,255,255,0.03)":"rgba(255,255,255,0.4)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid rgba(${T.accentRgb},0.12)`,boxShadow:`0 8px 32px rgba(0,0,0,0.15), inset 0 0 0 1px rgba(255,255,255,${T.dark?0.03:0.2})`};
@@ -3129,22 +3146,22 @@ html{scroll-behavior:smooth}
       </>,
       "security-blog":<>{(()=>{
         const blogArticles=[
-          {slug:"csprng-vs-prng",tag:"Security Deep-Dive",title:"Cryptographic vs Normal Password Generators",subtitle:"Why the random numbers behind your passwords matter more than you think — explained with entropy, physics, and a cup of hot coffee.",icon:"🔐",date:"February 2026"},
-          {slug:"quantum-threat-to-passwords",tag:"Quantum Computing",title:"How Quantum Computers Will Break Your Passwords",subtitle:"Grover's algorithm halves your password entropy overnight. Here's what that actually means and how to prepare for the post-quantum era.",icon:"⚛️",date:"March 2026"},
-          {slug:"ai-password-cracking",tag:"AI & Security",title:"AI-Powered Password Cracking: Neural Networks vs Your Secrets",subtitle:"From PassGAN to transformer-based guessers — how machine learning is changing the password cracking landscape and what it means for your security.",icon:"🤖",date:"March 2026"},
-          {slug:"post-quantum-cryptography",tag:"Quantum Research",title:"Post-Quantum Cryptography: The New Standards Protecting Your Future",subtitle:"NIST has finalized its post-quantum algorithms. A deep dive into lattice-based cryptography, CRYSTALS-Kyber, and why RSA's days are numbered.",icon:"🛡️",date:"March 2026"},
-          {slug:"quantum-entanglement-communication",tag:"Physics & Security",title:"Quantum Entanglement: Unhackable Communication Is Real",subtitle:"Einstein called it 'spooky action at a distance.' Today it powers quantum key distribution networks spanning entire countries.",icon:"🔗",date:"March 2026"},
-          {slug:"physics-of-true-randomness",tag:"Physics Deep-Dive",title:"The Physics of True Randomness: From Radioactive Decay to Your Password",subtitle:"Why true randomness can only come from quantum mechanics — and how your device harvests chaos from the physical universe to generate unbreakable passwords.",icon:"🌌",date:"March 2026"},
-          {slug:"ai-weapons-ethics",tag:"AI & Ethics",title:"When AI Chooses Targets: The Ethics of Autonomous Military Systems",subtitle:"From battlefield targeting to kill chain automation — the rise of AI in military decision-making raises questions humanity isn't ready to answer.",icon:"⚔️",date:"March 2026",img:"military"},
-          {slug:"ai-supercharging-hackers",tag:"Cybersecurity",title:"Vibe Hacking: How AI Tools Are Supercharging Cyber Attacks",subtitle:"Attackers are using LLMs to write malware, craft phishing emails, and automate social engineering at a scale never seen before.",icon:"💀",date:"March 2026",img:"hacker"},
-          {slug:"biological-computing",tag:"Neuroscience",title:"Human Brain Cells Are Running Software — And Playing Doom",subtitle:"Cortical Labs taught living neurons to play video games. The implications for computing, AI, and consciousness are staggering.",icon:"🧠",date:"March 2026",img:"brain"},
-          {slug:"ai-hallucination-crisis",tag:"AI & Trust",title:"The AI Hallucination Crisis: When Machines Fabricate Reality",subtitle:"From fake quotes in journalism to invented medical advice — AI hallucinations are eroding digital trust at an alarming rate.",icon:"👁️",date:"March 2026",img:"eye"},
-          {slug:"robot-workforce",tag:"Robotics",title:"The Robot Workforce: Delivery Bots, Factory Arms, and the Jobs They're Taking",subtitle:"Autonomous delivery robots are replacing human drivers in cities worldwide. This is just the beginning of the largest workforce disruption in history.",icon:"🦾",date:"March 2026",img:"robot"},
-          {slug:"jwst-universe-secrets",tag:"Space & Physics",title:"James Webb Is Rewriting the Universe: Latest Discoveries from Deep Space",subtitle:"From the atmospheres of distant planets to the earliest galaxies ever seen — JWST is challenging everything we thought we knew.",icon:"🔭",date:"March 2026",img:"telescope"},
-          {slug:"star-explosion-betelgeuse",tag:"Astrophysics",title:"A Star Is About to Explode: The Betelgeuse Countdown",subtitle:"Growing evidence suggests one of the brightest stars in our sky may go supernova — an event visible in broad daylight from Earth.",icon:"💥",date:"March 2026",img:"star"},
-          {slug:"space-launches-atmosphere",tag:"Climate & Space",title:"Rockets Are Punching Holes in Our Atmosphere",subtitle:"With 200+ launches per year, scientists warn that rocket exhaust is depleting the ozone layer and altering Earth's upper atmosphere.",icon:"🚀",date:"March 2026",img:"rocket"},
-          {slug:"lab-grown-brains",tag:"Biotech",title:"Lab-Grown Brains Are Getting Smarter — And That's Terrifying",subtitle:"Neural organoids are developing electrical activity resembling premature infants. The ethics of creating consciousness in a dish.",icon:"🧬",date:"March 2026",img:"dna"},
-          {slug:"3d-printing-revolution",tag:"Engineering",title:"MIT's 3D Printer Can Build Working Motors in Hours",subtitle:"A new multi-material 3D printer fabricates fully functional electromechanical devices — motors, actuators, and robots — in a single session.",icon:"⚙️",date:"March 2026",img:"gear"}
+          {slug:"csprng-vs-prng",tag:"Security Deep-Dive",title:"Cryptographic vs Normal Password Generators",subtitle:"Why the random numbers behind your passwords matter more than you think — explained with entropy, physics, and a cup of hot coffee.",icon:"🔐",date:"February 2026",photo:"https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=90"},
+          {slug:"quantum-threat-to-passwords",tag:"Quantum Computing",title:"How Quantum Computers Will Break Your Passwords",subtitle:"Grover's algorithm halves your password entropy overnight. Here's what that actually means and how to prepare for the post-quantum era.",icon:"⚛️",date:"March 2026",photo:"https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=800&q=90"},
+          {slug:"ai-password-cracking",tag:"AI & Security",title:"AI-Powered Password Cracking: Neural Networks vs Your Secrets",subtitle:"From PassGAN to transformer-based guessers — how machine learning is changing the password cracking landscape and what it means for your security.",icon:"🤖",date:"March 2026",photo:"https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=90"},
+          {slug:"post-quantum-cryptography",tag:"Quantum Research",title:"Post-Quantum Cryptography: The New Standards Protecting Your Future",subtitle:"NIST has finalized its post-quantum algorithms. A deep dive into lattice-based cryptography, CRYSTALS-Kyber, and why RSA's days are numbered.",icon:"🛡️",date:"March 2026",photo:"https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=90"},
+          {slug:"quantum-entanglement-communication",tag:"Physics & Security",title:"Quantum Entanglement: Unhackable Communication Is Real",subtitle:"Einstein called it 'spooky action at a distance.' Today it powers quantum key distribution networks spanning entire countries.",icon:"🔗",date:"March 2026",photo:"https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&w=800&q=90"},
+          {slug:"physics-of-true-randomness",tag:"Physics Deep-Dive",title:"The Physics of True Randomness: From Radioactive Decay to Your Password",subtitle:"Why true randomness can only come from quantum mechanics — and how your device harvests chaos from the physical universe to generate unbreakable passwords.",icon:"🌌",date:"March 2026",photo:"https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=800&q=90"},
+          {slug:"ai-weapons-ethics",tag:"AI & Ethics",title:"When AI Chooses Targets: The Ethics of Autonomous Military Systems",subtitle:"From battlefield targeting to kill chain automation — the rise of AI in military decision-making raises questions humanity isn't ready to answer.",icon:"⚔️",date:"March 2026",photo:"https://images.unsplash.com/photo-1473968512647-3e447244af8f?auto=format&fit=crop&w=800&q=90"},
+          {slug:"ai-supercharging-hackers",tag:"Cybersecurity",title:"Vibe Hacking: How AI Tools Are Supercharging Cyber Attacks",subtitle:"Attackers are using LLMs to write malware, craft phishing emails, and automate social engineering at a scale never seen before.",icon:"💀",date:"March 2026",photo:"https://images.unsplash.com/photo-1563206767-5b18f218e8de?auto=format&fit=crop&w=800&q=90"},
+          {slug:"biological-computing",tag:"Neuroscience",title:"Human Brain Cells Are Running Software — And Playing Doom",subtitle:"Cortical Labs taught living neurons to play video games. The implications for computing, AI, and consciousness are staggering.",icon:"🧠",date:"March 2026",photo:"https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&w=800&q=90"},
+          {slug:"ai-hallucination-crisis",tag:"AI & Trust",title:"The AI Hallucination Crisis: When Machines Fabricate Reality",subtitle:"From fake quotes in journalism to invented medical advice — AI hallucinations are eroding digital trust at an alarming rate.",icon:"👁️",date:"March 2026",photo:"https://images.unsplash.com/photo-1495592822108-9e6261896da8?auto=format&fit=crop&w=800&q=90"},
+          {slug:"robot-workforce",tag:"Robotics",title:"The Robot Workforce: Delivery Bots, Factory Arms, and the Jobs They're Taking",subtitle:"Autonomous delivery robots are replacing human drivers in cities worldwide. This is just the beginning of the largest workforce disruption in history.",icon:"🦾",date:"March 2026",photo:"https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=90"},
+          {slug:"jwst-universe-secrets",tag:"Space & Physics",title:"James Webb Is Rewriting the Universe: Latest Discoveries from Deep Space",subtitle:"From the atmospheres of distant planets to the earliest galaxies ever seen — JWST is challenging everything we thought we knew.",icon:"🔭",date:"March 2026",photo:"https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?auto=format&fit=crop&w=800&q=90"},
+          {slug:"star-explosion-betelgeuse",tag:"Astrophysics",title:"A Star Is About to Explode: The Betelgeuse Countdown",subtitle:"Growing evidence suggests one of the brightest stars in our sky may go supernova — an event visible in broad daylight from Earth.",icon:"💥",date:"March 2026",photo:"https://images.unsplash.com/photo-1543722530-d2c3201371e7?auto=format&fit=crop&w=800&q=90"},
+          {slug:"space-launches-atmosphere",tag:"Climate & Space",title:"Rockets Are Punching Holes in Our Atmosphere",subtitle:"With 200+ launches per year, scientists warn that rocket exhaust is depleting the ozone layer and altering Earth's upper atmosphere.",icon:"🚀",date:"March 2026",photo:"https://images.unsplash.com/photo-1516849841032-87cbac4d88f7?auto=format&fit=crop&w=800&q=90"},
+          {slug:"lab-grown-brains",tag:"Biotech",title:"Lab-Grown Brains Are Getting Smarter — And That's Terrifying",subtitle:"Neural organoids are developing electrical activity resembling premature infants. The ethics of creating consciousness in a dish.",icon:"🧬",date:"March 2026",photo:"https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&w=800&q=90"},
+          {slug:"3d-printing-revolution",tag:"Engineering",title:"MIT's 3D Printer Can Build Working Motors in Hours",subtitle:"A new multi-material 3D printer fabricates fully functional electromechanical devices — motors, actuators, and robots — in a single session.",icon:"⚙️",date:"March 2026",photo:"https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=90"}
         ];
         const activeArticle=blogArticles.find(a=>a.slug===blogArticle);
         const shareLink=(slug)=>{const url=window.location.origin+window.location.pathname+"#blog/"+slug;navigator.clipboard.writeText(url).then(()=>{setAuthErr("Link copied!");setTimeout(()=>setAuthErr(""),2000)})};
@@ -3165,34 +3182,24 @@ html{scroll-behavior:smooth}
         if(!activeArticle)return<>
           <h1 style={infoH}>Security Blog</h1>
           <p style={infoP}>In-depth articles about cryptography, password security, privacy, and the future of technology.</p>
-          <div style={{display:"flex",flexDirection:"column",gap:16,marginTop:24}}>
-            {blogArticles.map(a=><div key={a.slug} onClick={()=>{setBlogArticle(a.slug);window.scrollTo(0,0)}} style={{background:T.dark?"rgba(255,255,255,0.03)":"rgba(0,0,0,0.03)",border:`1px solid ${T.bdr}`,borderRadius:16,cursor:"pointer",transition:"all 0.3s",position:"relative",overflow:"hidden"}}
-              onMouseEnter={e=>{e.currentTarget.style.borderColor=T.accent;e.currentTarget.style.transform="translateY(-2px)"}}
-              onMouseLeave={e=>{e.currentTarget.style.borderColor=T.bdr;e.currentTarget.style.transform="translateY(0)"}}>
-              {a.img&&<div style={{width:"100%",height:140,overflow:"hidden",borderRadius:"16px 16px 0 0",position:"relative"}}>{blogImg(a.img,750,140)}<div style={{position:"absolute",bottom:0,left:0,right:0,height:40,background:"linear-gradient(transparent,rgba(0,0,0,0.5))",pointerEvents:"none"}}/></div>}
-              <div style={{padding:"20px 22px",position:"relative"}}>
-              <div style={{position:"absolute",top:-30,right:-30,width:120,height:120,background:`radial-gradient(circle,rgba(${T.accentRgb},0.08),transparent 70%)`,pointerEvents:"none"}}/>
-              <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}>
-                <span style={{fontSize:28}}>{a.icon}</span>
-                <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"3px 12px",fontSize:10,fontWeight:600,letterSpacing:1.5,textTransform:"uppercase",color:T.accent}}>{a.tag}</span>
-                <span style={{fontSize:10,color:T.dim,marginLeft:"auto"}}>{a.date}</span>
-              </div>
-              <h3 style={{fontSize:18,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",marginBottom:8,lineHeight:1.3}}>{a.title}</h3>
-              <p style={{fontSize:13,color:"#8892a4",lineHeight:1.6,margin:0}}>{a.subtitle}</p>
-              <div style={{display:"flex",alignItems:"center",gap:12,marginTop:16}}>
-                <span style={{fontSize:12,fontWeight:600,color:T.accent}}>Read Article</span>
-                <span style={{color:T.accent}}>&#8594;</span>
-                <button onClick={e=>{e.stopPropagation();shareLink(a.slug)}} style={{marginLeft:"auto",background:`rgba(${T.accentRgb},0.1)`,border:`1px solid rgba(${T.accentRgb},0.3)`,borderRadius:6,padding:"5px 12px",fontSize:11,fontWeight:600,color:T.accent,cursor:"pointer",fontFamily:"inherit",transition:"all 0.2s"}}
-                  onMouseEnter={e=>e.currentTarget.style.background=`rgba(${T.accentRgb},0.2)`}
-                  onMouseLeave={e=>e.currentTarget.style.background=`rgba(${T.accentRgb},0.1)`}>Share Link</button>
-              </div>
+          <div className="blog-grid-wrap" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:16,marginTop:24}}>
+            {blogArticles.map((a,idx)=><div key={a.slug} className="blog-card" onClick={()=>{setBlogArticle(a.slug);window.scrollTo(0,0)}} style={{animationDelay:idx*0.06+"s",animation:`blogArticleIn 0.5s cubic-bezier(0.22,1,0.36,1) ${idx*0.06}s both`}}>
+              <div className="blog-card-img" style={{backgroundImage:`url(${a.photo})`}}/>
+              <div className="blog-card-overlay">
+                <span className="blog-card-tag">{a.tag}</span>
+                <div className="blog-card-title" style={{fontFamily:`${F.heading},sans-serif`}}>{a.title}</div>
+                <div className="blog-card-subtitle">{a.subtitle}</div>
+                <div className="blog-card-meta">
+                  <span style={{fontSize:10,color:"rgba(255,255,255,0.5)"}}>{a.date}</span>
+                  <span style={{fontSize:16,marginLeft:"auto",opacity:0.6}}>{a.icon}</span>
+                </div>
               </div>
             </div>)}
           </div>
         </>;
 
         // Individual article view
-        return<>
+        return<div className="blog-article-enter">
           <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:24}}>
             <button onClick={()=>{setBlogArticle(null);window.scrollTo(0,0)}} style={{background:`rgba(${T.accentRgb},0.08)`,border:`1px solid rgba(${T.accentRgb},0.3)`,borderRadius:8,padding:"6px 14px",color:T.accent,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",transition:"all 0.2s"}}>&#8592; All Articles</button>
             <button onClick={()=>shareLink(activeArticle.slug)} style={{marginLeft:"auto",background:`rgba(${T.accentRgb},0.1)`,border:`1px solid rgba(${T.accentRgb},0.3)`,borderRadius:8,padding:"6px 14px",fontSize:12,fontWeight:600,color:T.accent,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",gap:6,transition:"all 0.2s"}}
@@ -3923,7 +3930,7 @@ html{scroll-behavior:smooth}
         <div style={{textAlign:"center",marginTop:32,fontSize:12,color:"#4a5568"}}>The factory of the future fits on a desk. So does the weapons lab.</div>
           </>}
 
-        </>;
+        </div>;
       })()}</>
     };
     return(
