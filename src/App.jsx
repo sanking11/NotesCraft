@@ -561,12 +561,16 @@ export default function NotesCraft(){
   const[blogFullArticle,setBlogFullArticle]=useState(()=>window.location.hash.replace("#","").startsWith("blog/"));
   const[blogFontSize,setBlogFontSize]=useState(1);
   const[blogReadingView,setBlogReadingView]=useState(false);
+  const[blogArticleTheme,setBlogArticleTheme]=useState('dark');
+  const[blogDynBg,setBlogDynBg]=useState(null);
   const blogFlyRef=useRef(null);
   const blogCardRectRef=useRef(null);
   const blogBusyRef=useRef(false);
+  const extractDominantColor=(photoUrl)=>{const img=new Image();img.crossOrigin='anonymous';img.onload=()=>{const c=document.createElement('canvas');const ctx=c.getContext('2d');c.width=50;c.height=50;ctx.drawImage(img,0,0,50,50);try{const d=ctx.getImageData(0,0,50,50).data;let r=0,g=0,b=0,n=0;for(let i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2];n++}setBlogDynBg({r:Math.round(r/n),g:Math.round(g/n),b:Math.round(b/n)})}catch(e){}};img.src=photoUrl};
   const openBlogCard=(slug,cardEl,photoUrl)=>{
     if(blogBusyRef.current)return;blogBusyRef.current=true;
     setBlogFullArticle(false);
+    extractDominantColor(photoUrl);
     const from=cardEl.getBoundingClientRect();
     blogCardRectRef.current={left:from.left,top:from.top,width:from.width,height:from.height,slug};
     const fly=blogFlyRef.current;if(!fly){blogBusyRef.current=false;setBlogArticle(slug);return}
@@ -594,7 +598,7 @@ export default function NotesCraft(){
         if(fly&&rect){fly.style.transition=`left ${imgDur}ms ${imgEase},top ${imgDur}ms ${imgEase},width ${imgDur}ms ${imgEase},height ${imgDur}ms ${imgEase}`;fly.style.left=rect.left+'px';fly.style.top=rect.top+'px';fly.style.width=rect.width+'px';fly.style.height=rect.height+'px';}
       },imgDelay);
       setTimeout(()=>{
-        setBlogArticle(null);setBlogFullArticle(false);setBlogFontSize(1);setBlogReadingView(false);window.scrollTo(0,0);
+        setBlogArticle(null);setBlogFullArticle(false);setBlogFontSize(1);setBlogReadingView(false);setBlogArticleTheme('dark');setBlogDynBg(null);window.scrollTo(0,0);
         if(fly){fly.style.opacity='0';fly.style.transition='none';}
         const origCard=document.querySelector(`[data-blog-slug="${rect.slug}"]`);
         if(origCard)origCard.style.opacity='1';
@@ -602,7 +606,7 @@ export default function NotesCraft(){
         blogCardRectRef.current=null;blogBusyRef.current=false;
       },imgDelay+imgDur+40);
     }else{
-      setBlogArticle(null);setBlogFullArticle(false);setBlogFontSize(1);setBlogReadingView(false);window.scrollTo(0,0);
+      setBlogArticle(null);setBlogFullArticle(false);setBlogFontSize(1);setBlogReadingView(false);setBlogArticleTheme('dark');setBlogDynBg(null);window.scrollTo(0,0);
       if(fly){fly.style.opacity='0';fly.style.transition='none';}
       const ovR=document.querySelector('.blog-ov-right');if(ovR){ovR.style.transform='';ovR.style.transition='';}
       blogCardRectRef.current=null;blogBusyRef.current=false;
@@ -2269,11 +2273,27 @@ html{scroll-behavior:smooth}
 .blog-ov-toolbar button:hover{background:rgba(${T.accentRgb},0.3);border-color:${T.accent};color:#fff;box-shadow:0 0 24px rgba(${T.accentRgb},0.4),0 0 48px rgba(${T.accentRgb},0.15),0 2px 8px rgba(0,0,0,0.4)}
 .blog-ov-toolbar button:disabled{opacity:0.3;cursor:not-allowed;box-shadow:none}
 .blog-ov-toolbar button:disabled:hover{background:rgba(${T.accentRgb},0.12);border-color:rgba(${T.accentRgb},0.5);box-shadow:none}
-.blog-reading-view{background:${T.dark?"#1a1a1a":"#faf8f0"}!important}
+.blog-reading-view{background:${T.dark?"#1a1a1a":"#faf8f0"}}
 .blog-reading-view .blog-content-section{font-family:Georgia,'Times New Roman',serif!important;line-height:2.2!important;max-width:680px!important;color:${T.dark?"#d4cfc4":"#3a3530"}!important}
 .blog-reading-view .blog-ov-hero{font-family:Georgia,'Times New Roman',serif}
 .blog-reading-view .blog-ov-hero h1{color:${T.dark?"#e8e0d4":"#2a2520"}!important}
 .blog-reading-view .blog-ov-hero p{color:${T.dark?"rgba(212,207,196,0.6)":"rgba(58,53,48,0.6)"}!important}
+.blog-article-light .blog-content-section{color:#374151!important}
+.blog-article-light .blog-content-section p{color:#374151!important}
+.blog-article-light .blog-content-section strong{color:#1a202c!important}
+.blog-article-light .blog-content-section div{color:#4a5568!important}
+.blog-article-light .blog-content-section span{color:#4a5568!important}
+.blog-article-light .blog-content-section h2{color:${T.accent}!important}
+.blog-article-light .blog-ov-toolbar button{background:rgba(255,255,255,0.85)!important;border-color:rgba(0,0,0,0.12)!important;color:#374151!important;box-shadow:0 2px 10px rgba(0,0,0,0.08)!important}
+.blog-article-light .blog-ov-toolbar button:hover{background:rgba(255,255,255,0.95)!important;border-color:rgba(0,0,0,0.2)!important}
+.blog-article-light::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12)!important}
+.blog-article-light .blog-read-btn{background:rgba(0,0,0,0.04)!important;border-color:rgba(0,0,0,0.15)!important}
+.blog-article-light .blog-read-btn span{color:#1a202c!important}
+.blog-article-light .blog-read-arrow{border-color:rgba(0,0,0,0.2)!important;color:#1a202c!important}
+.blog-reading-view.blog-article-light .blog-content-section{color:#3a3530!important}
+.blog-reading-view.blog-article-light .blog-content-section p{color:#3a3530!important}
+.blog-reading-view.blog-article-light .blog-ov-hero h1{color:#2a2520!important}
+.blog-reading-view.blog-article-light .blog-ov-hero p{color:rgba(58,53,48,0.6)!important}
 @media(max-width:900px){.blog-hero-wrap{grid-template-columns:1fr!important;height:auto!important}.blog-hero-col{height:50vh}.blog-grid-wrap{grid-template-columns:repeat(2,1fr)!important}.blog-ov-left{display:none}.blog-ov-right{flex:0 0 100%}.blog-ov-hero{padding:28px 20px}}
 @media(max-width:560px){.blog-grid-wrap{grid-template-columns:1fr!important}}`;
 
@@ -3277,6 +3297,7 @@ html{scroll-behavior:smooth}
         const tickerText=blogArticles.map(a=>a.title.toUpperCase()).join("  •  ");
         const artIdx=activeArticle?blogArticles.findIndex(a=>a.slug===activeArticle.slug):-1;
         const blogContentRef=React.createRef();
+        const blogOvBg=(()=>{const d=blogDynBg;const isL=blogArticleTheme==='light';const base=isL?(blogReadingView?'#faf8f0':'#f8f9fa'):(blogReadingView?(T.dark?'#1a1a1a':'#1a1a1a'):(T.dark?T.bg:'#0a0a12'));if(!d)return base;if(isL)return`linear-gradient(180deg, rgba(${d.r},${d.g},${d.b},0.18) 0%, rgba(${d.r},${d.g},${d.b},0.06) 40%, ${base} 100%)`;return`linear-gradient(180deg, rgba(${d.r},${d.g},${d.b},0.35) 0%, rgba(${d.r},${d.g},${d.b},0.1) 35%, ${base} 100%)`})();
         return<>
           {/* Top 3 Hero Columns */}
           <div className="blog-hero-wrap">
@@ -3317,28 +3338,29 @@ html{scroll-behavior:smooth}
           {/* Article overlay */}
           <div className={`blog-overlay${blogArticle?' visible':''}${blogFullArticle?' fullscreen':''}`}>
             <div className="blog-ov-left" />
-            <div className={`blog-ov-right${blogReadingView?' blog-reading-view':''}`}>
+            <div className={`blog-ov-right${blogReadingView?' blog-reading-view':''}${blogArticleTheme==='light'?' blog-article-light':''}`} style={{background:blogOvBg}}>
               <div className="blog-ov-toolbar">
                 {blogFullArticle&&<>
                 <button title="Decrease font size" disabled={blogFontSize<=0.8} onClick={()=>setBlogFontSize(s=>Math.round((s-0.1)*10)/10)} style={blogFontSize<=0.8?{opacity:0.3}:undefined}><span style={{fontSize:13,fontWeight:800,fontFamily:'sans-serif'}}>A<span style={{fontSize:10}}>−</span></span></button>
                 <button title="Increase font size" disabled={blogFontSize>=1.2} onClick={()=>setBlogFontSize(s=>Math.round((s+0.1)*10)/10)} style={blogFontSize>=1.2?{opacity:0.3}:undefined}><span style={{fontSize:13,fontWeight:800,fontFamily:'sans-serif'}}>A<span style={{fontSize:10}}>+</span></span></button>
                 <button title="Reading view" onClick={()=>setBlogReadingView(v=>!v)} style={blogReadingView?{background:T.accent,borderColor:T.accent}:undefined}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></button>
                 </>}
+                <button title={blogArticleTheme==='dark'?"Light theme":"Dark theme"} onClick={()=>setBlogArticleTheme(t=>t==='dark'?'light':'dark')} style={blogArticleTheme==='light'?{background:'rgba(255,255,255,0.9)',borderColor:'rgba(0,0,0,0.15)',color:'#374151'}:undefined}>{blogArticleTheme==='dark'?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>:<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>}</button>
                 <button title="Fullscreen" onClick={()=>readFullArticle(blogContentRef)}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg></button>
                 <button title="Close" onClick={closeBlogArticle}>&#10005;</button>
               </div>
               {activeArticle&&<>
               <div className="blog-ov-hero">
                 <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:24}}>
-                  <span style={{fontSize:13,fontWeight:600,color:"rgba(255,255,255,0.4)",letterSpacing:1}}>{artIdx+1} — {blogArticles.length}</span>
+                  <span style={{fontSize:13,fontWeight:600,color:blogArticleTheme==='dark'?"rgba(255,255,255,0.4)":"rgba(0,0,0,0.4)",letterSpacing:1}}>{artIdx+1} — {blogArticles.length}</span>
                   <span style={{width:8,height:8,borderRadius:"50%",background:T.accent}}/>
                   <span style={{fontSize:11,fontWeight:700,letterSpacing:2,textTransform:"uppercase",color:T.accent}}>{activeArticle.tag}</span>
                 </div>
-                <h1 style={{fontSize:"clamp(24px,3.5vw,42px)",fontWeight:900,color:"#fff",lineHeight:1.08,fontFamily:`${F.heading},sans-serif`,textTransform:"uppercase",letterSpacing:"-0.5px",margin:"0 0 20px"}}>{activeArticle.title}</h1>
-                <p style={{fontSize:14,color:"rgba(255,255,255,0.5)",lineHeight:1.7,margin:"0 0 12px",maxWidth:520}}>{activeArticle.subtitle}</p>
+                <h1 style={{fontSize:"clamp(24px,3.5vw,42px)",fontWeight:900,color:blogArticleTheme==='dark'?"#fff":"#1a202c",lineHeight:1.08,fontFamily:`${F.heading},sans-serif`,textTransform:"uppercase",letterSpacing:"-0.5px",margin:"0 0 20px"}}>{activeArticle.title}</h1>
+                <p style={{fontSize:14,color:blogArticleTheme==='dark'?"rgba(255,255,255,0.5)":"rgba(0,0,0,0.55)",lineHeight:1.7,margin:"0 0 12px",maxWidth:520}}>{activeArticle.subtitle}</p>
                 <div style={{display:"flex",alignItems:"center",gap:16,marginTop:8}}>
-                  <span style={{fontSize:11,color:"rgba(255,255,255,0.3)"}}>{activeArticle.date} • {activeArticle.icon}</span>
-                  <button onClick={()=>shareLink(activeArticle.slug)} style={{background:"none",border:"none",padding:0,fontSize:11,fontWeight:600,color:"rgba(255,255,255,0.3)",cursor:"pointer",fontFamily:"inherit",letterSpacing:1,transition:"color 0.2s"}} onMouseEnter={e=>{e.currentTarget.style.color=T.accent}} onMouseLeave={e=>{e.currentTarget.style.color="rgba(255,255,255,0.3)"}}>SHARE ↗</button>
+                  <span style={{fontSize:11,color:blogArticleTheme==='dark'?"rgba(255,255,255,0.3)":"rgba(0,0,0,0.4)"}}>{activeArticle.date} • {activeArticle.icon}</span>
+                  <button onClick={()=>shareLink(activeArticle.slug)} style={{background:"none",border:"none",padding:0,fontSize:11,fontWeight:600,color:blogArticleTheme==='dark'?"rgba(255,255,255,0.3)":"rgba(0,0,0,0.4)",cursor:"pointer",fontFamily:"inherit",letterSpacing:1,transition:"color 0.2s"}} onMouseEnter={e=>{e.currentTarget.style.color=T.accent}} onMouseLeave={e=>{e.currentTarget.style.color=blogArticleTheme==='dark'?"rgba(255,255,255,0.3)":"rgba(0,0,0,0.4)"}}>SHARE ↗</button>
                 </div>
               </div>
               <div ref={blogContentRef} className="blog-content-section" style={{padding:"40px 44px 48px",maxWidth:blogReadingView?680:780,margin:"0 auto",boxSizing:"border-box",fontSize:Math.round(14*blogFontSize),fontFamily:blogReadingView?"Georgia,'Times New Roman',serif":"inherit",lineHeight:blogReadingView?2.2:undefined,transition:"font-size 0.2s,max-width 0.3s"}}>
