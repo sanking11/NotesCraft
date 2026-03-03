@@ -558,15 +558,16 @@ export default function NotesCraft(){
   const validInfoPages=["about","privacy","terms","password-manager","security-blog"];
   const[infoPage,setInfoPage]=useState(()=>{const h=window.location.hash.replace("#","");if(h.startsWith("blog/"))return"security-blog";return validInfoPages.includes(h)?h:null});
   const[blogArticle,setBlogArticle]=useState(()=>{const h=window.location.hash.replace("#","");return h.startsWith("blog/")?h.slice(5):null});
-  const[blogClosing,setBlogClosing]=useState(false);
+  const[blogFullArticle,setBlogFullArticle]=useState(()=>window.location.hash.replace("#","").startsWith("blog/"));
   const blogFlyRef=useRef(null);
   const blogCardRectRef=useRef(null);
   const blogBusyRef=useRef(false);
   const openBlogCard=(slug,cardEl,photoUrl)=>{
     if(blogBusyRef.current)return;blogBusyRef.current=true;
+    setBlogFullArticle(false);
     const from=cardEl.getBoundingClientRect();
     blogCardRectRef.current={left:from.left,top:from.top,width:from.width,height:from.height,slug};
-    const fly=blogFlyRef.current;if(!fly)return;
+    const fly=blogFlyRef.current;if(!fly){blogBusyRef.current=false;setBlogArticle(slug);return}
     fly.style.cssText=`position:fixed;z-index:2000;left:${from.left}px;top:${from.top}px;width:${from.width}px;height:${from.height}px;background-image:url(${photoUrl.replace("w=800","w=1400&q=95")});background-size:cover;background-position:center;opacity:1;pointer-events:none;will-change:transform,width,height,left,top;transition:none;border-radius:0;`;
     cardEl.style.opacity='0';
     fly.getBoundingClientRect();
@@ -577,24 +578,31 @@ export default function NotesCraft(){
     setTimeout(()=>{setBlogArticle(slug)},200);
     setTimeout(()=>{blogBusyRef.current=false},dur+80);
   };
+  const readFullArticle=(ref)=>{setBlogFullArticle(true);const fly=blogFlyRef.current;if(fly){fly.style.transition='opacity 0.4s';fly.style.opacity='0'}setTimeout(()=>{if(ref&&ref.current)ref.current.scrollIntoView({behavior:'smooth'})},350)};
   const closeBlogArticle=()=>{
     if(blogBusyRef.current)return;blogBusyRef.current=true;
-    setBlogClosing(true);
     const fly=blogFlyRef.current;
-    const ovRight=document.querySelector('.blog-ov-right');
-    if(ovRight){ovRight.style.transition='transform 420ms cubic-bezier(0.55,0,0.78,0)';ovRight.style.transform='translateX(100%)';}
     const rect=blogCardRectRef.current;
-    const imgDelay=100,imgDur=660,imgEase='cubic-bezier(0.76,0,0.24,1)';
-    setTimeout(()=>{
-      if(fly&&rect){fly.style.transition=`left ${imgDur}ms ${imgEase},top ${imgDur}ms ${imgEase},width ${imgDur}ms ${imgEase},height ${imgDur}ms ${imgEase}`;fly.style.left=rect.left+'px';fly.style.top=rect.top+'px';fly.style.width=rect.width+'px';fly.style.height=rect.height+'px';}
-    },imgDelay);
-    setTimeout(()=>{
-      setBlogClosing(false);setBlogArticle(null);window.scrollTo(0,0);
+    const hasFlip=!!rect;
+    if(hasFlip){
+      const ovRight=document.querySelector('.blog-ov-right');
+      if(ovRight){ovRight.style.transition='transform 420ms cubic-bezier(0.55,0,0.78,0)';ovRight.style.transform='translateX(100%)';}
+      const imgDelay=100,imgDur=660,imgEase='cubic-bezier(0.76,0,0.24,1)';
+      setTimeout(()=>{
+        if(fly&&rect){fly.style.transition=`left ${imgDur}ms ${imgEase},top ${imgDur}ms ${imgEase},width ${imgDur}ms ${imgEase},height ${imgDur}ms ${imgEase}`;fly.style.left=rect.left+'px';fly.style.top=rect.top+'px';fly.style.width=rect.width+'px';fly.style.height=rect.height+'px';}
+      },imgDelay);
+      setTimeout(()=>{
+        setBlogArticle(null);setBlogFullArticle(false);window.scrollTo(0,0);
+        if(fly){fly.style.opacity='0';fly.style.transition='none';}
+        const origCard=document.querySelector(`[data-blog-slug="${rect.slug}"]`);
+        if(origCard)origCard.style.opacity='1';
+        blogCardRectRef.current=null;blogBusyRef.current=false;
+      },imgDelay+imgDur+40);
+    }else{
+      setBlogArticle(null);setBlogFullArticle(false);window.scrollTo(0,0);
       if(fly){fly.style.opacity='0';fly.style.transition='none';}
-      const origCard=document.querySelector(`[data-blog-slug="${rect?.slug}"]`);
-      if(origCard)origCard.style.opacity='1';
       blogCardRectRef.current=null;blogBusyRef.current=false;
-    },imgDelay+imgDur+40);
+    }
   };
   const[user,setUser]=useState(null);
   const[email,setEmail]=useState("");
@@ -2242,6 +2250,9 @@ html{scroll-behavior:smooth}
 .blog-ov-left{flex:0 0 50%;background:transparent}
 .blog-ov-right{flex:0 0 50%;position:relative;overflow-y:auto;display:flex;flex-direction:column;padding:0;transform:translateX(100%);transition:transform 520ms cubic-bezier(0.22,1,0.36,1);background:${T.dark?T.bg:"#0a0a12"}}
 .blog-overlay.visible .blog-ov-right{transform:translateX(0)}
+.blog-overlay.fullscreen .blog-ov-left{display:none}
+.blog-overlay.fullscreen .blog-ov-right{flex:0 0 100%}
+.blog-overlay.fullscreen .blog-ov-hero::before{display:none}
 .blog-ov-right::-webkit-scrollbar{width:3px}
 .blog-ov-right::-webkit-scrollbar-thumb{background:rgba(${T.accentRgb},0.2);border-radius:2px}
 .blog-ov-hero{padding:48px 44px;min-height:100vh;display:flex;flex-direction:column;justify-content:center}
@@ -3293,7 +3304,7 @@ html{scroll-behavior:smooth}
           <div ref={blogFlyRef} style={{position:'fixed',zIndex:2000,pointerEvents:'none',opacity:0}} />
 
           {/* Article overlay */}
-          <div className={`blog-overlay${blogArticle?' visible':''}`}>
+          <div className={`blog-overlay${blogArticle?' visible':''}${blogFullArticle?' fullscreen':''}`}>
             <div className="blog-ov-left" />
             <div className="blog-ov-right">
               <button id="blog-close-btn" onClick={closeBlogArticle}>&#10005;</button>
@@ -3307,11 +3318,12 @@ html{scroll-behavior:smooth}
                 <h1 style={{fontSize:"clamp(24px,3.5vw,42px)",fontWeight:900,color:"#fff",lineHeight:1.08,fontFamily:`${F.heading},sans-serif`,textTransform:"uppercase",letterSpacing:"-0.5px",margin:"0 0 20px"}}>{activeArticle.title}</h1>
                 <p style={{fontSize:14,color:"rgba(255,255,255,0.5)",lineHeight:1.7,margin:"0 0 8px",maxWidth:420}}>{activeArticle.subtitle}</p>
                 <div style={{fontSize:11,color:"rgba(255,255,255,0.3)",marginBottom:8}}>{activeArticle.date} • {activeArticle.icon}</div>
-                <button className="blog-read-btn" onClick={()=>blogContentRef.current?.scrollIntoView({behavior:"smooth"})}>
+                <button onClick={()=>shareLink(activeArticle.slug)} style={{marginTop:16,background:"none",border:"none",padding:0,fontSize:11,fontWeight:600,color:"rgba(255,255,255,0.3)",cursor:"pointer",fontFamily:"inherit",letterSpacing:1,transition:"color 0.2s"}} onMouseEnter={e=>{e.currentTarget.style.color=T.accent}} onMouseLeave={e=>{e.currentTarget.style.color="rgba(255,255,255,0.3)"}}>SHARE ARTICLE ↗</button>
+                <div style={{flex:1}} />
+                <button className="blog-read-btn" onClick={()=>readFullArticle(blogContentRef)}>
                   <span style={{fontSize:18,fontWeight:700,color:"#fff",fontFamily:`${F.heading},sans-serif`}}>Read full Article</span>
                   <span className="blog-read-arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
                 </button>
-                <button onClick={()=>shareLink(activeArticle.slug)} style={{marginTop:16,background:"none",border:"none",padding:0,fontSize:11,fontWeight:600,color:"rgba(255,255,255,0.3)",cursor:"pointer",fontFamily:"inherit",letterSpacing:1,transition:"color 0.2s"}} onMouseEnter={e=>{e.currentTarget.style.color=T.accent}} onMouseLeave={e=>{e.currentTarget.style.color="rgba(255,255,255,0.3)"}}>SHARE ARTICLE ↗</button>
               </div>
               <div ref={blogContentRef} className="blog-content-section" style={{padding:"40px 32px 32px",maxWidth:800,margin:"0 auto"}}>
 
@@ -4053,8 +4065,8 @@ html{scroll-behavior:smooth}
           <div style={{position:"absolute",width:600,height:600,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.2) 0%,transparent 70%)",filter:"blur(60px)",top:"-15%",left:"-10%",animation:"ldOrb1 25s ease-in-out infinite"}}/>
           <div style={{position:"absolute",width:500,height:500,borderRadius:"50%",background:`radial-gradient(circle,rgba(${T.accentRgb},0.18) 0%,transparent 70%)`,filter:"blur(45px)",bottom:"-10%",right:"-5%",animation:"ldOrb2 30s ease-in-out infinite"}}/>
         </div>
-        <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:100,padding:"16px 40px",display:"flex",alignItems:"center",justifyContent:"space-between",background:`linear-gradient(180deg,${T.dark?T.bg:"#0a0a12"} 0%,transparent 100%)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)"}}>
-          <div style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer"}} onClick={()=>{setBlogArticle(null);setInfoPage(null)}}>
+        <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:blogArticle?2000:100,padding:"16px 40px",display:"flex",alignItems:"center",justifyContent:"space-between",background:`linear-gradient(180deg,${T.dark?T.bg:"#0a0a12"} 0%,transparent 100%)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)"}}>
+          <div style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer"}} onClick={()=>{setBlogArticle(null);setBlogFullArticle(false);blogBusyRef.current=false;blogCardRectRef.current=null;setInfoPage(null)}}>
             <ButterflyLogo s={28} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} flap/>
             <span style={{fontSize:18,fontWeight:800,letterSpacing:3,fontFamily:`${F.heading},sans-serif`,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>NOTESCRAFT</span>
           </div>
