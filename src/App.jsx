@@ -559,7 +559,43 @@ export default function NotesCraft(){
   const[infoPage,setInfoPage]=useState(()=>{const h=window.location.hash.replace("#","");if(h.startsWith("blog/"))return"security-blog";return validInfoPages.includes(h)?h:null});
   const[blogArticle,setBlogArticle]=useState(()=>{const h=window.location.hash.replace("#","");return h.startsWith("blog/")?h.slice(5):null});
   const[blogClosing,setBlogClosing]=useState(false);
-  const closeBlogArticle=()=>{setBlogClosing(true);setTimeout(()=>{setBlogClosing(false);setBlogArticle(null);window.scrollTo(0,0)},600)};
+  const blogFlyRef=useRef(null);
+  const blogCardRectRef=useRef(null);
+  const blogBusyRef=useRef(false);
+  const openBlogCard=(slug,cardEl,photoUrl)=>{
+    if(blogBusyRef.current)return;blogBusyRef.current=true;
+    const from=cardEl.getBoundingClientRect();
+    blogCardRectRef.current={left:from.left,top:from.top,width:from.width,height:from.height,slug};
+    const fly=blogFlyRef.current;if(!fly)return;
+    fly.style.cssText=`position:fixed;z-index:2000;left:${from.left}px;top:${from.top}px;width:${from.width}px;height:${from.height}px;background-image:url(${photoUrl.replace("w=800","w=1400&q=95")});background-size:cover;background-position:center;opacity:1;pointer-events:none;will-change:transform,width,height,left,top;transition:none;border-radius:0;`;
+    cardEl.style.opacity='0';
+    fly.getBoundingClientRect();
+    const dur=720,ease='cubic-bezier(0.76,0,0.24,1)';
+    const tw=window.innerWidth*0.5,th=window.innerHeight;
+    fly.style.transition=`left ${dur}ms ${ease},top ${dur}ms ${ease},width ${dur}ms ${ease},height ${dur}ms ${ease}`;
+    fly.style.left='0px';fly.style.top='0px';fly.style.width=tw+'px';fly.style.height=th+'px';
+    setTimeout(()=>{setBlogArticle(slug)},200);
+    setTimeout(()=>{blogBusyRef.current=false},dur+80);
+  };
+  const closeBlogArticle=()=>{
+    if(blogBusyRef.current)return;blogBusyRef.current=true;
+    setBlogClosing(true);
+    const fly=blogFlyRef.current;
+    const ovRight=document.querySelector('.blog-ov-right');
+    if(ovRight){ovRight.style.transition='transform 420ms cubic-bezier(0.55,0,0.78,0)';ovRight.style.transform='translateX(100%)';}
+    const rect=blogCardRectRef.current;
+    const imgDelay=100,imgDur=660,imgEase='cubic-bezier(0.76,0,0.24,1)';
+    setTimeout(()=>{
+      if(fly&&rect){fly.style.transition=`left ${imgDur}ms ${imgEase},top ${imgDur}ms ${imgEase},width ${imgDur}ms ${imgEase},height ${imgDur}ms ${imgEase}`;fly.style.left=rect.left+'px';fly.style.top=rect.top+'px';fly.style.width=rect.width+'px';fly.style.height=rect.height+'px';}
+    },imgDelay);
+    setTimeout(()=>{
+      setBlogClosing(false);setBlogArticle(null);window.scrollTo(0,0);
+      if(fly){fly.style.opacity='0';fly.style.transition='none';}
+      const origCard=document.querySelector(`[data-blog-slug="${rect?.slug}"]`);
+      if(origCard)origCard.style.opacity='1';
+      blogCardRectRef.current=null;blogBusyRef.current=false;
+    },imgDelay+imgDur+40);
+  };
   const[user,setUser]=useState(null);
   const[email,setEmail]=useState("");
   const[pw,setPw]=useState("");
@@ -2201,27 +2237,23 @@ html{scroll-behavior:smooth}
 .blog-card-meta{display:flex;align-items:center;gap:8px;margin-top:10px;opacity:0;transform:translateY(8px);transition:all 0.4s 0.15s}
 .blog-card:hover .blog-card-meta{opacity:1;transform:translateY(0)}
 @keyframes blogFadeIn{from{opacity:0}to{opacity:1}}
-@keyframes blogArticleIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-@keyframes blogDeckOpenImg{0%{transform:translateX(100%) rotateY(-15deg) scale(0.85);opacity:0}40%{transform:translateX(20%) rotateY(-5deg) scale(0.95);opacity:1}100%{transform:translateX(0) rotateY(0) scale(1);opacity:1}}
-@keyframes blogDeckOpenRight{0%{transform:translateX(120%) rotateY(-12deg) scale(0.8);opacity:0}50%{transform:translateX(30%) rotateY(-4deg) scale(0.92);opacity:0.7}100%{transform:translateX(0) rotateY(0) scale(1);opacity:1}}
-@keyframes blogDeckCloseImg{0%{transform:translateX(0) rotateY(0) scale(1);opacity:1}60%{transform:translateX(-20%) rotateY(5deg) scale(0.95);opacity:1}100%{transform:translateX(-100%) rotateY(15deg) scale(0.85);opacity:0}}
-@keyframes blogDeckCloseRight{0%{transform:translateX(0) rotateY(0) scale(1);opacity:1}50%{transform:translateX(-10%) rotateY(4deg) scale(0.92);opacity:0.7}100%{transform:translateX(-120%) rotateY(12deg) scale(0.8);opacity:0}}
-@keyframes blogContentFadeIn{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
-@keyframes blogContentFadeOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(40px)}}
-.blog-article-enter{perspective:1200px;overflow:hidden}
-.blog-split{display:grid;grid-template-columns:1fr 1fr;min-height:80vh;overflow:visible;perspective:1200px}
-.blog-split-img{background-size:cover;background-position:center;position:relative;min-height:70vh;transform-origin:right center;animation:blogDeckOpenImg 0.7s cubic-bezier(0.22,1,0.36,1) both}
-.blog-split-right{display:flex;flex-direction:column;justify-content:center;padding:48px 44px;position:relative;background:rgba(0,0,0,0.3);transform-origin:left center;animation:blogDeckOpenRight 0.7s cubic-bezier(0.22,1,0.36,1) 0.08s both}
-.blog-split-right::before{content:'';position:absolute;top:0;left:0;bottom:0;width:1px;background:linear-gradient(180deg,transparent,rgba(${T.accentRgb},0.3),transparent)}
-.blog-closing .blog-split-img{animation:blogDeckCloseImg 0.55s cubic-bezier(0.55,0,1,0.45) 0.06s both}
-.blog-closing .blog-split-right{animation:blogDeckCloseRight 0.55s cubic-bezier(0.55,0,1,0.45) both}
-.blog-content-section{animation:blogContentFadeIn 0.5s cubic-bezier(0.22,1,0.36,1) 0.4s both}
-.blog-closing .blog-content-section{animation:blogContentFadeOut 0.3s cubic-bezier(0.55,0,1,0.45) both}
+.blog-overlay{position:fixed;inset:0;z-index:1500;display:flex;visibility:hidden;pointer-events:none}
+.blog-overlay.visible{visibility:visible;pointer-events:all}
+.blog-ov-left{flex:0 0 50%;background:transparent}
+.blog-ov-right{flex:0 0 50%;position:relative;overflow-y:auto;display:flex;flex-direction:column;padding:0;transform:translateX(100%);transition:transform 520ms cubic-bezier(0.22,1,0.36,1);background:${T.dark?T.bg:"#0a0a12"}}
+.blog-overlay.visible .blog-ov-right{transform:translateX(0)}
+.blog-ov-right::-webkit-scrollbar{width:3px}
+.blog-ov-right::-webkit-scrollbar-thumb{background:rgba(${T.accentRgb},0.2);border-radius:2px}
+.blog-ov-hero{padding:48px 44px;min-height:100vh;display:flex;flex-direction:column;justify-content:center}
+.blog-ov-hero::before{content:'';position:absolute;top:0;left:0;bottom:0;width:1px;background:linear-gradient(180deg,transparent,rgba(${T.accentRgb},0.3),transparent)}
 .blog-read-btn{display:inline-flex;align-items:center;gap:14px;margin-top:32px;cursor:pointer;background:none;border:none;padding:0;font-family:inherit}
 .blog-read-btn:hover .blog-read-arrow{transform:translateX(4px);background:${T.accent};border-color:${T.accent}}
 .blog-read-arrow{width:48px;height:48px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;transition:all 0.3s;color:#fff}
-@media(max-width:900px){.blog-hero-wrap{grid-template-columns:1fr!important;height:auto!important}.blog-hero-col{height:50vh}.blog-grid-wrap{grid-template-columns:repeat(2,1fr)!important}.blog-split{grid-template-columns:1fr!important}.blog-split-img{min-height:40vh}}
-@media(max-width:560px){.blog-grid-wrap{grid-template-columns:1fr!important}.blog-split-right{padding:28px 20px}}`;
+#blog-close-btn{position:fixed;top:18px;right:18px;width:38px;height:38px;border-radius:50%;border:1.5px solid rgba(${T.accentRgb},0.3);background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;color:rgba(255,255,255,0.6);z-index:3000;opacity:0;transform:scale(0.7);pointer-events:none;transition:opacity 0.25s 0.38s,transform 0.25s 0.38s,background 0.15s}
+.blog-overlay.visible #blog-close-btn{opacity:1;transform:scale(1);pointer-events:all}
+#blog-close-btn:hover{background:rgba(${T.accentRgb},0.2);color:#fff}
+@media(max-width:900px){.blog-hero-wrap{grid-template-columns:1fr!important;height:auto!important}.blog-hero-col{height:50vh}.blog-grid-wrap{grid-template-columns:repeat(2,1fr)!important}.blog-ov-left{display:none}.blog-ov-right{flex:0 0 100%}.blog-ov-hero{padding:28px 20px;min-height:auto;padding-top:80px}}
+@media(max-width:560px){.blog-grid-wrap{grid-template-columns:1fr!important}}`;
 
   const inp={background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.5)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid rgba(${T.accentRgb},0.15)`,borderRadius:10,color:T.text,fontSize:14,fontFamily:`${F.body},sans-serif`,outline:"none",boxSizing:"border-box",transition:"all 0.3s",boxShadow:`0 2px 10px rgba(0,0,0,0.1), inset 0 0 10px rgba(${T.accentRgb},0.02)`};
   const glass={background:T.dark?"rgba(255,255,255,0.03)":"rgba(255,255,255,0.4)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid rgba(${T.accentRgb},0.12)`,boxShadow:`0 8px 32px rgba(0,0,0,0.15), inset 0 0 0 1px rgba(255,255,255,${T.dark?0.03:0.2})`};
@@ -3217,15 +3249,16 @@ html{scroll-behavior:smooth}
           gear:<svg viewBox="0 0 750 180" width={w} height={h} style={{display:"block"}}><defs><linearGradient id="bg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="rgba(245,158,11,0.2)"/><stop offset="100%" stopColor="rgba(99,102,241,0.15)"/></linearGradient></defs><rect fill="url(#bg1)" width="750" height="180" rx="0"/>{[{cx:250,cy:90,r:35,t:12},{cx:480,cy:70,r:25,t:10},{cx:420,cy:120,r:20,t:8}].map((g,gi)=><g key={gi}>{Array.from({length:g.t},(_,i)=>{const a=i*(360/g.t)*Math.PI/180;return<rect key={i} x={g.cx+Math.cos(a)*g.r-4} y={g.cy+Math.sin(a)*g.r-4} width="8" height="8" rx="1" fill="rgba(245,158,11,0.2)" transform={`rotate(${i*(360/g.t)},${g.cx+Math.cos(a)*g.r},${g.cy+Math.sin(a)*g.r})`}/>})}<circle cx={g.cx} cy={g.cy} r={g.r-5} fill="none" stroke="rgba(245,158,11,0.3)" strokeWidth="1.5"/><circle cx={g.cx} cy={g.cy} r={g.r*0.3} fill="rgba(245,158,11,0.15)"/></g>)}<text x="375" y="172" textAnchor="middle" fill="rgba(245,158,11,0.25)" fontSize="10" fontFamily="monospace" letterSpacing="3">MULTI-MATERIAL FABRICATION</text></svg>
         };return imgs[key]||null};
 
-        // Blog listing
-        if(!activeArticle){
+        // Blog listing — always rendered; overlay shows article on top
         const heroArticles=blogArticles.slice(0,3);
         const restArticles=blogArticles.slice(3);
         const tickerText=blogArticles.map(a=>a.title.toUpperCase()).join("  •  ");
+        const artIdx=activeArticle?blogArticles.findIndex(a=>a.slug===activeArticle.slug):-1;
+        const blogContentRef=React.createRef();
         return<>
           {/* Top 3 Hero Columns */}
           <div className="blog-hero-wrap">
-            {heroArticles.map((a,idx)=>{const rowTxt=<><span className="brs-tag">{a.tag}</span><span className="brs-dot"/><span className="brs-label">Content by</span><span>{a.author}</span><span className="brs-dot"/><span className="brs-label">Photo by</span><span>{a.photoBy}</span><span className="brs-dot"/><span>{a.subtitle.slice(0,60)}...</span></>;return<div key={a.slug} className="blog-hero-col" onClick={()=>{setBlogArticle(a.slug);window.scrollTo(0,0)}}>
+            {heroArticles.map((a,idx)=>{const rowTxt=<><span className="brs-tag">{a.tag}</span><span className="brs-dot"/><span className="brs-label">Content by</span><span>{a.author}</span><span className="brs-dot"/><span className="brs-label">Photo by</span><span>{a.photoBy}</span><span className="brs-dot"/><span>{a.subtitle.slice(0,60)}...</span></>;return<div key={a.slug} className="blog-hero-col" data-blog-slug={a.slug} onClick={(e)=>openBlogCard(a.slug,e.currentTarget,a.photo)}>
               <div className="blog-hero-col-bg" style={{backgroundImage:`url(${a.photo.replace("w=800","w=1200")})`}}/>
               <div className="blog-hero-col-info">
                 <span className="blog-hero-col-tag">{a.tag}</span>
@@ -3240,7 +3273,7 @@ html{scroll-behavior:smooth}
           <div style={{padding:"0 32px 32px"}}>
           <h2 style={{fontSize:16,fontWeight:700,color:T.dark?T.text:"#e2e8f0",margin:"32px 0 16px",letterSpacing:1,textTransform:"uppercase",fontFamily:`${F.heading},sans-serif`}}>More Articles</h2>
           <div className="blog-grid-wrap" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:16}}>
-            {restArticles.map((a,idx)=>{const rowTxt=<><span className="brs-tag">{a.tag}</span><span className="brs-dot"/><span className="brs-label">Content by</span><span>{a.author}</span><span className="brs-dot"/><span className="brs-label">Photo by</span><span>{a.photoBy}</span></>;return<div key={a.slug} className="blog-card" onClick={()=>{setBlogArticle(a.slug);window.scrollTo(0,0)}} style={{animation:`blogArticleIn 0.5s cubic-bezier(0.22,1,0.36,1) ${idx*0.06}s both`}}>
+            {restArticles.map((a,idx)=>{const rowTxt=<><span className="brs-tag">{a.tag}</span><span className="brs-dot"/><span className="brs-label">Content by</span><span>{a.author}</span><span className="brs-dot"/><span className="brs-label">Photo by</span><span>{a.photoBy}</span></>;return<div key={a.slug} className="blog-card" data-blog-slug={a.slug} onClick={(e)=>openBlogCard(a.slug,e.currentTarget,a.photo)} style={{animation:`blogArticleIn 0.5s cubic-bezier(0.22,1,0.36,1) ${idx*0.06}s both`}}>
               <div className="blog-card-img" style={{backgroundImage:`url(${a.photo})`}}/>
               <div className="blog-card-overlay">
                 <span className="blog-card-tag">{a.tag}</span>
@@ -3255,35 +3288,32 @@ html{scroll-behavior:smooth}
             </div>})}
           </div>
           </div>{/* close padding wrap */}
-        </>;}
 
-        // Individual article view — Split hero + full content
-        const artIdx=blogArticles.findIndex(a=>a.slug===activeArticle.slug);
-        const blogContentRef=React.createRef();
-        return<div className={`blog-article-enter${blogClosing?" blog-closing":""}`}>
-          {/* Split hero: image left, preview right */}
-          <div className="blog-split">
-            <div className="blog-split-img" style={{backgroundImage:`url(${activeArticle.photo.replace("w=800","w=1400&q=95")})`}}/>
-            <div className="blog-split-right">
-              <button onClick={closeBlogArticle} style={{position:"absolute",top:20,right:20,width:40,height:40,borderRadius:"50%",background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.15)",color:"#fff",fontSize:18,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.3s",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)"}} onMouseEnter={e=>{e.currentTarget.style.background="rgba(255,255,255,0.15)"}} onMouseLeave={e=>{e.currentTarget.style.background="rgba(255,255,255,0.08)"}}>&#10005;</button>
-              <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:24}}>
-                <span style={{fontSize:13,fontWeight:600,color:"rgba(255,255,255,0.4)",letterSpacing:1}}>{artIdx+1} — {blogArticles.length}</span>
-                <span style={{width:8,height:8,borderRadius:"50%",background:T.accent}}/>
-                <span style={{fontSize:11,fontWeight:700,letterSpacing:2,textTransform:"uppercase",color:T.accent}}>{activeArticle.tag}</span>
+          {/* Flying image for FLIP animation */}
+          <div ref={blogFlyRef} style={{position:'fixed',zIndex:2000,pointerEvents:'none',opacity:0}} />
+
+          {/* Article overlay */}
+          <div className={`blog-overlay${blogArticle?' visible':''}`}>
+            <div className="blog-ov-left" />
+            <div className="blog-ov-right">
+              <button id="blog-close-btn" onClick={closeBlogArticle}>&#10005;</button>
+              {activeArticle&&<>
+              <div className="blog-ov-hero" style={{position:'relative'}}>
+                <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:24}}>
+                  <span style={{fontSize:13,fontWeight:600,color:"rgba(255,255,255,0.4)",letterSpacing:1}}>{artIdx+1} — {blogArticles.length}</span>
+                  <span style={{width:8,height:8,borderRadius:"50%",background:T.accent}}/>
+                  <span style={{fontSize:11,fontWeight:700,letterSpacing:2,textTransform:"uppercase",color:T.accent}}>{activeArticle.tag}</span>
+                </div>
+                <h1 style={{fontSize:"clamp(24px,3.5vw,42px)",fontWeight:900,color:"#fff",lineHeight:1.08,fontFamily:`${F.heading},sans-serif`,textTransform:"uppercase",letterSpacing:"-0.5px",margin:"0 0 20px"}}>{activeArticle.title}</h1>
+                <p style={{fontSize:14,color:"rgba(255,255,255,0.5)",lineHeight:1.7,margin:"0 0 8px",maxWidth:420}}>{activeArticle.subtitle}</p>
+                <div style={{fontSize:11,color:"rgba(255,255,255,0.3)",marginBottom:8}}>{activeArticle.date} • {activeArticle.icon}</div>
+                <button className="blog-read-btn" onClick={()=>blogContentRef.current?.scrollIntoView({behavior:"smooth"})}>
+                  <span style={{fontSize:18,fontWeight:700,color:"#fff",fontFamily:`${F.heading},sans-serif`}}>Read full Article</span>
+                  <span className="blog-read-arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+                </button>
+                <button onClick={()=>shareLink(activeArticle.slug)} style={{marginTop:16,background:"none",border:"none",padding:0,fontSize:11,fontWeight:600,color:"rgba(255,255,255,0.3)",cursor:"pointer",fontFamily:"inherit",letterSpacing:1,transition:"color 0.2s"}} onMouseEnter={e=>{e.currentTarget.style.color=T.accent}} onMouseLeave={e=>{e.currentTarget.style.color="rgba(255,255,255,0.3)"}}>SHARE ARTICLE ↗</button>
               </div>
-              <h1 style={{fontSize:"clamp(24px,3.5vw,42px)",fontWeight:900,color:"#fff",lineHeight:1.08,fontFamily:`${F.heading},sans-serif`,textTransform:"uppercase",letterSpacing:"-0.5px",margin:"0 0 20px"}}>{activeArticle.title}</h1>
-              <p style={{fontSize:14,color:"rgba(255,255,255,0.5)",lineHeight:1.7,margin:"0 0 8px",maxWidth:420}}>{activeArticle.subtitle}</p>
-              <div style={{fontSize:11,color:"rgba(255,255,255,0.3)",marginBottom:8}}>{activeArticle.date} • {activeArticle.icon}</div>
-              <button className="blog-read-btn" onClick={()=>blogContentRef.current?.scrollIntoView({behavior:"smooth"})}>
-                <span style={{fontSize:18,fontWeight:700,color:"#fff",fontFamily:`${F.heading},sans-serif`}}>Read full Article</span>
-                <span className="blog-read-arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
-              </button>
-              <button onClick={()=>shareLink(activeArticle.slug)} style={{marginTop:16,background:"none",border:"none",padding:0,fontSize:11,fontWeight:600,color:"rgba(255,255,255,0.3)",cursor:"pointer",fontFamily:"inherit",letterSpacing:1,transition:"color 0.2s"}} onMouseEnter={e=>{e.currentTarget.style.color=T.accent}} onMouseLeave={e=>{e.currentTarget.style.color="rgba(255,255,255,0.3)"}}>SHARE ARTICLE ↗</button>
-            </div>
-          </div>
-
-          {/* Full article content */}
-          <div ref={blogContentRef} className="blog-content-section" style={{padding:"40px 32px 32px",maxWidth:800,margin:"0 auto"}}>
+              <div ref={blogContentRef} className="blog-content-section" style={{padding:"40px 32px 32px",maxWidth:800,margin:"0 auto"}}>
 
           {/* Article: csprng-vs-prng */}
           {activeArticle.slug==="csprng-vs-prng"&&<>
@@ -4009,7 +4039,10 @@ html{scroll-behavior:smooth}
           </>}
 
           </div>{/* close blogContentRef */}
-        </div>;
+              </>}
+            </div>{/* close blog-ov-right */}
+          </div>{/* close blog-overlay */}
+        </>;
       })()}</>
     };
     return(
