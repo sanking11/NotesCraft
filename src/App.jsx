@@ -559,6 +559,8 @@ export default function NotesCraft(){
   const[infoPage,setInfoPage]=useState(()=>{const h=window.location.hash.replace("#","");if(h.startsWith("blog/"))return"security-blog";return validInfoPages.includes(h)?h:null});
   const[blogArticle,setBlogArticle]=useState(()=>{const h=window.location.hash.replace("#","");return h.startsWith("blog/")?h.slice(5):null});
   const[blogFullArticle,setBlogFullArticle]=useState(()=>window.location.hash.replace("#","").startsWith("blog/"));
+  const[blogFontSize,setBlogFontSize]=useState(1);
+  const[blogReadingView,setBlogReadingView]=useState(false);
   const blogFlyRef=useRef(null);
   const blogCardRectRef=useRef(null);
   const blogBusyRef=useRef(false);
@@ -592,7 +594,7 @@ export default function NotesCraft(){
         if(fly&&rect){fly.style.transition=`left ${imgDur}ms ${imgEase},top ${imgDur}ms ${imgEase},width ${imgDur}ms ${imgEase},height ${imgDur}ms ${imgEase}`;fly.style.left=rect.left+'px';fly.style.top=rect.top+'px';fly.style.width=rect.width+'px';fly.style.height=rect.height+'px';}
       },imgDelay);
       setTimeout(()=>{
-        setBlogArticle(null);setBlogFullArticle(false);window.scrollTo(0,0);
+        setBlogArticle(null);setBlogFullArticle(false);setBlogFontSize(1);setBlogReadingView(false);window.scrollTo(0,0);
         if(fly){fly.style.opacity='0';fly.style.transition='none';}
         const origCard=document.querySelector(`[data-blog-slug="${rect.slug}"]`);
         if(origCard)origCard.style.opacity='1';
@@ -600,7 +602,7 @@ export default function NotesCraft(){
         blogCardRectRef.current=null;blogBusyRef.current=false;
       },imgDelay+imgDur+40);
     }else{
-      setBlogArticle(null);setBlogFullArticle(false);window.scrollTo(0,0);
+      setBlogArticle(null);setBlogFullArticle(false);setBlogFontSize(1);setBlogReadingView(false);window.scrollTo(0,0);
       if(fly){fly.style.opacity='0';fly.style.transition='none';}
       const ovR=document.querySelector('.blog-ov-right');if(ovR){ovR.style.transform='';ovR.style.transition='';}
       blogCardRectRef.current=null;blogBusyRef.current=false;
@@ -2265,6 +2267,13 @@ html{scroll-behavior:smooth}
 .blog-overlay.visible .blog-ov-toolbar{opacity:1;transform:translateY(0);pointer-events:all}
 .blog-ov-toolbar button{width:42px;height:42px;border-radius:50%;border:1.5px solid rgba(${T.accentRgb},0.5);background:rgba(${T.accentRgb},0.12);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;transition:all 0.2s;box-shadow:0 0 16px rgba(${T.accentRgb},0.2),0 2px 8px rgba(0,0,0,0.4)}
 .blog-ov-toolbar button:hover{background:rgba(${T.accentRgb},0.3);border-color:${T.accent};color:#fff;box-shadow:0 0 24px rgba(${T.accentRgb},0.4),0 0 48px rgba(${T.accentRgb},0.15),0 2px 8px rgba(0,0,0,0.4)}
+.blog-ov-toolbar button:disabled{opacity:0.3;cursor:not-allowed;box-shadow:none}
+.blog-ov-toolbar button:disabled:hover{background:rgba(${T.accentRgb},0.12);border-color:rgba(${T.accentRgb},0.5);box-shadow:none}
+.blog-reading-view{background:${T.dark?"#1a1a1a":"#faf8f0"}!important}
+.blog-reading-view .blog-content-section{font-family:Georgia,'Times New Roman',serif!important;line-height:2.2!important;max-width:680px!important;color:${T.dark?"#d4cfc4":"#3a3530"}!important}
+.blog-reading-view .blog-ov-hero{font-family:Georgia,'Times New Roman',serif}
+.blog-reading-view .blog-ov-hero h1{color:${T.dark?"#e8e0d4":"#2a2520"}!important}
+.blog-reading-view .blog-ov-hero p{color:${T.dark?"rgba(212,207,196,0.6)":"rgba(58,53,48,0.6)"}!important}
 @media(max-width:900px){.blog-hero-wrap{grid-template-columns:1fr!important;height:auto!important}.blog-hero-col{height:50vh}.blog-grid-wrap{grid-template-columns:repeat(2,1fr)!important}.blog-ov-left{display:none}.blog-ov-right{flex:0 0 100%}.blog-ov-hero{padding:28px 20px}}
 @media(max-width:560px){.blog-grid-wrap{grid-template-columns:1fr!important}}`;
 
@@ -2953,9 +2962,9 @@ html{scroll-behavior:smooth}
   /* ═══════════ INFO PAGES (About / Privacy / Terms) ═══════════ */
   if(infoPage&&(authMode!=="app"||infoPage==="password-manager")){
     const infoGlass={background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.06)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:`1px solid rgba(${T.accentRgb},0.18)`,borderRadius:20,boxShadow:`0 8px 40px rgba(0,0,0,0.3),0 0 60px rgba(${T.accentRgb},0.06),inset 0 1px 0 rgba(255,255,255,0.06)`};
-    const infoH={fontSize:28,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",marginBottom:24,letterSpacing:2};
-    const infoH2={fontSize:18,fontWeight:700,fontFamily:`${F.heading},sans-serif`,color:T.accent,margin:"28px 0 12px",letterSpacing:1};
-    const infoP={fontSize:14,lineHeight:1.9,color:"#b0bec9",margin:"0 0 12px"};
+    const infoH={fontSize:Math.round(28*blogFontSize),fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",marginBottom:24,letterSpacing:2};
+    const infoH2={fontSize:Math.round(18*blogFontSize),fontWeight:700,fontFamily:`${F.heading},sans-serif`,color:T.accent,margin:"28px 0 12px",letterSpacing:1};
+    const infoP={fontSize:Math.round(14*blogFontSize),lineHeight:blogReadingView?2.2:1.9,color:blogReadingView?(T.dark?"#d4cfc4":"#3a3530"):"#b0bec9",margin:"0 0 12px"};
     const infoPages={
       about:<>
         <h1 style={infoH}>About NotesCraft</h1>
@@ -3308,8 +3317,13 @@ html{scroll-behavior:smooth}
           {/* Article overlay */}
           <div className={`blog-overlay${blogArticle?' visible':''}${blogFullArticle?' fullscreen':''}`}>
             <div className="blog-ov-left" />
-            <div className="blog-ov-right">
+            <div className={`blog-ov-right${blogReadingView?' blog-reading-view':''}`}>
               <div className="blog-ov-toolbar">
+                {blogFullArticle&&<>
+                <button title="Decrease font size" disabled={blogFontSize<=0.8} onClick={()=>setBlogFontSize(s=>Math.round((s-0.1)*10)/10)} style={blogFontSize<=0.8?{opacity:0.3}:undefined}><span style={{fontSize:13,fontWeight:800,fontFamily:'sans-serif'}}>A<span style={{fontSize:10}}>−</span></span></button>
+                <button title="Increase font size" disabled={blogFontSize>=1.2} onClick={()=>setBlogFontSize(s=>Math.round((s+0.1)*10)/10)} style={blogFontSize>=1.2?{opacity:0.3}:undefined}><span style={{fontSize:13,fontWeight:800,fontFamily:'sans-serif'}}>A<span style={{fontSize:10}}>+</span></span></button>
+                <button title="Reading view" onClick={()=>setBlogReadingView(v=>!v)} style={blogReadingView?{background:T.accent,borderColor:T.accent}:undefined}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></button>
+                </>}
                 <button title="Fullscreen" onClick={()=>readFullArticle(blogContentRef)}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg></button>
                 <button title="Close" onClick={closeBlogArticle}>&#10005;</button>
               </div>
@@ -3327,7 +3341,7 @@ html{scroll-behavior:smooth}
                   <button onClick={()=>shareLink(activeArticle.slug)} style={{background:"none",border:"none",padding:0,fontSize:11,fontWeight:600,color:"rgba(255,255,255,0.3)",cursor:"pointer",fontFamily:"inherit",letterSpacing:1,transition:"color 0.2s"}} onMouseEnter={e=>{e.currentTarget.style.color=T.accent}} onMouseLeave={e=>{e.currentTarget.style.color="rgba(255,255,255,0.3)"}}>SHARE ↗</button>
                 </div>
               </div>
-              <div ref={blogContentRef} className="blog-content-section" style={{padding:"40px 44px 48px",maxWidth:780,margin:"0 auto",boxSizing:"border-box"}}>
+              <div ref={blogContentRef} className="blog-content-section" style={{padding:"40px 44px 48px",maxWidth:blogReadingView?680:780,margin:"0 auto",boxSizing:"border-box",fontSize:Math.round(14*blogFontSize),fontFamily:blogReadingView?"Georgia,'Times New Roman',serif":"inherit",lineHeight:blogReadingView?2.2:undefined,transition:"font-size 0.2s,max-width 0.3s"}}>
 
           {/* Article: csprng-vs-prng */}
           {activeArticle.slug==="csprng-vs-prng"&&<>
