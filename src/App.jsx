@@ -558,6 +558,8 @@ export default function NotesCraft(){
   const validInfoPages=["about","privacy","terms","password-manager","security-blog"];
   const[infoPage,setInfoPage]=useState(()=>{const h=window.location.hash.replace("#","");if(h.startsWith("blog/"))return"security-blog";return validInfoPages.includes(h)?h:null});
   const[blogArticle,setBlogArticle]=useState(()=>{const h=window.location.hash.replace("#","");return h.startsWith("blog/")?h.slice(5):null});
+  const[blogClosing,setBlogClosing]=useState(false);
+  const closeBlogArticle=()=>{setBlogClosing(true);setTimeout(()=>{setBlogClosing(false);setBlogArticle(null);window.scrollTo(0,0)},600)};
   const[user,setUser]=useState(null);
   const[email,setEmail]=useState("");
   const[pw,setPw]=useState("");
@@ -2192,12 +2194,21 @@ html{scroll-behavior:smooth}
 .blog-card:hover .blog-card-meta{opacity:1;transform:translateY(0)}
 @keyframes blogFadeIn{from{opacity:0}to{opacity:1}}
 @keyframes blogArticleIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-@keyframes blogSplitIn{from{opacity:0;transform:scale(0.97)}to{opacity:1;transform:scale(1)}}
-.blog-article-enter{animation:blogArticleIn 0.6s cubic-bezier(0.22,1,0.36,1) both}
-.blog-split{display:grid;grid-template-columns:1fr 1fr;min-height:80vh;overflow:hidden;animation:blogSplitIn 0.7s cubic-bezier(0.22,1,0.36,1) both}
-.blog-split-img{background-size:cover;background-position:center;position:relative;min-height:70vh}
-.blog-split-right{display:flex;flex-direction:column;justify-content:center;padding:48px 44px;position:relative;background:rgba(0,0,0,0.3)}
-.blog-split-right::before{content:'';position:absolute;top:0;right:0;bottom:0;width:1px;background:linear-gradient(180deg,transparent,rgba(${T.accentRgb},0.3),transparent)}
+@keyframes blogDeckOpenImg{0%{transform:translateX(100%) rotateY(-15deg) scale(0.85);opacity:0}40%{transform:translateX(20%) rotateY(-5deg) scale(0.95);opacity:1}100%{transform:translateX(0) rotateY(0) scale(1);opacity:1}}
+@keyframes blogDeckOpenRight{0%{transform:translateX(120%) rotateY(-12deg) scale(0.8);opacity:0}50%{transform:translateX(30%) rotateY(-4deg) scale(0.92);opacity:0.7}100%{transform:translateX(0) rotateY(0) scale(1);opacity:1}}
+@keyframes blogDeckCloseImg{0%{transform:translateX(0) rotateY(0) scale(1);opacity:1}60%{transform:translateX(-20%) rotateY(5deg) scale(0.95);opacity:1}100%{transform:translateX(-100%) rotateY(15deg) scale(0.85);opacity:0}}
+@keyframes blogDeckCloseRight{0%{transform:translateX(0) rotateY(0) scale(1);opacity:1}50%{transform:translateX(-10%) rotateY(4deg) scale(0.92);opacity:0.7}100%{transform:translateX(-120%) rotateY(12deg) scale(0.8);opacity:0}}
+@keyframes blogContentFadeIn{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+@keyframes blogContentFadeOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(40px)}}
+.blog-article-enter{perspective:1200px;overflow:hidden}
+.blog-split{display:grid;grid-template-columns:1fr 1fr;min-height:80vh;overflow:visible;perspective:1200px}
+.blog-split-img{background-size:cover;background-position:center;position:relative;min-height:70vh;transform-origin:right center;animation:blogDeckOpenImg 0.7s cubic-bezier(0.22,1,0.36,1) both}
+.blog-split-right{display:flex;flex-direction:column;justify-content:center;padding:48px 44px;position:relative;background:rgba(0,0,0,0.3);transform-origin:left center;animation:blogDeckOpenRight 0.7s cubic-bezier(0.22,1,0.36,1) 0.08s both}
+.blog-split-right::before{content:'';position:absolute;top:0;left:0;bottom:0;width:1px;background:linear-gradient(180deg,transparent,rgba(${T.accentRgb},0.3),transparent)}
+.blog-closing .blog-split-img{animation:blogDeckCloseImg 0.55s cubic-bezier(0.55,0,1,0.45) 0.06s both}
+.blog-closing .blog-split-right{animation:blogDeckCloseRight 0.55s cubic-bezier(0.55,0,1,0.45) both}
+.blog-content-section{animation:blogContentFadeIn 0.5s cubic-bezier(0.22,1,0.36,1) 0.4s both}
+.blog-closing .blog-content-section{animation:blogContentFadeOut 0.3s cubic-bezier(0.55,0,1,0.45) both}
 .blog-read-btn{display:inline-flex;align-items:center;gap:14px;margin-top:32px;cursor:pointer;background:none;border:none;padding:0;font-family:inherit}
 .blog-read-btn:hover .blog-read-arrow{transform:translateX(4px);background:${T.accent};border-color:${T.accent}}
 .blog-read-arrow{width:48px;height:48px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;transition:all 0.3s;color:#fff}
@@ -3239,12 +3250,12 @@ html{scroll-behavior:smooth}
         // Individual article view — Split hero + full content
         const artIdx=blogArticles.findIndex(a=>a.slug===activeArticle.slug);
         const blogContentRef=React.createRef();
-        return<div className="blog-article-enter">
+        return<div className={`blog-article-enter${blogClosing?" blog-closing":""}`}>
           {/* Split hero: image left, preview right */}
           <div className="blog-split">
             <div className="blog-split-img" style={{backgroundImage:`url(${activeArticle.photo.replace("w=800","w=1400&q=95")})`}}/>
             <div className="blog-split-right">
-              <button onClick={()=>{setBlogArticle(null);window.scrollTo(0,0)}} style={{position:"absolute",top:20,right:20,width:40,height:40,borderRadius:"50%",background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.15)",color:"#fff",fontSize:18,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.3s",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)"}} onMouseEnter={e=>{e.currentTarget.style.background="rgba(255,255,255,0.15)"}} onMouseLeave={e=>{e.currentTarget.style.background="rgba(255,255,255,0.08)"}}>&#10005;</button>
+              <button onClick={closeBlogArticle} style={{position:"absolute",top:20,right:20,width:40,height:40,borderRadius:"50%",background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.15)",color:"#fff",fontSize:18,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.3s",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)"}} onMouseEnter={e=>{e.currentTarget.style.background="rgba(255,255,255,0.15)"}} onMouseLeave={e=>{e.currentTarget.style.background="rgba(255,255,255,0.08)"}}>&#10005;</button>
               <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:24}}>
                 <span style={{fontSize:13,fontWeight:600,color:"rgba(255,255,255,0.4)",letterSpacing:1}}>{artIdx+1} — {blogArticles.length}</span>
                 <span style={{width:8,height:8,borderRadius:"50%",background:T.accent}}/>
@@ -3262,7 +3273,7 @@ html{scroll-behavior:smooth}
           </div>
 
           {/* Full article content */}
-          <div ref={blogContentRef} style={{padding:"40px 32px 32px",maxWidth:800,margin:"0 auto"}}>
+          <div ref={blogContentRef} className="blog-content-section" style={{padding:"40px 32px 32px",maxWidth:800,margin:"0 auto"}}>
 
           {/* Article: csprng-vs-prng */}
           {activeArticle.slug==="csprng-vs-prng"&&<>
@@ -4006,7 +4017,7 @@ html{scroll-behavior:smooth}
           </div>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             {infoPage==="password-manager"&&!pmIsLoggedIn&&<button onClick={()=>{setPmShowLogin(true);setPmLoginErr("");setPmLogin2FA(false);setPmLogin2FACode("");setPmLogin2FAErr("");setPmSignupMode(false)}} style={{padding:"8px 20px",background:pgQuantumSafe?"linear-gradient(135deg,#10b981,#059669)":`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:8,color:"#fff",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5,boxShadow:pgQuantumSafe?"0 4px 16px rgba(16,185,129,0.35)":`0 4px 16px rgba(${T.accentRgb},0.35)`,transition:"all 0.3s"}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-1px)"}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)"}}>Login</button>}
-            <button onClick={()=>{if(blogArticle){setBlogArticle(null);window.scrollTo(0,0)}else{setInfoPage(null)}}} style={{background:`rgba(${T.accentRgb},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,borderRadius:8,padding:"8px 20px",color:T.dark?T.text:"#e2e8f0",fontSize:13,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1}}>{blogArticle?"← Blog":"← Back"}</button>
+            <button onClick={()=>{if(blogArticle){closeBlogArticle()}else{setInfoPage(null)}}} style={{background:`rgba(${T.accentRgb},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,borderRadius:8,padding:"8px 20px",color:T.dark?T.text:"#e2e8f0",fontSize:13,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1}}>{blogArticle?"← Blog":"← Back"}</button>
           </div>
         </nav>
         <div style={{position:"relative",zIndex:1,maxWidth:infoPage==="security-blog"?"100%":800,margin:"0 auto",padding:infoPage==="security-blog"?"80px 0 60px":"100px 24px 60px"}}>
