@@ -575,7 +575,7 @@ export default function NotesCraft(){
     const tw=window.innerWidth*0.5,th=window.innerHeight;
     fly.style.transition=`left ${dur}ms ${ease},top ${dur}ms ${ease},width ${dur}ms ${ease},height ${dur}ms ${ease}`;
     fly.style.left='0px';fly.style.top='0px';fly.style.width=tw+'px';fly.style.height=th+'px';
-    setTimeout(()=>{setBlogArticle(slug)},200);
+    setTimeout(()=>{const ovR=document.querySelector('.blog-ov-right');if(ovR)ovR.style.transform='';setBlogArticle(slug)},200);
     setTimeout(()=>{blogBusyRef.current=false},dur+80);
   };
   const readFullArticle=(ref)=>{setBlogFullArticle(true);const fly=blogFlyRef.current;if(fly){fly.style.transition='opacity 0.4s';fly.style.opacity='0'}setTimeout(()=>{if(ref&&ref.current)ref.current.scrollIntoView({behavior:'smooth'})},350)};
@@ -596,11 +596,13 @@ export default function NotesCraft(){
         if(fly){fly.style.opacity='0';fly.style.transition='none';}
         const origCard=document.querySelector(`[data-blog-slug="${rect.slug}"]`);
         if(origCard)origCard.style.opacity='1';
+        const ovR=document.querySelector('.blog-ov-right');if(ovR){ovR.style.transform='';ovR.style.transition='';}
         blogCardRectRef.current=null;blogBusyRef.current=false;
       },imgDelay+imgDur+40);
     }else{
       setBlogArticle(null);setBlogFullArticle(false);window.scrollTo(0,0);
       if(fly){fly.style.opacity='0';fly.style.transition='none';}
+      const ovR=document.querySelector('.blog-ov-right');if(ovR){ovR.style.transform='';ovR.style.transition='';}
       blogCardRectRef.current=null;blogBusyRef.current=false;
     }
   };
@@ -4065,7 +4067,7 @@ html{scroll-behavior:smooth}
           <div style={{position:"absolute",width:600,height:600,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.2) 0%,transparent 70%)",filter:"blur(60px)",top:"-15%",left:"-10%",animation:"ldOrb1 25s ease-in-out infinite"}}/>
           <div style={{position:"absolute",width:500,height:500,borderRadius:"50%",background:`radial-gradient(circle,rgba(${T.accentRgb},0.18) 0%,transparent 70%)`,filter:"blur(45px)",bottom:"-10%",right:"-5%",animation:"ldOrb2 30s ease-in-out infinite"}}/>
         </div>
-        <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:blogArticle?2000:100,padding:"16px 40px",display:"flex",alignItems:"center",justifyContent:"space-between",background:`linear-gradient(180deg,${T.dark?T.bg:"#0a0a12"} 0%,transparent 100%)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)"}}>
+        <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:blogArticle?5000:100,padding:"16px 40px",display:"flex",alignItems:"center",justifyContent:"space-between",background:`linear-gradient(180deg,${T.dark?T.bg:"#0a0a12"} 0%,transparent 100%)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)"}}>
           <div style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer"}} onClick={()=>{setBlogArticle(null);setBlogFullArticle(false);blogBusyRef.current=false;blogCardRectRef.current=null;setInfoPage(null)}}>
             <ButterflyLogo s={28} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} flap/>
             <span style={{fontSize:18,fontWeight:800,letterSpacing:3,fontFamily:`${F.heading},sans-serif`,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>NOTESCRAFT</span>
@@ -4075,7 +4077,7 @@ html{scroll-behavior:smooth}
             <button onClick={()=>{if(blogArticle){closeBlogArticle()}else{setInfoPage(null)}}} style={{background:`rgba(${T.accentRgb},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,borderRadius:8,padding:"8px 20px",color:T.dark?T.text:"#e2e8f0",fontSize:13,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1}}>{blogArticle?"← Blog":"← Back"}</button>
           </div>
         </nav>
-        <div style={{position:"relative",zIndex:1,maxWidth:infoPage==="security-blog"?"100%":800,margin:"0 auto",padding:infoPage==="security-blog"?"80px 0 60px":"100px 24px 60px"}}>
+        <div style={{position:"relative",zIndex:blogArticle?3000:1,maxWidth:infoPage==="security-blog"?"100%":800,margin:"0 auto",padding:infoPage==="security-blog"?"80px 0 60px":"100px 24px 60px"}}>
           {infoPage==="password-manager"&&<>
             <div style={{position:"absolute",width:600,height:600,borderRadius:"50%",background:pgQuantumSafe?"radial-gradient(circle,rgba(16,185,129,0.25) 0%,rgba(16,185,129,0.08) 40%,transparent 70%)":`radial-gradient(circle,rgba(${T.accentRgb},0.25) 0%,rgba(${T.accentRgb},0.08) 40%,transparent 70%)`,filter:"blur(60px)",top:"-5%",left:"-20%",pointerEvents:"none",animation:"ldOrb1 20s ease-in-out infinite",transition:"background 0.8s"}}/>
             <div style={{position:"absolute",width:500,height:500,borderRadius:"50%",background:pgQuantumSafe?"radial-gradient(circle,rgba(16,185,129,0.2) 0%,rgba(16,185,129,0.05) 40%,transparent 70%)":"radial-gradient(circle,rgba(139,92,246,0.22) 0%,rgba(139,92,246,0.06) 40%,transparent 70%)",filter:"blur(50px)",bottom:"5%",right:"-15%",pointerEvents:"none",animation:"ldOrb2 25s ease-in-out infinite",transition:"background 0.8s"}}/>
