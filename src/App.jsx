@@ -2172,20 +2172,20 @@ html{scroll-behavior:smooth}
 .blog-hero-col{position:relative;overflow:hidden;cursor:pointer}
 .blog-hero-col-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform 0.8s cubic-bezier(0.22,1,0.36,1),filter 0.8s;filter:brightness(0.55) saturate(1.1)}
 .blog-hero-col:hover .blog-hero-col-bg{transform:scale(1.06);filter:brightness(0.35) saturate(1.2)}
-.blog-hero-col-info{position:absolute;bottom:30px;left:0;right:0;padding:32px 20px;z-index:2;background:linear-gradient(0deg,rgba(0,0,0,0.9) 0%,rgba(0,0,0,0.5) 60%,transparent 100%);opacity:0;transform:translateY(20px);transition:opacity 0.5s cubic-bezier(0.22,1,0.36,1),transform 0.5s cubic-bezier(0.22,1,0.36,1)}
+.blog-hero-col-info{position:absolute;bottom:0;left:0;right:0;padding:32px 20px;z-index:2;background:linear-gradient(0deg,rgba(0,0,0,0.9) 0%,rgba(0,0,0,0.5) 60%,transparent 100%);opacity:0;transform:translateY(20px);transition:opacity 0.5s cubic-bezier(0.22,1,0.36,1),transform 0.5s cubic-bezier(0.22,1,0.36,1)}
 .blog-hero-col:hover .blog-hero-col-info{opacity:1;transform:translateY(0)}
 .blog-hero-col-title{font-size:clamp(24px,3.2vw,44px);font-weight:900;color:#fff;line-height:1.08;text-transform:uppercase;letter-spacing:-0.5px;text-shadow:0 4px 30px rgba(0,0,0,0.9);word-break:break-word;overflow-wrap:break-word}
 .blog-hero-col-tag{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:${T.accent};margin-bottom:10px;display:block}
 .blog-hero-ticker{position:absolute;bottom:0;left:0;right:0;height:28px;background:rgba(0,0,0,0.7);display:flex;align-items:center;overflow:hidden;z-index:3}
 .blog-hero-ticker span{display:inline-block;white-space:nowrap;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);animation:blogTickerScroll 30s linear infinite}
 @keyframes blogTickerScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.blog-row-scroll{position:absolute;bottom:0;left:0;right:0;height:26px;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;overflow:hidden;z-index:4;opacity:0;transform:translateY(100%);transition:opacity 0.35s,transform 0.35s cubic-bezier(0.22,1,0.36,1);padding:0 12px}
-.blog-hero-col:hover .blog-row-scroll,.blog-card:hover .blog-row-scroll{opacity:1;transform:translateY(0)}
+.blog-row-scroll{position:relative;height:28px;display:flex;align-items:center;overflow:hidden;margin-top:14px;border-radius:4px;background:rgba(255,255,255,0.06)}
 .blog-row-scroll-inner{display:inline-flex;align-items:center;white-space:nowrap;animation:blogRowScroll 20s linear infinite;gap:0}.blog-row-scroll-inner>*{flex-shrink:0}
-.blog-row-scroll-inner span{font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.5)}
+.blog-row-scroll-inner span{font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,0.55)}
 .blog-row-scroll-inner .brs-tag{color:${T.accent};font-weight:700}
-.blog-row-scroll-inner .brs-dot{width:5px;height:5px;border-radius:50%;background:${T.accent};margin:0 10px;flex-shrink:0;opacity:0.7}
-.blog-row-scroll-inner .brs-label{color:rgba(255,255,255,0.35);margin-right:4px}
+.blog-row-scroll-inner .brs-dot{width:6px;height:6px;border-radius:50%;background:${T.accent};margin:0 12px;flex-shrink:0;opacity:0.7}
+.blog-row-scroll-inner .brs-label{color:rgba(255,255,255,0.35);margin-right:5px}
+.blog-row-scroll-card{margin-top:10px;height:22px}.blog-row-scroll-card .blog-row-scroll-inner span{font-size:9px;letter-spacing:1px}.blog-row-scroll-card .brs-dot{width:4px;height:4px;margin:0 8px}
 @keyframes blogRowScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .blog-card{position:relative;border-radius:16px;overflow:hidden;cursor:pointer;aspect-ratio:3/4;background:#111;transition:transform 0.4s cubic-bezier(0.22,1,0.36,1),box-shadow 0.4s}
 .blog-card:hover{transform:translateY(-8px) scale(1.02);box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(${T.accentRgb},0.15)}
@@ -3230,8 +3230,8 @@ html{scroll-behavior:smooth}
               <div className="blog-hero-col-info">
                 <span className="blog-hero-col-tag">{a.tag}</span>
                 <div className="blog-hero-col-title" style={{fontFamily:`${F.heading},sans-serif`}}>{a.title}</div>
+                <div className="blog-row-scroll"><div className="blog-row-scroll-inner">{rowTxt}{rowTxt}</div></div>
               </div>
-              <div className="blog-row-scroll"><div className="blog-row-scroll-inner">{rowTxt}{rowTxt}</div></div>
             </div>})}
             <div className="blog-hero-ticker"><span>{tickerText+"  •  "+tickerText}</span></div>
           </div>
@@ -3250,8 +3250,8 @@ html{scroll-behavior:smooth}
                   <span style={{fontSize:10,color:"rgba(255,255,255,0.5)"}}>{a.date}</span>
                   <span style={{fontSize:16,marginLeft:"auto",opacity:0.6}}>{a.icon}</span>
                 </div>
+                <div className="blog-row-scroll blog-row-scroll-card"><div className="blog-row-scroll-inner">{rowTxt}{rowTxt}</div></div>
               </div>
-              <div className="blog-row-scroll"><div className="blog-row-scroll-inner">{rowTxt}{rowTxt}</div></div>
             </div>})}
           </div>
           </div>{/* close padding wrap */}
