@@ -3297,7 +3297,7 @@ html{scroll-behavior:smooth}
         const tickerText=blogArticles.map(a=>a.title.toUpperCase()).join("  •  ");
         const artIdx=activeArticle?blogArticles.findIndex(a=>a.slug===activeArticle.slug):-1;
         const blogContentRef=React.createRef();
-        const blogOvBg=(()=>{const d=blogDynBg;const isL=blogArticleTheme==='light';const base=isL?(blogReadingView?'#faf8f0':'#f8f9fa'):(blogReadingView?(T.dark?'#1a1a1a':'#1a1a1a'):(T.dark?T.bg:'#0a0a12'));if(!d)return base;if(isL)return`linear-gradient(180deg, rgba(${d.r},${d.g},${d.b},0.18) 0%, rgba(${d.r},${d.g},${d.b},0.06) 40%, ${base} 100%)`;return`linear-gradient(180deg, rgba(${d.r},${d.g},${d.b},0.35) 0%, rgba(${d.r},${d.g},${d.b},0.1) 35%, ${base} 100%)`})();
+        const blogOvBg=(()=>{const d=blogDynBg;const isL=blogArticleTheme==='light';const base=isL?(blogReadingView?'#faf8f0':'#f8f9fa'):(blogReadingView?(T.dark?'#1a1a1a':'#1a1a1a'):(T.dark?T.bg:'#0a0a12'));if(!d)return base;if(isL)return`linear-gradient(180deg, rgba(${d.r},${d.g},${d.b},0.18) 0%, rgba(${d.r},${d.g},${d.b},0.06) 40%, transparent 100%), ${base}`;return`linear-gradient(180deg, rgba(${d.r},${d.g},${d.b},0.35) 0%, rgba(${d.r},${d.g},${d.b},0.1) 35%, transparent 100%), ${base}`})();
         return<>
           {/* Top 3 Hero Columns */}
           <div className="blog-hero-wrap">
