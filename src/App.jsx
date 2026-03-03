@@ -2166,7 +2166,7 @@ html{scroll-behavior:smooth}
 .pg-mode-active{background:rgba(${T.accentRgb},0.2);color:${T.accent};font-weight:700;box-shadow:0 0 16px rgba(${T.accentRgb},0.3),inset 0 0 12px rgba(${T.accentRgb},0.1);border:1.5px solid rgba(${T.accentRgb},0.45);text-shadow:0 0 8px rgba(${T.accentRgb},0.4)}
 .pg-mode-inactive{background:rgba(255,255,255,0.02);color:${T.dim};font-weight:500;border:1.5px solid transparent}
 .pg-mode-inactive:hover{background:rgba(${T.accentRgb},0.08);color:${T.accent};border-color:rgba(${T.accentRgb},0.2)}
-.blog-hero-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;height:78vh;margin:0 -32px 32px;overflow:hidden;animation:blogFadeIn 0.8s cubic-bezier(0.22,1,0.36,1) both}
+.blog-hero-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;height:85vh;overflow:hidden;animation:blogFadeIn 0.8s cubic-bezier(0.22,1,0.36,1) both}
 .blog-hero-col{position:relative;overflow:hidden;cursor:pointer}
 .blog-hero-col-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform 0.8s cubic-bezier(0.22,1,0.36,1),filter 0.8s;filter:brightness(0.55) saturate(1.1)}
 .blog-hero-col:hover .blog-hero-col-bg{transform:scale(1.06);filter:brightness(0.35) saturate(1.2)}
@@ -2194,7 +2194,7 @@ html{scroll-behavior:smooth}
 @keyframes blogArticleIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 @keyframes blogSplitIn{from{opacity:0;transform:scale(0.97)}to{opacity:1;transform:scale(1)}}
 .blog-article-enter{animation:blogArticleIn 0.6s cubic-bezier(0.22,1,0.36,1) both}
-.blog-split{display:grid;grid-template-columns:1fr 1fr;min-height:70vh;margin:0 -32px 0;overflow:hidden;animation:blogSplitIn 0.7s cubic-bezier(0.22,1,0.36,1) both}
+.blog-split{display:grid;grid-template-columns:1fr 1fr;min-height:80vh;overflow:hidden;animation:blogSplitIn 0.7s cubic-bezier(0.22,1,0.36,1) both}
 .blog-split-img{background-size:cover;background-position:center;position:relative;min-height:70vh}
 .blog-split-right{display:flex;flex-direction:column;justify-content:center;padding:48px 44px;position:relative;background:rgba(0,0,0,0.3)}
 .blog-split-right::before{content:'';position:absolute;top:0;right:0;bottom:0;width:1px;background:linear-gradient(180deg,transparent,rgba(${T.accentRgb},0.3),transparent)}
@@ -3217,6 +3217,7 @@ html{scroll-behavior:smooth}
           </div>
 
           {/* Remaining articles grid */}
+          <div style={{padding:"0 32px 32px"}}>
           <h2 style={{fontSize:16,fontWeight:700,color:T.dark?T.text:"#e2e8f0",margin:"32px 0 16px",letterSpacing:1,textTransform:"uppercase",fontFamily:`${F.heading},sans-serif`}}>More Articles</h2>
           <div className="blog-grid-wrap" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:16}}>
             {restArticles.map((a,idx)=><div key={a.slug} className="blog-card" onClick={()=>{setBlogArticle(a.slug);window.scrollTo(0,0)}} style={{animation:`blogArticleIn 0.5s cubic-bezier(0.22,1,0.36,1) ${idx*0.06}s both`}}>
@@ -3232,6 +3233,7 @@ html{scroll-behavior:smooth}
               </div>
             </div>)}
           </div>
+          </div>{/* close padding wrap */}
         </>;}
 
         // Individual article view — Split hero + full content
@@ -3239,7 +3241,7 @@ html{scroll-behavior:smooth}
         const blogContentRef=React.createRef();
         return<div className="blog-article-enter">
           {/* Split hero: image left, preview right */}
-          <div className="blog-split" style={{margin:"0 -32px"}}>
+          <div className="blog-split">
             <div className="blog-split-img" style={{backgroundImage:`url(${activeArticle.photo.replace("w=800","w=1400&q=95")})`}}/>
             <div className="blog-split-right">
               <button onClick={()=>{setBlogArticle(null);window.scrollTo(0,0)}} style={{position:"absolute",top:20,right:20,width:40,height:40,borderRadius:"50%",background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.15)",color:"#fff",fontSize:18,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.3s",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)"}} onMouseEnter={e=>{e.currentTarget.style.background="rgba(255,255,255,0.15)"}} onMouseLeave={e=>{e.currentTarget.style.background="rgba(255,255,255,0.08)"}}>&#10005;</button>
@@ -3260,7 +3262,7 @@ html{scroll-behavior:smooth}
           </div>
 
           {/* Full article content */}
-          <div ref={blogContentRef} style={{paddingTop:40}}>
+          <div ref={blogContentRef} style={{padding:"40px 32px 32px",maxWidth:800,margin:"0 auto"}}>
 
           {/* Article: csprng-vs-prng */}
           {activeArticle.slug==="csprng-vs-prng"&&<>
@@ -4007,14 +4009,14 @@ html{scroll-behavior:smooth}
             <button onClick={()=>{if(blogArticle){setBlogArticle(null);window.scrollTo(0,0)}else{setInfoPage(null)}}} style={{background:`rgba(${T.accentRgb},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,borderRadius:8,padding:"8px 20px",color:T.dark?T.text:"#e2e8f0",fontSize:13,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1}}>{blogArticle?"← Blog":"← Back"}</button>
           </div>
         </nav>
-        <div style={{position:"relative",zIndex:1,maxWidth:800,margin:"0 auto",padding:"100px 24px 60px"}}>
+        <div style={{position:"relative",zIndex:1,maxWidth:infoPage==="security-blog"?"100%":800,margin:"0 auto",padding:infoPage==="security-blog"?"80px 0 60px":"100px 24px 60px"}}>
           {infoPage==="password-manager"&&<>
             <div style={{position:"absolute",width:600,height:600,borderRadius:"50%",background:pgQuantumSafe?"radial-gradient(circle,rgba(16,185,129,0.25) 0%,rgba(16,185,129,0.08) 40%,transparent 70%)":`radial-gradient(circle,rgba(${T.accentRgb},0.25) 0%,rgba(${T.accentRgb},0.08) 40%,transparent 70%)`,filter:"blur(60px)",top:"-5%",left:"-20%",pointerEvents:"none",animation:"ldOrb1 20s ease-in-out infinite",transition:"background 0.8s"}}/>
             <div style={{position:"absolute",width:500,height:500,borderRadius:"50%",background:pgQuantumSafe?"radial-gradient(circle,rgba(16,185,129,0.2) 0%,rgba(16,185,129,0.05) 40%,transparent 70%)":"radial-gradient(circle,rgba(139,92,246,0.22) 0%,rgba(139,92,246,0.06) 40%,transparent 70%)",filter:"blur(50px)",bottom:"5%",right:"-15%",pointerEvents:"none",animation:"ldOrb2 25s ease-in-out infinite",transition:"background 0.8s"}}/>
             <div style={{position:"absolute",width:350,height:350,borderRadius:"50%",background:pgQuantumSafe?"radial-gradient(circle,rgba(16,185,129,0.18) 0%,transparent 60%)":`radial-gradient(circle,rgba(${T.accentRgb},0.18) 0%,transparent 60%)`,filter:"blur(40px)",top:"35%",left:"50%",transform:"translateX(-50%)",pointerEvents:"none",animation:"pgGlowPulse 4s ease-in-out infinite",transition:"background 0.8s"}}/>
             <div style={{position:"absolute",width:250,height:250,borderRadius:"50%",background:pgQuantumSafe?"radial-gradient(circle,rgba(16,185,129,0.15) 0%,transparent 70%)":"radial-gradient(circle,rgba(236,72,153,0.12) 0%,transparent 70%)",filter:"blur(45px)",top:"15%",right:"5%",pointerEvents:"none",animation:"pgGlowPulse 6s ease-in-out infinite 2s",transition:"background 0.8s"}}/>
           </>}
-          <div style={{...(infoPage==="password-manager"?(pgQuantumSafe?{background:"rgba(16,185,129,0.04)",backdropFilter:"blur(32px)",WebkitBackdropFilter:"blur(32px)",border:"2.5px dashed rgba(16,185,129,0.7)",borderRadius:24,boxShadow:"0 12px 60px rgba(0,0,0,0.4),0 0 25px rgba(16,185,129,0.4),0 0 60px rgba(16,185,129,0.25),0 0 120px rgba(16,185,129,0.12),inset 0 0 30px rgba(16,185,129,0.06)",animation:"qmBorderGlow 3s ease-in-out infinite",transition:"all 0.6s"}:{background:"rgba(255,255,255,0.05)",backdropFilter:"blur(32px)",WebkitBackdropFilter:"blur(32px)",border:`2px solid rgba(${T.accentRgb},0.6)`,borderRadius:24,boxShadow:`0 12px 60px rgba(0,0,0,0.4),0 0 25px rgba(${T.accentRgb},0.35),0 0 50px rgba(${T.accentRgb},0.2),0 0 100px rgba(${T.accentRgb},0.1),inset 0 0 25px rgba(${T.accentRgb},0.06),inset 0 1px 0 rgba(255,255,255,0.1)`,animation:"pgBorderGlow 4s ease-in-out infinite",transition:"all 0.6s"}):infoGlass),padding:"48px 40px",position:"relative",overflow:"hidden"}}>
+          <div style={{...(infoPage==="security-blog"?{background:"none",border:"none",borderRadius:0,boxShadow:"none",backdropFilter:"none",WebkitBackdropFilter:"none"}:infoPage==="password-manager"?(pgQuantumSafe?{background:"rgba(16,185,129,0.04)",backdropFilter:"blur(32px)",WebkitBackdropFilter:"blur(32px)",border:"2.5px dashed rgba(16,185,129,0.7)",borderRadius:24,boxShadow:"0 12px 60px rgba(0,0,0,0.4),0 0 25px rgba(16,185,129,0.4),0 0 60px rgba(16,185,129,0.25),0 0 120px rgba(16,185,129,0.12),inset 0 0 30px rgba(16,185,129,0.06)",animation:"qmBorderGlow 3s ease-in-out infinite",transition:"all 0.6s"}:{background:"rgba(255,255,255,0.05)",backdropFilter:"blur(32px)",WebkitBackdropFilter:"blur(32px)",border:`2px solid rgba(${T.accentRgb},0.6)`,borderRadius:24,boxShadow:`0 12px 60px rgba(0,0,0,0.4),0 0 25px rgba(${T.accentRgb},0.35),0 0 50px rgba(${T.accentRgb},0.2),0 0 100px rgba(${T.accentRgb},0.1),inset 0 0 25px rgba(${T.accentRgb},0.06),inset 0 1px 0 rgba(255,255,255,0.1)`,animation:"pgBorderGlow 4s ease-in-out infinite",transition:"all 0.6s"}):infoGlass),padding:infoPage==="security-blog"?0:"48px 40px",position:"relative",overflow:infoPage==="security-blog"?"visible":"hidden"}}>
             {infoPage==="password-manager"&&!pgQuantumSafe&&<>
               <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:`linear-gradient(90deg,transparent 10%,rgba(${T.accentRgb},0.5) 50%,transparent 90%)`,pointerEvents:"none"}}/>
               <div style={{position:"absolute",bottom:0,left:0,right:0,height:1,background:`linear-gradient(90deg,transparent 20%,rgba(139,92,246,0.2) 50%,transparent 80%)`,pointerEvents:"none"}}/>
