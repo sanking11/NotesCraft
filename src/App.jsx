@@ -4916,13 +4916,13 @@ html{scroll-behavior:smooth}
         <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:100,display:blogArticle?"none":"flex",padding:"16px 40px",alignItems:"center",justifyContent:"space-between",background:`linear-gradient(180deg,${T.dark?T.bg:"#0a0a12"} 0%,transparent 100%)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)"}}>
           <div style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer"}} onClick={()=>{setBlogArticle(null);setBlogFullArticle(false);blogBusyRef.current=false;blogCardRectRef.current=null;setInfoPage(null)}}>
             {infoPage==="security-blog"?<>
-              <div style={{position:"relative",width:44,height:52,flexShrink:0,filter:`drop-shadow(0 0 12px rgba(${T.accentRgb},0.6))`,animation:"cubeFloat 4s ease-in-out infinite"}}>
+              <div style={{position:"relative",width:52,height:60,flexShrink:0,filter:`drop-shadow(0 0 12px rgba(${T.accentRgb},0.6))`,animation:"cubeFloat 4s ease-in-out infinite"}}>
                 {/* Corner brackets */}
                 <div style={{position:"absolute",top:-2,left:-2,width:10,height:10,borderTop:`2px solid rgba(${T.accentRgb},0.8)`,borderLeft:`2px solid rgba(${T.accentRgb},0.8)`,animation:"tcBracketTL 3s ease-in-out infinite"}}/>
                 <div style={{position:"absolute",top:-2,right:-2,width:10,height:10,borderTop:`2px solid rgba(${T.accentRgb},0.8)`,borderRight:`2px solid rgba(${T.accentRgb},0.8)`,animation:"tcBracketTR 3s ease-in-out infinite"}}/>
                 <div style={{position:"absolute",bottom:-2,left:-2,width:10,height:10,borderBottom:`2px solid rgba(${T.accentRgb},0.8)`,borderLeft:`2px solid rgba(${T.accentRgb},0.8)`,animation:"tcBracketBL 3s ease-in-out infinite"}}/>
                 <div style={{position:"absolute",bottom:-2,right:-2,width:10,height:10,borderBottom:`2px solid rgba(${T.accentRgb},0.8)`,borderRight:`2px solid rgba(${T.accentRgb},0.8)`,animation:"tcBracketBR 3s ease-in-out infinite"}}/>
-                <svg viewBox="-10 0 220 240" width={44} height={52} xmlns="http://www.w3.org/2000/svg" overflow="visible">
+                <svg viewBox="-10 0 220 240" width={52} height={60} xmlns="http://www.w3.org/2000/svg" overflow="visible">
 <defs>
 <linearGradient id="tcNT" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor={T.accent}/><stop offset="100%" stopColor={T.accent2||T.accent}/></linearGradient>
 <linearGradient id="tcNL" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor={`rgba(${T.accentRgb},0.7)`}/><stop offset="100%" stopColor={`rgba(${T.accentRgb},0.3)`}/></linearGradient>
@@ -4995,7 +4995,7 @@ html{scroll-behavior:smooth}
               <div style={{display:"flex",flexDirection:"column",gap:1}}>
                 <span style={{fontSize:18,fontWeight:800,letterSpacing:3,fontFamily:`${F.heading},sans-serif`,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",lineHeight:1.2}}>TECHCRAFT</span>
                 <span style={{fontSize:9,letterSpacing:1,color:`rgba(${T.accentRgb},0.8)`,fontFamily:`${F.heading},sans-serif`,lineHeight:1}}>Bits, Bots & the Big Bang</span>
-                <span style={{fontSize:7,letterSpacing:0.5,color:`rgba(${T.accentRgb},0.55)`,fontFamily:`${F.body},sans-serif`,lineHeight:1,marginTop:1}}>Crafted for Minds That Question Everything</span>
+                <span style={{fontSize:7,letterSpacing:1.5,color:`rgba(${T.accentRgb},0.8)`,fontFamily:`${F.body},sans-serif`,lineHeight:1,marginTop:1}}>Crafted for Minds That Question Everything</span>
               </div>
             </>:<>
               <ButterflyLogo s={28} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} flap/>
