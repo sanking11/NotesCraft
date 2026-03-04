@@ -2165,6 +2165,8 @@ input:focus,textarea:focus{border-color:rgba(${T.accentRgb},0.4)!important;box-s
 @keyframes ldGlowPulse{0%,100%{opacity:0.3}50%{opacity:0.7}}
 @keyframes ldTextReveal{from{opacity:0;transform:translateY(20px);filter:blur(8px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
 @keyframes ldShine{0%{left:-100%}100%{left:200%}}
+@keyframes cubeFloat{0%,100%{transform:translateY(0);filter:drop-shadow(0 0 20px rgba(0,140,255,0.6))}50%{transform:translateY(-8px);filter:drop-shadow(0 0 35px rgba(0,180,255,0.9))}}
+@keyframes glowPulse{0%,100%{transform:scale(1);opacity:0.8}50%{transform:scale(1.15);opacity:1}}
 @keyframes ldOrb1{0%{transform:translate(0,0)}25%{transform:translate(100px,-50px)}50%{transform:translate(-50px,80px)}75%{transform:translate(-120px,-30px)}100%{transform:translate(0,0)}}
 @keyframes ldOrb2{0%{transform:translate(0,0)}25%{transform:translate(-80px,60px)}50%{transform:translate(60px,-90px)}75%{transform:translate(100px,40px)}100%{transform:translate(0,0)}}
 @keyframes ldLine{0%{transform:translateX(-100%);opacity:0}20%{opacity:1}80%{opacity:1}100%{transform:translateX(100vw);opacity:0}}
@@ -3292,6 +3294,74 @@ html{scroll-behavior:smooth}
         };return imgs[key]||null};
 
         // Blog listing — always rendered; overlay shows article on top
+        const TechCraftLogo=({size=80})=><svg viewBox="-10 0 220 240" width={size} height={size*1.13} xmlns="http://www.w3.org/2000/svg" overflow="visible">
+<defs>
+<linearGradient id="tcTopG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#5ec4f5"/><stop offset="40%" stopColor="#3daae8"/><stop offset="100%" stopColor="#1a80cc"/></linearGradient>
+<linearGradient id="tcLeftG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#1565b8"/><stop offset="100%" stopColor="#0a3a78"/></linearGradient>
+<linearGradient id="tcRightG" x1="100%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor="#1878cc"/><stop offset="100%" stopColor="#0c4a90"/></linearGradient>
+<linearGradient id="tcRTopG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#0c3870"/><stop offset="100%" stopColor="#061830"/></linearGradient>
+<linearGradient id="tcRLG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#2080cc"/><stop offset="100%" stopColor="#0e50a0"/></linearGradient>
+<linearGradient id="tcRRG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#3aa0e8"/><stop offset="100%" stopColor="#1870b8"/></linearGradient>
+<radialGradient id="tcShadG" cx="50%" cy="50%" r="50%"><stop offset="0%" stopColor="#000820" stopOpacity="0.7"/><stop offset="100%" stopColor="#000820" stopOpacity="0"/></radialGradient>
+<filter id="tcGlow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="tcEG" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="1.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="tcCG" filterUnits="userSpaceOnUse" x="-10" y="0" width="220" height="240"><feGaussianBlur in="SourceGraphic" stdDeviation="1.8" result="blur"/><feFlood floodColor="#00ffee" floodOpacity="0.9" result="color"/><feComposite in="color" in2="blur" operator="in" result="glow"/><feMerge><feMergeNode in="glow"/><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="tcPG" filterUnits="userSpaceOnUse" x="-10" y="0" width="220" height="240"><feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/><feFlood floodColor="#00ffcc" floodOpacity="1" result="color"/><feComposite in="color" in2="blur" operator="in" result="glow"/><feMerge><feMergeNode in="glow"/><feMergeNode in="glow"/><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="tcWG" filterUnits="userSpaceOnUse" x="-10" y="0" width="220" height="240"><feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur"/><feFlood floodColor="#00d4ff" floodOpacity="0.8" result="color"/><feComposite in="color" in2="blur" operator="in" result="glow"/><feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<ellipse cx="100" cy="212" rx="62" ry="14" fill="url(#tcShadG)"/>
+<line x1="14" y1="60" x2="100" y2="110" stroke="#2090c0" strokeWidth="1" strokeDasharray="14 6" filter="url(#tcWG)"><animate attributeName="stroke-dashoffset" values="0;-40" dur="3s" repeatCount="indefinite"/></line>
+<line x1="186" y1="60" x2="100" y2="110" stroke="#2090c0" strokeWidth="1" strokeDasharray="14 6" filter="url(#tcWG)"><animate attributeName="stroke-dashoffset" values="0;-40" dur="3s" repeatCount="indefinite"/></line>
+<polygon points="100,20 174,63 100,106 26,63" fill="url(#tcTopG)"/>
+<polygon points="26,63 100,106 100,191 26,148" fill="url(#tcLeftG)"/>
+<polygon points="100,106 174,63 174,148 100,191" fill="url(#tcRightG)"/>
+<polygon points="52,72 100,96 100,110 52,86" fill="url(#tcRLG)" opacity="0.9"/>
+<polygon points="100,96 148,72 148,86 100,110" fill="url(#tcRRG)" opacity="0.7"/>
+<polygon points="100,62 148,86 100,110 52,86" fill="url(#tcRTopG)"/>
+<polyline points="100,48 148,72 148,86 100,110 52,86 52,72 100,48" fill="none" stroke="rgba(80,180,255,0.5)" strokeWidth="1" strokeLinejoin="round"/>
+{/* Circuit traces */}
+<path d="M26,63 L34,59 L34,52 L42,48 L42,41 L54,35 L62,39 L62,47 L54,51" fill="none" stroke="rgba(0,255,220,0.3)" strokeWidth="0.8" strokeLinecap="square" filter="url(#tcCG)"/>
+<path d="M174,63 L166,59 L166,52 L158,48 L158,41 L146,35 L138,39 L138,47 L146,51" fill="none" stroke="rgba(0,255,220,0.3)" strokeWidth="0.8" strokeLinecap="square" filter="url(#tcCG)"/>
+<path d="M54,35 L62,31 L74,25 L100,24 L126,25 L138,31 L146,35" fill="none" stroke="rgba(0,255,220,0.22)" strokeWidth="0.6" strokeLinecap="square" filter="url(#tcCG)"/>
+<path d="M26,68 L36,74 L36,88 L48,95 L48,107 L36,114 L36,128 L48,135 L48,145 L26,148" fill="none" stroke="rgba(0,220,255,0.28)" strokeWidth="0.8" strokeLinecap="square" filter="url(#tcCG)"/>
+<path d="M174,68 L164,74 L164,88 L152,95 L152,107 L164,114 L164,128 L152,135 L152,145 L174,148" fill="none" stroke="rgba(0,220,255,0.28)" strokeWidth="0.8" strokeLinecap="square" filter="url(#tcCG)"/>
+<path d="M100,112 L100,128 L100,191" fill="none" stroke="rgba(0,255,200,0.12)" strokeWidth="0.5" strokeLinecap="square" strokeDasharray="2 4" filter="url(#tcCG)"><animate attributeName="stroke-dashoffset" values="0;-12" dur="2s" repeatCount="indefinite"/></path>
+{/* Junction pads */}
+<rect x="32" y="50" width="4" height="4" fill="#00ffcc" opacity="0.7"/>
+<rect x="40" y="39" width="4" height="4" fill="#00ffcc" opacity="0.7"/>
+<rect x="156" y="39" width="4" height="4" fill="#00ffcc" opacity="0.7"/>
+<rect x="164" y="50" width="4" height="4" fill="#00ffcc" opacity="0.7"/>
+<rect x="98" y="22" width="4" height="4" fill="#00ffcc" opacity="0.6"/>
+{/* Traveling pulses */}
+<circle r="2.2" fill="#00ffee" filter="url(#tcPG)" opacity="0.95"><animateMotion path="M26,63 L34,59 L34,52 L42,48 L42,41 L54,35 L62,39 L62,47 L54,51" dur="2.8s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.3;1;1;1;0.3" dur="2.8s" repeatCount="indefinite"/></circle>
+<circle r="2.2" fill="#00ffee" filter="url(#tcPG)" opacity="0.95"><animateMotion path="M174,63 L166,59 L166,52 L158,48 L158,41 L146,35 L138,39 L138,47 L146,51" dur="2.8s" repeatCount="indefinite" begin="1.4s"/><animate attributeName="opacity" values="0.3;1;1;1;0.3" dur="2.8s" repeatCount="indefinite" begin="1.4s"/></circle>
+<circle r="2" fill="#00eeff" filter="url(#tcPG)" opacity="0.9"><animateMotion path="M26,68 L36,74 L36,88 L48,95 L48,107 L36,114 L36,128 L48,135 L48,145 L26,148" dur="3.5s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.2;1;1;1;1;1;0.2" dur="3.5s" repeatCount="indefinite"/></circle>
+<circle r="2" fill="#00eeff" filter="url(#tcPG)" opacity="0.9"><animateMotion path="M174,68 L164,74 L164,88 L152,95 L152,107 L164,114 L164,128 L152,135 L152,145 L174,148" dur="3.6s" repeatCount="indefinite" begin="0.5s"/><animate attributeName="opacity" values="0.2;1;1;1;1;1;0.2" dur="3.6s" repeatCount="indefinite" begin="0.5s"/></circle>
+<circle r="2" fill="#00ffc8" filter="url(#tcPG)" opacity="0.85"><animateMotion path="M100,112 L100,128 L100,191" dur="3s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.3;1;1;0.3" dur="3s" repeatCount="indefinite"/></circle>
+{/* Cube edges */}
+<line x1="100" y1="20" x2="26" y2="63" stroke="rgba(160,220,255,0.85)" strokeWidth="1.8" filter="url(#tcEG)"/>
+<line x1="100" y1="20" x2="174" y2="63" stroke="rgba(130,200,255,0.7)" strokeWidth="1.5"/>
+<line x1="26" y1="63" x2="26" y2="148" stroke="rgba(90,170,255,0.5)" strokeWidth="1.4"/>
+<line x1="174" y1="63" x2="174" y2="148" stroke="rgba(70,150,255,0.4)" strokeWidth="1.3"/>
+<line x1="26" y1="148" x2="100" y2="191" stroke="rgba(70,140,220,0.45)" strokeWidth="1.3"/>
+<line x1="174" y1="148" x2="100" y2="191" stroke="rgba(55,120,200,0.4)" strokeWidth="1.3"/>
+<line x1="26" y1="63" x2="100" y2="106" stroke="rgba(100,180,255,0.35)" strokeWidth="1"/>
+<line x1="174" y1="63" x2="100" y2="106" stroke="rgba(80,160,255,0.3)" strokeWidth="1"/>
+<line x1="100" y1="106" x2="100" y2="191" stroke="rgba(70,140,220,0.35)" strokeWidth="1"/>
+{/* Wireframe front */}
+<line x1="100" y1="10" x2="14" y2="60" stroke="#40c8ff" strokeWidth="1.3" strokeDasharray="14 6" filter="url(#tcWG)"><animate attributeName="stroke-dashoffset" values="0;-40" dur="3s" repeatCount="indefinite"/></line>
+<line x1="100" y1="10" x2="186" y2="60" stroke="#40c8ff" strokeWidth="1.3" strokeDasharray="14 6" filter="url(#tcWG)"><animate attributeName="stroke-dashoffset" values="0;-40" dur="3s" repeatCount="indefinite"/></line>
+<line x1="14" y1="60" x2="14" y2="153" stroke="#50d0ff" strokeWidth="1.5" strokeDasharray="14 6" filter="url(#tcWG)"><animate attributeName="stroke-dashoffset" values="0;-40" dur="3s" repeatCount="indefinite"/></line>
+<line x1="186" y1="60" x2="186" y2="153" stroke="#50d0ff" strokeWidth="1.5" strokeDasharray="14 6" filter="url(#tcWG)"><animate attributeName="stroke-dashoffset" values="0;-40" dur="3s" repeatCount="indefinite"/></line>
+<line x1="14" y1="153" x2="100" y2="203" stroke="#30a8e0" strokeWidth="1.3" strokeDasharray="14 6" filter="url(#tcWG)"><animate attributeName="stroke-dashoffset" values="0;-40" dur="3s" repeatCount="indefinite"/></line>
+<line x1="186" y1="153" x2="100" y2="203" stroke="#30a8e0" strokeWidth="1.3" strokeDasharray="14 6" filter="url(#tcWG)"><animate attributeName="stroke-dashoffset" values="0;-40" dur="3s" repeatCount="indefinite"/></line>
+{/* Corner glints */}
+<circle cx="100" cy="20" r="3" fill="#c8f0ff" filter="url(#tcGlow)" opacity="0.9"><animate attributeName="opacity" values="0.9;0.35;0.9" dur="2s" repeatCount="indefinite"/></circle>
+<circle cx="26" cy="63" r="2.5" fill="#88ccff" filter="url(#tcGlow)" opacity="0.75"><animate attributeName="opacity" values="0.75;0.2;0.75" dur="2.8s" repeatCount="indefinite"/></circle>
+<circle cx="174" cy="63" r="2.5" fill="#66bbff" filter="url(#tcGlow)" opacity="0.65"><animate attributeName="opacity" values="0.65;0.2;0.65" dur="3.2s" repeatCount="indefinite"/></circle>
+<circle cx="100" cy="191" r="2.5" fill="#44aaff" filter="url(#tcGlow)" opacity="0.7"><animate attributeName="opacity" values="0.7;0.2;0.7" dur="2.4s" repeatCount="indefinite"/></circle>
+</svg>;
+
         const heroArticles=blogArticles.slice(0,3);
         const restArticles=blogArticles.slice(3);
         const tickerText=blogArticles.map(a=>a.title.toUpperCase()).join("  •  ");
@@ -3299,6 +3369,17 @@ html{scroll-behavior:smooth}
         const blogContentRef=React.createRef();
         const blogOvBg=(()=>{const d=blogDynBg;const isL=blogArticleTheme==='light';const bR=isL?(blogReadingView?250:248):(blogReadingView?26:10);const bG=isL?(blogReadingView?248:249):(blogReadingView?26:10);const bB=isL?(blogReadingView?240:250):(blogReadingView?26:18);const base=`rgb(${bR},${bG},${bB})`;if(!d)return base;const mx=(c,b,t)=>Math.round(b+(c-b)*t);if(isL)return`linear-gradient(180deg, rgb(${mx(d.r,bR,0.25)},${mx(d.g,bG,0.25)},${mx(d.b,bB,0.25)}) 0%, rgb(${mx(d.r,bR,0.08)},${mx(d.g,bG,0.08)},${mx(d.b,bB,0.08)}) 55%, ${base} 100%)`;return`linear-gradient(180deg, rgb(${mx(d.r,bR,0.45)},${mx(d.g,bG,0.45)},${mx(d.b,bB,0.45)}) 0%, rgb(${mx(d.r,bR,0.15)},${mx(d.g,bG,0.15)},${mx(d.b,bB,0.15)}) 55%, ${base} 100%)`})();
         return<>
+          {/* TechCraft Header */}
+          <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"20px 24px 40px",position:"relative"}}>
+            <div style={{position:"absolute",width:220,height:220,borderRadius:"50%",background:"radial-gradient(circle,rgba(0,140,255,0.15) 0%,transparent 70%)",pointerEvents:"none",animation:"glowPulse 3s ease-in-out infinite"}}/>
+            <div style={{filter:"drop-shadow(0 0 20px rgba(0,140,255,0.6))",animation:"cubeFloat 4s ease-in-out infinite",marginBottom:16}}>
+              <TechCraftLogo size={100}/>
+            </div>
+            <h1 style={{fontSize:28,fontWeight:900,letterSpacing:"0.25em",fontFamily:"'Orbitron',sans-serif",margin:"0 0 6px",textTransform:"uppercase",background:"linear-gradient(135deg,#ffffff 0%,#a0d4ff 50%,#00c8ff 100%)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",filter:"drop-shadow(0 0 8px rgba(0,200,255,0.5))"}}>TechCraft</h1>
+            <div style={{width:180,height:1,background:"linear-gradient(90deg,transparent,#00c8ff,transparent)",marginBottom:10}}/>
+            <p style={{fontSize:14,fontWeight:600,letterSpacing:1,color:"rgba(0,200,255,0.85)",margin:"0 0 4px",fontFamily:`${F.heading},sans-serif`}}>Bits, Bots & the Big Bang</p>
+            <p style={{fontSize:10,letterSpacing:"0.5em",textTransform:"uppercase",color:"rgba(0,200,255,0.5)",margin:0,fontFamily:`${F.heading},sans-serif`}}>Crafted for Minds That Question Everything</p>
+          </div>
           {/* Top 3 Hero Columns */}
           <div className="blog-hero-wrap">
             {heroArticles.map((a,idx)=>{const rowTxt=<><span className="brs-tag">{a.tag}</span><span className="brs-dot"/><span className="brs-label">Content by</span><span>{a.author}</span><span className="brs-dot"/><span className="brs-label">Photo by</span><span>{a.photoBy}</span><span className="brs-dot"/><span>{a.subtitle.slice(0,60)}...</span></>;return<div key={a.slug} className="blog-hero-col" data-blog-slug={a.slug} onClick={(e)=>openBlogCard(a.slug,e.currentTarget,a.photo)}>
@@ -4915,7 +4996,7 @@ html{scroll-behavior:smooth}
           </div>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             {infoPage==="password-manager"&&!pmIsLoggedIn&&<button onClick={()=>{setPmShowLogin(true);setPmLoginErr("");setPmLogin2FA(false);setPmLogin2FACode("");setPmLogin2FAErr("");setPmSignupMode(false)}} style={{padding:"8px 20px",background:pgQuantumSafe?"linear-gradient(135deg,#10b981,#059669)":`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:8,color:"#fff",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5,boxShadow:pgQuantumSafe?"0 4px 16px rgba(16,185,129,0.35)":`0 4px 16px rgba(${T.accentRgb},0.35)`,transition:"all 0.3s"}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-1px)"}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)"}}>Login</button>}
-            <button onClick={()=>{if(blogArticle){closeBlogArticle()}else{setInfoPage(null)}}} style={{background:`rgba(${T.accentRgb},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,borderRadius:8,padding:"8px 20px",color:T.dark?T.text:"#e2e8f0",fontSize:13,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1}}>{blogArticle?"← Blog":"← Back"}</button>
+            <button onClick={()=>{if(blogArticle){closeBlogArticle()}else{setInfoPage(null)}}} style={{background:`rgba(${T.accentRgb},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,borderRadius:8,padding:"8px 20px",color:T.dark?T.text:"#e2e8f0",fontSize:13,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1}}>{blogArticle?"← TechCraft":"← Back"}</button>
           </div>
         </nav>
         <div style={{position:"relative",zIndex:1,maxWidth:infoPage==="security-blog"?"100%":800,margin:"0 auto",padding:infoPage==="security-blog"?"80px 0 60px":"100px 24px 60px"}}>
@@ -5050,7 +5131,7 @@ html{scroll-behavior:smooth}
             <a href="#features" className="ld-nav-btn" style={{color:"rgba(226,232,240,0.8)",fontSize:13,fontWeight:500,textDecoration:"none",fontFamily:"inherit"}}>Features</a>
             <a href="#pricing" className="ld-nav-btn" style={{color:"rgba(226,232,240,0.8)",fontSize:13,fontWeight:500,textDecoration:"none",fontFamily:"inherit"}}>Pricing</a>
             <button onClick={()=>setInfoPage("password-manager")} className="ld-nav-btn" style={{color:"rgba(226,232,240,0.8)",fontSize:13,fontWeight:500,background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>ShieldCraft</button>
-            <button onClick={()=>setInfoPage("security-blog")} className="ld-nav-btn" style={{color:"rgba(226,232,240,0.8)",fontSize:13,fontWeight:500,background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Blog</button>
+            <button onClick={()=>setInfoPage("security-blog")} className="ld-nav-btn" style={{color:"rgba(226,232,240,0.8)",fontSize:13,fontWeight:500,background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>TechCraft</button>
             <button onClick={()=>goAuth("login")} className="ld-nav-btn" style={{background:`rgba(${T.accentRgb},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,borderRadius:8,padding:"8px 20px",color:T.dark?T.text:"#e2e8f0",fontSize:13,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1}}>Sign In</button>
           </div>
         </nav>
@@ -5233,7 +5314,7 @@ html{scroll-behavior:smooth}
             <button onClick={()=>setInfoPage("privacy")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Privacy</button>
             <button onClick={()=>setInfoPage("terms")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Terms</button>
             <button onClick={()=>setInfoPage("password-manager")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>ShieldCraft</button>
-            <button onClick={()=>setInfoPage("security-blog")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Blog</button>
+            <button onClick={()=>setInfoPage("security-blog")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>TechCraft</button>
           </div>
           <p style={{fontSize:11,color:"#7a8898",letterSpacing:0.8,display:"flex",alignItems:"center",justifyContent:"center",gap:6,flexWrap:"wrap",lineHeight:2,margin:0}}>
             <span style={{fontStyle:"italic"}}>Designed and Developed by</span>
@@ -5439,7 +5520,7 @@ html{scroll-behavior:smooth}
             <button onClick={()=>{setInfoPage("privacy");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Privacy</button>
             <button onClick={()=>{setInfoPage("terms");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Terms</button>
             <button onClick={()=>{setInfoPage("password-manager");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>ShieldCraft</button>
-            <button onClick={()=>{setInfoPage("security-blog");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Blog</button>
+            <button onClick={()=>{setInfoPage("security-blog");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>TechCraft</button>
           </div>
           <p style={{fontSize:11,color:T.dim,fontFamily:`${F.body},sans-serif`,letterSpacing:0.8,display:"flex",alignItems:"center",justifyContent:"center",gap:6,flexWrap:"wrap",lineHeight:2,margin:0}}>
             <span style={{fontStyle:"italic",opacity:0.7}}>Designed and Developed by</span>
