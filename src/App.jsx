@@ -2167,6 +2167,10 @@ input:focus,textarea:focus{border-color:rgba(${T.accentRgb},0.4)!important;box-s
 @keyframes ldShine{0%{left:-100%}100%{left:200%}}
 @keyframes cubeFloat{0%,100%{transform:translateY(0);filter:drop-shadow(0 0 20px rgba(0,140,255,0.6))}50%{transform:translateY(-8px);filter:drop-shadow(0 0 35px rgba(0,180,255,0.9))}}
 @keyframes glowPulse{0%,100%{transform:scale(1);opacity:0.8}50%{transform:scale(1.15);opacity:1}}
+@keyframes tcBracketTL{0%,100%{transform:translate(0,0);border-color:rgba(0,200,255,0.4)}50%{transform:translate(-6px,-6px);border-color:rgba(0,255,240,0.95)}}
+@keyframes tcBracketTR{0%,100%{transform:translate(0,0);border-color:rgba(0,200,255,0.4)}50%{transform:translate(6px,-6px);border-color:rgba(0,255,240,0.95)}}
+@keyframes tcBracketBL{0%,100%{transform:translate(0,0);border-color:rgba(0,200,255,0.4)}50%{transform:translate(-6px,6px);border-color:rgba(0,255,240,0.95)}}
+@keyframes tcBracketBR{0%,100%{transform:translate(0,0);border-color:rgba(0,200,255,0.4)}50%{transform:translate(6px,6px);border-color:rgba(0,255,240,0.95)}}
 @keyframes ldOrb1{0%{transform:translate(0,0)}25%{transform:translate(100px,-50px)}50%{transform:translate(-50px,80px)}75%{transform:translate(-120px,-30px)}100%{transform:translate(0,0)}}
 @keyframes ldOrb2{0%{transform:translate(0,0)}25%{transform:translate(-80px,60px)}50%{transform:translate(60px,-90px)}75%{transform:translate(100px,40px)}100%{transform:translate(0,0)}}
 @keyframes ldLine{0%{transform:translateX(-100%);opacity:0}20%{opacity:1}80%{opacity:1}100%{transform:translateX(100vw);opacity:0}}
@@ -3294,7 +3298,13 @@ html{scroll-behavior:smooth}
         };return imgs[key]||null};
 
         // Blog listing — always rendered; overlay shows article on top
-        const TechCraftLogo=({size=80})=><svg viewBox="-10 0 220 240" width={size} height={size*1.13} xmlns="http://www.w3.org/2000/svg" overflow="visible">
+        const TechCraftLogo=({size=80})=>{const s=size,h=s*1.13;return<div style={{position:"relative",width:s,height:h}}>
+{/* Corner brackets */}
+<div style={{position:"absolute",top:0,left:0,width:18,height:18,borderTop:"2px solid rgba(0,200,255,0.6)",borderLeft:"2px solid rgba(0,200,255,0.6)",animation:"tcBracketTL 3s ease-in-out infinite"}}/>
+<div style={{position:"absolute",top:0,right:0,width:18,height:18,borderTop:"2px solid rgba(0,200,255,0.6)",borderRight:"2px solid rgba(0,200,255,0.6)",animation:"tcBracketTR 3s ease-in-out infinite"}}/>
+<div style={{position:"absolute",bottom:0,left:0,width:18,height:18,borderBottom:"2px solid rgba(0,200,255,0.6)",borderLeft:"2px solid rgba(0,200,255,0.6)",animation:"tcBracketBL 3s ease-in-out infinite"}}/>
+<div style={{position:"absolute",bottom:0,right:0,width:18,height:18,borderBottom:"2px solid rgba(0,200,255,0.6)",borderRight:"2px solid rgba(0,200,255,0.6)",animation:"tcBracketBR 3s ease-in-out infinite"}}/>
+<svg viewBox="-10 0 220 240" width={s} height={h} xmlns="http://www.w3.org/2000/svg" overflow="visible">
 <defs>
 <linearGradient id="tcTopG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#5ec4f5"/><stop offset="40%" stopColor="#3daae8"/><stop offset="100%" stopColor="#1a80cc"/></linearGradient>
 <linearGradient id="tcLeftG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#1565b8"/><stop offset="100%" stopColor="#0a3a78"/></linearGradient>
@@ -3309,35 +3319,88 @@ html{scroll-behavior:smooth}
 <filter id="tcPG" filterUnits="userSpaceOnUse" x="-10" y="0" width="220" height="240"><feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/><feFlood floodColor="#00ffcc" floodOpacity="1" result="color"/><feComposite in="color" in2="blur" operator="in" result="glow"/><feMerge><feMergeNode in="glow"/><feMergeNode in="glow"/><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <filter id="tcWG" filterUnits="userSpaceOnUse" x="-10" y="0" width="220" height="240"><feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur"/><feFlood floodColor="#00d4ff" floodOpacity="0.8" result="color"/><feComposite in="color" in2="blur" operator="in" result="glow"/><feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 </defs>
+{/* Shadow */}
 <ellipse cx="100" cy="212" rx="62" ry="14" fill="url(#tcShadG)"/>
+{/* Back wireframe edges */}
 <line x1="14" y1="60" x2="100" y2="110" stroke="#2090c0" strokeWidth="1" strokeDasharray="14 6" filter="url(#tcWG)"><animate attributeName="stroke-dashoffset" values="0;-40" dur="3s" repeatCount="indefinite"/></line>
 <line x1="186" y1="60" x2="100" y2="110" stroke="#2090c0" strokeWidth="1" strokeDasharray="14 6" filter="url(#tcWG)"><animate attributeName="stroke-dashoffset" values="0;-40" dur="3s" repeatCount="indefinite"/></line>
+<line x1="100" y1="10" x2="100" y2="110" stroke="#2090c0" strokeWidth="1" strokeDasharray="14 6" filter="url(#tcWG)"><animate attributeName="stroke-dashoffset" values="0;-40" dur="3s" repeatCount="indefinite"/></line>
+{/* Solid cube faces */}
 <polygon points="100,20 174,63 100,106 26,63" fill="url(#tcTopG)"/>
 <polygon points="26,63 100,106 100,191 26,148" fill="url(#tcLeftG)"/>
 <polygon points="100,106 174,63 174,148 100,191" fill="url(#tcRightG)"/>
+{/* Recessed square on top */}
 <polygon points="52,72 100,96 100,110 52,86" fill="url(#tcRLG)" opacity="0.9"/>
 <polygon points="100,96 148,72 148,86 100,110" fill="url(#tcRRG)" opacity="0.7"/>
+<polygon points="100,48 52,72 52,86 100,62" fill="url(#tcRLG)" opacity="0.5"/>
+<polygon points="100,48 148,72 148,86 100,62" fill="url(#tcRRG)" opacity="0.4"/>
 <polygon points="100,62 148,86 100,110 52,86" fill="url(#tcRTopG)"/>
+{/* Recess edges */}
 <polyline points="100,48 148,72 148,86 100,110 52,86 52,72 100,48" fill="none" stroke="rgba(80,180,255,0.5)" strokeWidth="1" strokeLinejoin="round"/>
-{/* Circuit traces */}
+<line x1="100" y1="48" x2="100" y2="62" stroke="rgba(80,180,255,0.35)" strokeWidth="0.8"/>
+<line x1="52" y1="72" x2="52" y2="86" stroke="rgba(80,180,255,0.35)" strokeWidth="0.8"/>
+<line x1="148" y1="72" x2="148" y2="86" stroke="rgba(80,180,255,0.35)" strokeWidth="0.8"/>
+<line x1="100" y1="96" x2="100" y2="110" stroke="rgba(80,180,255,0.35)" strokeWidth="0.8"/>
+<polyline points="100,62 148,86 100,110 52,86 100,62" fill="none" stroke="rgba(60,140,255,0.3)" strokeWidth="0.8" strokeLinejoin="round"/>
+{/* TOP FACE circuit traces */}
 <path d="M26,63 L34,59 L34,52 L42,48 L42,41 L54,35 L62,39 L62,47 L54,51" fill="none" stroke="rgba(0,255,220,0.3)" strokeWidth="0.8" strokeLinecap="square" filter="url(#tcCG)"/>
 <path d="M174,63 L166,59 L166,52 L158,48 L158,41 L146,35 L138,39 L138,47 L146,51" fill="none" stroke="rgba(0,255,220,0.3)" strokeWidth="0.8" strokeLinecap="square" filter="url(#tcCG)"/>
 <path d="M54,35 L62,31 L74,25 L100,24 L126,25 L138,31 L146,35" fill="none" stroke="rgba(0,255,220,0.22)" strokeWidth="0.6" strokeLinecap="square" filter="url(#tcCG)"/>
-<path d="M26,68 L36,74 L36,88 L48,95 L48,107 L36,114 L36,128 L48,135 L48,145 L26,148" fill="none" stroke="rgba(0,220,255,0.28)" strokeWidth="0.8" strokeLinecap="square" filter="url(#tcCG)"/>
-<path d="M174,68 L164,74 L164,88 L152,95 L152,107 L164,114 L164,128 L152,135 L152,145 L174,148" fill="none" stroke="rgba(0,220,255,0.28)" strokeWidth="0.8" strokeLinecap="square" filter="url(#tcCG)"/>
-<path d="M100,112 L100,128 L100,191" fill="none" stroke="rgba(0,255,200,0.12)" strokeWidth="0.5" strokeLinecap="square" strokeDasharray="2 4" filter="url(#tcCG)"><animate attributeName="stroke-dashoffset" values="0;-12" dur="2s" repeatCount="indefinite"/></path>
-{/* Junction pads */}
+<path d="M26,63 L30,70 L40,76 L40,87 L52,93" fill="none" stroke="rgba(0,255,220,0.25)" strokeWidth="0.6" strokeLinecap="square" filter="url(#tcCG)"/>
+<path d="M174,63 L170,70 L160,76 L160,87 L148,93" fill="none" stroke="rgba(0,255,220,0.25)" strokeWidth="0.6" strokeLinecap="square" filter="url(#tcCG)"/>
+{/* Top face junction pads */}
 <rect x="32" y="50" width="4" height="4" fill="#00ffcc" opacity="0.7"/>
 <rect x="40" y="39" width="4" height="4" fill="#00ffcc" opacity="0.7"/>
 <rect x="156" y="39" width="4" height="4" fill="#00ffcc" opacity="0.7"/>
 <rect x="164" y="50" width="4" height="4" fill="#00ffcc" opacity="0.7"/>
 <rect x="98" y="22" width="4" height="4" fill="#00ffcc" opacity="0.6"/>
-{/* Traveling pulses */}
+<rect x="38" y="74" width="4" height="4" fill="#00ffcc" opacity="0.5"/>
+<rect x="158" y="74" width="4" height="4" fill="#00ffcc" opacity="0.5"/>
+<circle cx="100" cy="24" r="1.8" fill="#00ffdd" opacity="0.6"/>
+{/* LEFT FACE circuit traces */}
+<path d="M26,68 L36,74 L36,88 L48,95 L48,107 L36,114 L36,128 L48,135 L48,145 L26,148" fill="none" stroke="rgba(0,220,255,0.28)" strokeWidth="0.8" strokeLinecap="square" filter="url(#tcCG)"/>
+<path d="M48,107 L60,114 L72,114 L84,121" fill="none" stroke="rgba(0,220,255,0.22)" strokeWidth="0.6" strokeLinecap="square" filter="url(#tcCG)"/>
+<path d="M36,128 L48,128 L60,135 L72,148 L86,162 L100,170" fill="none" stroke="rgba(0,220,255,0.2)" strokeWidth="0.5" strokeLinecap="square" filter="url(#tcCG)"/>
+{/* Left face junction pads */}
+<rect x="46" y="93" width="4" height="4" fill="#00ddff" opacity="0.6"/>
+<rect x="34" y="112" width="4" height="4" fill="#00ddff" opacity="0.6"/>
+<rect x="46" y="105" width="4" height="4" fill="#00ddff" opacity="0.6"/>
+<rect x="34" y="126" width="4" height="4" fill="#00ddff" opacity="0.6"/>
+<rect x="46" y="133" width="4" height="4" fill="#00ddff" opacity="0.6"/>
+<circle cx="84" cy="121" r="1.5" fill="#00ccff" opacity="0.5"/>
+<circle cx="100" cy="170" r="1.5" fill="#00ccff" opacity="0.5"/>
+{/* RIGHT FACE circuit traces */}
+<path d="M174,68 L164,74 L164,88 L152,95 L152,107 L164,114 L164,128 L152,135 L152,145 L174,148" fill="none" stroke="rgba(0,220,255,0.28)" strokeWidth="0.8" strokeLinecap="square" filter="url(#tcCG)"/>
+<path d="M152,107 L140,114 L128,114 L116,121" fill="none" stroke="rgba(0,220,255,0.22)" strokeWidth="0.6" strokeLinecap="square" filter="url(#tcCG)"/>
+<path d="M164,128 L152,128 L140,135 L128,148 L114,162 L100,170" fill="none" stroke="rgba(0,220,255,0.2)" strokeWidth="0.5" strokeLinecap="square" filter="url(#tcCG)"/>
+{/* Right face junction pads */}
+<rect x="150" y="93" width="4" height="4" fill="#00ddff" opacity="0.6"/>
+<rect x="162" y="112" width="4" height="4" fill="#00ddff" opacity="0.6"/>
+<rect x="150" y="105" width="4" height="4" fill="#00ddff" opacity="0.6"/>
+<rect x="162" y="126" width="4" height="4" fill="#00ddff" opacity="0.6"/>
+<rect x="150" y="133" width="4" height="4" fill="#00ddff" opacity="0.6"/>
+<circle cx="116" cy="121" r="1.5" fill="#00ccff" opacity="0.5"/>
+{/* Cross-face data bus */}
+<path d="M84,121 L100,128 L116,121" fill="none" stroke="rgba(0,255,200,0.2)" strokeWidth="0.6" strokeLinecap="square" strokeDasharray="3 3" filter="url(#tcCG)"><animate attributeName="stroke-dashoffset" values="0;-12" dur="1.5s" repeatCount="indefinite"/></path>
+<path d="M100,112 L100,128 L100,191" fill="none" stroke="rgba(0,255,200,0.12)" strokeWidth="0.5" strokeLinecap="square" strokeDasharray="2 4" filter="url(#tcCG)"><animate attributeName="stroke-dashoffset" values="0;-12" dur="2s" repeatCount="indefinite"/></path>
+{/* Central hub node */}
+<rect x="96" y="124" width="8" height="8" rx="1" fill="none" stroke="#00ffc8" strokeWidth="0.6" opacity="0.5"><animate attributeName="opacity" values="0.3;0.8;0.3" dur="2s" repeatCount="indefinite"/></rect>
+<circle cx="100" cy="128" r="1.5" fill="#00ffc8" opacity="0.6"><animate attributeName="opacity" values="0.4;1;0.4" dur="2s" repeatCount="indefinite"/></circle>
+{/* Traveling pulses - top face */}
 <circle r="2.2" fill="#00ffee" filter="url(#tcPG)" opacity="0.95"><animateMotion path="M26,63 L34,59 L34,52 L42,48 L42,41 L54,35 L62,39 L62,47 L54,51" dur="2.8s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.3;1;1;1;0.3" dur="2.8s" repeatCount="indefinite"/></circle>
 <circle r="2.2" fill="#00ffee" filter="url(#tcPG)" opacity="0.95"><animateMotion path="M174,63 L166,59 L166,52 L158,48 L158,41 L146,35 L138,39 L138,47 L146,51" dur="2.8s" repeatCount="indefinite" begin="1.4s"/><animate attributeName="opacity" values="0.3;1;1;1;0.3" dur="2.8s" repeatCount="indefinite" begin="1.4s"/></circle>
+<circle r="1.8" fill="#80ffee" filter="url(#tcPG)" opacity="0.7"><animateMotion path="M54,35 L62,31 L74,25 L100,24 L126,25 L138,31 L146,35" dur="3.5s" repeatCount="indefinite" begin="0.5s"/><animate attributeName="opacity" values="0.2;0.8;1;0.8;0.2" dur="3.5s" repeatCount="indefinite" begin="0.5s"/></circle>
+{/* Traveling pulses - left face */}
 <circle r="2" fill="#00eeff" filter="url(#tcPG)" opacity="0.9"><animateMotion path="M26,68 L36,74 L36,88 L48,95 L48,107 L36,114 L36,128 L48,135 L48,145 L26,148" dur="3.5s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.2;1;1;1;1;1;0.2" dur="3.5s" repeatCount="indefinite"/></circle>
+<circle r="1.5" fill="#60eeff" filter="url(#tcPG)" opacity="0.7"><animateMotion path="M48,107 L60,114 L72,114 L84,121" dur="1.8s" repeatCount="indefinite" begin="0.6s"/><animate attributeName="opacity" values="0.1;0.8;0.8;0.1" dur="1.8s" repeatCount="indefinite" begin="0.6s"/></circle>
+<circle r="1.5" fill="#40ddcc" filter="url(#tcPG)" opacity="0.6"><animateMotion path="M36,128 L48,128 L60,135 L72,148 L86,162 L100,170" dur="3s" repeatCount="indefinite" begin="1s"/><animate attributeName="opacity" values="0.1;0.7;0.7;0.1" dur="3s" repeatCount="indefinite" begin="1s"/></circle>
+{/* Traveling pulses - right face */}
 <circle r="2" fill="#00eeff" filter="url(#tcPG)" opacity="0.9"><animateMotion path="M174,68 L164,74 L164,88 L152,95 L152,107 L164,114 L164,128 L152,135 L152,145 L174,148" dur="3.6s" repeatCount="indefinite" begin="0.5s"/><animate attributeName="opacity" values="0.2;1;1;1;1;1;0.2" dur="3.6s" repeatCount="indefinite" begin="0.5s"/></circle>
+<circle r="1.5" fill="#60eeff" filter="url(#tcPG)" opacity="0.7"><animateMotion path="M152,107 L140,114 L128,114 L116,121" dur="1.8s" repeatCount="indefinite" begin="1.2s"/><animate attributeName="opacity" values="0.1;0.8;0.8;0.1" dur="1.8s" repeatCount="indefinite" begin="1.2s"/></circle>
+<circle r="1.5" fill="#40ddcc" filter="url(#tcPG)" opacity="0.6"><animateMotion path="M164,128 L152,128 L140,135 L128,148 L114,162 L100,170" dur="3s" repeatCount="indefinite" begin="2s"/><animate attributeName="opacity" values="0.1;0.7;0.7;0.1" dur="3s" repeatCount="indefinite" begin="2s"/></circle>
+{/* Vertical bus pulses */}
 <circle r="2" fill="#00ffc8" filter="url(#tcPG)" opacity="0.85"><animateMotion path="M100,112 L100,128 L100,191" dur="3s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.3;1;1;0.3" dur="3s" repeatCount="indefinite"/></circle>
+<circle r="1.5" fill="#80ffe0" filter="url(#tcPG)" opacity="0.6"><animateMotion path="M100,191 L100,128 L100,112" dur="3s" repeatCount="indefinite" begin="1.5s"/><animate attributeName="opacity" values="0.2;0.8;0.8;0.2" dur="3s" repeatCount="indefinite" begin="1.5s"/></circle>
 {/* Cube edges */}
 <line x1="100" y1="20" x2="26" y2="63" stroke="rgba(160,220,255,0.85)" strokeWidth="1.8" filter="url(#tcEG)"/>
 <line x1="100" y1="20" x2="174" y2="63" stroke="rgba(130,200,255,0.7)" strokeWidth="1.5"/>
@@ -3355,12 +3418,18 @@ html{scroll-behavior:smooth}
 <line x1="186" y1="60" x2="186" y2="153" stroke="#50d0ff" strokeWidth="1.5" strokeDasharray="14 6" filter="url(#tcWG)"><animate attributeName="stroke-dashoffset" values="0;-40" dur="3s" repeatCount="indefinite"/></line>
 <line x1="14" y1="153" x2="100" y2="203" stroke="#30a8e0" strokeWidth="1.3" strokeDasharray="14 6" filter="url(#tcWG)"><animate attributeName="stroke-dashoffset" values="0;-40" dur="3s" repeatCount="indefinite"/></line>
 <line x1="186" y1="153" x2="100" y2="203" stroke="#30a8e0" strokeWidth="1.3" strokeDasharray="14 6" filter="url(#tcWG)"><animate attributeName="stroke-dashoffset" values="0;-40" dur="3s" repeatCount="indefinite"/></line>
+<line x1="100" y1="110" x2="100" y2="203" stroke="#2898d0" strokeWidth="1.1" strokeDasharray="14 6" filter="url(#tcWG)"><animate attributeName="stroke-dashoffset" values="0;-40" dur="3s" repeatCount="indefinite"/></line>
 {/* Corner glints */}
 <circle cx="100" cy="20" r="3" fill="#c8f0ff" filter="url(#tcGlow)" opacity="0.9"><animate attributeName="opacity" values="0.9;0.35;0.9" dur="2s" repeatCount="indefinite"/></circle>
 <circle cx="26" cy="63" r="2.5" fill="#88ccff" filter="url(#tcGlow)" opacity="0.75"><animate attributeName="opacity" values="0.75;0.2;0.75" dur="2.8s" repeatCount="indefinite"/></circle>
 <circle cx="174" cy="63" r="2.5" fill="#66bbff" filter="url(#tcGlow)" opacity="0.65"><animate attributeName="opacity" values="0.65;0.2;0.65" dur="3.2s" repeatCount="indefinite"/></circle>
 <circle cx="100" cy="191" r="2.5" fill="#44aaff" filter="url(#tcGlow)" opacity="0.7"><animate attributeName="opacity" values="0.7;0.2;0.7" dur="2.4s" repeatCount="indefinite"/></circle>
-</svg>;
+{/* Wireframe corner glints */}
+<circle cx="100" cy="10" r="2" fill="#60c8ff" filter="url(#tcGlow)" opacity="0.4"><animate attributeName="opacity" values="0.4;0.15;0.4" dur="3s" repeatCount="indefinite"/></circle>
+<circle cx="14" cy="60" r="1.5" fill="#50b8ff" filter="url(#tcGlow)" opacity="0.35"/>
+<circle cx="186" cy="60" r="1.5" fill="#50b8ff" filter="url(#tcGlow)" opacity="0.35"/>
+<circle cx="100" cy="203" r="1.5" fill="#3090dd" filter="url(#tcGlow)" opacity="0.3"/>
+</svg></div>};
 
         const heroArticles=blogArticles.slice(0,3);
         const restArticles=blogArticles.slice(3);
@@ -4991,8 +5060,13 @@ html{scroll-behavior:smooth}
         </div>
         <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:100,display:blogArticle?"none":"flex",padding:"16px 40px",alignItems:"center",justifyContent:"space-between",background:`linear-gradient(180deg,${T.dark?T.bg:"#0a0a12"} 0%,transparent 100%)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)"}}>
           <div style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer"}} onClick={()=>{setBlogArticle(null);setBlogFullArticle(false);blogBusyRef.current=false;blogCardRectRef.current=null;setInfoPage(null)}}>
-            <ButterflyLogo s={28} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} flap/>
-            <span style={{fontSize:18,fontWeight:800,letterSpacing:3,fontFamily:`${F.heading},sans-serif`,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>NOTESCRAFT</span>
+            {infoPage==="security-blog"?<>
+              <svg viewBox="-10 0 220 240" width={28} height={32} xmlns="http://www.w3.org/2000/svg" overflow="visible"><defs><linearGradient id="tcNavTop" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#5ec4f5"/><stop offset="100%" stopColor="#1a80cc"/></linearGradient><linearGradient id="tcNavL" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#1565b8"/><stop offset="100%" stopColor="#0a3a78"/></linearGradient><linearGradient id="tcNavR" x1="100%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor="#1878cc"/><stop offset="100%" stopColor="#0c4a90"/></linearGradient></defs><polygon points="100,20 174,63 100,106 26,63" fill="url(#tcNavTop)"/><polygon points="26,63 100,106 100,191 26,148" fill="url(#tcNavL)"/><polygon points="100,106 174,63 174,148 100,191" fill="url(#tcNavR)"/><polygon points="100,62 148,86 100,110 52,86" fill="#061830"/><line x1="100" y1="20" x2="26" y2="63" stroke="rgba(160,220,255,0.85)" strokeWidth="2"/><line x1="100" y1="20" x2="174" y2="63" stroke="rgba(130,200,255,0.7)" strokeWidth="1.8"/></svg>
+              <span style={{fontSize:18,fontWeight:800,letterSpacing:3,fontFamily:`${F.heading},sans-serif`,background:"linear-gradient(135deg,#ffffff 0%,#a0d4ff 50%,#00c8ff 100%)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>TECHCRAFT</span>
+            </>:<>
+              <ButterflyLogo s={28} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} flap/>
+              <span style={{fontSize:18,fontWeight:800,letterSpacing:3,fontFamily:`${F.heading},sans-serif`,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>NOTESCRAFT</span>
+            </>}
           </div>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             {infoPage==="password-manager"&&!pmIsLoggedIn&&<button onClick={()=>{setPmShowLogin(true);setPmLoginErr("");setPmLogin2FA(false);setPmLogin2FACode("");setPmLogin2FAErr("");setPmSignupMode(false)}} style={{padding:"8px 20px",background:pgQuantumSafe?"linear-gradient(135deg,#10b981,#059669)":`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:8,color:"#fff",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5,boxShadow:pgQuantumSafe?"0 4px 16px rgba(16,185,129,0.35)":`0 4px 16px rgba(${T.accentRgb},0.35)`,transition:"all 0.3s"}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-1px)"}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)"}}>Login</button>}
