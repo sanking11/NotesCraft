@@ -4916,26 +4916,26 @@ html{scroll-behavior:smooth}
         <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:100,display:blogArticle?"none":"flex",padding:"16px 40px",alignItems:"center",justifyContent:"space-between",background:`linear-gradient(180deg,${T.dark?T.bg:"#0a0a12"} 0%,transparent 100%)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)"}}>
           <div style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer"}} onClick={()=>{setBlogArticle(null);setBlogFullArticle(false);blogBusyRef.current=false;blogCardRectRef.current=null;setInfoPage(null)}}>
             {infoPage==="security-blog"?<>
-              <div style={{position:"relative",width:36,height:42,flexShrink:0,filter:`drop-shadow(0 0 10px rgba(${T.accentRgb},0.5))`,animation:"cubeFloat 4s ease-in-out infinite"}}>
+              <div style={{position:"relative",width:44,height:52,flexShrink:0,filter:`drop-shadow(0 0 12px rgba(${T.accentRgb},0.6))`,animation:"cubeFloat 4s ease-in-out infinite"}}>
                 {/* Corner brackets */}
-                <div style={{position:"absolute",top:0,left:0,width:8,height:8,borderTop:`1.5px solid rgba(${T.accentRgb},0.6)`,borderLeft:`1.5px solid rgba(${T.accentRgb},0.6)`,animation:"tcBracketTL 3s ease-in-out infinite"}}/>
-                <div style={{position:"absolute",top:0,right:0,width:8,height:8,borderTop:`1.5px solid rgba(${T.accentRgb},0.6)`,borderRight:`1.5px solid rgba(${T.accentRgb},0.6)`,animation:"tcBracketTR 3s ease-in-out infinite"}}/>
-                <div style={{position:"absolute",bottom:0,left:0,width:8,height:8,borderBottom:`1.5px solid rgba(${T.accentRgb},0.6)`,borderLeft:`1.5px solid rgba(${T.accentRgb},0.6)`,animation:"tcBracketBL 3s ease-in-out infinite"}}/>
-                <div style={{position:"absolute",bottom:0,right:0,width:8,height:8,borderBottom:`1.5px solid rgba(${T.accentRgb},0.6)`,borderRight:`1.5px solid rgba(${T.accentRgb},0.6)`,animation:"tcBracketBR 3s ease-in-out infinite"}}/>
-                <svg viewBox="-10 0 220 240" width={36} height={42} xmlns="http://www.w3.org/2000/svg" overflow="visible">
+                <div style={{position:"absolute",top:-2,left:-2,width:10,height:10,borderTop:`2px solid rgba(${T.accentRgb},0.8)`,borderLeft:`2px solid rgba(${T.accentRgb},0.8)`,animation:"tcBracketTL 3s ease-in-out infinite"}}/>
+                <div style={{position:"absolute",top:-2,right:-2,width:10,height:10,borderTop:`2px solid rgba(${T.accentRgb},0.8)`,borderRight:`2px solid rgba(${T.accentRgb},0.8)`,animation:"tcBracketTR 3s ease-in-out infinite"}}/>
+                <div style={{position:"absolute",bottom:-2,left:-2,width:10,height:10,borderBottom:`2px solid rgba(${T.accentRgb},0.8)`,borderLeft:`2px solid rgba(${T.accentRgb},0.8)`,animation:"tcBracketBL 3s ease-in-out infinite"}}/>
+                <div style={{position:"absolute",bottom:-2,right:-2,width:10,height:10,borderBottom:`2px solid rgba(${T.accentRgb},0.8)`,borderRight:`2px solid rgba(${T.accentRgb},0.8)`,animation:"tcBracketBR 3s ease-in-out infinite"}}/>
+                <svg viewBox="-10 0 220 240" width={44} height={52} xmlns="http://www.w3.org/2000/svg" overflow="visible">
 <defs>
 <linearGradient id="tcNT" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor={T.accent}/><stop offset="100%" stopColor={T.accent2||T.accent}/></linearGradient>
 <linearGradient id="tcNL" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor={`rgba(${T.accentRgb},0.7)`}/><stop offset="100%" stopColor={`rgba(${T.accentRgb},0.3)`}/></linearGradient>
 <linearGradient id="tcNR" x1="100%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor={`rgba(${T.accentRgb},0.6)`}/><stop offset="100%" stopColor={`rgba(${T.accentRgb},0.25)`}/></linearGradient>
-<filter id="tcNG" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-<filter id="tcNC" filterUnits="userSpaceOnUse" x="-10" y="0" width="220" height="240"><feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="b"/><feFlood floodColor={T.accent} floodOpacity="0.8" result="c"/><feComposite in="c" in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-<filter id="tcNP" filterUnits="userSpaceOnUse" x="-10" y="0" width="220" height="240"><feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="b"/><feFlood floodColor={T.accent} floodOpacity="1" result="c"/><feComposite in="c" in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-<filter id="tcNW" filterUnits="userSpaceOnUse" x="-10" y="0" width="220" height="240"><feGaussianBlur in="SourceGraphic" stdDeviation="1.2" result="b"/><feFlood floodColor={T.accent} floodOpacity="0.7" result="c"/><feComposite in="c" in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="tcNG" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="tcNC" filterUnits="userSpaceOnUse" x="-10" y="0" width="220" height="240"><feGaussianBlur in="SourceGraphic" stdDeviation="3" result="b"/><feFlood floodColor={T.accent} floodOpacity="1" result="c"/><feComposite in="c" in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="tcNP" filterUnits="userSpaceOnUse" x="-10" y="0" width="220" height="240"><feGaussianBlur in="SourceGraphic" stdDeviation="5" result="b"/><feFlood floodColor={T.accent} floodOpacity="1" result="c"/><feComposite in="c" in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="g"/><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="tcNW" filterUnits="userSpaceOnUse" x="-10" y="0" width="220" height="240"><feGaussianBlur in="SourceGraphic" stdDeviation="3" result="b"/><feFlood floodColor={T.accent} floodOpacity="1" result="c"/><feComposite in="c" in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 </defs>
 {/* Back wireframe */}
-<line x1="14" y1="60" x2="100" y2="110" stroke={`rgba(${T.accentRgb},0.3)`} strokeWidth="1" strokeDasharray="14 6" filter="url(#tcNW)"><animate attributeName="stroke-dashoffset" values="0;-40" dur="3s" repeatCount="indefinite"/></line>
-<line x1="186" y1="60" x2="100" y2="110" stroke={`rgba(${T.accentRgb},0.3)`} strokeWidth="1" strokeDasharray="14 6" filter="url(#tcNW)"><animate attributeName="stroke-dashoffset" values="0;-40" dur="3s" repeatCount="indefinite"/></line>
-<line x1="100" y1="10" x2="100" y2="110" stroke={`rgba(${T.accentRgb},0.3)`} strokeWidth="1" strokeDasharray="14 6" filter="url(#tcNW)"><animate attributeName="stroke-dashoffset" values="0;-40" dur="3s" repeatCount="indefinite"/></line>
+<line x1="14" y1="60" x2="100" y2="110" stroke={`rgba(${T.accentRgb},0.5)`} strokeWidth="2.5" strokeDasharray="10 5" filter="url(#tcNW)"><animate attributeName="stroke-dashoffset" values="0;-30" dur="3s" repeatCount="indefinite"/></line>
+<line x1="186" y1="60" x2="100" y2="110" stroke={`rgba(${T.accentRgb},0.5)`} strokeWidth="2.5" strokeDasharray="10 5" filter="url(#tcNW)"><animate attributeName="stroke-dashoffset" values="0;-30" dur="3s" repeatCount="indefinite"/></line>
+<line x1="100" y1="10" x2="100" y2="110" stroke={`rgba(${T.accentRgb},0.5)`} strokeWidth="2.5" strokeDasharray="10 5" filter="url(#tcNW)"><animate attributeName="stroke-dashoffset" values="0;-30" dur="3s" repeatCount="indefinite"/></line>
 {/* Cube faces */}
 <polygon points="100,20 174,63 100,106 26,63" fill="url(#tcNT)"/>
 <polygon points="26,63 100,106 100,191 26,148" fill="url(#tcNL)"/>
@@ -4944,57 +4944,58 @@ html{scroll-behavior:smooth}
 <polygon points="52,72 100,96 100,110 52,86" fill={`rgba(${T.accentRgb},0.4)`} opacity="0.9"/>
 <polygon points="100,96 148,72 148,86 100,110" fill={`rgba(${T.accentRgb},0.35)`} opacity="0.7"/>
 <polygon points="100,62 148,86 100,110 52,86" fill={T.dark?"#061830":"#1a1a2e"}/>
-<polyline points="100,48 148,72 148,86 100,110 52,86 52,72 100,48" fill="none" stroke={`rgba(${T.accentRgb},0.5)`} strokeWidth="1" strokeLinejoin="round"/>
+<polyline points="100,48 148,72 148,86 100,110 52,86 52,72 100,48" fill="none" stroke={`rgba(${T.accentRgb},0.7)`} strokeWidth="2" strokeLinejoin="round"/>
 {/* Circuit traces - top face */}
-<path d="M26,63 L34,59 L34,52 L42,48 L42,41 L54,35 L62,39 L62,47 L54,51" fill="none" stroke={`rgba(${T.accentRgb},0.4)`} strokeWidth="0.8" filter="url(#tcNC)"/>
-<path d="M174,63 L166,59 L166,52 L158,48 L158,41 L146,35 L138,39 L138,47 L146,51" fill="none" stroke={`rgba(${T.accentRgb},0.4)`} strokeWidth="0.8" filter="url(#tcNC)"/>
-<path d="M54,35 L62,31 L74,25 L100,24 L126,25 L138,31 L146,35" fill="none" stroke={`rgba(${T.accentRgb},0.3)`} strokeWidth="0.6" filter="url(#tcNC)"/>
+<path d="M26,63 L34,59 L34,52 L42,48 L42,41 L54,35 L62,39 L62,47 L54,51" fill="none" stroke={`rgba(${T.accentRgb},0.8)`} strokeWidth="2.5" filter="url(#tcNC)"/>
+<path d="M174,63 L166,59 L166,52 L158,48 L158,41 L146,35 L138,39 L138,47 L146,51" fill="none" stroke={`rgba(${T.accentRgb},0.8)`} strokeWidth="2.5" filter="url(#tcNC)"/>
+<path d="M54,35 L62,31 L74,25 L100,24 L126,25 L138,31 L146,35" fill="none" stroke={`rgba(${T.accentRgb},0.6)`} strokeWidth="2" filter="url(#tcNC)"/>
 {/* Circuit traces - left face */}
-<path d="M26,68 L36,74 L36,88 L48,95 L48,107 L36,114 L36,128 L48,135 L48,145 L26,148" fill="none" stroke={`rgba(${T.accentRgb},0.35)`} strokeWidth="0.8" filter="url(#tcNC)"/>
-<path d="M48,107 L60,114 L72,114 L84,121" fill="none" stroke={`rgba(${T.accentRgb},0.25)`} strokeWidth="0.6" filter="url(#tcNC)"/>
+<path d="M26,68 L36,74 L36,88 L48,95 L48,107 L36,114 L36,128 L48,135 L48,145 L26,148" fill="none" stroke={`rgba(${T.accentRgb},0.7)`} strokeWidth="2.5" filter="url(#tcNC)"/>
+<path d="M48,107 L60,114 L72,114 L84,121" fill="none" stroke={`rgba(${T.accentRgb},0.5)`} strokeWidth="2" filter="url(#tcNC)"/>
 {/* Circuit traces - right face */}
-<path d="M174,68 L164,74 L164,88 L152,95 L152,107 L164,114 L164,128 L152,135 L152,145 L174,148" fill="none" stroke={`rgba(${T.accentRgb},0.35)`} strokeWidth="0.8" filter="url(#tcNC)"/>
-<path d="M152,107 L140,114 L128,114 L116,121" fill="none" stroke={`rgba(${T.accentRgb},0.25)`} strokeWidth="0.6" filter="url(#tcNC)"/>
+<path d="M174,68 L164,74 L164,88 L152,95 L152,107 L164,114 L164,128 L152,135 L152,145 L174,148" fill="none" stroke={`rgba(${T.accentRgb},0.7)`} strokeWidth="2.5" filter="url(#tcNC)"/>
+<path d="M152,107 L140,114 L128,114 L116,121" fill="none" stroke={`rgba(${T.accentRgb},0.5)`} strokeWidth="2" filter="url(#tcNC)"/>
 {/* Vertical data bus */}
-<path d="M100,112 L100,128 L100,191" fill="none" stroke={`rgba(${T.accentRgb},0.15)`} strokeWidth="0.5" strokeDasharray="2 4" filter="url(#tcNC)"><animate attributeName="stroke-dashoffset" values="0;-12" dur="2s" repeatCount="indefinite"/></path>
+<path d="M100,112 L100,128 L100,191" fill="none" stroke={`rgba(${T.accentRgb},0.4)`} strokeWidth="1.5" strokeDasharray="4 6" filter="url(#tcNC)"><animate attributeName="stroke-dashoffset" values="0;-20" dur="2s" repeatCount="indefinite"/></path>
 {/* Junction pads */}
-<rect x="32" y="50" width="4" height="4" fill={T.accent} opacity="0.7"/>
-<rect x="40" y="39" width="4" height="4" fill={T.accent} opacity="0.7"/>
-<rect x="156" y="39" width="4" height="4" fill={T.accent} opacity="0.7"/>
-<rect x="164" y="50" width="4" height="4" fill={T.accent} opacity="0.7"/>
-<rect x="46" y="93" width="4" height="4" fill={T.accent} opacity="0.5"/>
-<rect x="150" y="93" width="4" height="4" fill={T.accent} opacity="0.5"/>
+<rect x="30" y="48" width="8" height="8" rx="1" fill={T.accent} opacity="0.9"/>
+<rect x="38" y="37" width="8" height="8" rx="1" fill={T.accent} opacity="0.9"/>
+<rect x="154" y="37" width="8" height="8" rx="1" fill={T.accent} opacity="0.9"/>
+<rect x="162" y="48" width="8" height="8" rx="1" fill={T.accent} opacity="0.9"/>
+<rect x="44" y="91" width="8" height="8" rx="1" fill={T.accent} opacity="0.7"/>
+<rect x="148" y="91" width="8" height="8" rx="1" fill={T.accent} opacity="0.7"/>
 {/* Traveling pulses */}
-<circle r="2.2" fill={T.accent} filter="url(#tcNP)" opacity="0.95"><animateMotion path="M26,63 L34,59 L34,52 L42,48 L42,41 L54,35 L62,39 L62,47 L54,51" dur="2.8s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.3;1;1;1;0.3" dur="2.8s" repeatCount="indefinite"/></circle>
-<circle r="2.2" fill={T.accent} filter="url(#tcNP)" opacity="0.95"><animateMotion path="M174,63 L166,59 L166,52 L158,48 L158,41 L146,35 L138,39 L138,47 L146,51" dur="2.8s" repeatCount="indefinite" begin="1.4s"/><animate attributeName="opacity" values="0.3;1;1;1;0.3" dur="2.8s" repeatCount="indefinite" begin="1.4s"/></circle>
-<circle r="2" fill={T.accent} filter="url(#tcNP)" opacity="0.9"><animateMotion path="M26,68 L36,74 L36,88 L48,95 L48,107 L36,114 L36,128 L48,135 L48,145 L26,148" dur="3.5s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.2;1;1;1;0.2" dur="3.5s" repeatCount="indefinite"/></circle>
-<circle r="2" fill={T.accent} filter="url(#tcNP)" opacity="0.9"><animateMotion path="M174,68 L164,74 L164,88 L152,95 L152,107 L164,114 L164,128 L152,135 L152,145 L174,148" dur="3.6s" repeatCount="indefinite" begin="0.5s"/><animate attributeName="opacity" values="0.2;1;1;1;0.2" dur="3.6s" repeatCount="indefinite" begin="0.5s"/></circle>
-<circle r="2" fill={T.accent} filter="url(#tcNP)" opacity="0.85"><animateMotion path="M100,112 L100,128 L100,191" dur="3s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.3;1;1;0.3" dur="3s" repeatCount="indefinite"/></circle>
+<circle r="4" fill={T.accent} filter="url(#tcNP)" opacity="1"><animateMotion path="M26,63 L34,59 L34,52 L42,48 L42,41 L54,35 L62,39 L62,47 L54,51" dur="2.8s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.4;1;1;1;0.4" dur="2.8s" repeatCount="indefinite"/></circle>
+<circle r="4" fill={T.accent} filter="url(#tcNP)" opacity="1"><animateMotion path="M174,63 L166,59 L166,52 L158,48 L158,41 L146,35 L138,39 L138,47 L146,51" dur="2.8s" repeatCount="indefinite" begin="1.4s"/><animate attributeName="opacity" values="0.4;1;1;1;0.4" dur="2.8s" repeatCount="indefinite" begin="1.4s"/></circle>
+<circle r="3.5" fill={T.accent} filter="url(#tcNP)" opacity="1"><animateMotion path="M26,68 L36,74 L36,88 L48,95 L48,107 L36,114 L36,128 L48,135 L48,145 L26,148" dur="3.5s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.3;1;1;1;0.3" dur="3.5s" repeatCount="indefinite"/></circle>
+<circle r="3.5" fill={T.accent} filter="url(#tcNP)" opacity="1"><animateMotion path="M174,68 L164,74 L164,88 L152,95 L152,107 L164,114 L164,128 L152,135 L152,145 L174,148" dur="3.6s" repeatCount="indefinite" begin="0.5s"/><animate attributeName="opacity" values="0.3;1;1;1;0.3" dur="3.6s" repeatCount="indefinite" begin="0.5s"/></circle>
+<circle r="3.5" fill={T.accent} filter="url(#tcNP)" opacity="1"><animateMotion path="M100,112 L100,128 L100,191" dur="3s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.4;1;1;0.4" dur="3s" repeatCount="indefinite"/></circle>
 {/* Cube edges */}
-<line x1="100" y1="20" x2="26" y2="63" stroke={`rgba(${T.accentRgb},0.85)`} strokeWidth="1.8" filter="url(#tcNG)"/>
-<line x1="100" y1="20" x2="174" y2="63" stroke={`rgba(${T.accentRgb},0.7)`} strokeWidth="1.5"/>
-<line x1="26" y1="63" x2="26" y2="148" stroke={`rgba(${T.accentRgb},0.5)`} strokeWidth="1.4"/>
-<line x1="174" y1="63" x2="174" y2="148" stroke={`rgba(${T.accentRgb},0.4)`} strokeWidth="1.3"/>
-<line x1="26" y1="148" x2="100" y2="191" stroke={`rgba(${T.accentRgb},0.45)`} strokeWidth="1.3"/>
-<line x1="174" y1="148" x2="100" y2="191" stroke={`rgba(${T.accentRgb},0.4)`} strokeWidth="1.3"/>
-<line x1="100" y1="106" x2="100" y2="191" stroke={`rgba(${T.accentRgb},0.35)`} strokeWidth="1"/>
-{/* Wireframe front */}
-<line x1="100" y1="10" x2="14" y2="60" stroke={T.accent} strokeWidth="1.3" strokeDasharray="14 6" filter="url(#tcNW)"><animate attributeName="stroke-dashoffset" values="0;-40" dur="3s" repeatCount="indefinite"/></line>
-<line x1="100" y1="10" x2="186" y2="60" stroke={T.accent} strokeWidth="1.3" strokeDasharray="14 6" filter="url(#tcNW)"><animate attributeName="stroke-dashoffset" values="0;-40" dur="3s" repeatCount="indefinite"/></line>
-<line x1="14" y1="60" x2="14" y2="153" stroke={T.accent} strokeWidth="1.5" strokeDasharray="14 6" filter="url(#tcNW)"><animate attributeName="stroke-dashoffset" values="0;-40" dur="3s" repeatCount="indefinite"/></line>
-<line x1="186" y1="60" x2="186" y2="153" stroke={T.accent} strokeWidth="1.5" strokeDasharray="14 6" filter="url(#tcNW)"><animate attributeName="stroke-dashoffset" values="0;-40" dur="3s" repeatCount="indefinite"/></line>
-<line x1="14" y1="153" x2="100" y2="203" stroke={T.accent} strokeWidth="1.3" strokeDasharray="14 6" filter="url(#tcNW)"><animate attributeName="stroke-dashoffset" values="0;-40" dur="3s" repeatCount="indefinite"/></line>
-<line x1="186" y1="153" x2="100" y2="203" stroke={T.accent} strokeWidth="1.3" strokeDasharray="14 6" filter="url(#tcNW)"><animate attributeName="stroke-dashoffset" values="0;-40" dur="3s" repeatCount="indefinite"/></line>
+<line x1="100" y1="20" x2="26" y2="63" stroke={`rgba(${T.accentRgb},0.95)`} strokeWidth="3" filter="url(#tcNG)"/>
+<line x1="100" y1="20" x2="174" y2="63" stroke={`rgba(${T.accentRgb},0.85)`} strokeWidth="2.5"/>
+<line x1="26" y1="63" x2="26" y2="148" stroke={`rgba(${T.accentRgb},0.7)`} strokeWidth="2.5"/>
+<line x1="174" y1="63" x2="174" y2="148" stroke={`rgba(${T.accentRgb},0.6)`} strokeWidth="2.2"/>
+<line x1="26" y1="148" x2="100" y2="191" stroke={`rgba(${T.accentRgb},0.65)`} strokeWidth="2.2"/>
+<line x1="174" y1="148" x2="100" y2="191" stroke={`rgba(${T.accentRgb},0.6)`} strokeWidth="2.2"/>
+<line x1="100" y1="106" x2="100" y2="191" stroke={`rgba(${T.accentRgb},0.5)`} strokeWidth="1.8"/>
+{/* Wireframe front - dotted border */}
+<line x1="100" y1="10" x2="14" y2="60" stroke={T.accent} strokeWidth="3" strokeDasharray="8 5" filter="url(#tcNW)"><animate attributeName="stroke-dashoffset" values="0;-26" dur="3s" repeatCount="indefinite"/></line>
+<line x1="100" y1="10" x2="186" y2="60" stroke={T.accent} strokeWidth="3" strokeDasharray="8 5" filter="url(#tcNW)"><animate attributeName="stroke-dashoffset" values="0;-26" dur="3s" repeatCount="indefinite"/></line>
+<line x1="14" y1="60" x2="14" y2="153" stroke={T.accent} strokeWidth="3.5" strokeDasharray="8 5" filter="url(#tcNW)"><animate attributeName="stroke-dashoffset" values="0;-26" dur="3s" repeatCount="indefinite"/></line>
+<line x1="186" y1="60" x2="186" y2="153" stroke={T.accent} strokeWidth="3.5" strokeDasharray="8 5" filter="url(#tcNW)"><animate attributeName="stroke-dashoffset" values="0;-26" dur="3s" repeatCount="indefinite"/></line>
+<line x1="14" y1="153" x2="100" y2="203" stroke={T.accent} strokeWidth="3" strokeDasharray="8 5" filter="url(#tcNW)"><animate attributeName="stroke-dashoffset" values="0;-26" dur="3s" repeatCount="indefinite"/></line>
+<line x1="186" y1="153" x2="100" y2="203" stroke={T.accent} strokeWidth="3" strokeDasharray="8 5" filter="url(#tcNW)"><animate attributeName="stroke-dashoffset" values="0;-26" dur="3s" repeatCount="indefinite"/></line>
 {/* Corner glints */}
-<circle cx="100" cy="20" r="3" fill={T.accent} filter="url(#tcNG)" opacity="0.9"><animate attributeName="opacity" values="0.9;0.35;0.9" dur="2s" repeatCount="indefinite"/></circle>
-<circle cx="26" cy="63" r="2.5" fill={T.accent} filter="url(#tcNG)" opacity="0.75"><animate attributeName="opacity" values="0.75;0.2;0.75" dur="2.8s" repeatCount="indefinite"/></circle>
-<circle cx="174" cy="63" r="2.5" fill={T.accent} filter="url(#tcNG)" opacity="0.65"><animate attributeName="opacity" values="0.65;0.2;0.65" dur="3.2s" repeatCount="indefinite"/></circle>
-<circle cx="100" cy="191" r="2.5" fill={T.accent} filter="url(#tcNG)" opacity="0.7"><animate attributeName="opacity" values="0.7;0.2;0.7" dur="2.4s" repeatCount="indefinite"/></circle>
+<circle cx="100" cy="20" r="5" fill={T.accent} filter="url(#tcNG)" opacity="1"><animate attributeName="opacity" values="1;0.4;1" dur="2s" repeatCount="indefinite"/></circle>
+<circle cx="26" cy="63" r="4.5" fill={T.accent} filter="url(#tcNG)" opacity="0.9"><animate attributeName="opacity" values="0.9;0.3;0.9" dur="2.8s" repeatCount="indefinite"/></circle>
+<circle cx="174" cy="63" r="4.5" fill={T.accent} filter="url(#tcNG)" opacity="0.8"><animate attributeName="opacity" values="0.8;0.3;0.8" dur="3.2s" repeatCount="indefinite"/></circle>
+<circle cx="100" cy="191" r="4.5" fill={T.accent} filter="url(#tcNG)" opacity="0.85"><animate attributeName="opacity" values="0.85;0.3;0.85" dur="2.4s" repeatCount="indefinite"/></circle>
 </svg>
               </div>
-              <div style={{display:"flex",flexDirection:"column",gap:0}}>
+              <div style={{display:"flex",flexDirection:"column",gap:1}}>
                 <span style={{fontSize:18,fontWeight:800,letterSpacing:3,fontFamily:`${F.heading},sans-serif`,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",lineHeight:1.2}}>TECHCRAFT</span>
-                <span style={{fontSize:9,letterSpacing:1,color:`rgba(${T.accentRgb},0.7)`,fontFamily:`${F.heading},sans-serif`,lineHeight:1}}>Bits, Bots & the Big Bang</span>
+                <span style={{fontSize:9,letterSpacing:1,color:`rgba(${T.accentRgb},0.8)`,fontFamily:`${F.heading},sans-serif`,lineHeight:1}}>Bits, Bots & the Big Bang</span>
+                <span style={{fontSize:7,letterSpacing:0.5,color:`rgba(${T.accentRgb},0.55)`,fontFamily:`${F.body},sans-serif`,lineHeight:1,marginTop:1}}>Crafted for Minds That Question Everything</span>
               </div>
             </>:<>
               <ButterflyLogo s={28} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} flap/>
