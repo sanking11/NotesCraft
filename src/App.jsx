@@ -2234,9 +2234,6 @@ html{scroll-behavior:smooth}
 .blog-hero-col:hover .blog-hero-col-info{opacity:1;transform:translateY(0)}
 .blog-hero-col-title{font-size:clamp(24px,3.2vw,44px);font-weight:900;color:#fff;line-height:1.08;text-transform:uppercase;letter-spacing:-0.5px;text-shadow:0 4px 30px rgba(0,0,0,0.9);word-break:break-word;overflow-wrap:break-word}
 .blog-hero-col-tag{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:${T.accent};margin-bottom:10px;display:block}
-.blog-hero-ticker{position:absolute;bottom:0;left:0;right:0;height:28px;background:rgba(0,0,0,0.7);display:flex;align-items:center;overflow:hidden;z-index:3}
-.blog-hero-ticker span{display:inline-block;white-space:nowrap;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);animation:blogTickerScroll 30s linear infinite}
-@keyframes blogTickerScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .blog-row-scroll{position:relative;height:28px;display:flex;align-items:center;overflow:hidden;margin-top:14px;border-radius:4px;background:rgba(255,255,255,0.06)}
 .blog-row-scroll-inner{display:inline-flex;align-items:center;white-space:nowrap;animation:blogRowScroll 20s linear infinite;gap:0}.blog-row-scroll-inner>*{flex-shrink:0}
 .blog-row-scroll-inner span{font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,0.55)}
@@ -3299,7 +3296,6 @@ html{scroll-behavior:smooth}
 
         const heroArticles=blogArticles.slice(0,3);
         const restArticles=blogArticles.slice(3);
-        const tickerText=blogArticles.map(a=>a.title.toUpperCase()).join("  •  ");
         const artIdx=activeArticle?blogArticles.findIndex(a=>a.slug===activeArticle.slug):-1;
         const blogContentRef=React.createRef();
         const blogOvBg=(()=>{const d=blogDynBg;const isL=blogArticleTheme==='light';const bR=isL?(blogReadingView?250:248):(blogReadingView?26:10);const bG=isL?(blogReadingView?248:249):(blogReadingView?26:10);const bB=isL?(blogReadingView?240:250):(blogReadingView?26:18);const base=`rgb(${bR},${bG},${bB})`;if(!d)return base;const mx=(c,b,t)=>Math.round(b+(c-b)*t);if(isL)return`linear-gradient(180deg, rgb(${mx(d.r,bR,0.25)},${mx(d.g,bG,0.25)},${mx(d.b,bB,0.25)}) 0%, rgb(${mx(d.r,bR,0.08)},${mx(d.g,bG,0.08)},${mx(d.b,bB,0.08)}) 55%, ${base} 100%)`;return`linear-gradient(180deg, rgb(${mx(d.r,bR,0.45)},${mx(d.g,bG,0.45)},${mx(d.b,bB,0.45)}) 0%, rgb(${mx(d.r,bR,0.15)},${mx(d.g,bG,0.15)},${mx(d.b,bB,0.15)}) 55%, ${base} 100%)`})();
@@ -3314,7 +3310,6 @@ html{scroll-behavior:smooth}
                 <div className="blog-row-scroll"><div className="blog-row-scroll-inner">{rowTxt}{rowTxt}</div></div>
               </div>
             </div>})}
-            <div className="blog-hero-ticker"><span>{tickerText+"  •  "+tickerText}</span></div>
           </div>
 
           {/* Remaining articles grid */}
