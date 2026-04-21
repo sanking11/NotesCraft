@@ -2041,6 +2041,11 @@ select option{background:${T.bg};color:${T.text}}
 @keyframes pgPulseGlow{0%,100%{box-shadow:0 0 8px rgba(var(--ar),0.3)}50%{box-shadow:0 0 20px rgba(var(--ar),0.6),0 0 40px rgba(var(--ar),0.2)}}
 @keyframes pgCopySuccess{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
 @keyframes pgBtnShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes pgQrBackdrop{from{opacity:0;backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px)}to{opacity:1;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}}
+@keyframes pgQrCardIn{0%{opacity:0;transform:scale(0.82) translateY(24px);filter:blur(6px)}60%{opacity:1;filter:blur(0)}100%{opacity:1;transform:scale(1) translateY(0);filter:blur(0)}}
+@keyframes pgQrGlow{0%,100%{box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(var(--qrg),0.15)}50%{box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 60px rgba(var(--qrg),0.3)}}
+@keyframes pgQrReveal{0%{clip-path:inset(0 100% 0 0);opacity:0.6}100%{clip-path:inset(0 0 0 0);opacity:1}}
+@keyframes pgQrScan{0%{top:0;opacity:0}15%{opacity:1}85%{opacity:1}100%{top:100%;opacity:0}}
 @keyframes djStepIn{from{opacity:0;transform:translateY(16px) scale(0.9)}to{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes djArrowIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
 @keyframes djIconPulse{0%,100%{box-shadow:0 0 20px rgba(var(--sc),0.2)}50%{box-shadow:0 0 32px rgba(var(--sc),0.45)}}
@@ -3282,8 +3287,8 @@ html{scroll-behavior:smooth}
               rects.push(`<rect x="${(x*cell).toFixed(3)}" y="${(y*cell).toFixed(3)}" width="${cell.toFixed(3)}" height="${cell.toFixed(3)}" fill="#0a0a0a"/>`);
             return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${qrPx} ${qrPx}" width="${qrPx}" height="${qrPx}" shape-rendering="crispEdges"><rect width="${qrPx}" height="${qrPx}" fill="#ffffff"/>${rects.join("")}</svg>`;
           })():"";
-          return <div style={{position:"fixed",inset:0,zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.7)",backdropFilter:"blur(10px)",WebkitBackdropFilter:"blur(10px)",padding:20}} onClick={e=>{if(e.target===e.currentTarget)setPgQrOpen(false)}}>
-            <div style={{maxWidth:380,width:"100%",background:T.bg||"#0f0f14",border:`1.5px solid rgba(${accentRgb},0.35)`,borderRadius:16,padding:"24px 22px",boxShadow:`0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(${accentRgb},0.15)`,position:"relative"}}>
+          return <div style={{position:"fixed",inset:0,zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.7)",backdropFilter:"blur(10px)",WebkitBackdropFilter:"blur(10px)",padding:20,animation:"pgQrBackdrop 0.3s ease-out"}} onClick={e=>{if(e.target===e.currentTarget)setPgQrOpen(false)}}>
+            <div style={{maxWidth:380,width:"100%",background:T.bg||"#0f0f14",border:`1.5px solid rgba(${accentRgb},0.35)`,borderRadius:16,padding:"24px 22px",boxShadow:`0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(${accentRgb},0.15)`,position:"relative","--qrg":accentRgb,animation:"pgQrCardIn 0.45s cubic-bezier(0.34,1.56,0.64,1) both, pgQrGlow 3s ease-in-out 0.45s infinite"}}>
               <button onClick={()=>setPgQrOpen(false)} aria-label="Close" style={{position:"absolute",top:12,right:12,width:28,height:28,borderRadius:8,background:"rgba(255,255,255,0.05)",border:`1px solid rgba(${accentRgb},0.25)`,color:T.text,fontSize:16,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s"}}
                 onMouseEnter={e=>{e.currentTarget.style.background="rgba(255,255,255,0.1)"}}
                 onMouseLeave={e=>{e.currentTarget.style.background="rgba(255,255,255,0.05)"}}>✕</button>
@@ -3295,7 +3300,10 @@ html{scroll-behavior:smooth}
               {err?<div style={{padding:"16px",borderRadius:10,background:"rgba(239,68,68,0.08)",border:"1px solid rgba(239,68,68,0.3)",color:"#ef4444",fontSize:12,textAlign:"center"}}>{err}</div>:
                 <>
                   <div style={{display:"flex",justifyContent:"center",marginBottom:14}}>
-                    <div style={{padding:12,background:"#ffffff",borderRadius:12,boxShadow:`0 4px 20px rgba(${accentRgb},0.25),0 0 30px rgba(${accentRgb},0.1)`,lineHeight:0}} dangerouslySetInnerHTML={{__html:qrSvg}}/>
+                    <div style={{position:"relative",padding:12,background:"#ffffff",borderRadius:12,boxShadow:`0 4px 20px rgba(${accentRgb},0.25),0 0 30px rgba(${accentRgb},0.1)`,lineHeight:0,overflow:"hidden"}}>
+                      <div style={{animation:"pgQrReveal 0.6s ease-out 0.25s both",lineHeight:0}} dangerouslySetInnerHTML={{__html:qrSvg}}/>
+                      <div style={{position:"absolute",left:12,right:12,height:2,background:`linear-gradient(90deg,transparent,rgba(${accentRgb},0.9),transparent)`,boxShadow:`0 0 12px rgba(${accentRgb},0.9)`,animation:"pgQrScan 2.4s ease-in-out 0.85s infinite",pointerEvents:"none"}}/>
+                    </div>
                   </div>
                   <div style={{padding:"10px 12px",borderRadius:8,background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${accentRgb},0.15)`,fontSize:11,fontFamily:"monospace",color:T.text,wordBreak:"break-all",textAlign:"center",marginBottom:12,maxHeight:80,overflowY:"auto"}}>{pgResult}</div>
                   <p style={{margin:0,fontSize:10,color:T.dim,lineHeight:1.5,textAlign:"center"}}>🔒 Generated on this device. Close this window when done — the QR is not saved.</p>

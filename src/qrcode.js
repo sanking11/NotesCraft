@@ -270,13 +270,13 @@ function drawFormatBits(modules, ecl, mask){
   for(let i = 0; i < 10; i++) rem = (rem << 1) ^ ((rem >>> 9) * 0x537);
   const bits = ((data << 10) | rem) ^ 0x5412;
   const size = modules.length;
-  // top-left
-  for(let i = 0; i <= 5; i++) modules[8][i] = (bits >>> i) & 1;
-  modules[8][7] = (bits >>> 6) & 1;
+  // copy 1: around top-left finder (col 8 vertical, then row 8 horizontal)
+  for(let i = 0; i <= 5; i++) modules[i][8] = (bits >>> i) & 1;
+  modules[7][8] = (bits >>> 6) & 1;
   modules[8][8] = (bits >>> 7) & 1;
-  modules[7][8] = (bits >>> 8) & 1;
-  for(let i = 9; i < 15; i++) modules[14 - i][8] = (bits >>> i) & 1;
-  // bottom-left + top-right
+  modules[8][7] = (bits >>> 8) & 1;
+  for(let i = 9; i < 15; i++) modules[8][14 - i] = (bits >>> i) & 1;
+  // copy 2: bottom-left vertical + top-right horizontal
   for(let i = 0; i < 8; i++) modules[size - 1 - i][8] = (bits >>> i) & 1;
   for(let i = 8; i < 15; i++) modules[8][size - 15 + i] = (bits >>> i) & 1;
   modules[size - 8][8] = 1; // dark module
