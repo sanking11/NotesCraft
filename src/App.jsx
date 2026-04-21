@@ -2170,6 +2170,7 @@ input:focus,textarea:focus{border-color:rgba(${T.accentRgb},0.4)!important;box-s
 @keyframes ldGridFlow{0%{background-position:0 0}100%{background-position:60px 60px}}
 @keyframes neoGridScroll{0%{background-position:0 0}100%{background-position:0 60px}}
 @keyframes neoPulse{0%,100%{opacity:0.25}50%{opacity:0.65}}
+@keyframes scrollArrowBounce{0%,100%{transform:translateY(0);opacity:0.75}50%{transform:translateY(8px);opacity:1}}
 @keyframes neoFloat1{0%,100%{transform:translateY(0)}50%{transform:translateY(-22px)}}
 @keyframes neoFloat2{0%,100%{transform:translateY(0)}50%{transform:translateY(-30px)}}
 @keyframes neoFloat3{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
@@ -5185,13 +5186,22 @@ html{scroll-behavior:smooth}
               {icon:"📱",title:"Scan-to-Transfer QR",color:"#a855f7",rgb:"168,85,247",desc:"Send the password to your phone via a local QR. Generated on-device, never hits any server."},
               {icon:"🧠",title:"3 Generation Modes",color:"#14b8a6",rgb:"20,184,166",desc:"Random, Memorable (word-based), or PIN. Pick the right style for the account — plus custom word lists."},
               {icon:"📊",title:"Dual Strength Analysis",color:"#ef4444",rgb:"239,68,68",desc:"Shows both classical GPU crack time and quantum Grover attack estimate — threat modeling for the next decade."},
-              {icon:"🔒",title:"Zero Server",color:"#22c55e",rgb:"34,197,94",desc:"Everything happens in your browser. No passwords, no clicks, no analytics ever transmitted anywhere. Ever."}
+              {icon:"🔒",title:"Zero Server",color:"#22c55e",rgb:"34,197,94",desc:"Everything happens in your browser. No passwords, no clicks, no analytics ever transmitted anywhere. Ever."},
+              {icon:"🧬",title:"Entropy Visible",color:"#06b6d4",rgb:"6,182,212",desc:"See exact bits of entropy in real time — not just a vague strength bar. Informed decisions beat guesswork."}
             ];
             return <div style={{marginTop:40,position:"relative",zIndex:1}}>
+              {/* scroll hint arrow — invites the user to look below */}
+              <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6,marginBottom:28}}>
+                <div style={{fontSize:10,fontWeight:700,color:`rgba(${T.accentRgb},0.85)`,letterSpacing:3,textTransform:"uppercase",fontFamily:"monospace"}}>More Below</div>
+                <svg width="22" height="28" viewBox="0 0 22 28" fill="none" style={{animation:"scrollArrowBounce 1.8s ease-in-out infinite",filter:`drop-shadow(0 0 8px rgba(${T.accentRgb},0.7))`}}>
+                  <path d="M4 8 L11 15 L18 8" stroke={T.accent} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.45"/>
+                  <path d="M4 16 L11 23 L18 16" stroke={T.accent} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
               <div style={{textAlign:"center",marginBottom:28}}>
                 <div style={{fontSize:10,fontWeight:700,color:T.accent,letterSpacing:3,marginBottom:8,textTransform:"uppercase"}}>Built Different</div>
                 <h2 style={{fontSize:26,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",margin:"0 0 8px",letterSpacing:0.5}}>Why ShieldCraft</h2>
-                <p style={{fontSize:13,color:T.dim,maxWidth:520,margin:"0 auto",lineHeight:1.6}}>Eight things most password generators don't do — and we think every single one matters.</p>
+                <p style={{fontSize:13,color:T.dim,maxWidth:720,margin:"0 auto",lineHeight:1.6,padding:"0 12px"}}>Nine things most password generators don't do — and we think every single one matters.</p>
               </div>
               <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(240px,1fr))",gap:14}}>
                 {feats.map((f,i)=>(
