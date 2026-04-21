@@ -643,6 +643,7 @@ export default function NotesCraft(){
   const[pgCustomErr,setPgCustomErr]=useState("");
   const[pgQuantumSafe,setPgQuantumSafe]=useState(false);
   const[pgScrollHint,setPgScrollHint]=useState(true);
+  const pgFeatsRef=React.useRef(null);
   const[pgResult,setPgResult]=useState("");
   const[pgDisplay,setPgDisplay]=useState("");
   const[pgScrambling,setPgScrambling]=useState(false);
@@ -3071,10 +3072,22 @@ html{scroll-behavior:smooth}
         <p style={infoP}>We reserve the right to update these terms at any time. Continued use of NotesCraft and ShieldCraft after changes constitutes acceptance of the updated terms.</p>
       </>,
       "password-manager":<>
-        {/* in-card nav — Login + Back replace the removed top title bar */}
+        {/* in-card nav — Login + Home replace the removed top title bar */}
         <div style={{position:"absolute",top:16,right:16,zIndex:5,display:"flex",gap:10,alignItems:"center"}}>
-          {!pmIsLoggedIn&&<button onClick={()=>{setPmShowLogin(true);setPmLoginErr("");setPmLogin2FA(false);setPmLogin2FACode("");setPmLogin2FAErr("");setPmSignupMode(false)}} style={{padding:"7px 18px",background:pgQuantumSafe?"linear-gradient(135deg,#10b981,#059669)":`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:8,color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5,boxShadow:pgQuantumSafe?"0 4px 14px rgba(16,185,129,0.35)":`0 4px 14px rgba(${T.accentRgb},0.35)`,transition:"all 0.3s"}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-1px)"}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)"}}>Login</button>}
-          <button onClick={()=>setInfoPage(null)} style={{background:`rgba(${T.accentRgb},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,borderRadius:8,padding:"7px 16px",color:T.dark?T.text:"#e2e8f0",fontSize:12,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1}}>← Back</button>
+          {!pmIsLoggedIn&&<button onClick={()=>{setPmShowLogin(true);setPmLoginErr("");setPmLogin2FA(false);setPmLogin2FACode("");setPmLogin2FAErr("");setPmSignupMode(false)}}
+            style={{padding:"7px 16px",background:pgQuantumSafe?"linear-gradient(135deg,#10b981,#059669)":`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:8,color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5,boxShadow:pgQuantumSafe?"0 4px 14px rgba(16,185,129,0.35)":`0 4px 14px rgba(${T.accentRgb},0.35)`,transition:"all 0.3s ease-out",display:"flex",alignItems:"center",gap:6}}
+            onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow=pgQuantumSafe?"0 6px 22px rgba(16,185,129,0.6),0 0 28px rgba(16,185,129,0.35)":`0 6px 22px rgba(${T.accentRgb},0.6),0 0 28px rgba(${T.accentRgb},0.35)`}}
+            onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow=pgQuantumSafe?"0 4px 14px rgba(16,185,129,0.35)":`0 4px 14px rgba(${T.accentRgb},0.35)`}}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+            Login
+          </button>}
+          <button onClick={()=>setInfoPage(null)}
+            style={{background:`rgba(${T.accentRgb},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,borderRadius:8,padding:"7px 14px",color:T.dark?T.text:"#e2e8f0",fontSize:12,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1,display:"flex",alignItems:"center",gap:6,transition:"all 0.3s ease-out",boxShadow:"none"}}
+            onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.8)`;e.currentTarget.style.background=`rgba(${T.accentRgb},0.18)`;e.currentTarget.style.boxShadow=`0 4px 18px rgba(${T.accentRgb},0.4),0 0 24px rgba(${T.accentRgb},0.25)`}}
+            onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.borderColor=`rgba(${T.accentRgb},0.4)`;e.currentTarget.style.background=`rgba(${T.accentRgb},0.08)`;e.currentTarget.style.boxShadow="none"}}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1z"/></svg>
+            Home
+          </button>
         </div>
         <div style={{display:"flex",alignItems:"center",gap:2,marginBottom:0,marginTop:-24,marginLeft:-6}}>
           <div style={{animation:"shieldEntrance 0.8s ease-out",filter:`drop-shadow(0 4px 12px rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.3))${pgQuantumSafe?" hue-rotate(-50deg) saturate(1.5) brightness(1.05)":""}`,marginRight:-2,width:72,height:72,borderRadius:16,overflow:"hidden",transition:"filter 0.4s"}}>
@@ -3130,7 +3143,10 @@ html{scroll-behavior:smooth}
         </div>}
 
         {/* Password Display */}
-        <div style={{background:pgQuantumSafe?"rgba(16,185,129,0.05)":"rgba(255,255,255,0.06)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:pgQuantumSafe?`2px solid rgba(16,185,129,${pgScrambling?0.9:0.5})`:`2px solid ${pgScrambling?T.accent:`rgba(${T.accentRgb},0.45)`}`,borderRadius:16,padding:"22px 26px",marginBottom:20,position:"relative",transition:"all 0.4s",boxShadow:pgQuantumSafe?`0 6px 30px rgba(0,0,0,0.25),0 0 ${pgScrambling?40:18}px rgba(16,185,129,${pgScrambling?0.45:0.2}),0 0 ${pgScrambling?60:35}px rgba(16,185,129,${pgScrambling?0.2:0.08}),inset 0 1px 0 rgba(255,255,255,0.1),inset 0 0 20px rgba(16,185,129,0.05)`:`0 6px 30px rgba(0,0,0,0.25),0 0 ${pgScrambling?40:18}px rgba(${T.accentRgb},${pgScrambling?0.4:0.18}),0 0 ${pgScrambling?60:35}px rgba(${T.accentRgb},${pgScrambling?0.15:0.06}),inset 0 1px 0 rgba(255,255,255,0.1),inset 0 0 20px rgba(${T.accentRgb},0.04)`,overflow:"hidden"}}>
+        <div
+          onMouseEnter={e=>{if(pgScrambling)return;e.currentTarget.style.boxShadow=pgQuantumSafe?"0 6px 30px rgba(0,0,0,0.3),0 0 34px rgba(16,185,129,0.48),0 0 62px rgba(16,185,129,0.2),inset 0 1px 0 rgba(255,255,255,0.14),inset 0 0 26px rgba(16,185,129,0.1)":`0 6px 30px rgba(0,0,0,0.3),0 0 34px rgba(${T.accentRgb},0.44),0 0 62px rgba(${T.accentRgb},0.18),inset 0 1px 0 rgba(255,255,255,0.14),inset 0 0 26px rgba(${T.accentRgb},0.08)`;e.currentTarget.style.borderColor=pgQuantumSafe?"rgba(16,185,129,0.8)":`rgba(${T.accentRgb},0.75)`}}
+          onMouseLeave={e=>{if(pgScrambling)return;e.currentTarget.style.boxShadow=pgQuantumSafe?`0 6px 30px rgba(0,0,0,0.25),0 0 18px rgba(16,185,129,0.2),0 0 35px rgba(16,185,129,0.08),inset 0 1px 0 rgba(255,255,255,0.1),inset 0 0 20px rgba(16,185,129,0.05)`:`0 6px 30px rgba(0,0,0,0.25),0 0 18px rgba(${T.accentRgb},0.18),0 0 35px rgba(${T.accentRgb},0.06),inset 0 1px 0 rgba(255,255,255,0.1),inset 0 0 20px rgba(${T.accentRgb},0.04)`;e.currentTarget.style.borderColor=pgQuantumSafe?"rgba(16,185,129,0.5)":`rgba(${T.accentRgb},0.45)`}}
+          style={{background:pgQuantumSafe?"rgba(16,185,129,0.05)":"rgba(255,255,255,0.06)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",border:pgQuantumSafe?`2px solid rgba(16,185,129,${pgScrambling?0.9:0.5})`:`2px solid ${pgScrambling?T.accent:`rgba(${T.accentRgb},0.45)`}`,borderRadius:16,padding:"22px 26px",marginBottom:20,position:"relative",transition:"box-shadow 0.3s ease-out,border-color 0.3s ease-out,background 0.4s",boxShadow:pgQuantumSafe?`0 6px 30px rgba(0,0,0,0.25),0 0 ${pgScrambling?40:18}px rgba(16,185,129,${pgScrambling?0.45:0.2}),0 0 ${pgScrambling?60:35}px rgba(16,185,129,${pgScrambling?0.2:0.08}),inset 0 1px 0 rgba(255,255,255,0.1),inset 0 0 20px rgba(16,185,129,0.05)`:`0 6px 30px rgba(0,0,0,0.25),0 0 ${pgScrambling?40:18}px rgba(${T.accentRgb},${pgScrambling?0.4:0.18}),0 0 ${pgScrambling?60:35}px rgba(${T.accentRgb},${pgScrambling?0.15:0.06}),inset 0 1px 0 rgba(255,255,255,0.1),inset 0 0 20px rgba(${T.accentRgb},0.04)`,overflow:"hidden"}}>
           {/* Diagonal stripe pattern background */}
           <div style={{position:"absolute",inset:0,backgroundImage:pgQuantumSafe?"repeating-linear-gradient(45deg,transparent,transparent 18px,rgba(16,185,129,0.15) 18px,rgba(16,185,129,0.15) 36px)":`repeating-linear-gradient(45deg,transparent,transparent 18px,rgba(${T.accentRgb},0.12) 18px,rgba(${T.accentRgb},0.12) 36px)`,backgroundSize:"50px 50px",animation:"pgStripeMove 3s linear infinite",pointerEvents:"none",borderRadius:14}}/>
           <div style={{position:"relative",zIndex:1,fontSize:(pgDisplay||pgResult).length>30?14:18,fontFamily:"monospace",fontWeight:600,color:pgScrambling?(pgQuantumSafe?"#10b981":T.accent):T.text,wordBreak:"break-all",lineHeight:1.6,letterSpacing:0.5,minHeight:28,paddingRight:90,transition:"color 0.2s",textShadow:pgScrambling?(pgQuantumSafe?"0 0 10px rgba(16,185,129,0.5)":`0 0 10px rgba(${T.accentRgb},0.5)`):(pgQuantumSafe?"0 0 6px rgba(16,185,129,0.25)":`0 0 6px rgba(${T.accentRgb},0.2)`)}}>{pgHidden&&!pgScrambling?"•".repeat(Math.min((pgDisplay||pgResult).length,40)):(pgDisplay||pgResult)}</div>
@@ -3244,8 +3260,10 @@ html{scroll-behavior:smooth}
             </div>
             <span style={{fontSize:12,fontWeight:700,color:pgStrength.color}}>{pgStrength.label}</span>
           </div>
-          <div style={{height:8,borderRadius:4,background:"rgba(255,255,255,0.08)",overflow:"hidden",marginBottom:6,position:"relative",boxShadow:"inset 0 1px 3px rgba(0,0,0,0.3)"}}>
-            <div style={{height:"100%",borderRadius:4,background:`linear-gradient(90deg,${pgStrength.color}90,${pgStrength.color})`,width:pgStrength.percent+"%",transition:"width 0.4s ease",boxShadow:`0 0 16px ${pgStrength.color}60,0 0 6px ${pgStrength.color}40,0 0 30px ${pgStrength.color}20`}}/>
+          <div style={{position:"relative",marginBottom:6,borderRadius:4,boxShadow:`0 0 14px ${pgStrength.color}55,0 0 28px ${pgStrength.color}22`,transition:"box-shadow 0.3s"}}>
+            <div style={{height:8,borderRadius:4,background:"rgba(255,255,255,0.08)",overflow:"hidden",position:"relative",boxShadow:"inset 0 1px 3px rgba(0,0,0,0.3)"}}>
+              <div style={{height:"100%",borderRadius:4,background:`linear-gradient(90deg,${pgStrength.color}90,${pgStrength.color})`,width:pgStrength.percent+"%",transition:"width 0.4s ease",boxShadow:`0 0 16px ${pgStrength.color}80,0 0 6px ${pgStrength.color}40,0 0 30px ${pgStrength.color}30,inset 0 0 6px rgba(255,255,255,0.25)`,position:"relative"}}/>
+            </div>
           </div>
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:3}}>
             <span style={{fontSize:10,color:T.dim}}>{pgStrength.bits} bits of entropy · Effective Bits: <span style={{fontWeight:600}}>{pgStrength.qBits}</span></span>
@@ -5068,15 +5086,19 @@ html{scroll-behavior:smooth}
     return(
       <div onScroll={e=>{const st=e.currentTarget.scrollTop;setPgScrollHint(st<60)}} style={{width:"100%",height:"100vh",overflowY:"auto",overflowX:"hidden",background:T.dark?T.bg:"#0a0a12",color:T.dark?T.text:"#e2e8f0",fontFamily:`${F.body},sans-serif`,position:"relative"}}>
         <style>{css}</style>
-        {/* scroll indicator — soft gradient edge + mouse-scroll icon, no text */}
+        {/* scroll indicator — soft gradient edge + clickable mouse-scroll icon */}
         {infoPage==="password-manager"&&<>
           <div style={{position:"fixed",bottom:0,left:0,right:0,height:120,pointerEvents:"none",zIndex:19,background:`linear-gradient(180deg,transparent 0%,${T.dark?T.bg||"#0a0a12":"#0a0a12"} 80%)`,opacity:pgScrollHint?1:0,transition:"opacity 0.5s ease-out"}}/>
           <div style={{position:"fixed",bottom:0,left:0,right:0,height:2,pointerEvents:"none",zIndex:19,background:`linear-gradient(90deg,transparent 10%,rgba(${T.accentRgb},0.6) 50%,transparent 90%)`,boxShadow:`0 -8px 24px rgba(${T.accentRgb},0.35),0 -16px 40px rgba(${T.accentRgb},0.18)`,opacity:pgScrollHint?1:0,transition:"opacity 0.5s ease-out",animation:"pgScrollEdgePulse 2.4s ease-in-out infinite"}}/>
-          <div style={{position:"fixed",bottom:22,left:"50%",transform:"translateX(-50%)",zIndex:20,pointerEvents:"none",opacity:pgScrollHint?1:0,transition:"opacity 0.5s ease-out"}}>
-            <div className="sc-mouse" style={{width:22,height:36,borderRadius:12,border:`2px solid rgba(${T.accentRgb},0.85)`,position:"relative",boxShadow:`0 0 14px rgba(${T.accentRgb},0.5),inset 0 0 10px rgba(${T.accentRgb},0.15)`,background:`rgba(${T.accentRgb},0.05)`,backdropFilter:"blur(10px)",WebkitBackdropFilter:"blur(10px)"}}>
+          <button onClick={()=>{pgFeatsRef.current?.scrollIntoView({behavior:"smooth",block:"start"})}} title="Scroll to features" style={{position:"fixed",bottom:16,left:"50%",transform:"translateX(-50%)",zIndex:20,opacity:pgScrollHint?1:0,transition:"opacity 0.5s ease-out,transform 0.25s ease-out",background:"transparent",border:"none",cursor:"pointer",padding:"8px 14px",fontFamily:"inherit"}}
+            onMouseEnter={e=>{e.currentTarget.style.transform="translateX(-50%) translateY(-4px)"}}
+            onMouseLeave={e=>{e.currentTarget.style.transform="translateX(-50%) translateY(0)"}}>
+            <div style={{width:22,height:36,borderRadius:12,border:`2px solid rgba(${T.accentRgb},0.85)`,position:"relative",boxShadow:`0 0 14px rgba(${T.accentRgb},0.5),inset 0 0 10px rgba(${T.accentRgb},0.15)`,background:`rgba(${T.accentRgb},0.05)`,backdropFilter:"blur(10px)",WebkitBackdropFilter:"blur(10px)",transition:"box-shadow 0.25s ease-out"}}
+              onMouseEnter={e=>{e.currentTarget.style.boxShadow=`0 0 24px rgba(${T.accentRgb},0.85),0 0 42px rgba(${T.accentRgb},0.4),inset 0 0 14px rgba(${T.accentRgb},0.25)`}}
+              onMouseLeave={e=>{e.currentTarget.style.boxShadow=`0 0 14px rgba(${T.accentRgb},0.5),inset 0 0 10px rgba(${T.accentRgb},0.15)`}}>
               <div style={{width:3,height:6,borderRadius:2,background:T.accent,position:"absolute",top:5,left:"50%",transform:"translateX(-50%)",animation:"pgMouseScroll 1.8s cubic-bezier(0.4,0,0.2,1) infinite",boxShadow:`0 0 8px rgba(${T.accentRgb},0.9)`}}/>
             </div>
-          </div>
+          </button>
         </>}
         <div style={{position:"fixed",inset:0,zIndex:0,overflow:"hidden",pointerEvents:"none"}}>
           <canvas ref={gridCvsRef} style={{position:"absolute",inset:0,width:"100%",height:"100%"}}/>
@@ -5213,7 +5235,7 @@ html{scroll-behavior:smooth}
               {icon:"🔒",title:"Zero Server",color:"#22c55e",rgb:"34,197,94",desc:"Everything happens in your browser. No passwords, no clicks, no analytics ever transmitted anywhere. Ever."},
               {icon:"🧬",title:"Entropy Visible",color:"#06b6d4",rgb:"6,182,212",desc:"See exact bits of entropy in real time — not just a vague strength bar. Informed decisions beat guesswork."}
             ];
-            return <div style={{marginTop:40,position:"relative",zIndex:1}}>
+            return <div ref={pgFeatsRef} style={{marginTop:40,position:"relative",zIndex:1,scrollMarginTop:24}}>
               <div style={{textAlign:"center",marginBottom:28}}>
                 <div style={{fontSize:10,fontWeight:700,color:T.accent,letterSpacing:3,marginBottom:8,textTransform:"uppercase"}}>Built Different</div>
                 <h2 style={{fontSize:26,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",margin:"0 0 8px",letterSpacing:0.5}}>Why ShieldCraft</h2>
