@@ -642,7 +642,6 @@ export default function NotesCraft(){
   const[pgUseCustom,setPgUseCustom]=useState(false);
   const[pgCustomErr,setPgCustomErr]=useState("");
   const[pgQuantumSafe,setPgQuantumSafe]=useState(false);
-  const[pgHiddenCards,setPgHiddenCards]=useState({});
   const[pgResult,setPgResult]=useState("");
   const[pgDisplay,setPgDisplay]=useState("");
   const[pgScrambling,setPgScrambling]=useState(false);
@@ -2170,10 +2169,10 @@ input:focus,textarea:focus{border-color:rgba(${T.accentRgb},0.4)!important;box-s
 @keyframes ldPulseRing{0%{transform:scale(0.8);opacity:0.6}100%{transform:scale(2.5);opacity:0}}
 @keyframes ldGridFlow{0%{background-position:0 0}100%{background-position:60px 60px}}
 @keyframes neoGridScroll{0%{background-position:0 0}100%{background-position:0 60px}}
+@keyframes neoPulse{0%,100%{opacity:0.25}50%{opacity:0.65}}
 @keyframes neoFloat1{0%,100%{transform:translateY(0)}50%{transform:translateY(-22px)}}
 @keyframes neoFloat2{0%,100%{transform:translateY(0)}50%{transform:translateY(-30px)}}
 @keyframes neoFloat3{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
-@keyframes neoPulse{0%,100%{opacity:0.25}50%{opacity:0.65}}
 @keyframes scanDown{0%{top:-2%;opacity:0}5%{opacity:0.5}95%{opacity:0.5}100%{top:102%;opacity:0}}
 @keyframes ldGlowPulse{0%,100%{opacity:0.3}50%{opacity:0.7}}
 @keyframes ldTextReveal{from{opacity:0;transform:translateY(20px);filter:blur(8px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
@@ -3388,8 +3387,8 @@ html{scroll-behavior:smooth}
                   <span style={{fontSize:22,filter:`drop-shadow(0 0 8px rgba(${accentRgb},0.6))`}}>📱</span>
                   <h3 style={{margin:0,fontSize:16,fontWeight:800,color:T.text,fontFamily:F.heading,letterSpacing:1,textTransform:"uppercase",background:`linear-gradient(135deg,${accent},${accent2})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text"}}>Scan to Get Password</h3>
                 </div>
-                <div style={{fontSize:9,fontWeight:600,color:`rgba(${accentRgb},0.7)`,letterSpacing:2,marginBottom:12,textTransform:"uppercase",position:"relative",zIndex:1}}>// Encrypted · Local Transfer</div>
-                <p style={{margin:"0 0 18px",fontSize:11,color:T.dim,lineHeight:1.6,position:"relative",zIndex:1}}>Point your phone camera at the QR. Password is encoded on this device — nothing is sent to any server.</p>
+                <div style={{fontSize:9,fontWeight:600,color:`rgba(${accentRgb},0.7)`,letterSpacing:2,marginBottom:12,textTransform:"uppercase",position:"relative",zIndex:1}}>// Encrypted · Process locally on device</div>
+                <p style={{margin:"0 0 18px",fontSize:12,color:T.dim,lineHeight:1.6,position:"relative",zIndex:1}}>Point your phone camera at the QR.</p>
                 {err?<div style={{padding:"16px",borderRadius:10,background:"rgba(239,68,68,0.08)",border:"1px solid rgba(239,68,68,0.3)",color:"#ef4444",fontSize:12,textAlign:"center",position:"relative",zIndex:1}}>{err}</div>:
                   <>
                     <div style={{display:"flex",justifyContent:"center",marginBottom:16,position:"relative",zIndex:1}}>
@@ -3401,7 +3400,7 @@ html{scroll-behavior:smooth}
                     <div style={{padding:"12px 14px",borderRadius:10,background:`linear-gradient(135deg,rgba(${accentRgb},0.08),rgba(${accentRgb},0.02))`,border:`1px solid rgba(${accentRgb},0.25)`,fontSize:12,fontFamily:F.mono||"monospace",color:T.text,wordBreak:"break-all",textAlign:"center",marginBottom:12,maxHeight:80,overflowY:"auto",letterSpacing:0.5,position:"relative",zIndex:1,boxShadow:`inset 0 1px 0 rgba(255,255,255,0.04),0 0 16px rgba(${accentRgb},0.08)`}}>{pgResult}</div>
                     <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,position:"relative",zIndex:1}}>
                       <div style={{width:6,height:6,borderRadius:"50%",background:accent,boxShadow:`0 0 8px ${accent}`,animation:"pulse 1.8s ease-in-out infinite"}}/>
-                      <p style={{margin:0,fontSize:10,color:T.dim,lineHeight:1.5,letterSpacing:0.3}}>Generated on this device · QR not saved</p>
+                      <p style={{margin:0,fontSize:10,color:T.dim,lineHeight:1.5,letterSpacing:0.3}}>Generated on this device · QR not saved · Password is encoded on this device · Nothing is sent to any server outside.</p>
                     </div>
                   </>
                 }
@@ -5176,42 +5175,40 @@ html{scroll-behavior:smooth}
             </>}
             {infoPages[infoPage]}
           </div>
-          {/* Floating neon side cards */}
-          {infoPage==="password-manager"&&<>
-            {!pgHiddenCards.qs&&<div style={{position:"absolute",left:-280,top:130,width:270,height:210,animation:"neoFloat1 6s ease-in-out infinite",zIndex:2,transition:"opacity 0.4s,transform 0.4s"}}>
-              <div style={{width:"100%",height:"100%",borderRadius:6,padding:"20px 20px",border:"2px solid rgba(16,185,129,0.8)",background:"rgba(16,185,129,0.1)",boxShadow:"0 0 15px rgba(16,185,129,0.35),0 0 30px rgba(16,185,129,0.18),inset 0 0 15px rgba(16,185,129,0.08)",transform:"rotate(-8deg)",display:"flex",flexDirection:"column",overflow:"hidden",position:"relative"}}>
-                <button onClick={()=>setPgHiddenCards(p=>({...p,qs:true}))} style={{position:"absolute",top:4,right:6,background:"none",border:"none",color:"rgba(16,185,129,0.5)",fontSize:14,cursor:"pointer",padding:"2px 5px",lineHeight:1,borderRadius:4,transition:"color 0.2s"}} onMouseEnter={e=>e.currentTarget.style.color="rgba(16,185,129,1)"} onMouseLeave={e=>e.currentTarget.style.color="rgba(16,185,129,0.5)"} title="Hide card">✕</button>
-                <div style={{fontSize:17,fontWeight:900,color:"#10b981",marginBottom:8,fontFamily:"monospace",letterSpacing:1}}>⚛️ Quantum-Safe</div>
-                <div style={{fontSize:13.5,color:"rgba(255,255,255,0.88)",lineHeight:1.65,fontFamily:"monospace",flex:1,overflow:"hidden"}}>Only password generator with Grover-aware effective{"\n"}bits calculation —{"\n"}models real quantum{"\n"}attack cost, not just{"\n"}classical brute-force</div>
+          {/* ShieldCraft features grid */}
+          {infoPage==="password-manager"&&(()=>{
+            const feats=[
+              {icon:"⚛️",title:"Quantum-Safe",color:"#10b981",rgb:"16,185,129",desc:"Grover-aware effective-bits calculation models real quantum attack cost, not just classical brute-force."},
+              {icon:"🔑",title:"512-Char Max",color:T.accent,rgb:T.accentRgb,desc:"Most generators cap at 64–128 chars. Generate ultra-long passwords for maximum entropy and future-proofing."},
+              {icon:"🛡️",title:"100% Free",color:"#f59e0b",rgb:"245,158,11",desc:"No signup, no rate limits, no ads, no tracking. One-and-only free quantum-resistant generator on the web."},
+              {icon:"🎲",title:"True Randomness",color:"#3b82f6",rgb:"59,130,246",desc:"Uses the Web Crypto CSPRNG (crypto.getRandomValues) — never predictable Math.random() pseudo-randomness."},
+              {icon:"📱",title:"Scan-to-Transfer QR",color:"#a855f7",rgb:"168,85,247",desc:"Send the password to your phone via a local QR. Generated on-device, never hits any server."},
+              {icon:"🧠",title:"3 Generation Modes",color:"#14b8a6",rgb:"20,184,166",desc:"Random, Memorable (word-based), or PIN. Pick the right style for the account — plus custom word lists."},
+              {icon:"📊",title:"Dual Strength Analysis",color:"#ef4444",rgb:"239,68,68",desc:"Shows both classical GPU crack time and quantum Grover attack estimate — threat modeling for the next decade."},
+              {icon:"🔒",title:"Zero Server",color:"#22c55e",rgb:"34,197,94",desc:"Everything happens in your browser. No passwords, no clicks, no analytics ever transmitted anywhere. Ever."}
+            ];
+            return <div style={{marginTop:40,position:"relative",zIndex:1}}>
+              <div style={{textAlign:"center",marginBottom:28}}>
+                <div style={{fontSize:10,fontWeight:700,color:T.accent,letterSpacing:3,marginBottom:8,textTransform:"uppercase"}}>Built Different</div>
+                <h2 style={{fontSize:26,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",margin:"0 0 8px",letterSpacing:0.5}}>Why ShieldCraft</h2>
+                <p style={{fontSize:13,color:T.dim,maxWidth:520,margin:"0 auto",lineHeight:1.6}}>Eight things most password generators don't do — and we think every single one matters.</p>
               </div>
-            </div>}
-            {!pgHiddenCards.mx&&<div style={{position:"absolute",right:-255,top:310,width:240,height:180,animation:"neoFloat2 7s ease-in-out infinite 1s",zIndex:2,transition:"opacity 0.4s,transform 0.4s"}}>
-              <div style={{width:"100%",height:"100%",borderRadius:6,padding:"18px 18px",border:`2px solid rgba(${T.accentRgb},0.8)`,background:`rgba(${T.accentRgb},0.1)`,boxShadow:`0 0 15px rgba(${T.accentRgb},0.35),0 0 30px rgba(${T.accentRgb},0.18),inset 0 0 15px rgba(${T.accentRgb},0.08)`,transform:"rotate(6deg)",display:"flex",flexDirection:"column",overflow:"hidden",position:"relative"}}>
-                <button onClick={()=>setPgHiddenCards(p=>({...p,mx:true}))} style={{position:"absolute",top:4,right:6,background:"none",border:"none",color:`rgba(${T.accentRgb},0.5)`,fontSize:14,cursor:"pointer",padding:"2px 5px",lineHeight:1,borderRadius:4,transition:"color 0.2s"}} onMouseEnter={e=>e.currentTarget.style.color=T.accent} onMouseLeave={e=>e.currentTarget.style.color=`rgba(${T.accentRgb},0.5)`} title="Hide card">✕</button>
-                <div style={{fontSize:17,fontWeight:900,color:T.accent,marginBottom:8,fontFamily:"monospace",letterSpacing:1}}>🔑 512-Char Max</div>
-                <div style={{fontSize:13.5,color:"rgba(255,255,255,0.88)",lineHeight:1.65,fontFamily:"monospace",flex:1,overflow:"hidden"}}>Most generators cap{"\n"}at 64-128 chars.{"\n"}Only password generator{"\n"}allowing ultra-long{"\n"}passwords for max{"\n"}entropy & future-proof</div>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(240px,1fr))",gap:14}}>
+                {feats.map((f,i)=>(
+                  <div key={i} className="sc-feat-card" style={{position:"relative",padding:"20px 18px 18px",borderRadius:14,background:`linear-gradient(135deg,rgba(${f.rgb},0.08),rgba(${f.rgb},0.02))`,border:`1.5px solid rgba(${f.rgb},0.35)`,backdropFilter:"blur(14px)",WebkitBackdropFilter:"blur(14px)",boxShadow:`0 4px 20px rgba(0,0,0,0.2),0 0 20px rgba(${f.rgb},0.1),inset 0 1px 0 rgba(255,255,255,0.05)`,transition:"all 0.3s",overflow:"hidden",cursor:"default"}}
+                    onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-4px)";e.currentTarget.style.borderColor=`rgba(${f.rgb},0.65)`;e.currentTarget.style.boxShadow=`0 10px 36px rgba(0,0,0,0.3),0 0 36px rgba(${f.rgb},0.28),inset 0 1px 0 rgba(255,255,255,0.08)`}}
+                    onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.borderColor=`rgba(${f.rgb},0.35)`;e.currentTarget.style.boxShadow=`0 4px 20px rgba(0,0,0,0.2),0 0 20px rgba(${f.rgb},0.1),inset 0 1px 0 rgba(255,255,255,0.05)`}}>
+                    <div style={{position:"absolute",inset:0,background:`radial-gradient(circle at 100% 0%,rgba(${f.rgb},0.14) 0%,transparent 60%)`,pointerEvents:"none"}}/>
+                    <div style={{position:"relative",display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
+                      <div style={{width:36,height:36,borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,background:`rgba(${f.rgb},0.14)`,border:`1px solid rgba(${f.rgb},0.35)`,boxShadow:`0 0 12px rgba(${f.rgb},0.25)`,flexShrink:0}}>{f.icon}</div>
+                      <div style={{fontSize:14,fontWeight:800,color:f.color,letterSpacing:0.5,fontFamily:"monospace",textShadow:`0 0 10px rgba(${f.rgb},0.3)`}}>{f.title}</div>
+                    </div>
+                    <p style={{position:"relative",fontSize:12,color:T.dark?"rgba(255,255,255,0.78)":T.dim,lineHeight:1.6,margin:0}}>{f.desc}</p>
+                  </div>
+                ))}
               </div>
-            </div>}
-            {!pgHiddenCards.fr&&<div style={{position:"absolute",left:-250,top:400,width:240,height:175,animation:"neoFloat3 8s ease-in-out infinite 0.5s",zIndex:2,transition:"opacity 0.4s,transform 0.4s"}}>
-              <div style={{width:"100%",height:"100%",borderRadius:6,padding:"18px 18px",border:"2px solid rgba(245,158,11,0.8)",background:"rgba(245,158,11,0.1)",boxShadow:"0 0 15px rgba(245,158,11,0.35),0 0 30px rgba(245,158,11,0.18),inset 0 0 15px rgba(245,158,11,0.08)",transform:"rotate(5deg)",display:"flex",flexDirection:"column",overflow:"hidden",position:"relative"}}>
-                <button onClick={()=>setPgHiddenCards(p=>({...p,fr:true}))} style={{position:"absolute",top:4,right:6,background:"none",border:"none",color:"rgba(245,158,11,0.5)",fontSize:14,cursor:"pointer",padding:"2px 5px",lineHeight:1,borderRadius:4,transition:"color 0.2s"}} onMouseEnter={e=>e.currentTarget.style.color="#f59e0b"} onMouseLeave={e=>e.currentTarget.style.color="rgba(245,158,11,0.5)"} title="Hide card">✕</button>
-                <div style={{fontSize:17,fontWeight:900,color:"#f59e0b",marginBottom:8,fontFamily:"monospace",letterSpacing:1}}>🛡️ 100% Free</div>
-                <div style={{fontSize:13.5,color:"rgba(255,255,255,0.88)",lineHeight:1.65,fontFamily:"monospace",flex:1,overflow:"hidden"}}>One and only free{"\n"}Quantum Resistant{"\n"}password generator{"\n"}tool — no signup,{"\n"}no limits, no ads</div>
-              </div>
-            </div>}
-          </>}
-          {infoPage==="password-manager"&&<div onClick={()=>{setInfoPage("security-blog");window.scrollTo(0,0)}} style={{marginTop:32,borderRadius:16,overflow:"hidden",cursor:"pointer",border:`1px solid rgba(${T.accentRgb},0.2)`,background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.06)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",transition:"all 0.3s",boxShadow:`0 4px 24px rgba(0,0,0,0.2)`}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.boxShadow=`0 8px 32px rgba(${T.accentRgb},0.25)`}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="0 4px 24px rgba(0,0,0,0.2)"}}>
-            <div style={{height:160,background:`linear-gradient(135deg,rgba(${T.accentRgb},0.3) 0%,rgba(${T.accentRgb},0.05) 50%,rgba(139,92,246,0.2) 100%)`,display:"flex",alignItems:"center",justifyContent:"center",position:"relative",overflow:"hidden"}}>
-              <div style={{position:"absolute",inset:0,background:"repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(255,255,255,0.02) 20px,rgba(255,255,255,0.02) 40px)"}}/>
-              <div style={{fontSize:56,filter:"drop-shadow(0 4px 12px rgba(0,0,0,0.3))",zIndex:1}}>🔐</div>
-            </div>
-            <div style={{padding:"20px 24px"}}>
-              <span style={{fontSize:10,fontWeight:700,letterSpacing:2,textTransform:"uppercase",color:T.accent,display:"block",marginBottom:8}}>Security Deep-Dive</span>
-              <h3 style={{fontSize:18,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",margin:"0 0 8px",lineHeight:1.3}}>Cryptographic vs Normal Password Generators</h3>
-              <p style={{fontSize:12,color:T.dim,margin:0,lineHeight:1.5}}>Why the random numbers behind your passwords matter more than you think — explained with entropy, physics, and a cup of hot coffee.</p>
-              <span style={{display:"inline-block",marginTop:12,fontSize:11,fontWeight:600,color:T.accent,letterSpacing:0.5}}>Read Article →</span>
-            </div>
-          </div>}
+            </div>;
+          })()}
         </div>
         <footer style={{position:"relative",zIndex:1,padding:"40px 24px 30px",borderTop:`1px solid rgba(${T.accentRgb},0.15)`,textAlign:"center",background:`rgba(${T.dark?"0,0,0":"10,10,18"},0.12)`,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)"}}>
           <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,marginBottom:12}}>
