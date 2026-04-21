@@ -642,6 +642,7 @@ export default function NotesCraft(){
   const[pgUseCustom,setPgUseCustom]=useState(false);
   const[pgCustomErr,setPgCustomErr]=useState("");
   const[pgQuantumSafe,setPgQuantumSafe]=useState(false);
+  const[pgScrollHint,setPgScrollHint]=useState(true);
   const[pgResult,setPgResult]=useState("");
   const[pgDisplay,setPgDisplay]=useState("");
   const[pgScrambling,setPgScrambling]=useState(false);
@@ -5052,8 +5053,16 @@ html{scroll-behavior:smooth}
       })()}</>
     };
     return(
-      <div style={{width:"100%",height:"100vh",overflowY:"auto",overflowX:"hidden",background:T.dark?T.bg:"#0a0a12",color:T.dark?T.text:"#e2e8f0",fontFamily:`${F.body},sans-serif`,position:"relative"}}>
+      <div onScroll={e=>{const st=e.currentTarget.scrollTop;setPgScrollHint(st<60)}} style={{width:"100%",height:"100vh",overflowY:"auto",overflowX:"hidden",background:T.dark?T.bg:"#0a0a12",color:T.dark?T.text:"#e2e8f0",fontFamily:`${F.body},sans-serif`,position:"relative"}}>
         <style>{css}</style>
+        {/* floating scroll hint — visible until user scrolls away from top */}
+        {infoPage==="password-manager"&&<div style={{position:"fixed",bottom:24,left:"50%",transform:"translateX(-50%)",zIndex:20,display:"flex",flexDirection:"column",alignItems:"center",gap:4,pointerEvents:"none",opacity:pgScrollHint?1:0,transition:"opacity 0.4s ease-out"}}>
+          <div style={{fontSize:9,fontWeight:700,color:`rgba(${T.accentRgb},0.9)`,letterSpacing:3,textTransform:"uppercase",fontFamily:"monospace",padding:"6px 14px",borderRadius:20,background:`rgba(${T.accentRgb},0.1)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid rgba(${T.accentRgb},0.35)`,boxShadow:`0 4px 16px rgba(0,0,0,0.3),0 0 16px rgba(${T.accentRgb},0.25)`}}>More Below</div>
+          <svg width="20" height="26" viewBox="0 0 22 28" fill="none" style={{animation:"scrollArrowBounce 1.6s ease-in-out infinite",filter:`drop-shadow(0 0 10px rgba(${T.accentRgb},0.8))`}}>
+            <path d="M4 8 L11 15 L18 8" stroke={T.accent} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.4"/>
+            <path d="M4 16 L11 23 L18 16" stroke={T.accent} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>}
         <div style={{position:"fixed",inset:0,zIndex:0,overflow:"hidden",pointerEvents:"none"}}>
           <canvas ref={gridCvsRef} style={{position:"absolute",inset:0,width:"100%",height:"100%"}}/>
           <div style={{position:"absolute",width:600,height:600,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.2) 0%,transparent 70%)",filter:"blur(60px)",top:"-15%",left:"-10%",animation:"ldOrb1 25s ease-in-out infinite"}}/>
@@ -5190,14 +5199,6 @@ html{scroll-behavior:smooth}
               {icon:"🧬",title:"Entropy Visible",color:"#06b6d4",rgb:"6,182,212",desc:"See exact bits of entropy in real time — not just a vague strength bar. Informed decisions beat guesswork."}
             ];
             return <div style={{marginTop:40,position:"relative",zIndex:1}}>
-              {/* scroll hint arrow — invites the user to look below */}
-              <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6,marginBottom:28}}>
-                <div style={{fontSize:10,fontWeight:700,color:`rgba(${T.accentRgb},0.85)`,letterSpacing:3,textTransform:"uppercase",fontFamily:"monospace"}}>More Below</div>
-                <svg width="22" height="28" viewBox="0 0 22 28" fill="none" style={{animation:"scrollArrowBounce 1.8s ease-in-out infinite",filter:`drop-shadow(0 0 8px rgba(${T.accentRgb},0.7))`}}>
-                  <path d="M4 8 L11 15 L18 8" stroke={T.accent} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.45"/>
-                  <path d="M4 16 L11 23 L18 16" stroke={T.accent} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
               <div style={{textAlign:"center",marginBottom:28}}>
                 <div style={{fontSize:10,fontWeight:700,color:T.accent,letterSpacing:3,marginBottom:8,textTransform:"uppercase"}}>Built Different</div>
                 <h2 style={{fontSize:26,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",margin:"0 0 8px",letterSpacing:0.5}}>Why ShieldCraft</h2>
