@@ -3319,9 +3319,27 @@ html{scroll-behavior:smooth}
             const drawFinder=(fx,fy)=>{
               const ox=(fx+quiet)*cell,oy=(fy+quiet)*cell;
               const oR=cell*1.9,mR=cell*1.2,iR=cell*0.7;
-              return `<rect x="${ox}" y="${oy}" width="${7*cell}" height="${7*cell}" rx="${oR}" fill="url(#qrgradFinder)"/><rect x="${ox+cell}" y="${oy+cell}" width="${5*cell}" height="${5*cell}" rx="${mR}" fill="#ffffff"/><rect x="${ox+2*cell}" y="${oy+2*cell}" width="${3*cell}" height="${3*cell}" rx="${iR}" fill="url(#qrgradFinder)"/>`;
+              return `<rect x="${ox}" y="${oy}" width="${7*cell}" height="${7*cell}" rx="${oR}" fill="url(#qrgradFinder)"/>`+
+                `<rect x="${ox+cell}" y="${oy+cell}" width="${5*cell}" height="${5*cell}" rx="${mR}" fill="#ffffff"/>`+
+                `<rect x="${ox+2*cell}" y="${oy+2*cell}" width="${3*cell}" height="${3*cell}" rx="${iR}" fill="url(#qrgradFinder)"/>`;
             };
             parts+=drawFinder(0,0)+drawFinder(n-7,0)+drawFinder(0,n-7);
+            // centered butterfly logo — sits over data modules; ECC-M (15% recovery) absorbs the covered area
+            const bfCells=5;
+            const bfPx=bfCells*cell;
+            const bfCx=(n/2+quiet)*cell, bfCy=(n/2+quiet)*cell;
+            const bfScale=bfPx/48;
+            const bfX=bfCx-bfPx/2, bfY=bfCy-bfPx/2;
+            // white rounded backdrop so the butterfly reads cleanly regardless of underlying modules
+            parts+=`<rect x="${(bfX-cell*0.25).toFixed(2)}" y="${(bfY-cell*0.25).toFixed(2)}" width="${(bfPx+cell*0.5).toFixed(2)}" height="${(bfPx+cell*0.5).toFixed(2)}" rx="${(cell*0.8).toFixed(2)}" fill="#ffffff"/>`;
+            const bfPathsGrad=[
+              `M21 11Q17 7 12 5Q8 5 4 8Q1 11 0 16Q1 21 5 25Q13 28 21 29Z`,
+              `M21 29Q13 28 5 25Q2 30 2 37Q5 42 12 44Q17 43 21 39Z`,
+              `M27 11Q31 7 36 5Q40 5 44 8Q47 11 48 16Q47 21 43 25Q35 28 27 29Z`,
+              `M27 29Q35 28 43 25Q46 30 46 37Q43 42 36 44Q31 43 27 39Z`
+            ].map(d=>`<path d="${d}" fill="url(#qrgradFinder)"/>`).join("")+
+              `<rect x="22" y="12" width="4" height="26" rx="2" fill="url(#qrgradFinder)"/>`;
+            parts+=`<g transform="translate(${bfX.toFixed(2)} ${bfY.toFixed(2)}) scale(${bfScale.toFixed(4)})">${bfPathsGrad}</g>`;
             return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${total} ${total}" width="280" height="280">${parts}</svg>`;
           })():"";
           const bracket=(pos)=>{const map={tl:{top:-7,left:-7,br:"none",bb:"none"},tr:{top:-7,right:-7,bl:"none",bb:"none"},bl:{bottom:-7,left:-7,br:"none",bt:"none"},br:{bottom:-7,right:-7,bl:"none",bt:"none"}};const p=map[pos];return <div style={{position:"absolute",top:p.top,left:p.left,right:p.right,bottom:p.bottom,width:20,height:20,borderTop:p.bt||`2.5px solid ${accent}`,borderBottom:p.bb||`2.5px solid ${accent}`,borderLeft:p.bl||`2.5px solid ${accent}`,borderRight:p.br||`2.5px solid ${accent}`,borderTopLeftRadius:pos==="tl"?6:0,borderTopRightRadius:pos==="tr"?6:0,borderBottomLeftRadius:pos==="bl"?6:0,borderBottomRightRadius:pos==="br"?6:0,animation:`pgQrCorner${pos} 0.55s ease-out 0.35s both, pgQrCornerPulse 2.2s ease-in-out 1s infinite`,["--brC"]:accent}}/>};
