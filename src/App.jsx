@@ -3,6 +3,7 @@ import zxcvbn from "zxcvbn";
 import { generateSalt, deriveKey, hashPassword, exportKey, importKey, generateTOTPSecret, verifyTOTP, generateTOTP, getTOTPRemaining, generateRecoveryCodes, encrypt, decrypt } from "./crypto.js";
 import { createSyncAdapter } from "./sync.js";
 import { EncryptedStorage } from "./storage.js";
+import { qrEncode } from "./qrcode.js";
 
 /* ═══════════════════════════════════════════════════
    THEMES
@@ -648,6 +649,8 @@ export default function NotesCraft(){
   const[pgCopied,setPgCopied]=useState(false);
   const[pgHidden,setPgHidden]=useState(false);
   const[pgStrength,setPgStrength]=useState(null);
+  const[pgQrOpen,setPgQrOpen]=useState(false);
+  const[pgQrErr,setPgQrErr]=useState("");
   const pgScrambleRef=React.useRef(null);
   // Password Manager state
   const[pmCredentials,setPmCredentials]=useState([]);
@@ -3203,6 +3206,12 @@ html{scroll-behavior:smooth}
             onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.background="rgba(255,255,255,0.04)";e.currentTarget.style.borderColor=pgQuantumSafe?"rgba(16,185,129,0.3)":`rgba(${T.accentRgb},0.25)`;e.currentTarget.style.boxShadow=`0 2px 12px rgba(0,0,0,0.15),inset 0 1px 0 rgba(255,255,255,0.05)`}}>
             ↓ Download .txt
           </button>
+          <button onClick={()=>{if(!pgResult)return;setPgQrErr("");setPgQrOpen(true)}}
+            style={{flex:1,padding:"13px 0",background:"rgba(255,255,255,0.04)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:pgQuantumSafe?"1.5px solid rgba(16,185,129,0.3)":`1.5px solid rgba(${T.accentRgb},0.25)`,borderRadius:12,color:pgQuantumSafe?"#10b981":T.accent,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5,transition:"all 0.3s",boxShadow:`0 2px 12px rgba(0,0,0,0.15),inset 0 1px 0 rgba(255,255,255,0.05)`}}
+            onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.background="rgba(255,255,255,0.08)";e.currentTarget.style.borderColor=pgQuantumSafe?"rgba(16,185,129,0.6)":`rgba(${T.accentRgb},0.5)`;e.currentTarget.style.boxShadow=pgQuantumSafe?"0 4px 20px rgba(16,185,129,0.25),inset 0 1px 0 rgba(255,255,255,0.08)":`0 4px 20px rgba(${T.accentRgb},0.2),inset 0 1px 0 rgba(255,255,255,0.08)`}}
+            onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.background="rgba(255,255,255,0.04)";e.currentTarget.style.borderColor=pgQuantumSafe?"rgba(16,185,129,0.3)":`rgba(${T.accentRgb},0.25)`;e.currentTarget.style.boxShadow=`0 2px 12px rgba(0,0,0,0.15),inset 0 1px 0 rgba(255,255,255,0.05)`}}>
+            📱 QR Code
+          </button>
         </div>
 
         {/* Strength Meter */}
@@ -3258,6 +3267,43 @@ html{scroll-behavior:smooth}
           <p style={{margin:"0 0 8px"}}><span style={{color:"#f59e0b"}}>⚠️</span> <strong style={{color:T.text}}>Disclaimer:</strong> Quantum resistance estimates model Grover's search algorithm (O(√N) speedup) against symmetric key spaces at 10⁷ logical Grover iterations/sec — an optimistic projection for fault-tolerant quantum hardware. <strong style={{color:T.text}}>No cryptographically relevant quantum computer currently exists.</strong> These are forward-looking theoretical projections, not assessments of present-day risk.</p>
           <p style={{margin:0}}>Real-world quantum attack feasibility depends on logical qubit count, gate fidelity thresholds, quantum error correction overhead (surface codes), decoherence rates, and circuit depth limitations — variables that remain unsolved at scale. <strong style={{color:T.text}}>No guarantees are made regarding actual post-quantum security.</strong> This model is for entropy planning and threat modeling purposes only.</p>
         </div>}
+
+        {/* QR Code Modal */}
+        {pgQrOpen&&(()=>{
+          let qr=null,err="";
+          try{ qr=qrEncode(pgResult,"M") }catch(e){ err=e?.message||"Failed to encode" }
+          const accent=pgQuantumSafe?"#10b981":T.accent;
+          const accentRgb=pgQuantumSafe?"16,185,129":T.accentRgb;
+          const qrPx=256;
+          const qrSvg=qr?(()=>{
+            const n=qr.size,cell=qrPx/n;
+            const rects=[];
+            for(let y=0;y<n;y++)for(let x=0;x<n;x++)if(qr.modules[y][x])
+              rects.push(`<rect x="${(x*cell).toFixed(3)}" y="${(y*cell).toFixed(3)}" width="${cell.toFixed(3)}" height="${cell.toFixed(3)}" fill="#0a0a0a"/>`);
+            return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${qrPx} ${qrPx}" width="${qrPx}" height="${qrPx}" shape-rendering="crispEdges"><rect width="${qrPx}" height="${qrPx}" fill="#ffffff"/>${rects.join("")}</svg>`;
+          })():"";
+          return <div style={{position:"fixed",inset:0,zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.7)",backdropFilter:"blur(10px)",WebkitBackdropFilter:"blur(10px)",padding:20}} onClick={e=>{if(e.target===e.currentTarget)setPgQrOpen(false)}}>
+            <div style={{maxWidth:380,width:"100%",background:T.bg||"#0f0f14",border:`1.5px solid rgba(${accentRgb},0.35)`,borderRadius:16,padding:"24px 22px",boxShadow:`0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(${accentRgb},0.15)`,position:"relative"}}>
+              <button onClick={()=>setPgQrOpen(false)} aria-label="Close" style={{position:"absolute",top:12,right:12,width:28,height:28,borderRadius:8,background:"rgba(255,255,255,0.05)",border:`1px solid rgba(${accentRgb},0.25)`,color:T.text,fontSize:16,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s"}}
+                onMouseEnter={e=>{e.currentTarget.style.background="rgba(255,255,255,0.1)"}}
+                onMouseLeave={e=>{e.currentTarget.style.background="rgba(255,255,255,0.05)"}}>✕</button>
+              <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:6}}>
+                <span style={{fontSize:20}}>📱</span>
+                <h3 style={{margin:0,fontSize:16,fontWeight:700,color:T.text,fontFamily:F.heading,letterSpacing:0.5}}>Scan to Get Password</h3>
+              </div>
+              <p style={{margin:"0 0 16px",fontSize:11,color:T.dim,lineHeight:1.5}}>Point your phone camera at the QR code. The password is encoded locally — nothing is sent to any server.</p>
+              {err?<div style={{padding:"16px",borderRadius:10,background:"rgba(239,68,68,0.08)",border:"1px solid rgba(239,68,68,0.3)",color:"#ef4444",fontSize:12,textAlign:"center"}}>{err}</div>:
+                <>
+                  <div style={{display:"flex",justifyContent:"center",marginBottom:14}}>
+                    <div style={{padding:12,background:"#ffffff",borderRadius:12,boxShadow:`0 4px 20px rgba(${accentRgb},0.25),0 0 30px rgba(${accentRgb},0.1)`,lineHeight:0}} dangerouslySetInnerHTML={{__html:qrSvg}}/>
+                  </div>
+                  <div style={{padding:"10px 12px",borderRadius:8,background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${accentRgb},0.15)`,fontSize:11,fontFamily:"monospace",color:T.text,wordBreak:"break-all",textAlign:"center",marginBottom:12,maxHeight:80,overflowY:"auto"}}>{pgResult}</div>
+                  <p style={{margin:0,fontSize:10,color:T.dim,lineHeight:1.5,textAlign:"center"}}>🔒 Generated on this device. Close this window when done — the QR is not saved.</p>
+                </>
+              }
+            </div>
+          </div>;
+        })()}
 
       </>,
       "security-blog":<>{(()=>{
