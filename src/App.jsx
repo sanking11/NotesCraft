@@ -2045,11 +2045,12 @@ select option{background:${T.bg};color:${T.text}}
 @keyframes pgQrCardIn{0%{opacity:0;transform:scale(0.82) translateY(24px);filter:blur(6px)}60%{opacity:1;filter:blur(0)}100%{opacity:1;transform:scale(1) translateY(0);filter:blur(0)}}
 @keyframes pgQrGlow{0%,100%{box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(var(--qrg),0.15)}50%{box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 60px rgba(var(--qrg),0.3)}}
 @keyframes pgQrReveal{0%{clip-path:inset(0 100% 0 0);opacity:0.6}100%{clip-path:inset(0 0 0 0);opacity:1}}
-@keyframes pgQrFrameShift{0%{background-position:0% 50%}100%{background-position:300% 50%}}
+@keyframes pgQrSpin{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(360deg)}}
 @keyframes pgQrCornertl{0%{opacity:0;transform:translate(-8px,-8px) scale(0.4)}100%{opacity:1;transform:translate(0,0) scale(1)}}
 @keyframes pgQrCornertr{0%{opacity:0;transform:translate(8px,-8px) scale(0.4)}100%{opacity:1;transform:translate(0,0) scale(1)}}
 @keyframes pgQrCornerbl{0%{opacity:0;transform:translate(-8px,8px) scale(0.4)}100%{opacity:1;transform:translate(0,0) scale(1)}}
 @keyframes pgQrCornerbr{0%{opacity:0;transform:translate(8px,8px) scale(0.4)}100%{opacity:1;transform:translate(0,0) scale(1)}}
+@keyframes pgQrCornerPulse{0%,100%{filter:drop-shadow(0 0 3px var(--brC)) drop-shadow(0 0 6px var(--brC));transform:scale(1)}50%{filter:drop-shadow(0 0 8px var(--brC)) drop-shadow(0 0 16px var(--brC));transform:scale(1.12)}}
 @keyframes djStepIn{from{opacity:0;transform:translateY(16px) scale(0.9)}to{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes djArrowIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
 @keyframes djIconPulse{0%,100%{box-shadow:0 0 20px rgba(var(--sc),0.2)}50%{box-shadow:0 0 32px rgba(var(--sc),0.45)}}
@@ -3284,33 +3285,53 @@ html{scroll-behavior:smooth}
           const accent=pgQuantumSafe?"#10b981":T.accent;
           const accent2=pgQuantumSafe?"#059669":(T.accent2||T.accent);
           const accentRgb=pgQuantumSafe?"16,185,129":T.accentRgb;
+          // darken accents for the QR modules so contrast vs white bg stays scanner-safe
+          const darken=(hex,amt)=>{const h=hex.replace("#","");if(h.length!==6)return hex;const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);const f=c=>Math.round(c*(1-amt)).toString(16).padStart(2,"0");return "#"+f(r)+f(g)+f(b)};
+          const qrC1=darken(accent,0.45),qrC2=darken(accent2,0.45);
           const qrSvg=qr?(()=>{
             const n=qr.size,quiet=4,cell=10;
             const total=(n+quiet*2)*cell;
-            const dark="#0b0f1e";
             const isFinder=(x,y)=>(x<7&&y<7)||(x>=n-7&&y<7)||(x<7&&y>=n-7);
-            let parts=`<defs><radialGradient id="qrbg" cx="50%" cy="50%" r="70%"><stop offset="0%" stop-color="rgba(${accentRgb},0.035)"/><stop offset="100%" stop-color="rgba(${accentRgb},0)"/></radialGradient></defs><rect width="${total}" height="${total}" fill="#ffffff"/><rect width="${total}" height="${total}" fill="url(#qrbg)"/>`;
+            let parts=`<defs>
+              <linearGradient id="qrgrad" x1="0" y1="0" x2="${total}" y2="${total}" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="${qrC1}"/>
+                <stop offset="50%" stop-color="${qrC2}"/>
+                <stop offset="100%" stop-color="${qrC1}"/>
+              </linearGradient>
+              <linearGradient id="qrgradFinder" x1="0" y1="0" x2="${total}" y2="${total}" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="${qrC1}"/>
+                <stop offset="100%" stop-color="${qrC2}"/>
+              </linearGradient>
+              <radialGradient id="qrbg" cx="50%" cy="50%" r="70%">
+                <stop offset="0%" stop-color="rgba(${accentRgb},0.07)"/>
+                <stop offset="100%" stop-color="rgba(${accentRgb},0)"/>
+              </radialGradient>
+            </defs>
+            <rect width="${total}" height="${total}" fill="#ffffff"/>
+            <rect width="${total}" height="${total}" fill="url(#qrbg)"/>`;
             const inset=cell*0.08,r=cell*0.28,s=cell-inset*2;
             for(let y=0;y<n;y++)for(let x=0;x<n;x++){
               if(!qr.modules[y][x]||isFinder(x,y)) continue;
               const px=((x+quiet)*cell+inset).toFixed(2);
               const py=((y+quiet)*cell+inset).toFixed(2);
-              parts+=`<rect x="${px}" y="${py}" width="${s.toFixed(2)}" height="${s.toFixed(2)}" rx="${r.toFixed(2)}" fill="${dark}"/>`;
+              parts+=`<rect x="${px}" y="${py}" width="${s.toFixed(2)}" height="${s.toFixed(2)}" rx="${r.toFixed(2)}" fill="url(#qrgrad)"/>`;
             }
             const drawFinder=(fx,fy)=>{
               const ox=(fx+quiet)*cell,oy=(fy+quiet)*cell;
               const oR=cell*1.9,mR=cell*1.2,iR=cell*0.7;
-              return `<rect x="${ox}" y="${oy}" width="${7*cell}" height="${7*cell}" rx="${oR}" fill="${dark}"/><rect x="${ox+cell}" y="${oy+cell}" width="${5*cell}" height="${5*cell}" rx="${mR}" fill="#ffffff"/><rect x="${ox+2*cell}" y="${oy+2*cell}" width="${3*cell}" height="${3*cell}" rx="${iR}" fill="${dark}"/>`;
+              return `<rect x="${ox}" y="${oy}" width="${7*cell}" height="${7*cell}" rx="${oR}" fill="url(#qrgradFinder)"/><rect x="${ox+cell}" y="${oy+cell}" width="${5*cell}" height="${5*cell}" rx="${mR}" fill="#ffffff"/><rect x="${ox+2*cell}" y="${oy+2*cell}" width="${3*cell}" height="${3*cell}" rx="${iR}" fill="url(#qrgradFinder)"/>`;
             };
             parts+=drawFinder(0,0)+drawFinder(n-7,0)+drawFinder(0,n-7);
             return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${total} ${total}" width="280" height="280">${parts}</svg>`;
           })():"";
-          const bracket=(pos)=>{const map={tl:{top:-6,left:-6,br:"none",bb:"none"},tr:{top:-6,right:-6,bl:"none",bb:"none"},bl:{bottom:-6,left:-6,br:"none",bt:"none"},br:{bottom:-6,right:-6,bl:"none",bt:"none"}};const p=map[pos];return <div style={{position:"absolute",top:p.top,left:p.left,right:p.right,bottom:p.bottom,width:18,height:18,borderTop:p.bt||`2px solid ${accent}`,borderBottom:p.bb||`2px solid ${accent}`,borderLeft:p.bl||`2px solid ${accent}`,borderRight:p.br||`2px solid ${accent}`,borderTopLeftRadius:pos==="tl"?6:0,borderTopRightRadius:pos==="tr"?6:0,borderBottomLeftRadius:pos==="bl"?6:0,borderBottomRightRadius:pos==="br"?6:0,filter:`drop-shadow(0 0 4px ${accent})`,animation:`pgQrCorner${pos} 0.55s ease-out 0.35s both`}}/>};
+          const bracket=(pos)=>{const map={tl:{top:-7,left:-7,br:"none",bb:"none"},tr:{top:-7,right:-7,bl:"none",bb:"none"},bl:{bottom:-7,left:-7,br:"none",bt:"none"},br:{bottom:-7,right:-7,bl:"none",bt:"none"}};const p=map[pos];return <div style={{position:"absolute",top:p.top,left:p.left,right:p.right,bottom:p.bottom,width:20,height:20,borderTop:p.bt||`2.5px solid ${accent}`,borderBottom:p.bb||`2.5px solid ${accent}`,borderLeft:p.bl||`2.5px solid ${accent}`,borderRight:p.br||`2.5px solid ${accent}`,borderTopLeftRadius:pos==="tl"?6:0,borderTopRightRadius:pos==="tr"?6:0,borderBottomLeftRadius:pos==="bl"?6:0,borderBottomRightRadius:pos==="br"?6:0,animation:`pgQrCorner${pos} 0.55s ease-out 0.35s both, pgQrCornerPulse 2.2s ease-in-out 1s infinite`,["--brC"]:accent}}/>};
           return <div style={{position:"fixed",inset:0,zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.72)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",padding:20,animation:"pgQrBackdrop 0.3s ease-out"}} onClick={e=>{if(e.target===e.currentTarget)setPgQrOpen(false)}}>
             <div style={{maxWidth:400,width:"100%",position:"relative","--qrg":accentRgb,animation:"pgQrCardIn 0.45s cubic-bezier(0.34,1.56,0.64,1) both"}}>
-              {/* gradient frame border */}
-              <div style={{position:"absolute",inset:-1,borderRadius:18,padding:1.5,background:`linear-gradient(135deg,${accent},${accent2},rgba(${accentRgb},0.3),${accent})`,backgroundSize:"300% 300%",WebkitMask:"linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0)",WebkitMaskComposite:"xor",maskComposite:"exclude",pointerEvents:"none",animation:"pgQrFrameShift 6s linear infinite"}}/>
-              <div style={{background:T.bg||"#0a0d18",borderRadius:16,padding:"26px 24px",boxShadow:`0 24px 70px rgba(0,0,0,0.6),0 0 50px rgba(${accentRgb},0.18)`,position:"relative",overflow:"hidden",animation:`pgQrGlow 3s ease-in-out 0.45s infinite`}}>
+              {/* rotating conic-gradient neon rim behind the card */}
+              <div style={{position:"absolute",inset:-2,borderRadius:18,overflow:"hidden",pointerEvents:"none"}}>
+                <div style={{position:"absolute",top:"50%",left:"50%",width:"260%",aspectRatio:"1",transform:"translate(-50%,-50%)",background:`conic-gradient(from 0deg,transparent 0deg,${accent} 50deg,${accent2} 120deg,transparent 180deg,${accent2} 240deg,${accent} 310deg,transparent 360deg)`,animation:"pgQrSpin 3.2s linear infinite",filter:"blur(2px)",opacity:1}}/>
+              </div>
+              <div style={{background:T.bg||"#0a0d18",borderRadius:16,padding:"26px 24px",boxShadow:`0 24px 70px rgba(0,0,0,0.6),0 0 50px rgba(${accentRgb},0.18)`,position:"relative",overflow:"hidden"}}>
                 {/* subtle grid overlay */}
                 <div style={{position:"absolute",inset:0,backgroundImage:`linear-gradient(rgba(${accentRgb},0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(${accentRgb},0.04) 1px,transparent 1px)`,backgroundSize:"22px 22px",pointerEvents:"none",opacity:0.8}}/>
                 <button onClick={()=>setPgQrOpen(false)} aria-label="Close" style={{position:"absolute",top:12,right:12,width:30,height:30,borderRadius:8,background:"rgba(255,255,255,0.05)",border:`1px solid rgba(${accentRgb},0.3)`,color:T.text,fontSize:14,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",zIndex:2}}
