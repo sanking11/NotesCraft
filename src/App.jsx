@@ -3071,6 +3071,11 @@ html{scroll-behavior:smooth}
         <p style={infoP}>We reserve the right to update these terms at any time. Continued use of NotesCraft and ShieldCraft after changes constitutes acceptance of the updated terms.</p>
       </>,
       "password-manager":<>
+        {/* in-card nav — Login + Back replace the removed top title bar */}
+        <div style={{position:"absolute",top:16,right:16,zIndex:5,display:"flex",gap:10,alignItems:"center"}}>
+          {!pmIsLoggedIn&&<button onClick={()=>{setPmShowLogin(true);setPmLoginErr("");setPmLogin2FA(false);setPmLogin2FACode("");setPmLogin2FAErr("");setPmSignupMode(false)}} style={{padding:"7px 18px",background:pgQuantumSafe?"linear-gradient(135deg,#10b981,#059669)":`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:8,color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5,boxShadow:pgQuantumSafe?"0 4px 14px rgba(16,185,129,0.35)":`0 4px 14px rgba(${T.accentRgb},0.35)`,transition:"all 0.3s"}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-1px)"}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)"}}>Login</button>}
+          <button onClick={()=>setInfoPage(null)} style={{background:`rgba(${T.accentRgb},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,borderRadius:8,padding:"7px 16px",color:T.dark?T.text:"#e2e8f0",fontSize:12,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1}}>← Back</button>
+        </div>
         <div style={{display:"flex",alignItems:"center",gap:2,marginBottom:0,marginTop:-24,marginLeft:-6}}>
           <div style={{animation:"shieldEntrance 0.8s ease-out",filter:`drop-shadow(0 4px 12px rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.3))${pgQuantumSafe?" hue-rotate(-50deg) saturate(1.5) brightness(1.05)":""}`,marginRight:-2,width:72,height:72,borderRadius:16,overflow:"hidden",transition:"filter 0.4s"}}>
             <SCLogo s={72}/>
@@ -5078,7 +5083,7 @@ html{scroll-behavior:smooth}
           <div style={{position:"absolute",width:600,height:600,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.2) 0%,transparent 70%)",filter:"blur(60px)",top:"-15%",left:"-10%",animation:"ldOrb1 25s ease-in-out infinite"}}/>
           <div style={{position:"absolute",width:500,height:500,borderRadius:"50%",background:`radial-gradient(circle,rgba(${T.accentRgb},0.18) 0%,transparent 70%)`,filter:"blur(45px)",bottom:"-10%",right:"-5%",animation:"ldOrb2 30s ease-in-out infinite"}}/>
         </div>
-        <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:100,display:blogArticle?"none":"flex",padding:"16px 40px",alignItems:"center",justifyContent:"space-between",background:`linear-gradient(180deg,${T.dark?T.bg:"#0a0a12"} 0%,transparent 100%)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)"}}>
+        <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:100,display:(blogArticle||infoPage==="password-manager")?"none":"flex",padding:"16px 40px",alignItems:"center",justifyContent:"space-between",background:`linear-gradient(180deg,${T.dark?T.bg:"#0a0a12"} 0%,transparent 100%)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)"}}>
           <div style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer"}} onClick={()=>{setBlogArticle(null);setBlogFullArticle(false);blogBusyRef.current=false;blogCardRectRef.current=null;setInfoPage(null)}}>
             {infoPage==="security-blog"?<>
               <div style={{position:"relative",width:52,height:60,flexShrink:0,filter:`drop-shadow(0 0 12px rgba(${T.accentRgb},0.6))`,animation:"cubeFloat 4s ease-in-out infinite"}}>
@@ -5172,7 +5177,7 @@ html{scroll-behavior:smooth}
             <button onClick={()=>{if(blogArticle){closeBlogArticle()}else{setInfoPage(null)}}} style={{background:`rgba(${T.accentRgb},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,borderRadius:8,padding:"8px 20px",color:T.dark?T.text:"#e2e8f0",fontSize:13,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1}}>{blogArticle?"← TechCraft":"← Back"}</button>
           </div>
         </nav>
-        <div style={{position:"relative",zIndex:1,maxWidth:infoPage==="security-blog"?"100%":800,margin:"0 auto",padding:infoPage==="security-blog"?"80px 0 60px":"100px 24px 60px"}}>
+        <div style={{position:"relative",zIndex:1,maxWidth:infoPage==="security-blog"?"100%":800,margin:"0 auto",padding:infoPage==="security-blog"?"80px 0 60px":infoPage==="password-manager"?"28px 24px 60px":"100px 24px 60px"}}>
           {infoPage==="password-manager"&&<>
             <div style={{position:"absolute",width:600,height:600,borderRadius:"50%",background:pgQuantumSafe?"radial-gradient(circle,rgba(16,185,129,0.25) 0%,rgba(16,185,129,0.08) 40%,transparent 70%)":`radial-gradient(circle,rgba(${T.accentRgb},0.25) 0%,rgba(${T.accentRgb},0.08) 40%,transparent 70%)`,filter:"blur(60px)",top:"-5%",left:"-20%",pointerEvents:"none",animation:"ldOrb1 20s ease-in-out infinite",transition:"background 0.8s"}}/>
             <div style={{position:"absolute",width:500,height:500,borderRadius:"50%",background:pgQuantumSafe?"radial-gradient(circle,rgba(16,185,129,0.2) 0%,rgba(16,185,129,0.05) 40%,transparent 70%)":"radial-gradient(circle,rgba(139,92,246,0.22) 0%,rgba(139,92,246,0.06) 40%,transparent 70%)",filter:"blur(50px)",bottom:"5%",right:"-15%",pointerEvents:"none",animation:"ldOrb2 25s ease-in-out infinite",transition:"background 0.8s"}}/>
