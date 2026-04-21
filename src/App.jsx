@@ -2172,6 +2172,8 @@ input:focus,textarea:focus{border-color:rgba(${T.accentRgb},0.4)!important;box-s
 @keyframes neoGridScroll{0%{background-position:0 0}100%{background-position:0 60px}}
 @keyframes neoPulse{0%,100%{opacity:0.25}50%{opacity:0.65}}
 @keyframes scrollArrowBounce{0%,100%{transform:translateY(0);opacity:0.75}50%{transform:translateY(8px);opacity:1}}
+@keyframes pgMouseScroll{0%{top:5px;opacity:1}60%{top:20px;opacity:0.3}65%{top:5px;opacity:0}70%{top:5px;opacity:0}100%{top:5px;opacity:1}}
+@keyframes pgScrollEdgePulse{0%,100%{opacity:0.85}50%{opacity:1}}
 @keyframes neoFloat1{0%,100%{transform:translateY(0)}50%{transform:translateY(-22px)}}
 @keyframes neoFloat2{0%,100%{transform:translateY(0)}50%{transform:translateY(-30px)}}
 @keyframes neoFloat3{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
@@ -3266,7 +3268,10 @@ html{scroll-behavior:smooth}
           </div>)}
         </div>}
         {/* Quantum Resistant toggle */}
-        <div style={{marginTop:14,marginBottom:pgQuantumSafe?10:12,padding:"14px 18px",borderRadius:14,background:pgQuantumSafe?"rgba(16,185,129,0.08)":"rgba(255,255,255,0.05)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:pgQuantumSafe?"2px solid rgba(16,185,129,0.7)":`2px solid rgba(${T.accentRgb},0.4)`,transition:"all 0.4s",boxShadow:pgQuantumSafe?"0 0 20px rgba(16,185,129,0.3),0 0 40px rgba(16,185,129,0.12),inset 0 0 20px rgba(16,185,129,0.06)":`0 4px 16px rgba(0,0,0,0.15),0 0 15px rgba(${T.accentRgb},0.2),0 0 30px rgba(${T.accentRgb},0.08),inset 0 1px 0 rgba(255,255,255,0.06)`,animation:pgQuantumSafe?"qrPulse 3s ease-in-out infinite":"none",position:"relative",overflow:"hidden"}}>
+        <div
+          onMouseEnter={e=>{e.currentTarget.style.boxShadow=pgQuantumSafe?"0 0 28px rgba(16,185,129,0.5),0 0 56px rgba(16,185,129,0.2),inset 0 0 24px rgba(16,185,129,0.1)":`0 4px 18px rgba(0,0,0,0.2),0 0 24px rgba(${T.accentRgb},0.42),0 0 48px rgba(${T.accentRgb},0.18),inset 0 1px 0 rgba(255,255,255,0.08)`;e.currentTarget.style.borderColor=pgQuantumSafe?"rgba(16,185,129,0.95)":`rgba(${T.accentRgb},0.65)`}}
+          onMouseLeave={e=>{e.currentTarget.style.boxShadow=pgQuantumSafe?"0 0 20px rgba(16,185,129,0.3),0 0 40px rgba(16,185,129,0.12),inset 0 0 20px rgba(16,185,129,0.06)":`0 4px 16px rgba(0,0,0,0.15),0 0 15px rgba(${T.accentRgb},0.2),0 0 30px rgba(${T.accentRgb},0.08),inset 0 1px 0 rgba(255,255,255,0.06)`;e.currentTarget.style.borderColor=pgQuantumSafe?"rgba(16,185,129,0.7)":`rgba(${T.accentRgb},0.4)`}}
+          style={{marginTop:14,marginBottom:pgQuantumSafe?10:12,padding:"14px 18px",borderRadius:14,background:pgQuantumSafe?"rgba(16,185,129,0.08)":"rgba(255,255,255,0.05)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:pgQuantumSafe?"2px solid rgba(16,185,129,0.7)":`2px solid rgba(${T.accentRgb},0.4)`,transition:"box-shadow 0.3s ease-out,border-color 0.3s ease-out,background 0.4s,margin 0.4s",boxShadow:pgQuantumSafe?"0 0 20px rgba(16,185,129,0.3),0 0 40px rgba(16,185,129,0.12),inset 0 0 20px rgba(16,185,129,0.06)":`0 4px 16px rgba(0,0,0,0.15),0 0 15px rgba(${T.accentRgb},0.2),0 0 30px rgba(${T.accentRgb},0.08),inset 0 1px 0 rgba(255,255,255,0.06)`,animation:pgQuantumSafe?"qrPulse 3s ease-in-out infinite":"none",position:"relative",overflow:"hidden"}}>
           {/* Subtle stripe overlay */}
           <div style={{position:"absolute",inset:0,backgroundImage:pgQuantumSafe?"repeating-linear-gradient(45deg,transparent,transparent 14px,rgba(16,185,129,0.03) 14px,rgba(16,185,129,0.03) 28px)":`repeating-linear-gradient(45deg,transparent,transparent 14px,rgba(${T.accentRgb},0.02) 14px,rgba(${T.accentRgb},0.02) 28px)`,backgroundSize:"40px 40px",animation:"pgStripeMove 4s linear infinite",pointerEvents:"none",borderRadius:12}}/>
           <label style={{display:"flex",alignItems:"center",gap:12,cursor:"pointer",position:"relative",zIndex:1}}>
@@ -5058,15 +5063,14 @@ html{scroll-behavior:smooth}
     return(
       <div onScroll={e=>{const st=e.currentTarget.scrollTop;setPgScrollHint(st<60)}} style={{width:"100%",height:"100vh",overflowY:"auto",overflowX:"hidden",background:T.dark?T.bg:"#0a0a12",color:T.dark?T.text:"#e2e8f0",fontFamily:`${F.body},sans-serif`,position:"relative"}}>
         <style>{css}</style>
-        {/* floating scroll hint — fade backdrop prevents overlap with card content */}
+        {/* scroll indicator — soft gradient edge + mouse-scroll icon, no text */}
         {infoPage==="password-manager"&&<>
-          <div style={{position:"fixed",bottom:0,left:0,right:0,height:110,pointerEvents:"none",zIndex:19,background:`linear-gradient(180deg,transparent 0%,${T.dark?T.bg||"#0a0a12":"#0a0a12"} 75%)`,opacity:pgScrollHint?1:0,transition:"opacity 0.4s ease-out"}}/>
-          <div style={{position:"fixed",bottom:22,left:"50%",transform:"translateX(-50%)",zIndex:20,display:"flex",flexDirection:"column",alignItems:"center",gap:4,pointerEvents:"none",opacity:pgScrollHint?1:0,transition:"opacity 0.4s ease-out"}}>
-            <div style={{fontSize:9,fontWeight:700,color:`rgba(${T.accentRgb},0.95)`,letterSpacing:3,textTransform:"uppercase",fontFamily:"monospace",padding:"6px 14px",borderRadius:20,background:`rgba(${T.accentRgb},0.14)`,backdropFilter:"blur(14px)",WebkitBackdropFilter:"blur(14px)",border:`1px solid rgba(${T.accentRgb},0.45)`,boxShadow:`0 4px 20px rgba(0,0,0,0.5),0 0 18px rgba(${T.accentRgb},0.35)`}}>More Below</div>
-            <svg width="20" height="26" viewBox="0 0 22 28" fill="none" style={{animation:"scrollArrowBounce 1.6s ease-in-out infinite",filter:`drop-shadow(0 0 10px rgba(${T.accentRgb},0.8))`}}>
-              <path d="M4 8 L11 15 L18 8" stroke={T.accent} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.4"/>
-              <path d="M4 16 L11 23 L18 16" stroke={T.accent} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+          <div style={{position:"fixed",bottom:0,left:0,right:0,height:120,pointerEvents:"none",zIndex:19,background:`linear-gradient(180deg,transparent 0%,${T.dark?T.bg||"#0a0a12":"#0a0a12"} 80%)`,opacity:pgScrollHint?1:0,transition:"opacity 0.5s ease-out"}}/>
+          <div style={{position:"fixed",bottom:0,left:0,right:0,height:2,pointerEvents:"none",zIndex:19,background:`linear-gradient(90deg,transparent 10%,rgba(${T.accentRgb},0.6) 50%,transparent 90%)`,boxShadow:`0 -8px 24px rgba(${T.accentRgb},0.35),0 -16px 40px rgba(${T.accentRgb},0.18)`,opacity:pgScrollHint?1:0,transition:"opacity 0.5s ease-out",animation:"pgScrollEdgePulse 2.4s ease-in-out infinite"}}/>
+          <div style={{position:"fixed",bottom:22,left:"50%",transform:"translateX(-50%)",zIndex:20,pointerEvents:"none",opacity:pgScrollHint?1:0,transition:"opacity 0.5s ease-out"}}>
+            <div className="sc-mouse" style={{width:22,height:36,borderRadius:12,border:`2px solid rgba(${T.accentRgb},0.85)`,position:"relative",boxShadow:`0 0 14px rgba(${T.accentRgb},0.5),inset 0 0 10px rgba(${T.accentRgb},0.15)`,background:`rgba(${T.accentRgb},0.05)`,backdropFilter:"blur(10px)",WebkitBackdropFilter:"blur(10px)"}}>
+              <div style={{width:3,height:6,borderRadius:2,background:T.accent,position:"absolute",top:5,left:"50%",transform:"translateX(-50%)",animation:"pgMouseScroll 1.8s cubic-bezier(0.4,0,0.2,1) infinite",boxShadow:`0 0 8px rgba(${T.accentRgb},0.9)`}}/>
+            </div>
           </div>
         </>}
         <div style={{position:"fixed",inset:0,zIndex:0,overflow:"hidden",pointerEvents:"none"}}>
