@@ -3281,7 +3281,7 @@ html{scroll-behavior:smooth}
         {/* QR Code Modal */}
         {pgQrOpen&&(()=>{
           let qr=null,err="";
-          try{ qr=qrEncode(pgResult,"M") }catch(e){ err=e?.message||"Failed to encode" }
+          try{ qr=qrEncode(pgResult,"H") }catch(e){ err=e?.message||"Failed to encode" }
           const accent=pgQuantumSafe?"#10b981":T.accent;
           const accent2=pgQuantumSafe?"#059669":(T.accent2||T.accent);
           const accentRgb=pgQuantumSafe?"16,185,129":T.accentRgb;
@@ -3324,22 +3324,41 @@ html{scroll-behavior:smooth}
                 `<rect x="${ox+2*cell}" y="${oy+2*cell}" width="${3*cell}" height="${3*cell}" rx="${iR}" fill="url(#qrgradFinder)"/>`;
             };
             parts+=drawFinder(0,0)+drawFinder(n-7,0)+drawFinder(0,n-7);
-            // centered butterfly logo — sits over data modules; ECC-M (15% recovery) absorbs the covered area
-            const bfCells=5;
-            const bfPx=bfCells*cell;
-            const bfCx=(n/2+quiet)*cell, bfCy=(n/2+quiet)*cell;
+            // centered full butterfly logo — matches the ButterflyLogo component exactly.
+            // Dark rounded backdrop lets the translucent wing layers read correctly,
+            // same as the nav/auth screen. ECC-H (30% recovery) absorbs the coverage.
+            // scale with QR size so small QRs don't over-cover
+            const backCells=Math.max(6,Math.min(9,Math.round(n*0.28)));
+            const bfCells=backCells-1;
+            const bfPx=bfCells*cell,backPx=backCells*cell;
+            const bfCx=(n/2+quiet)*cell,bfCy=(n/2+quiet)*cell;
+            const bfX=bfCx-bfPx/2,bfY=bfCy-bfPx/2;
+            const backX=bfCx-backPx/2,backY=bfCy-backPx/2;
             const bfScale=bfPx/48;
-            const bfX=bfCx-bfPx/2, bfY=bfCy-bfPx/2;
-            // white rounded backdrop so the butterfly reads cleanly regardless of underlying modules
-            parts+=`<rect x="${(bfX-cell*0.25).toFixed(2)}" y="${(bfY-cell*0.25).toFixed(2)}" width="${(bfPx+cell*0.5).toFixed(2)}" height="${(bfPx+cell*0.5).toFixed(2)}" rx="${(cell*0.8).toFixed(2)}" fill="#ffffff"/>`;
-            const bfPathsGrad=[
-              `M21 11Q17 7 12 5Q8 5 4 8Q1 11 0 16Q1 21 5 25Q13 28 21 29Z`,
-              `M21 29Q13 28 5 25Q2 30 2 37Q5 42 12 44Q17 43 21 39Z`,
-              `M27 11Q31 7 36 5Q40 5 44 8Q47 11 48 16Q47 21 43 25Q35 28 27 29Z`,
-              `M27 29Q35 28 43 25Q46 30 46 37Q43 42 36 44Q31 43 27 39Z`
-            ].map(d=>`<path d="${d}" fill="url(#qrgradFinder)"/>`).join("")+
-              `<rect x="22" y="12" width="4" height="26" rx="2" fill="url(#qrgradFinder)"/>`;
-            parts+=`<g transform="translate(${bfX.toFixed(2)} ${bfY.toFixed(2)}) scale(${bfScale.toFixed(4)})">${bfPathsGrad}</g>`;
+            const rawAccentRgb=pgQuantumSafe?"16,185,129":T.accentRgb;
+            const w1=`rgba(${rawAccentRgb},0.55)`,w2=`rgba(${rawAccentRgb},0.38)`,w3=`rgba(${rawAccentRgb},0.2)`;
+            const strokeC="#e6edf5",warnC=T.warn||"#f59e0b",sw=1.8;
+            // dark rounded badge backdrop with accent-gradient border
+            parts+=`<rect x="${backX.toFixed(2)}" y="${backY.toFixed(2)}" width="${backPx.toFixed(2)}" height="${backPx.toFixed(2)}" rx="${(cell*1.4).toFixed(2)}" fill="#0a0d18"/>`;
+            parts+=`<rect x="${backX.toFixed(2)}" y="${backY.toFixed(2)}" width="${backPx.toFixed(2)}" height="${backPx.toFixed(2)}" rx="${(cell*1.4).toFixed(2)}" fill="none" stroke="url(#qrgradFinder)" stroke-width="1.5"/>`;
+            const bfSvg=
+              `<g>`+
+              `<path d="M21 11Q17 7 12 5Q8 5 4 8Q1 11 0 16Q1 21 5 25Q13 28 21 29Z" fill="${w1}" stroke="${strokeC}" stroke-width="${sw}" stroke-linejoin="round"/>`+
+              `<path d="M21 29L9 19L5 25Z" fill="${w2}"/>`+
+              `<path d="M21 11L12 5L10 16Z" fill="${w3}"/>`+
+              `<path d="M21 29Q13 28 5 25Q2 30 2 37Q5 42 12 44Q17 43 21 39Z" fill="${w2}" stroke="${strokeC}" stroke-width="${sw}" stroke-linejoin="round"/>`+
+              `<path d="M21 39L10 33L12 44Z" fill="${w3}"/>`+
+              `</g><g>`+
+              `<path d="M27 11Q31 7 36 5Q40 5 44 8Q47 11 48 16Q47 21 43 25Q35 28 27 29Z" fill="${w1}" stroke="${strokeC}" stroke-width="${sw}" stroke-linejoin="round"/>`+
+              `<path d="M27 29L39 19L43 25Z" fill="${w2}"/>`+
+              `<path d="M27 11L36 5L38 16Z" fill="${w3}"/>`+
+              `<path d="M27 29Q35 28 43 25Q46 30 46 37Q43 42 36 44Q31 43 27 39Z" fill="${w2}" stroke="${strokeC}" stroke-width="${sw}" stroke-linejoin="round"/>`+
+              `<path d="M27 39L38 33L36 44Z" fill="${w3}"/>`+
+              `</g>`+
+              `<path d="M22 12Q19 4 14 1" stroke="${strokeC}" stroke-width="${(sw*0.6).toFixed(2)}" stroke-linecap="round" fill="none"/>`+
+              `<path d="M26 12Q29 4 34 1" stroke="${strokeC}" stroke-width="${(sw*0.6).toFixed(2)}" stroke-linecap="round" fill="none"/>`+
+              `<rect x="22" y="12" width="4" height="26" rx="2" fill="${warnC}"/>`;
+            parts+=`<g transform="translate(${bfX.toFixed(2)} ${bfY.toFixed(2)}) scale(${bfScale.toFixed(4)})">${bfSvg}</g>`;
             return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${total} ${total}" width="280" height="280">${parts}</svg>`;
           })():"";
           const bracket=(pos)=>{const map={tl:{top:-7,left:-7,br:"none",bb:"none"},tr:{top:-7,right:-7,bl:"none",bb:"none"},bl:{bottom:-7,left:-7,br:"none",bt:"none"},br:{bottom:-7,right:-7,bl:"none",bt:"none"}};const p=map[pos];return <div style={{position:"absolute",top:p.top,left:p.left,right:p.right,bottom:p.bottom,width:20,height:20,borderTop:p.bt||`2.5px solid ${accent}`,borderBottom:p.bb||`2.5px solid ${accent}`,borderLeft:p.bl||`2.5px solid ${accent}`,borderRight:p.br||`2.5px solid ${accent}`,borderTopLeftRadius:pos==="tl"?6:0,borderTopRightRadius:pos==="tr"?6:0,borderBottomLeftRadius:pos==="bl"?6:0,borderBottomRightRadius:pos==="br"?6:0,animation:`pgQrCorner${pos} 0.55s ease-out 0.35s both, pgQrCornerPulse 2.2s ease-in-out 1s infinite`,["--brC"]:accent}}/>};
