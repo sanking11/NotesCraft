@@ -2045,7 +2045,6 @@ select option{background:${T.bg};color:${T.text}}
 @keyframes pgQrCardIn{0%{opacity:0;transform:scale(0.82) translateY(24px);filter:blur(6px)}60%{opacity:1;filter:blur(0)}100%{opacity:1;transform:scale(1) translateY(0);filter:blur(0)}}
 @keyframes pgQrGlow{0%,100%{box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(var(--qrg),0.15)}50%{box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 60px rgba(var(--qrg),0.3)}}
 @keyframes pgQrReveal{0%{clip-path:inset(0 100% 0 0);opacity:0.6}100%{clip-path:inset(0 0 0 0);opacity:1}}
-@keyframes pgQrScan{0%{top:0;opacity:0}15%{opacity:1}85%{opacity:1}100%{top:100%;opacity:0}}
 @keyframes djStepIn{from{opacity:0;transform:translateY(16px) scale(0.9)}to{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes djArrowIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
 @keyframes djIconPulse{0%,100%{box-shadow:0 0 20px rgba(var(--sc),0.2)}50%{box-shadow:0 0 32px rgba(var(--sc),0.45)}}
@@ -3302,7 +3301,6 @@ html{scroll-behavior:smooth}
                   <div style={{display:"flex",justifyContent:"center",marginBottom:14}}>
                     <div style={{position:"relative",padding:12,background:"#ffffff",borderRadius:12,boxShadow:`0 4px 20px rgba(${accentRgb},0.25),0 0 30px rgba(${accentRgb},0.1)`,lineHeight:0,overflow:"hidden"}}>
                       <div style={{animation:"pgQrReveal 0.6s ease-out 0.25s both",lineHeight:0}} dangerouslySetInnerHTML={{__html:qrSvg}}/>
-                      <div style={{position:"absolute",left:12,right:12,height:2,background:`linear-gradient(90deg,transparent,rgba(${accentRgb},0.9),transparent)`,boxShadow:`0 0 12px rgba(${accentRgb},0.9)`,animation:"pgQrScan 2.4s ease-in-out 0.85s infinite",pointerEvents:"none"}}/>
                     </div>
                   </div>
                   <div style={{padding:"10px 12px",borderRadius:8,background:"rgba(255,255,255,0.04)",border:`1px solid rgba(${accentRgb},0.15)`,fontSize:11,fontFamily:"monospace",color:T.text,wordBreak:"break-all",textAlign:"center",marginBottom:12,maxHeight:80,overflowY:"auto"}}>{pgResult}</div>

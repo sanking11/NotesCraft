@@ -121,15 +121,20 @@ function addEccAndInterleave(version, ecl, data){
 
   const blocks = [];
   const divisor = rsComputeDivisor(blockEccLen);
+  // every block is stored at max length (shortBlockLen+1); short blocks
+  // get an extra 0 padding byte inserted between data and ECC, which is
+  // skipped during interleaving
+  const blockTotalLen = shortBlockLen + 1;
   let k = 0;
   for(let i = 0; i < numBlocks; i++){
     const dataLen = shortBlockLen - blockEccLen + (i < numShortBlocks ? 0 : 1);
     const dat = data.slice(k, k + dataLen);
     k += dataLen;
     const ecc = rsComputeRemainder(dat, divisor);
-    const block = new Uint8Array(dat.length + ecc.length);
-    block.set(dat);
-    block.set(ecc, dat.length);
+    const block = new Uint8Array(blockTotalLen);
+    block.set(dat, 0);
+    // ECC always goes at the same offset from the end
+    block.set(ecc, blockTotalLen - ecc.length);
     blocks.push(block);
   }
 
@@ -201,11 +206,12 @@ function buildMatrix(version, ecl, codewords){
     }
   }
 
-  // reserve format info
-  for(let i = 0; i < 9; i++) setFn(8, i, 0);
-  for(let i = 0; i < 8; i++) setFn(i, 8, 0);
-  for(let i = 0; i < 8; i++) setFn(size - 1 - i, 8, 0);
-  for(let i = 0; i < 7; i++) setFn(8, size - 1 - i, 0);
+  // reserve format-info positions — flag only, do NOT overwrite existing
+  // timing/finder values at (col 8 row 6) and (col 6 row 8)
+  for(let i = 0; i < 9; i++) reserved[i][8] = 1;
+  for(let i = 0; i < 8; i++) reserved[8][i] = 1;
+  for(let i = 0; i < 8; i++) reserved[8][size - 1 - i] = 1;
+  for(let i = 0; i < 7; i++) reserved[size - 1 - i][8] = 1;
   setFn(8, size - 8, 1); // dark module
 
   // reserve version info (v7+)
