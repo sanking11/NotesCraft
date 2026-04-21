@@ -3352,13 +3352,13 @@ html{scroll-behavior:smooth}
             parts+=`<rect x="${backX.toFixed(2)}" y="${backY.toFixed(2)}" width="${backPx.toFixed(2)}" height="${backPx.toFixed(2)}" rx="${(cell*1.4).toFixed(2)}" fill="#000000"/>`;
             parts+=`<rect x="${backX.toFixed(2)}" y="${backY.toFixed(2)}" width="${backPx.toFixed(2)}" height="${backPx.toFixed(2)}" rx="${(cell*1.4).toFixed(2)}" fill="none" stroke="url(#qrgradFinder)" stroke-width="1.8" filter="url(#qrGlow)"/>`;
             const bfSvg=
-              `<g>`+
+              `<g style="animation:flapWing 1.2s ease-in-out infinite;transform-origin:21px 27px">`+
               `<path d="M21 11Q17 7 12 5Q8 5 4 8Q1 11 0 16Q1 21 5 25Q13 28 21 29Z" fill="${w1}" stroke="${strokeC}" stroke-width="${sw}" stroke-linejoin="round"/>`+
               `<path d="M21 29L9 19L5 25Z" fill="${w2}"/>`+
               `<path d="M21 11L12 5L10 16Z" fill="${w3}"/>`+
               `<path d="M21 29Q13 28 5 25Q2 30 2 37Q5 42 12 44Q17 43 21 39Z" fill="${w2}" stroke="${strokeC}" stroke-width="${sw}" stroke-linejoin="round"/>`+
               `<path d="M21 39L10 33L12 44Z" fill="${w3}"/>`+
-              `</g><g>`+
+              `</g><g style="animation:flapWing 1.2s ease-in-out infinite;transform-origin:27px 27px">`+
               `<path d="M27 11Q31 7 36 5Q40 5 44 8Q47 11 48 16Q47 21 43 25Q35 28 27 29Z" fill="${w1}" stroke="${strokeC}" stroke-width="${sw}" stroke-linejoin="round"/>`+
               `<path d="M27 29L39 19L43 25Z" fill="${w2}"/>`+
               `<path d="M27 11L36 5L38 16Z" fill="${w3}"/>`+
@@ -3368,7 +3368,7 @@ html{scroll-behavior:smooth}
               `<path d="M22 12Q19 4 14 1" stroke="${strokeC}" stroke-width="${(sw*0.6).toFixed(2)}" stroke-linecap="round" fill="none"/>`+
               `<path d="M26 12Q29 4 34 1" stroke="${strokeC}" stroke-width="${(sw*0.6).toFixed(2)}" stroke-linecap="round" fill="none"/>`+
               `<rect x="22" y="12" width="4" height="26" rx="2" fill="${warnC}"/>`;
-            parts+=`<g transform="translate(${bfX.toFixed(2)} ${bfY.toFixed(2)}) scale(${bfScale.toFixed(4)})">${bfSvg}</g>`;
+            parts+=`<svg x="${bfX.toFixed(2)}" y="${bfY.toFixed(2)}" width="${bfPx.toFixed(2)}" height="${bfPx.toFixed(2)}" viewBox="0 0 48 48" overflow="visible">${bfSvg}</svg>`;
             return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${total} ${total}" width="280" height="280">${parts}</svg>`;
           })():"";
           const bracket=(pos)=>{const map={tl:{top:-7,left:-7,br:"none",bb:"none"},tr:{top:-7,right:-7,bl:"none",bb:"none"},bl:{bottom:-7,left:-7,br:"none",bt:"none"},br:{bottom:-7,right:-7,bl:"none",bt:"none"}};const p=map[pos];return <div style={{position:"absolute",top:p.top,left:p.left,right:p.right,bottom:p.bottom,width:20,height:20,borderTop:p.bt||`2.5px solid ${accent}`,borderBottom:p.bb||`2.5px solid ${accent}`,borderLeft:p.bl||`2.5px solid ${accent}`,borderRight:p.br||`2.5px solid ${accent}`,borderTopLeftRadius:pos==="tl"?6:0,borderTopRightRadius:pos==="tr"?6:0,borderBottomLeftRadius:pos==="bl"?6:0,borderBottomRightRadius:pos==="br"?6:0,animation:`pgQrCorner${pos} 0.55s ease-out 0.35s both, pgQrCornerPulse 2.2s ease-in-out 1s infinite`,["--brC"]:accent}}/>};
