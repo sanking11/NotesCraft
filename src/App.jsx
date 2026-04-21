@@ -5696,9 +5696,16 @@ html{scroll-behavior:smooth}
                 <div>
                   {twoFAStep===1&&<div style={{display:"flex",flexDirection:"column",gap:14,alignItems:"center"}}>
                     <p style={{fontSize:12,color:T.faint,lineHeight:1.6,textAlign:"center"}}>Scan this QR code with your authenticator app<br/>(Google Authenticator, Authy, Microsoft Authenticator, etc.)</p>
-                    <div style={{padding:12,background:"#fff",borderRadius:12,display:"inline-block"}}>
-                      <img src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(`otpauth://totp/NotesCraft:${encodeURIComponent(user.email)}?secret=${twoFASetup.secret}&issuer=NotesCraft&digits=6&period=30`)}`} alt="QR" width={180} height={180} style={{display:"block"}}/>
-                    </div>
+                    <div style={{padding:12,background:"#fff",borderRadius:12,display:"inline-block",lineHeight:0}} dangerouslySetInnerHTML={{__html:(()=>{
+                      try{
+                        const uri=`otpauth://totp/NotesCraft:${encodeURIComponent(user.email)}?secret=${twoFASetup.secret}&issuer=NotesCraft&digits=6&period=30`;
+                        const q=qrEncode(uri,"M"),n=q.size,px=180,cell=px/n;
+                        let rects="";
+                        for(let y=0;y<n;y++)for(let x=0;x<n;x++)if(q.modules[y][x])
+                          rects+=`<rect x="${(x*cell).toFixed(3)}" y="${(y*cell).toFixed(3)}" width="${cell.toFixed(3)}" height="${cell.toFixed(3)}" fill="#0a0a0a"/>`;
+                        return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${px} ${px}" width="${px}" height="${px}" shape-rendering="crispEdges"><rect width="${px}" height="${px}" fill="#ffffff"/>${rects}</svg>`;
+                      }catch(e){ return `<div style="width:180px;height:180px;display:flex;align-items:center;justify-content:center;color:#ef4444;font-size:11px;font-family:monospace;text-align:center">QR encode failed</div>`; }
+                    })()}}/>
                     <div style={{width:"100%"}}>
                       <label style={{fontSize:10,fontWeight:600,color:T.dim,letterSpacing:0.3,display:"block",marginBottom:4}}>Or enter this key manually:</label>
                       <div style={{display:"flex",gap:6,alignItems:"center"}}>
