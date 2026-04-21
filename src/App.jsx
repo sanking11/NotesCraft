@@ -3285,9 +3285,9 @@ html{scroll-behavior:smooth}
           const accent=pgQuantumSafe?"#10b981":T.accent;
           const accent2=pgQuantumSafe?"#059669":(T.accent2||T.accent);
           const accentRgb=pgQuantumSafe?"16,185,129":T.accentRgb;
-          // darken accents for the QR modules so contrast vs white bg stays scanner-safe
-          const darken=(hex,amt)=>{const h=hex.replace("#","");if(h.length!==6)return hex;const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);const f=c=>Math.round(c*(1-amt)).toString(16).padStart(2,"0");return "#"+f(r)+f(g)+f(b)};
-          const qrC1=darken(accent,0.45),qrC2=darken(accent2,0.45);
+          // lighten accents so modules stay bright against the black QR bg (inverted QR)
+          const lighten=(hex,amt)=>{const h=hex.replace("#","");if(h.length!==6)return hex;const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);const f=c=>Math.round(c+(255-c)*amt).toString(16).padStart(2,"0");return "#"+f(r)+f(g)+f(b)};
+          const qrC1=lighten(accent,0.35),qrC2=lighten(accent2,0.35);
           const qrSvg=qr?(()=>{
             const n=qr.size,quiet=4,cell=10;
             const total=(n+quiet*2)*cell;
@@ -3302,28 +3302,37 @@ html{scroll-behavior:smooth}
                 <stop offset="0%" stop-color="${qrC1}"/>
                 <stop offset="100%" stop-color="${qrC2}"/>
               </linearGradient>
-              <radialGradient id="qrbg" cx="50%" cy="50%" r="70%">
-                <stop offset="0%" stop-color="rgba(${accentRgb},0.07)"/>
-                <stop offset="100%" stop-color="rgba(${accentRgb},0)"/>
+              <radialGradient id="qrbg" cx="50%" cy="50%" r="80%">
+                <stop offset="0%" stop-color="#0a0d18"/>
+                <stop offset="100%" stop-color="#000000"/>
               </radialGradient>
+              <filter id="qrGlow" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="0.9" result="blur"/>
+                <feMerge>
+                  <feMergeNode in="blur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
             </defs>
-            <rect width="${total}" height="${total}" fill="#ffffff"/>
             <rect width="${total}" height="${total}" fill="url(#qrbg)"/>`;
             const inset=cell*0.08,r=cell*0.28,s=cell-inset*2;
+            let solidLayer="";
             for(let y=0;y<n;y++)for(let x=0;x<n;x++){
               if(!qr.modules[y][x]||isFinder(x,y)) continue;
               const px=((x+quiet)*cell+inset).toFixed(2);
               const py=((y+quiet)*cell+inset).toFixed(2);
-              parts+=`<rect x="${px}" y="${py}" width="${s.toFixed(2)}" height="${s.toFixed(2)}" rx="${r.toFixed(2)}" fill="url(#qrgrad)"/>`;
+              solidLayer+=`<rect x="${px}" y="${py}" width="${s.toFixed(2)}" height="${s.toFixed(2)}" rx="${r.toFixed(2)}" fill="url(#qrgrad)"/>`;
             }
             const drawFinder=(fx,fy)=>{
               const ox=(fx+quiet)*cell,oy=(fy+quiet)*cell;
               const oR=cell*1.9,mR=cell*1.2,iR=cell*0.7;
               return `<rect x="${ox}" y="${oy}" width="${7*cell}" height="${7*cell}" rx="${oR}" fill="url(#qrgradFinder)"/>`+
-                `<rect x="${ox+cell}" y="${oy+cell}" width="${5*cell}" height="${5*cell}" rx="${mR}" fill="#ffffff"/>`+
+                `<rect x="${ox+cell}" y="${oy+cell}" width="${5*cell}" height="${5*cell}" rx="${mR}" fill="#000000"/>`+
                 `<rect x="${ox+2*cell}" y="${oy+2*cell}" width="${3*cell}" height="${3*cell}" rx="${iR}" fill="url(#qrgradFinder)"/>`;
             };
-            parts+=drawFinder(0,0)+drawFinder(n-7,0)+drawFinder(0,n-7);
+            solidLayer+=drawFinder(0,0)+drawFinder(n-7,0)+drawFinder(0,n-7);
+            // apply subtle bloom to the modules+finders via filter group
+            parts+=`<g filter="url(#qrGlow)">${solidLayer}</g>`;
             // centered full butterfly logo — matches the ButterflyLogo component exactly.
             // Dark rounded backdrop lets the translucent wing layers read correctly,
             // same as the nav/auth screen. ECC-H (30% recovery) absorbs the coverage.
@@ -3338,9 +3347,10 @@ html{scroll-behavior:smooth}
             const rawAccentRgb=pgQuantumSafe?"16,185,129":T.accentRgb;
             const w1=`rgba(${rawAccentRgb},0.55)`,w2=`rgba(${rawAccentRgb},0.38)`,w3=`rgba(${rawAccentRgb},0.2)`;
             const strokeC="#e6edf5",warnC=T.warn||"#f59e0b",sw=1.8;
-            // dark rounded badge backdrop with accent-gradient border
-            parts+=`<rect x="${backX.toFixed(2)}" y="${backY.toFixed(2)}" width="${backPx.toFixed(2)}" height="${backPx.toFixed(2)}" rx="${(cell*1.4).toFixed(2)}" fill="#0a0d18"/>`;
-            parts+=`<rect x="${backX.toFixed(2)}" y="${backY.toFixed(2)}" width="${backPx.toFixed(2)}" height="${backPx.toFixed(2)}" rx="${(cell*1.4).toFixed(2)}" fill="none" stroke="url(#qrgradFinder)" stroke-width="1.5"/>`;
+            // backdrop blends with the black QR bg so the butterfly reads like it floats on the dark surface,
+            // with a bright gradient border + soft glow so the logo still reads as a badge
+            parts+=`<rect x="${backX.toFixed(2)}" y="${backY.toFixed(2)}" width="${backPx.toFixed(2)}" height="${backPx.toFixed(2)}" rx="${(cell*1.4).toFixed(2)}" fill="#000000"/>`;
+            parts+=`<rect x="${backX.toFixed(2)}" y="${backY.toFixed(2)}" width="${backPx.toFixed(2)}" height="${backPx.toFixed(2)}" rx="${(cell*1.4).toFixed(2)}" fill="none" stroke="url(#qrgradFinder)" stroke-width="1.8" filter="url(#qrGlow)"/>`;
             const bfSvg=
               `<g>`+
               `<path d="M21 11Q17 7 12 5Q8 5 4 8Q1 11 0 16Q1 21 5 25Q13 28 21 29Z" fill="${w1}" stroke="${strokeC}" stroke-width="${sw}" stroke-linejoin="round"/>`+
@@ -3383,7 +3393,7 @@ html{scroll-behavior:smooth}
                 {err?<div style={{padding:"16px",borderRadius:10,background:"rgba(239,68,68,0.08)",border:"1px solid rgba(239,68,68,0.3)",color:"#ef4444",fontSize:12,textAlign:"center",position:"relative",zIndex:1}}>{err}</div>:
                   <>
                     <div style={{display:"flex",justifyContent:"center",marginBottom:16,position:"relative",zIndex:1}}>
-                      <div style={{position:"relative",padding:14,background:"linear-gradient(135deg,#ffffff,#f5f7fc)",borderRadius:14,boxShadow:`0 6px 28px rgba(${accentRgb},0.3),0 0 40px rgba(${accentRgb},0.14),inset 0 0 0 1px rgba(${accentRgb},0.25)`,lineHeight:0}}>
+                      <div style={{position:"relative",padding:14,background:"radial-gradient(circle at 50% 50%,#0a0d18 0%,#000000 100%)",borderRadius:14,boxShadow:`0 6px 28px rgba(${accentRgb},0.4),0 0 50px rgba(${accentRgb},0.22),inset 0 0 0 1px rgba(${accentRgb},0.4)`,lineHeight:0}}>
                         {bracket("tl")}{bracket("tr")}{bracket("bl")}{bracket("br")}
                         <div style={{animation:"pgQrReveal 0.65s ease-out 0.3s both",lineHeight:0}} dangerouslySetInnerHTML={{__html:qrSvg}}/>
                       </div>
