@@ -2389,9 +2389,12 @@ html{scroll-behavior:smooth}
 
       {/* ═══ LEFT SIDEBAR ═══ */}
       <div style={{width:260,minWidth:260,height:"100%",background:T.dark?"rgba(255,255,255,0.015)":"rgba(0,0,0,0.02)",borderRight:`1px solid ${T.bdr}`,display:"flex",flexDirection:"column"}}>
-        <div style={{padding:"14px 12px 10px",display:"flex",alignItems:"center",gap:2}}>
+        <div style={{padding:"6px 12px 8px",display:"flex",alignItems:"center",gap:2}}>
           <div style={{width:54,height:54,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",filter:pgQuantumSafe?`drop-shadow(0 2px 10px rgba(16,185,129,0.45)) hue-rotate(-50deg) saturate(1.5) brightness(1.05)`:`drop-shadow(0 2px 10px rgba(${T.accentRgb},0.4))`,transition:"filter 0.4s"}}><SCLogo s={52}/></div>
-          <span className="sc-grad-title" style={{fontSize:22,fontWeight:800,fontFamily:`${F.heading},sans-serif`,letterSpacing:1.5,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${pgQuantumSafe?"#10b981":T.accent} 70%,${pgQuantumSafe?"#059669":T.accent2||T.accent})`,lineHeight:1.2}}>ShieldCraft</span>
+          <div style={{display:"flex",flexDirection:"column",gap:1,minWidth:0}}>
+            <span className="sc-grad-title" style={{fontSize:22,fontWeight:800,fontFamily:`${F.heading},sans-serif`,letterSpacing:1.5,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${pgQuantumSafe?"#10b981":T.accent} 70%,${pgQuantumSafe?"#059669":T.accent2||T.accent})`,lineHeight:1.1}}>ShieldCraft</span>
+            <span style={{fontSize:7.5,color:pgQuantumSafe?"rgba(16,185,129,0.6)":T.dim,letterSpacing:0.5,fontWeight:500,textAlign:"center",whiteSpace:"nowrap"}}>Password Generator Tool by NotesCraft</span>
+          </div>
         </div>
 
         <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
