@@ -3433,7 +3433,6 @@ html{scroll-behavior:smooth}
                         <div style={{animation:"pgQrReveal 0.65s ease-out 0.3s both",lineHeight:0}} dangerouslySetInnerHTML={{__html:qrSvg}}/>
                       </div>
                     </div>
-                    <div style={{padding:"12px 14px",borderRadius:10,background:`linear-gradient(135deg,rgba(${accentRgb},0.08),rgba(${accentRgb},0.02))`,border:`1px solid rgba(${accentRgb},0.25)`,fontSize:12,fontFamily:F.mono||"monospace",color:T.text,wordBreak:"break-all",textAlign:"center",marginBottom:12,maxHeight:80,overflowY:"auto",letterSpacing:0.5,position:"relative",zIndex:1,boxShadow:`inset 0 1px 0 rgba(255,255,255,0.04),0 0 16px rgba(${accentRgb},0.08)`}}>{pgResult}</div>
                     <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,position:"relative",zIndex:1}}>
                       <div style={{width:6,height:6,borderRadius:"50%",background:accent,boxShadow:`0 0 8px ${accent}`,animation:"pulse 1.8s ease-in-out infinite"}}/>
                       <p style={{margin:0,fontSize:10,color:T.dim,lineHeight:1.5,letterSpacing:0.3}}>Generated on this device · QR not saved · Password is encoded on this device · Nothing is sent to any server outside.</p>
