@@ -3095,7 +3095,7 @@ html{scroll-behavior:smooth}
           </div>
           <div style={{marginTop:-10}}>
             <span className="sc-grad-title" style={{display:"inline-block",fontSize:32,fontWeight:800,fontFamily:`${F.heading},sans-serif`,letterSpacing:2,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${pgQuantumSafe?"#10b981":T.accent} 70%,${pgQuantumSafe?"#059669":T.accent2||T.accent})`,lineHeight:1.2}}>ShieldCraft</span>
-            <p style={{fontSize:9,color:pgQuantumSafe?"rgba(16,185,129,0.6)":T.dim,margin:"1px 0 0",letterSpacing:1.2,fontWeight:500}}> Password Generator Tool by NotesCraft</p>
+            <p style={{fontSize:9,color:pgQuantumSafe?"rgba(16,185,129,0.6)":T.dim,margin:"1px 0 0",letterSpacing:1.2,fontWeight:500,textAlign:"center"}}>Password Generator Tool by NotesCraft</p>
           </div>
         </div>
         <p style={{...infoP,color:"rgba(176,190,201,0.8)",marginTop:8,fontSize:12}}>Generate strong passwords and securely store your credentials with end-to-end encryption.</p>
