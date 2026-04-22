@@ -2389,9 +2389,9 @@ html{scroll-behavior:smooth}
 
       {/* ═══ LEFT SIDEBAR ═══ */}
       <div style={{width:260,minWidth:260,height:"100%",background:T.dark?"rgba(255,255,255,0.015)":"rgba(0,0,0,0.02)",borderRight:`1px solid ${T.bdr}`,display:"flex",flexDirection:"column"}}>
-        <div style={{padding:"14px 12px 10px",display:"flex",alignItems:"center",gap:8}}>
-          <div style={{width:40,height:40,borderRadius:10,flexShrink:0,overflow:"hidden",background:"linear-gradient(135deg,#0a0a1a,#12102a)",display:"flex",alignItems:"center",justifyContent:"center",filter:pgQuantumSafe?"hue-rotate(-50deg) saturate(1.5) brightness(1.05)":"none",transition:"filter 0.4s"}}><SCLogo s={36}/></div>
-          <span style={{fontSize:15,fontWeight:700,fontFamily:`${F.heading},sans-serif`,letterSpacing:1}}>ShieldCraft</span>
+        <div style={{padding:"14px 12px 10px",display:"flex",alignItems:"center",gap:2}}>
+          <div style={{width:54,height:54,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",filter:pgQuantumSafe?`drop-shadow(0 2px 10px rgba(16,185,129,0.45)) hue-rotate(-50deg) saturate(1.5) brightness(1.05)`:`drop-shadow(0 2px 10px rgba(${T.accentRgb},0.4))`,transition:"filter 0.4s"}}><SCLogo s={52}/></div>
+          <span className="sc-grad-title" style={{fontSize:22,fontWeight:800,fontFamily:`${F.heading},sans-serif`,letterSpacing:1.5,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${pgQuantumSafe?"#10b981":T.accent} 70%,${pgQuantumSafe?"#059669":T.accent2||T.accent})`,lineHeight:1.2}}>ShieldCraft</span>
         </div>
 
         <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
