@@ -1028,6 +1028,24 @@ export default function NotesCraft(){
   };
   const pmLockGhost=(name)=>{setPmGhostUnlocked(prev=>{const n=new Set(prev);n.delete(name);return n});if(pmFolderFilter===name){setPmFolderFilter(null);setPmView("list")}};
   const pmLockAllGhosts=()=>{setPmGhostUnlocked(new Set())};
+  // cross-tab logout sync — when any tab logs out, clear this tab too
+  const pmAuthBcRef=React.useRef(null);
+  React.useEffect(()=>{
+    if(typeof BroadcastChannel==="undefined")return;
+    const bc=new BroadcastChannel("sc-auth");
+    pmAuthBcRef.current=bc;
+    bc.onmessage=(e)=>{
+      if(e.data?.type==="logout"){
+        setPmIsLoggedIn(false);
+        setPmCredentials([]);
+        pmStorageRef.current=null;
+        pmUserRef.current=null;
+        setPmGhostUnlocked(new Set());
+      }
+    };
+    return()=>{bc.close();pmAuthBcRef.current=null};
+  },[]);
+  const pmBroadcastLogout=()=>{try{pmAuthBcRef.current?.postMessage({type:"logout"})}catch{}};
   const isGhostLocked=(folder)=>{if(!folder)return false;const def=pmVaultDefs[folder];return def&&def.ghost&&!pmGhostUnlocked.has(folder)};
   const pmLoadVault=async(stRef,em)=>{
     try{
@@ -2523,7 +2541,7 @@ html{scroll-behavior:smooth}
             <span style={{fontSize:13,color:T.dim,flex:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{user?.name||pmUserRef.current||email}</span>
             <button onClick={()=>{setPmShowSettings(true);setPmSettingsTab("account")}} className="sidebar-icon-btn" style={{background:"none",border:"none",color:T.faint,cursor:"pointer",padding:2,display:"flex"}} title="Settings"><IC.Settings/></button>
             <button onClick={()=>{setPmShowSettings(true);setPmSettingsTab("themes")}} className="sidebar-icon-btn" style={{background:"none",border:"none",color:T.faint,cursor:"pointer",padding:2,display:"flex"}} title="Themes"><IC.Palette/></button>
-            <button onClick={()=>{setPmIsLoggedIn(false);setPmCredentials([]);pmStorageRef.current=null;pmUserRef.current=null;pmLockAllGhosts()}} className="sidebar-icon-btn" style={{background:"none",border:"none",color:T.faint,cursor:"pointer",padding:2,display:"flex"}} title="Lock ShieldCraft"><IC.Logout/></button>
+            <button onClick={()=>{pmBroadcastLogout();setPmIsLoggedIn(false);setPmCredentials([]);pmStorageRef.current=null;pmUserRef.current=null;pmLockAllGhosts()}} className="sidebar-icon-btn" style={{background:"none",border:"none",color:T.faint,cursor:"pointer",padding:2,display:"flex"}} title="Lock ShieldCraft"><IC.Logout/></button>
           </div>
           <div style={{display:"flex",alignItems:"center",gap:6,padding:"4px 12px 8px"}}>
             <div style={{width:6,height:6,borderRadius:"50%",background:!ncOnline?"#ef4444":ncQueueCount>0?"#f59e0b":"#10b981",boxShadow:`0 0 4px ${!ncOnline?"rgba(239,68,68,0.5)":ncQueueCount>0?"rgba(245,158,11,0.5)":"rgba(16,185,129,0.5)"}`}}/>
@@ -2901,7 +2919,7 @@ html{scroll-behavior:smooth}
                   </div>
                 </div>
               ))}
-              <button onClick={()=>{setPmIsLoggedIn(false);setPmCredentials([]);pmStorageRef.current=null;pmUserRef.current=null;pmLockAllGhosts();setPmShowSettings(false)}} style={{width:"100%",padding:"10px 0",marginTop:8,borderRadius:8,fontSize:12,fontWeight:700,background:"rgba(239,68,68,0.08)",border:"1px solid rgba(239,68,68,0.2)",color:"#ef4444",cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>
+              <button onClick={()=>{pmBroadcastLogout();setPmIsLoggedIn(false);setPmCredentials([]);pmStorageRef.current=null;pmUserRef.current=null;pmLockAllGhosts();setPmShowSettings(false)}} style={{width:"100%",padding:"10px 0",marginTop:8,borderRadius:8,fontSize:12,fontWeight:700,background:"rgba(239,68,68,0.08)",border:"1px solid rgba(239,68,68,0.2)",color:"#ef4444",cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>
                 <IC.Logout/> Lock ShieldCraft
               </button>
             </div>}
