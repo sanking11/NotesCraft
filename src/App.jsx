@@ -3101,7 +3101,7 @@ html{scroll-behavior:smooth}
             <p style={{fontSize:9,color:pgQuantumSafe?"rgba(16,185,129,0.6)":T.dim,margin:"1px 0 0",letterSpacing:1.2,fontWeight:500,textAlign:"center"}}>Password Generator Tool by NotesCraft</p>
           </div>
         </div>
-        <p style={{...infoP,color:"rgba(176,190,201,0.8)",marginTop:8,fontSize:12}}>Generate strong passwords and securely store your credentials with end-to-end encryption.</p>
+        <p style={{...infoP,color:"rgba(176,190,201,0.8)",marginTop:8,fontSize:12}}>Generate ultra strong passwords and securely store your credentials with end-to-end encryption.</p>
 
 
         {/* ═══════ GHOST SHIELD UNLOCK MODAL ═══════ */}
@@ -6837,28 +6837,28 @@ html{scroll-behavior:smooth}
                 ):(
                   <div style={{display:"flex",gap:3,alignItems:"center"}}>
                     <select value="" onChange={e=>{if(e.target.value)toggleNoteTag(sel.id,e.target.value)}}
-                      style={{padding:"2px 4px",borderRadius:4,fontSize:12,background:T.surf,border:`1px solid ${T.bdr}`,color:T.faint,fontFamily:"inherit",cursor:"pointer",outline:"none"}}>
+                      style={{padding:"3px 6px",borderRadius:5,fontSize:12,fontWeight:500,background:`rgba(${T.accentRgb},0.08)`,border:`1px solid rgba(${T.accentRgb},0.3)`,color:T.dim,fontFamily:"inherit",cursor:"pointer",outline:"none"}}>
                       <option value="">+tag</option>
                       {tags.filter(tg=>!sel.tags.includes(tg)).map(tg=><option key={tg} value={tg}>{tg}</option>)}
                     </select>
-                    <button onClick={()=>setShowNewTag(true)} className="glass-btn" style={{padding:"3px 8px",borderRadius:5,fontSize:11,background:T.dark?"rgba(255,255,255,0.03)":"rgba(255,255,255,0.3)",backdropFilter:"blur(4px)",border:`1px solid rgba(${T.accentRgb},0.1)`,color:T.faint,fontFamily:"inherit",cursor:"pointer",transition:"all 0.3s"}}>+new</button>
+                    <button onClick={()=>setShowNewTag(true)} className="glass-btn" style={{padding:"3px 8px",borderRadius:5,fontSize:11,fontWeight:500,background:`rgba(${T.accentRgb},0.08)`,backdropFilter:"blur(4px)",border:`1px solid rgba(${T.accentRgb},0.3)`,color:T.dim,fontFamily:"inherit",cursor:"pointer",transition:"all 0.3s"}}>+new</button>
                   </div>
                 )}
               </div>
               <div style={{marginTop:6,display:"flex",alignItems:"center",gap:6}}>
-                <span style={{fontSize:11,color:T.faint}}>Folder:</span>
+                <span style={{fontSize:11,color:T.dim,fontWeight:500}}>Folder:</span>
                 {(()=>{const cf=notes.find(n=>n.id===selId)?.folder||"";const fc=folderColors[cf];return(
                   <div style={{display:"flex",alignItems:"center",gap:4}}>
                     {cf&&fc&&<span style={{width:8,height:8,borderRadius:"50%",background:fc,flexShrink:0}}/>}
                     <select value={cf} onChange={e=>upNotes(p=>p.map(n=>n.id===selId?{...n,folder:e.target.value,modified:new Date().toISOString()}:n))}
-                      style={{padding:"2px 6px",borderRadius:4,fontSize:12,background:T.surf,border:`1px solid ${T.bdr}`,color:T.dim,fontFamily:"inherit",cursor:"pointer",outline:"none",minWidth:100}}>
+                      style={{padding:"3px 8px",borderRadius:5,fontSize:12,fontWeight:500,background:`rgba(${T.accentRgb},0.08)`,border:`1px solid rgba(${T.accentRgb},0.3)`,color:T.text,fontFamily:"inherit",cursor:"pointer",outline:"none",minWidth:100}}>
                       <option value="">None</option>
                       {folders.map(([name])=><option key={name} value={name}>{name}</option>)}
                       {cf&&!folders.find(([n])=>n===cf)&&<option value={cf}>{cf}</option>}
                     </select>
                   </div>
                 )})()}
-                <select defaultValue="" onChange={e=>{if(e.target.value){addBlock(e.target.value);e.target.value=""}}} style={{padding:"4px 8px",borderRadius:6,fontSize:11,fontWeight:600,background:`rgba(${T.accentRgb},0.06)`,border:`1px solid rgba(${T.accentRgb},0.1)`,color:T.accent,fontFamily:"inherit",cursor:"pointer",outline:"none",marginLeft:6}}>
+                <select defaultValue="" onChange={e=>{if(e.target.value){addBlock(e.target.value);e.target.value=""}}} style={{padding:"4px 10px",borderRadius:6,fontSize:11,fontWeight:700,background:`rgba(${T.accentRgb},0.14)`,border:`1px solid rgba(${T.accentRgb},0.4)`,color:T.accent,fontFamily:"inherit",cursor:"pointer",outline:"none",marginLeft:6}}>
                   <option value="">+ Add Block</option>{NOTE_TYPES.map(nt=><option key={nt.id} value={nt.id}>{nt.name}</option>)}
                 </select>
               </div>
@@ -6866,13 +6866,13 @@ html{scroll-behavior:smooth}
 
             {/* Note actions bar */}
             <div style={{padding:"6px 24px",borderBottom:`1px solid rgba(${T.accentRgb},0.08)`,display:"flex",gap:2,alignItems:"center"}}>
-              <span style={{fontSize:12,color:T.faint,flex:1}}>{eBlocks.length} block{eBlocks.length!==1?"s":""}</span>
-              <button onClick={()=>toggleStar(sel.id)} className="glass-btn note-action-btn" style={{background:sel.starred?`rgba(${T.accentRgb},0.06)`:"transparent",border:sel.starred?`1px solid rgba(${T.accentRgb},0.1)`:"1px solid transparent",color:sel.starred?T.warn:T.faint,cursor:"pointer",padding:"5px 7px",borderRadius:7,display:"flex",alignItems:"center"}}>
+              <span style={{fontSize:12,color:T.dim,fontWeight:500,flex:1}}>{eBlocks.length} block{eBlocks.length!==1?"s":""}</span>
+              <button onClick={()=>toggleStar(sel.id)} className="glass-btn note-action-btn" style={{background:sel.starred?`rgba(${T.accentRgb},0.1)`:"transparent",border:sel.starred?`1px solid rgba(${T.accentRgb},0.25)`:`1px solid rgba(${T.accentRgb},0.12)`,color:sel.starred?T.warn:T.dim,cursor:"pointer",padding:"5px 7px",borderRadius:7,display:"flex",alignItems:"center",transition:"all 0.2s"}} title={sel.starred?"Unstar":"Star"}>
                 {sel.starred?<IC.StarF/>:<IC.Star/>}
               </button>
-              <button onClick={()=>archiveNote(sel.id)} className="glass-btn note-action-btn" style={{background:"transparent",border:"1px solid transparent",color:T.faint,cursor:"pointer",padding:"5px 7px",borderRadius:7,display:"flex"}} title="Archive"><IC.Archive/></button>
-              <button onClick={()=>{if(sel.deleted)setDelConfirm(sel.id);else deleteNote(sel.id)}} className="glass-btn note-action-btn" style={{background:"transparent",border:"1px solid transparent",color:T.faint,cursor:"pointer",padding:"5px 7px",borderRadius:7,display:"flex"}} title="Delete"><IC.Trash/></button>
-              <button onClick={()=>{setShowHistory(!showHistory);setHistoryPreview(null)}} className="glass-btn note-action-btn" style={{background:showHistory?`rgba(${T.accentRgb},0.06)`:"transparent",border:showHistory?`1px solid rgba(${T.accentRgb},0.1)`:"1px solid transparent",color:showHistory?T.accent:T.faint,cursor:"pointer",padding:"5px 7px",borderRadius:7,display:"flex",alignItems:"center",gap:4}} title="Revision History">
+              <button onClick={()=>archiveNote(sel.id)} className="glass-btn note-action-btn" style={{background:"transparent",border:`1px solid rgba(${T.accentRgb},0.12)`,color:T.dim,cursor:"pointer",padding:"5px 7px",borderRadius:7,display:"flex",transition:"all 0.2s"}} title="Archive"><IC.Archive/></button>
+              <button onClick={()=>{if(sel.deleted)setDelConfirm(sel.id);else deleteNote(sel.id)}} className="glass-btn note-action-btn" style={{background:"transparent",border:`1px solid rgba(${T.accentRgb},0.12)`,color:T.dim,cursor:"pointer",padding:"5px 7px",borderRadius:7,display:"flex",transition:"all 0.2s"}} title="Delete"><IC.Trash/></button>
+              <button onClick={()=>{setShowHistory(!showHistory);setHistoryPreview(null)}} className="glass-btn note-action-btn" style={{background:showHistory?`rgba(${T.accentRgb},0.1)`:"transparent",border:showHistory?`1px solid rgba(${T.accentRgb},0.25)`:`1px solid rgba(${T.accentRgb},0.12)`,color:showHistory?T.accent:T.dim,cursor:"pointer",padding:"5px 7px",borderRadius:7,display:"flex",alignItems:"center",gap:4,transition:"all 0.2s"}} title="Revision History">
                 <IC.History/>{(sel.revisions?.length||0)>0&&<span style={{fontSize:10,fontWeight:600}}>{sel.revisions.length}</span>}
               </button>
             </div>
