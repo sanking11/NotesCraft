@@ -5247,7 +5247,7 @@ html{scroll-behavior:smooth}
               {icon:"⚛️",title:"Quantum-Safe",color:"#10b981",rgb:"16,185,129",desc:"Grover-aware effective-bits calculation models real quantum attack cost, not just classical brute-force."},
               {icon:"🔑",title:"512-Char Max",color:T.accent,rgb:T.accentRgb,desc:"Most generators cap at 64–128 chars. Generate ultra-long passwords for maximum entropy and future-proofing."},
               {icon:"🛡️",title:"100% Free",color:"#f59e0b",rgb:"245,158,11",desc:"No signup, no rate limits, no ads, no tracking. One-and-only free quantum-resistant generator on the web."},
-              {icon:"🎲",title:"True Randomness",color:"#3b82f6",rgb:"59,130,246",desc:"Uses the Web Crypto CSPRNG (crypto.getRandomValues) — never predictable Math.random() pseudo-randomness."},
+              {icon:"🎲",title:"True Randomness",color:"#3b82f6",rgb:"59,130,246",desc:"No made-up math formula. Passwords are forged from real physical entropy your device collects — mouse jitter, keystroke timing, thermal noise, hardware RNG. Actual randomness, not a predictable algorithm."},
               {icon:"📱",title:"Scan-to-Transfer QR",color:"#a855f7",rgb:"168,85,247",desc:"Send the password to your phone via a local QR. Generated on-device, never hits any server."},
               {icon:"🧠",title:"3 Generation Modes",color:"#14b8a6",rgb:"20,184,166",desc:"Random, Memorable (word-based), or PIN. Pick the right style for the account — plus custom word lists."},
               {icon:"📊",title:"Dual Strength Analysis",color:"#ef4444",rgb:"239,68,68",desc:"Shows both classical GPU crack time and quantum Grover attack estimate — threat modeling for the next decade."},
