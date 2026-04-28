@@ -3457,9 +3457,35 @@ html{scroll-behavior:smooth}
                         <div style={{animation:"pgQrReveal 0.65s ease-out 0.3s both",lineHeight:0}} dangerouslySetInnerHTML={{__html:qrSvg}}/>
                       </div>
                     </div>
-                    <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,position:"relative",zIndex:1}}>
-                      <div style={{width:6,height:6,borderRadius:"50%",background:accent,boxShadow:`0 0 8px ${accent}`,animation:"pulse 1.8s ease-in-out infinite"}}/>
-                      <p style={{margin:0,fontSize:10,color:T.dim,lineHeight:1.5,letterSpacing:0.3}}>Generated on this device · QR not saved · Password is encoded on this device · Nothing is sent to any server outside.</p>
+                    <div style={{padding:"10px 12px",borderRadius:8,background:"rgba(0,0,0,0.55)",border:"1px solid rgba(34,197,94,0.25)",fontFamily:F.mono||"'IBM Plex Mono',monospace",fontSize:10,color:"#22c55e",lineHeight:1.7,letterSpacing:0.3,position:"relative",zIndex:1,boxShadow:"inset 0 0 12px rgba(34,197,94,0.06)"}}>
+                      <div style={{display:"flex",alignItems:"center",gap:6}}>
+                        <span style={{color:"rgba(34,197,94,0.6)"}}>$</span>
+                        <span style={{color:"rgba(34,197,94,0.85)"}}>status</span>
+                        <span style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:4,color:"rgba(34,197,94,0.5)",fontSize:8}}>
+                          <span style={{width:6,height:6,borderRadius:"50%",background:"#22c55e",boxShadow:"0 0 6px #22c55e",animation:"pulse 1.8s ease-in-out infinite"}}/>
+                          live
+                        </span>
+                      </div>
+                      <div style={{display:"flex",alignItems:"center",gap:6,paddingLeft:10}}>
+                        <span aria-hidden="true">🔒</span>
+                        <span>generated_on_device</span>
+                        <span style={{color:"rgba(34,197,94,0.5)",marginLeft:"auto"}}>✓</span>
+                      </div>
+                      <div style={{display:"flex",alignItems:"center",gap:6,paddingLeft:10}}>
+                        <span aria-hidden="true">📱</span>
+                        <span>qr_not_saved</span>
+                        <span style={{color:"rgba(34,197,94,0.5)",marginLeft:"auto"}}>✓</span>
+                      </div>
+                      <div style={{display:"flex",alignItems:"center",gap:6,paddingLeft:10}}>
+                        <span aria-hidden="true">🔐</span>
+                        <span>encoded_locally</span>
+                        <span style={{color:"rgba(34,197,94,0.5)",marginLeft:"auto"}}>✓</span>
+                      </div>
+                      <div style={{display:"flex",alignItems:"center",gap:6,paddingLeft:10}}>
+                        <span aria-hidden="true">🛰️</span>
+                        <span>network_calls: <span style={{color:"#fff"}}>0</span></span>
+                        <span style={{color:"rgba(34,197,94,0.5)",marginLeft:"auto"}}>✓</span>
+                      </div>
                     </div>
                   </>
                 }
