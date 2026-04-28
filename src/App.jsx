@@ -2422,7 +2422,7 @@ html{scroll-behavior:smooth}
           return <div style={{padding:"6px 12px 8px",display:"flex",alignItems:"center",gap:2}}>
             <div style={{width:54,height:54,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",filter:`drop-shadow(0 2px 10px rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.45)) hue-rotate(${rot}deg) saturate(${pgQuantumSafe?1.5:1.25}) brightness(1.02)`,transition:"filter 0.4s"}}><SCLogo s={52}/></div>
             <div style={{display:"flex",flexDirection:"column",gap:1,minWidth:0}}>
-              <span className="sc-grad-title" style={{fontSize:22,fontWeight:800,fontFamily:`${F.heading},sans-serif`,letterSpacing:1.5,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${pgQuantumSafe?"#10b981":T.accent} 70%,${pgQuantumSafe?"#059669":T.accent2||T.accent})`,lineHeight:1.1}}>ShieldCraft</span>
+              <span className="sc-grad-title" style={{fontSize:22,fontWeight:800,fontFamily:`${F.heading},sans-serif`,letterSpacing:1.5,background:`linear-gradient(135deg,${T.text} 30%,${pgQuantumSafe?"#10b981":T.accent} 70%,${pgQuantumSafe?"#059669":T.accent2||T.accent})`,lineHeight:1.1}}>ShieldCraft</span>
               <span style={{fontSize:6,color:pgQuantumSafe?"rgba(16,185,129,0.6)":T.dim,letterSpacing:0.4,fontWeight:500,textAlign:"center",whiteSpace:"nowrap"}}>Password Generator Tool by NotesCraft</span>
             </div>
           </div>;
@@ -3188,7 +3188,7 @@ html{scroll-behavior:smooth}
             <SCLogo s={72}/>
           </div>
           <div style={{marginTop:-10}}>
-            <span className="sc-grad-title" style={{display:"inline-block",fontSize:32,fontWeight:800,fontFamily:`${F.heading},sans-serif`,letterSpacing:2,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${pgQuantumSafe?"#10b981":T.accent} 70%,${pgQuantumSafe?"#059669":T.accent2||T.accent})`,lineHeight:1.2}}>ShieldCraft</span>
+            <span className="sc-grad-title" style={{display:"inline-block",fontSize:32,fontWeight:800,fontFamily:`${F.heading},sans-serif`,letterSpacing:2,background:`linear-gradient(135deg,${T.text} 30%,${pgQuantumSafe?"#10b981":T.accent} 70%,${pgQuantumSafe?"#059669":T.accent2||T.accent})`,lineHeight:1.2}}>ShieldCraft</span>
             <p style={{fontSize:9,color:pgQuantumSafe?"rgba(16,185,129,0.6)":T.dim,margin:"1px 0 0",letterSpacing:1.2,fontWeight:500,textAlign:"center"}}>Password Generator Tool by NotesCraft</p>
           </div>
         </div>
@@ -5286,13 +5286,13 @@ html{scroll-behavior:smooth}
 </svg>
               </div>
               <div style={{display:"flex",flexDirection:"column",gap:1}}>
-                <span style={{fontSize:18,fontWeight:800,letterSpacing:3,fontFamily:`${F.heading},sans-serif`,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",lineHeight:1.2}}>TECHCRAFT</span>
+                <span style={{fontSize:18,fontWeight:800,letterSpacing:3,fontFamily:`${F.heading},sans-serif`,background:`linear-gradient(135deg,${T.text} 30%,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",lineHeight:1.2}}>TECHCRAFT</span>
                 <span style={{fontSize:9,letterSpacing:1,color:`rgba(${T.accentRgb},0.8)`,fontFamily:`${F.heading},sans-serif`,lineHeight:1}}>Bits, Bots & the Big Bang</span>
                 <span style={{fontSize:7,letterSpacing:1.5,color:`rgba(${T.accentRgb},0.8)`,fontFamily:`${F.body},sans-serif`,lineHeight:1,marginTop:1}}>Crafted for Minds That Question Everything</span>
               </div>
             </>:<>
               <ButterflyLogo s={28} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} flap/>
-              <span style={{fontSize:18,fontWeight:800,letterSpacing:3,fontFamily:`${F.heading},sans-serif`,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>NOTESCRAFT</span>
+              <span style={{fontSize:18,fontWeight:800,letterSpacing:3,fontFamily:`${F.heading},sans-serif`,background:`linear-gradient(135deg,${T.text} 30%,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>NOTESCRAFT</span>
             </>}
           </div>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
@@ -5436,7 +5436,7 @@ html{scroll-behavior:smooth}
         <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:100,padding:"16px 40px",display:"flex",alignItems:"center",justifyContent:"space-between",background:`linear-gradient(180deg,${T.dark?T.bg:"#0a0a12"} 0%,transparent 100%)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)"}}>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             <ButterflyLogo s={28} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} flap/>
-            <span style={{fontSize:18,fontWeight:800,letterSpacing:3,fontFamily:`${F.heading},sans-serif`,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>NOTESCRAFT</span>
+            <span style={{fontSize:18,fontWeight:800,letterSpacing:3,fontFamily:`${F.heading},sans-serif`,background:`linear-gradient(135deg,${T.text} 30%,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>NOTESCRAFT</span>
           </div>
           <div style={{display:"flex",alignItems:"center",gap:20}}>
             <a href="#features" className="ld-nav-btn" style={{color:"rgba(226,232,240,0.8)",fontSize:13,fontWeight:500,textDecoration:"none",fontFamily:"inherit"}}>Features</a>
