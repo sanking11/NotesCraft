@@ -2093,6 +2093,8 @@ select option{background:${T.bg};color:${T.text}}
 @keyframes shieldFloat{0%{transform:translateY(0px) rotate(0deg)}20%{transform:translateY(-6px) rotate(1.5deg)}40%{transform:translateY(-2px) rotate(-0.5deg)}60%{transform:translateY(-8px) rotate(-1.5deg)}80%{transform:translateY(-3px) rotate(0.5deg)}100%{transform:translateY(0px) rotate(0deg)}}
 @keyframes shieldEntrance{0%{transform:scale(0) rotate(-20deg);opacity:0;filter:blur(8px)}30%{transform:scale(1.15) rotate(4deg);opacity:1;filter:blur(0)}55%{transform:scale(0.92) rotate(-2deg)}75%{transform:scale(1.03) rotate(1deg)}100%{transform:scale(1) rotate(0deg);opacity:1;filter:blur(0)}}
 .sc-grad-title{-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;color:transparent!important}
+.sc-feat-front{opacity:1}
+.sc-feat-back{opacity:0;pointer-events:none}
 .sc-feat-card:hover .sc-feat-front{opacity:0}
 .sc-feat-card:hover .sc-feat-back{opacity:1;pointer-events:auto}
 .sc-feat-card .sc-feat-back::-webkit-scrollbar{width:4px}
@@ -5278,8 +5280,8 @@ html{scroll-behavior:smooth}
                       </div>
                       <p style={{fontSize:12,color:T.dark?"rgba(255,255,255,0.78)":T.dim,lineHeight:1.6,margin:0}}>{f.desc}</p>
                     </div>
-                    {/* expanded detail (fades in on hover) */}
-                    <div className="sc-feat-back" style={{position:"absolute",inset:0,padding:"16px 18px",overflowY:"auto",opacity:0,transition:"opacity 0.3s ease-out",pointerEvents:"none",background:`linear-gradient(135deg,rgba(${f.rgb},0.12),rgba(${f.rgb},0.04))`,backdropFilter:"blur(14px)",WebkitBackdropFilter:"blur(14px)"}}>
+                    {/* expanded detail (fades in on hover) — opacity controlled by CSS .sc-feat-card:hover */}
+                    <div className="sc-feat-back" style={{position:"absolute",inset:0,padding:"16px 18px",overflowY:"auto",transition:"opacity 0.3s ease-out",background:`linear-gradient(135deg,rgba(${f.rgb},0.12),rgba(${f.rgb},0.04))`,backdropFilter:"blur(14px)",WebkitBackdropFilter:"blur(14px)"}}>
                       <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8,position:"sticky",top:0}}>
                         <span style={{fontSize:14}}>{f.icon}</span>
                         <span style={{fontSize:11,fontWeight:800,color:f.color,letterSpacing:0.5,fontFamily:"monospace",textTransform:"uppercase"}}>{f.title}</span>
