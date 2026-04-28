@@ -3167,7 +3167,7 @@ html{scroll-behavior:smooth}
       </>,
       "password-manager":<>
         {/* in-card nav — Login + Home replace the removed top title bar */}
-        <div style={{position:"absolute",top:16,right:16,zIndex:5,display:"flex",gap:10,alignItems:"center"}}>
+        <div style={{position:"absolute",top:16,right:40,zIndex:5,display:"flex",gap:10,alignItems:"center"}}>
           {!pmIsLoggedIn&&<button onClick={()=>{setPmShowLogin(true);setPmLoginErr("");setPmLogin2FA(false);setPmLogin2FACode("");setPmLogin2FAErr("");setPmSignupMode(false)}}
             style={{padding:"7px 16px",background:pgQuantumSafe?"linear-gradient(135deg,#10b981,#059669)":`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,border:"none",borderRadius:8,color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:0.5,boxShadow:pgQuantumSafe?"0 4px 14px rgba(16,185,129,0.35)":`0 4px 14px rgba(${T.accentRgb},0.35)`,transition:"all 0.3s ease-out",display:"flex",alignItems:"center",gap:6}}
             onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow=pgQuantumSafe?"0 6px 22px rgba(16,185,129,0.6),0 0 28px rgba(16,185,129,0.35)":`0 6px 22px rgba(${T.accentRgb},0.6),0 0 28px rgba(${T.accentRgb},0.35)`}}
