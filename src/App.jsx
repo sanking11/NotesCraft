@@ -2094,12 +2094,8 @@ select option{background:${T.bg};color:${T.text}}
 @keyframes shieldFloat{0%{transform:translateY(0px) rotate(0deg)}20%{transform:translateY(-6px) rotate(1.5deg)}40%{transform:translateY(-2px) rotate(-0.5deg)}60%{transform:translateY(-8px) rotate(-1.5deg)}80%{transform:translateY(-3px) rotate(0.5deg)}100%{transform:translateY(0px) rotate(0deg)}}
 @keyframes shieldEntrance{0%{transform:scale(0) rotate(-20deg);opacity:0;filter:blur(8px)}30%{transform:scale(1.15) rotate(4deg);opacity:1;filter:blur(0)}55%{transform:scale(0.92) rotate(-2deg)}75%{transform:scale(1.03) rotate(1deg)}100%{transform:scale(1) rotate(0deg);opacity:1;filter:blur(0)}}
 .sc-grad-title{-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;color:transparent!important}
-.sc-feat-front{opacity:1}
-.sc-feat-back{opacity:0;pointer-events:none}
-.sc-feat-card:hover .sc-feat-front{opacity:0}
-.sc-feat-card:hover .sc-feat-back{opacity:1;pointer-events:auto}
-.sc-feat-card .sc-feat-back::-webkit-scrollbar{width:4px}
-.sc-feat-card .sc-feat-back::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);border-radius:2px}
+.sc-feat-pop{opacity:0;pointer-events:none;transform:translateY(-6px)}
+.sc-feat-wrap:hover .sc-feat-pop{opacity:1;pointer-events:auto;transform:translateY(0)}
 @keyframes flapWing{0%{transform:scaleX(1)}15%{transform:scaleX(0.6)}30%{transform:scaleX(1)}45%{transform:scaleX(0.55)}60%{transform:scaleX(1)}80%{transform:scaleX(0.7)}100%{transform:scaleX(1)}}
 @keyframes butterflyFly{0%{transform:translate(0,0) scaleX(1) rotate(0deg)}5%{transform:translate(80px,-30px) scaleX(1) rotate(4deg)}10%{transform:translate(180px,-50px) scaleX(1) rotate(7deg)}15%{transform:translate(260px,-25px) scaleX(1) rotate(5deg)}20%{transform:translate(300px,-10px) scaleX(1) rotate(2deg)}24%{transform:translate(280px,-5px) scaleX(-1) rotate(3deg)}30%{transform:translate(150px,-15px) scaleX(-1) rotate(6deg)}35%{transform:translate(50px,-25px) scaleX(-1) rotate(4deg)}40%{transform:translate(-30px,-35px) scaleX(-1) rotate(2deg)}45%{transform:translate(-120px,-50px) scaleX(-1) rotate(6deg)}50%{transform:translate(-220px,-60px) scaleX(-1) rotate(8deg)}55%{transform:translate(-300px,-35px) scaleX(-1) rotate(5deg)}60%{transform:translate(-280px,-20px) scaleX(-1) rotate(2deg)}64%{transform:translate(-240px,-25px) scaleX(1) rotate(-2deg)}70%{transform:translate(-100px,-15px) scaleX(1) rotate(-5deg)}75%{transform:translate(-20px,-10px) scaleX(1) rotate(-3deg)}80%{transform:translate(40px,-15px) scaleX(1) rotate(-2deg)}85%{transform:translate(25px,-10px) scaleX(1) rotate(-1deg)}90%{transform:translate(12px,-5px) scaleX(1) rotate(0deg)}95%{transform:translate(4px,-2px) scaleX(1) rotate(0deg)}100%{transform:translate(0,0) scaleX(1) rotate(0deg)}}
 @keyframes butterflyFly2{0%{transform:translate(0,0) scaleX(-1) rotate(0deg)}4%{transform:translate(-60px,-15px) scaleX(-1) rotate(3deg)}8%{transform:translate(-150px,-30px) scaleX(-1) rotate(6deg)}12%{transform:translate(-240px,-20px) scaleX(-1) rotate(4deg)}18%{transform:translate(-280px,-40px) scaleX(-1) rotate(1deg)}22%{transform:translate(-260px,-50px) scaleX(1) rotate(-3deg)}28%{transform:translate(-150px,-35px) scaleX(1) rotate(-5deg)}34%{transform:translate(-30px,-20px) scaleX(1) rotate(-3deg)}40%{transform:translate(80px,-30px) scaleX(1) rotate(-2deg)}46%{transform:translate(180px,-45px) scaleX(1) rotate(-4deg)}52%{transform:translate(260px,-30px) scaleX(1) rotate(-6deg)}58%{transform:translate(300px,-40px) scaleX(1) rotate(-4deg)}62%{transform:translate(280px,-35px) scaleX(-1) rotate(3deg)}68%{transform:translate(180px,-25px) scaleX(-1) rotate(4deg)}74%{transform:translate(80px,-15px) scaleX(-1) rotate(3deg)}80%{transform:translate(20px,-10px) scaleX(-1) rotate(2deg)}86%{transform:translate(-10px,-8px) scaleX(-1) rotate(1deg)}92%{transform:translate(-5px,-4px) scaleX(1) rotate(0deg)}100%{transform:translate(0,0) scaleX(1) rotate(0deg)}}
@@ -5344,25 +5340,24 @@ html{scroll-behavior:smooth}
               </div>
               <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(240px,1fr))",gap:14}}>
                 {feats.map((f,i)=>(
-                  <div key={i} className="sc-feat-card" style={{position:"relative",padding:"20px 18px 18px",borderRadius:14,background:`linear-gradient(135deg,rgba(${f.rgb},0.08),rgba(${f.rgb},0.02))`,border:`1.5px solid rgba(${f.rgb},0.35)`,backdropFilter:"blur(14px)",WebkitBackdropFilter:"blur(14px)",boxShadow:`0 4px 20px rgba(0,0,0,0.2),0 0 20px rgba(${f.rgb},0.1),inset 0 1px 0 rgba(255,255,255,0.05)`,transition:"transform 0.3s,border-color 0.3s,box-shadow 0.3s",overflow:"hidden",cursor:"default",minHeight:200}}
-                    onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-4px)";e.currentTarget.style.borderColor=`rgba(${f.rgb},0.7)`;e.currentTarget.style.boxShadow=`0 10px 36px rgba(0,0,0,0.35),0 0 40px rgba(${f.rgb},0.32),inset 0 1px 0 rgba(255,255,255,0.08)`}}
-                    onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.borderColor=`rgba(${f.rgb},0.35)`;e.currentTarget.style.boxShadow=`0 4px 20px rgba(0,0,0,0.2),0 0 20px rgba(${f.rgb},0.1),inset 0 1px 0 rgba(255,255,255,0.05)`}}>
-                    <div style={{position:"absolute",inset:0,background:`radial-gradient(circle at 100% 0%,rgba(${f.rgb},0.14) 0%,transparent 60%)`,pointerEvents:"none"}}/>
-                    {/* default content (fades out on hover) */}
-                    <div className="sc-feat-front" style={{position:"relative",transition:"opacity 0.3s ease-out"}}>
-                      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
+                  <div key={i} className="sc-feat-wrap" style={{position:"relative"}}
+                    onMouseEnter={e=>{const c=e.currentTarget.firstElementChild;if(c){c.style.transform="translateY(-4px)";c.style.borderColor=`rgba(${f.rgb},0.7)`;c.style.boxShadow=`0 10px 36px rgba(0,0,0,0.35),0 0 40px rgba(${f.rgb},0.32),inset 0 1px 0 rgba(255,255,255,0.08)`}}}
+                    onMouseLeave={e=>{const c=e.currentTarget.firstElementChild;if(c){c.style.transform="translateY(0)";c.style.borderColor=`rgba(${f.rgb},0.35)`;c.style.boxShadow=`0 4px 20px rgba(0,0,0,0.2),0 0 20px rgba(${f.rgb},0.1),inset 0 1px 0 rgba(255,255,255,0.05)`}}}>
+                    <div className="sc-feat-card" style={{padding:"20px 18px 18px",borderRadius:14,background:`linear-gradient(135deg,rgba(${f.rgb},0.08),rgba(${f.rgb},0.02))`,border:`1.5px solid rgba(${f.rgb},0.35)`,backdropFilter:"blur(14px)",WebkitBackdropFilter:"blur(14px)",boxShadow:`0 4px 20px rgba(0,0,0,0.2),0 0 20px rgba(${f.rgb},0.1),inset 0 1px 0 rgba(255,255,255,0.05)`,transition:"transform 0.3s,border-color 0.3s,box-shadow 0.3s",overflow:"hidden",cursor:"default",position:"relative"}}>
+                      <div style={{position:"absolute",inset:0,background:`radial-gradient(circle at 100% 0%,rgba(${f.rgb},0.14) 0%,transparent 60%)`,pointerEvents:"none"}}/>
+                      <div style={{position:"relative",display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
                         <div style={{width:36,height:36,borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,background:`rgba(${f.rgb},0.14)`,border:`1px solid rgba(${f.rgb},0.35)`,boxShadow:`0 0 12px rgba(${f.rgb},0.25)`,flexShrink:0}}>{f.icon}</div>
                         <div style={{fontSize:14,fontWeight:800,color:f.color,letterSpacing:0.5,fontFamily:"monospace",textShadow:`0 0 10px rgba(${f.rgb},0.3)`}}>{f.title}</div>
                       </div>
-                      <p style={{fontSize:12,color:T.dark?"rgba(255,255,255,0.78)":T.dim,lineHeight:1.6,margin:0}}>{f.desc}</p>
+                      <p style={{position:"relative",fontSize:12,color:T.dark?"rgba(255,255,255,0.78)":T.dim,lineHeight:1.6,margin:0}}>{f.desc}</p>
                     </div>
-                    {/* expanded detail (fades in on hover) — opacity controlled by CSS .sc-feat-card:hover */}
-                    <div className="sc-feat-back" style={{position:"absolute",inset:0,padding:"16px 18px",overflowY:"auto",transition:"opacity 0.3s ease-out",background:`linear-gradient(135deg,rgba(${f.rgb},0.12),rgba(${f.rgb},0.04))`,backdropFilter:"blur(14px)",WebkitBackdropFilter:"blur(14px)"}}>
-                      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8,position:"sticky",top:0}}>
+                    <div className="sc-feat-pop" style={{position:"absolute",top:"calc(100% + 12px)",left:0,right:0,minWidth:300,padding:"14px 16px 16px",borderRadius:12,background:T.dark?`linear-gradient(135deg,rgba(${f.rgb},0.18),rgba(20,22,32,0.96))`:`linear-gradient(135deg,rgba(${f.rgb},0.12),rgba(255,255,255,0.96))`,border:`1.5px solid rgba(${f.rgb},0.5)`,boxShadow:`0 12px 40px rgba(0,0,0,0.5),0 0 32px rgba(${f.rgb},0.25)`,backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",zIndex:50,transition:"opacity 0.22s ease-out,transform 0.22s ease-out"}}>
+                      <div style={{position:"absolute",top:-7,left:28,width:12,height:12,transform:"rotate(45deg)",background:T.dark?`rgba(${f.rgb},0.18)`:`rgba(${f.rgb},0.12)`,borderTop:`1.5px solid rgba(${f.rgb},0.5)`,borderLeft:`1.5px solid rgba(${f.rgb},0.5)`}}/>
+                      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
                         <span style={{fontSize:14}}>{f.icon}</span>
-                        <span style={{fontSize:11,fontWeight:800,color:f.color,letterSpacing:0.5,fontFamily:"monospace",textTransform:"uppercase"}}>{f.title}</span>
+                        <span style={{fontSize:11,fontWeight:800,color:f.color,letterSpacing:0.7,fontFamily:"monospace",textTransform:"uppercase"}}>{f.title}</span>
                       </div>
-                      <p style={{fontSize:11,color:T.dark?"rgba(255,255,255,0.85)":T.text,lineHeight:1.65,margin:0}}>{f.detail}</p>
+                      <p style={{fontSize:11.5,color:T.text,lineHeight:1.7,margin:0}}>{f.detail}</p>
                     </div>
                   </div>
                 ))}
