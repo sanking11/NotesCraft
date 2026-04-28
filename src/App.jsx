@@ -676,6 +676,7 @@ export default function NotesCraft(){
   const[pmTotpRemaining,setPmTotpRemaining]=useState(30);
   const[pmDelConfirm,setPmDelConfirm]=useState(null);
   const[pmIsLoggedIn,setPmIsLoggedIn]=useState(false);
+  const[pmQrCred,setPmQrCred]=useState(null);
   const[pmLoginEmail,setPmLoginEmail]=useState("");
   const[pmLoginPw,setPmLoginPw]=useState("");
   const[pmLoginErr,setPmLoginErr]=useState("");
@@ -2413,13 +2414,19 @@ html{scroll-behavior:smooth}
 
       {/* ═══ LEFT SIDEBAR ═══ */}
       <div style={{width:260,minWidth:260,height:"100%",background:T.dark?"rgba(255,255,255,0.015)":"rgba(0,0,0,0.02)",borderRight:`1px solid ${T.bdr}`,display:"flex",flexDirection:"column"}}>
-        <div style={{padding:"6px 12px 8px",display:"flex",alignItems:"center",gap:2}}>
-          <div style={{width:54,height:54,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",filter:pgQuantumSafe?`drop-shadow(0 2px 10px rgba(16,185,129,0.45)) hue-rotate(-50deg) saturate(1.5) brightness(1.05)`:`drop-shadow(0 2px 10px rgba(${T.accentRgb},0.4))`,transition:"filter 0.4s"}}><SCLogo s={52}/></div>
-          <div style={{display:"flex",flexDirection:"column",gap:1,minWidth:0}}>
-            <span className="sc-grad-title" style={{fontSize:22,fontWeight:800,fontFamily:`${F.heading},sans-serif`,letterSpacing:1.5,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${pgQuantumSafe?"#10b981":T.accent} 70%,${pgQuantumSafe?"#059669":T.accent2||T.accent})`,lineHeight:1.1}}>ShieldCraft</span>
-            <span style={{fontSize:7.5,color:pgQuantumSafe?"rgba(16,185,129,0.6)":T.dim,letterSpacing:0.5,fontWeight:500,textAlign:"center",whiteSpace:"nowrap"}}>Password Generator Tool by NotesCraft</span>
-          </div>
-        </div>
+        {(()=>{
+          // hue-rotate the SC logo so its default cyan-purple shifts toward the active theme accent
+          const hueOf=(hex)=>{const m=hex&&hex.match(/^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})/i);if(!m)return 220;const r=parseInt(m[1],16)/255,g=parseInt(m[2],16)/255,b=parseInt(m[3],16)/255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn;if(!d)return 220;let h;if(mx===r)h=((g-b)/d)%6;else if(mx===g)h=(b-r)/d+2;else h=(r-g)/d+4;h*=60;return h<0?h+360:h};
+          const tH=pgQuantumSafe?156:hueOf(T.accent);
+          const rot=Math.round(tH-220);
+          return <div style={{padding:"6px 12px 8px",display:"flex",alignItems:"center",gap:2}}>
+            <div style={{width:54,height:54,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",filter:`drop-shadow(0 2px 10px rgba(${pgQuantumSafe?"16,185,129":T.accentRgb},0.45)) hue-rotate(${rot}deg) saturate(${pgQuantumSafe?1.5:1.25}) brightness(1.02)`,transition:"filter 0.4s"}}><SCLogo s={52}/></div>
+            <div style={{display:"flex",flexDirection:"column",gap:1,minWidth:0}}>
+              <span className="sc-grad-title" style={{fontSize:22,fontWeight:800,fontFamily:`${F.heading},sans-serif`,letterSpacing:1.5,background:`linear-gradient(135deg,${T.dark?T.text:"#e2e8f0"} 30%,${pgQuantumSafe?"#10b981":T.accent} 70%,${pgQuantumSafe?"#059669":T.accent2||T.accent})`,lineHeight:1.1}}>ShieldCraft</span>
+              <span style={{fontSize:6,color:pgQuantumSafe?"rgba(16,185,129,0.6)":T.dim,letterSpacing:0.4,fontWeight:500,textAlign:"center",whiteSpace:"nowrap"}}>Password Generator Tool by NotesCraft</span>
+            </div>
+          </div>;
+        })()}
 
         <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
           <div style={{padding:"0 10px"}}>
@@ -2838,6 +2845,10 @@ html{scroll-behavior:smooth}
             </div>
             <div style={{display:"flex",gap:8}}>
               <button onClick={()=>pmEditCredential(selCred)} style={{padding:"8px 20px",background:`rgba(${T.accentRgb},0.1)`,border:`1px solid rgba(${T.accentRgb},0.25)`,borderRadius:8,color:T.accent,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Edit</button>
+              {selCred.password&&<button onClick={()=>setPmQrCred(selCred)} title="Scan to phone" style={{padding:"8px 16px",background:`rgba(${T.accentRgb},0.1)`,border:`1px solid rgba(${T.accentRgb},0.25)`,borderRadius:8,color:T.accent,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",gap:6}}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h2v2h-2zM18 14h3v3h-3zM14 18h3v3h-3zM18 19h3v2h-3z"/></svg>
+                QR
+              </button>}
               <button onClick={()=>{if(pmDelConfirm===selCred.id){pmDeleteCredential(selCred.id);setPmSelectedId(null);setPmDelConfirm(null)}else{setPmDelConfirm(selCred.id)}}} style={{padding:"8px 20px",background:pmDelConfirm===selCred.id?"rgba(239,68,68,0.15)":"transparent",border:`1px solid ${pmDelConfirm===selCred.id?"rgba(239,68,68,0.4)":"rgba(239,68,68,0.15)"}`,borderRadius:8,color:"#ef4444",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>{pmDelConfirm===selCred.id?"Confirm Delete":"Delete"}</button>
             </div>
           </div>
@@ -2880,6 +2891,62 @@ html{scroll-behavior:smooth}
         </div>}
 
       </div>}
+
+      {/* ═══════ CREDENTIAL QR MODAL ═══════ */}
+      {pmQrCred&&(()=>{
+        let qr=null,err="";
+        const payload=`${pmQrCred.username||""}\n${pmQrCred.password||""}`.trim();
+        try{ qr=qrEncode(payload,"M") }catch(e){ err=e?.message||"Failed to encode" }
+        const accent=T.accent,accentRgb=T.accentRgb;
+        const lighten=(hex,amt)=>{const h=hex.replace("#","");if(h.length!==6)return hex;const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);const f=c=>Math.round(c+(255-c)*amt).toString(16).padStart(2,"0");return "#"+f(r)+f(g)+f(b)};
+        const qrC1=lighten(accent,0.35),qrC2=lighten(T.accent2||accent,0.35);
+        const qrSvg=qr?(()=>{
+          const n=qr.size,quiet=4,cell=10;
+          const total=(n+quiet*2)*cell;
+          const isFinder=(x,y)=>(x<7&&y<7)||(x>=n-7&&y<7)||(x<7&&y>=n-7);
+          let parts=`<defs><linearGradient id="qrgC" x1="0" y1="0" x2="${total}" y2="${total}" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="${qrC1}"/><stop offset="50%" stop-color="${qrC2}"/><stop offset="100%" stop-color="${qrC1}"/></linearGradient><filter id="qrCG" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="0.9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><rect width="${total}" height="${total}" fill="#000000"/>`;
+          const inset=cell*0.08,r=cell*0.28,s=cell-inset*2;
+          let body="";
+          for(let y=0;y<n;y++)for(let x=0;x<n;x++){
+            if(!qr.modules[y][x]||isFinder(x,y))continue;
+            body+=`<rect x="${((x+quiet)*cell+inset).toFixed(2)}" y="${((y+quiet)*cell+inset).toFixed(2)}" width="${s.toFixed(2)}" height="${s.toFixed(2)}" rx="${r.toFixed(2)}" fill="url(#qrgC)"/>`;
+          }
+          const drawF=(fx,fy)=>{const ox=(fx+quiet)*cell,oy=(fy+quiet)*cell;return `<rect x="${ox}" y="${oy}" width="${7*cell}" height="${7*cell}" rx="${cell*1.9}" fill="url(#qrgC)"/><rect x="${ox+cell}" y="${oy+cell}" width="${5*cell}" height="${5*cell}" rx="${cell*1.2}" fill="#000000"/><rect x="${ox+2*cell}" y="${oy+2*cell}" width="${3*cell}" height="${3*cell}" rx="${cell*0.7}" fill="url(#qrgC)"/>`};
+          body+=drawF(0,0)+drawF(n-7,0)+drawF(0,n-7);
+          parts+=`<g filter="url(#qrCG)">${body}</g>`;
+          return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${total} ${total}" width="260" height="260">${parts}</svg>`;
+        })():"";
+        return <div style={{position:"fixed",inset:0,zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.7)",backdropFilter:"blur(10px)",WebkitBackdropFilter:"blur(10px)",padding:20,animation:"pgQrBackdrop 0.3s ease-out"}} onClick={e=>{if(e.target===e.currentTarget)setPmQrCred(null)}}>
+          <div style={{maxWidth:380,width:"100%",position:"relative",animation:"pgQrCardIn 0.45s cubic-bezier(0.34,1.56,0.64,1) both"}}>
+            <div style={{background:T.bg||"#0a0d18",borderRadius:16,padding:"24px 22px",border:`1.5px solid rgba(${accentRgb},0.4)`,boxShadow:`0 24px 70px rgba(0,0,0,0.6),0 0 50px rgba(${accentRgb},0.18)`,position:"relative",overflow:"hidden"}}>
+              <button onClick={()=>setPmQrCred(null)} aria-label="Close" style={{position:"absolute",top:12,right:12,width:30,height:30,borderRadius:8,background:"rgba(255,255,255,0.05)",border:`1px solid rgba(${accentRgb},0.3)`,color:T.text,fontSize:14,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.2s",zIndex:2}}>✕</button>
+              <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:4}}>
+                <span style={{fontSize:20}}>📱</span>
+                <h3 style={{margin:0,fontSize:15,fontWeight:800,color:T.text,fontFamily:F.heading,letterSpacing:0.5}}>Scan to Get Credentials</h3>
+              </div>
+              <p style={{margin:"0 0 16px",fontSize:11,color:T.dim,lineHeight:1.5}}><strong style={{color:T.text}}>{pmQrCred.siteName||"Credential"}</strong> — point your phone camera at the QR. Username and password are encoded locally on this device.</p>
+              {err?<div style={{padding:16,borderRadius:10,background:"rgba(239,68,68,0.08)",border:"1px solid rgba(239,68,68,0.3)",color:"#ef4444",fontSize:12,textAlign:"center"}}>{err}</div>:
+                <div style={{display:"flex",justifyContent:"center",marginBottom:12}}>
+                  <div style={{padding:14,background:"radial-gradient(circle at 50% 50%,#0a0d18 0%,#000 100%)",borderRadius:14,boxShadow:`0 6px 28px rgba(${accentRgb},0.4),0 0 50px rgba(${accentRgb},0.22),inset 0 0 0 1px rgba(${accentRgb},0.4)`,lineHeight:0}} dangerouslySetInnerHTML={{__html:qrSvg}}/>
+                </div>
+              }
+              <div style={{padding:"10px 12px",borderRadius:8,background:"rgba(0,0,0,0.55)",border:"1px solid rgba(34,197,94,0.25)",fontFamily:F.mono||"'IBM Plex Mono',monospace",fontSize:10,color:"#22c55e",lineHeight:1.7,letterSpacing:0.3,boxShadow:"inset 0 0 12px rgba(34,197,94,0.06)"}}>
+                <div style={{display:"flex",alignItems:"center",gap:6}}>
+                  <span style={{color:"rgba(34,197,94,0.6)"}}>$</span>
+                  <span style={{color:"rgba(34,197,94,0.85)"}}>scan_status</span>
+                  <span style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:4,color:"rgba(34,197,94,0.5)",fontSize:8}}>
+                    <span style={{width:6,height:6,borderRadius:"50%",background:"#22c55e",boxShadow:"0 0 6px #22c55e",animation:"pulse 1.8s ease-in-out infinite"}}/>
+                    live
+                  </span>
+                </div>
+                <div style={{display:"flex",alignItems:"center",gap:6,paddingLeft:10}}><span>🔒</span><span>encoded_locally</span><span style={{marginLeft:"auto",color:"rgba(34,197,94,0.5)"}}>✓</span></div>
+                <div style={{display:"flex",alignItems:"center",gap:6,paddingLeft:10}}><span>📱</span><span>qr_not_saved</span><span style={{marginLeft:"auto",color:"rgba(34,197,94,0.5)"}}>✓</span></div>
+                <div style={{display:"flex",alignItems:"center",gap:6,paddingLeft:10}}><span>🛰️</span><span>network_calls: <span style={{color:"#fff"}}>0</span></span><span style={{marginLeft:"auto",color:"rgba(34,197,94,0.5)"}}>✓</span></div>
+              </div>
+            </div>
+          </div>
+        </div>;
+      })()}
 
       {/* ═══════ SHIELDCRAFT SETTINGS MODAL ═══════ */}
       {pmShowSettings&&<div style={{position:"fixed",inset:0,zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.5)",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)"}} onClick={()=>{setPmShowSettings(false);setPmImportData(null);setPmImportErr("")}}>
