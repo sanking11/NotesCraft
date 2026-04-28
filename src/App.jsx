@@ -2930,18 +2930,18 @@ html{scroll-behavior:smooth}
                   <div style={{padding:14,background:"radial-gradient(circle at 50% 50%,#0a0d18 0%,#000 100%)",borderRadius:14,boxShadow:`0 6px 28px rgba(${accentRgb},0.4),0 0 50px rgba(${accentRgb},0.22),inset 0 0 0 1px rgba(${accentRgb},0.4)`,lineHeight:0}} dangerouslySetInnerHTML={{__html:qrSvg}}/>
                 </div>
               }
-              <div style={{padding:"10px 12px",borderRadius:8,background:"rgba(0,0,0,0.55)",border:"1px solid rgba(34,197,94,0.25)",fontFamily:F.mono||"'IBM Plex Mono',monospace",fontSize:10,color:"#22c55e",lineHeight:1.7,letterSpacing:0.3,boxShadow:"inset 0 0 12px rgba(34,197,94,0.06)"}}>
-                <div style={{display:"flex",alignItems:"center",gap:6}}>
-                  <span style={{color:"rgba(34,197,94,0.6)"}}>$</span>
-                  <span style={{color:"rgba(34,197,94,0.85)"}}>scan_status</span>
-                  <span style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:4,color:"rgba(34,197,94,0.5)",fontSize:8}}>
-                    <span style={{width:6,height:6,borderRadius:"50%",background:"#22c55e",boxShadow:"0 0 6px #22c55e",animation:"pulse 1.8s ease-in-out infinite"}}/>
-                    live
-                  </span>
-                </div>
-                <div style={{display:"flex",alignItems:"center",gap:6,paddingLeft:10}}><span>🔒</span><span>encoded_locally</span><span style={{marginLeft:"auto",color:"rgba(34,197,94,0.5)"}}>✓</span></div>
-                <div style={{display:"flex",alignItems:"center",gap:6,paddingLeft:10}}><span>📱</span><span>qr_not_saved</span><span style={{marginLeft:"auto",color:"rgba(34,197,94,0.5)"}}>✓</span></div>
-                <div style={{display:"flex",alignItems:"center",gap:6,paddingLeft:10}}><span>🛰️</span><span>network_calls: <span style={{color:"#fff"}}>0</span></span><span style={{marginLeft:"auto",color:"rgba(34,197,94,0.5)"}}>✓</span></div>
+              <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:6,fontFamily:F.mono||"'IBM Plex Mono',monospace"}}>
+                {[
+                  {dot:true,label:"On-Device"},
+                  {dot:true,label:"QR Not Saved"},
+                  {dot:true,label:"Zero Network"},
+                  {icon:"🔒",label:"Encoded Locally"}
+                ].map((p,i)=>(
+                  <div key={i} style={{display:"inline-flex",alignItems:"center",gap:5,padding:"4px 9px",borderRadius:6,background:"rgba(0,0,0,0.55)",border:"1px solid rgba(34,197,94,0.3)",fontSize:9.5,color:"#22c55e",letterSpacing:0.3,boxShadow:"inset 0 0 8px rgba(34,197,94,0.06)"}}>
+                    {p.dot?<span style={{width:6,height:6,borderRadius:"50%",background:"#22c55e",boxShadow:"0 0 6px #22c55e",animation:i===0?"pulse 1.8s ease-in-out infinite":"none",flexShrink:0}}/>:<span style={{fontSize:10,lineHeight:1}}>{p.icon}</span>}
+                    <span>{p.label}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -3524,35 +3524,18 @@ html{scroll-behavior:smooth}
                         <div style={{animation:"pgQrReveal 0.65s ease-out 0.3s both",lineHeight:0}} dangerouslySetInnerHTML={{__html:qrSvg}}/>
                       </div>
                     </div>
-                    <div style={{padding:"10px 12px",borderRadius:8,background:"rgba(0,0,0,0.55)",border:"1px solid rgba(34,197,94,0.25)",fontFamily:F.mono||"'IBM Plex Mono',monospace",fontSize:10,color:"#22c55e",lineHeight:1.7,letterSpacing:0.3,position:"relative",zIndex:1,boxShadow:"inset 0 0 12px rgba(34,197,94,0.06)"}}>
-                      <div style={{display:"flex",alignItems:"center",gap:6}}>
-                        <span style={{color:"rgba(34,197,94,0.6)"}}>$</span>
-                        <span style={{color:"rgba(34,197,94,0.85)"}}>status</span>
-                        <span style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:4,color:"rgba(34,197,94,0.5)",fontSize:8}}>
-                          <span style={{width:6,height:6,borderRadius:"50%",background:"#22c55e",boxShadow:"0 0 6px #22c55e",animation:"pulse 1.8s ease-in-out infinite"}}/>
-                          live
-                        </span>
-                      </div>
-                      <div style={{display:"flex",alignItems:"center",gap:6,paddingLeft:10}}>
-                        <span aria-hidden="true">🔒</span>
-                        <span>generated_on_device</span>
-                        <span style={{color:"rgba(34,197,94,0.5)",marginLeft:"auto"}}>✓</span>
-                      </div>
-                      <div style={{display:"flex",alignItems:"center",gap:6,paddingLeft:10}}>
-                        <span aria-hidden="true">📱</span>
-                        <span>qr_not_saved</span>
-                        <span style={{color:"rgba(34,197,94,0.5)",marginLeft:"auto"}}>✓</span>
-                      </div>
-                      <div style={{display:"flex",alignItems:"center",gap:6,paddingLeft:10}}>
-                        <span aria-hidden="true">🔐</span>
-                        <span>encoded_locally</span>
-                        <span style={{color:"rgba(34,197,94,0.5)",marginLeft:"auto"}}>✓</span>
-                      </div>
-                      <div style={{display:"flex",alignItems:"center",gap:6,paddingLeft:10}}>
-                        <span aria-hidden="true">🛰️</span>
-                        <span>network_calls: <span style={{color:"#fff"}}>0</span></span>
-                        <span style={{color:"rgba(34,197,94,0.5)",marginLeft:"auto"}}>✓</span>
-                      </div>
+                    <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:6,fontFamily:F.mono||"'IBM Plex Mono',monospace",position:"relative",zIndex:1}}>
+                      {[
+                        {dot:true,label:"On-Device"},
+                        {dot:true,label:"QR Not Saved"},
+                        {dot:true,label:"Zero Network"},
+                        {icon:"🔒",label:"Encoded Locally"}
+                      ].map((p,i)=>(
+                        <div key={i} style={{display:"inline-flex",alignItems:"center",gap:5,padding:"4px 9px",borderRadius:6,background:"rgba(0,0,0,0.55)",border:"1px solid rgba(34,197,94,0.3)",fontSize:9.5,color:"#22c55e",letterSpacing:0.3,boxShadow:"inset 0 0 8px rgba(34,197,94,0.06)"}}>
+                          {p.dot?<span style={{width:6,height:6,borderRadius:"50%",background:"#22c55e",boxShadow:"0 0 6px #22c55e",animation:i===0?"pulse 1.8s ease-in-out infinite":"none",flexShrink:0}}/>:<span style={{fontSize:10,lineHeight:1}}>{p.icon}</span>}
+                          <span>{p.label}</span>
+                        </div>
+                      ))}
                     </div>
                   </>
                 }
