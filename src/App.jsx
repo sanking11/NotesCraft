@@ -5345,28 +5345,31 @@ html{scroll-behavior:smooth}
                       const wrap=e.currentTarget;
                       const card=wrap.firstElementChild;
                       const pop=wrap.querySelector(".sc-feat-pop");
-                      const arrow=pop?.firstElementChild;
                       if(card){card.style.transform="translateY(-4px)";card.style.borderColor=`rgba(${f.rgb},0.7)`;card.style.boxShadow=`0 10px 36px rgba(0,0,0,0.35),0 0 40px rgba(${f.rgb},0.32),inset 0 1px 0 rgba(255,255,255,0.08)`}
-                      // Smart vertical placement: prefer below, flip above if not enough room
-                      if(pop&&arrow){
-                        const r=wrap.getBoundingClientRect();
-                        const popH=pop.offsetHeight||220;
-                        const below=window.innerHeight-r.bottom;
-                        const above=r.top;
-                        const flip=below<popH+24&&above>below;
-                        if(flip){
-                          pop.style.top="auto";pop.style.bottom="calc(100% + 12px)";
-                          arrow.style.top="auto";arrow.style.bottom="-7px";
-                          arrow.style.borderTop="none";arrow.style.borderLeft="none";
-                          arrow.style.borderBottom=`1.5px solid rgba(${f.rgb},0.5)`;
-                          arrow.style.borderRight=`1.5px solid rgba(${f.rgb},0.5)`;
-                        }else{
-                          pop.style.top="calc(100% + 12px)";pop.style.bottom="auto";
-                          arrow.style.top="-7px";arrow.style.bottom="auto";
-                          arrow.style.borderTop=`1.5px solid rgba(${f.rgb},0.5)`;
-                          arrow.style.borderLeft=`1.5px solid rgba(${f.rgb},0.5)`;
-                          arrow.style.borderBottom="none";arrow.style.borderRight="none";
-                        }
+                      // Smart placement: anchor popover to viewport via position:fixed.
+                      // Try right of card → left of card → below → above, picking whichever has room.
+                      if(pop){
+                        const r=card.getBoundingClientRect();
+                        const popW=Math.min(320,window.innerWidth-32);
+                        const vw=window.innerWidth,vh=window.innerHeight;
+                        const gap=14;
+                        const margin=12;
+                        const popH=Math.min(pop.scrollHeight||260,vh-margin*2);
+                        let left,top;
+                        const roomR=vw-r.right-gap,roomL=r.left-gap,roomB=vh-r.bottom-gap,roomT=r.top-gap;
+                        if(roomR>=popW){left=r.right+gap;top=r.top;}
+                        else if(roomL>=popW){left=r.left-gap-popW;top=r.top;}
+                        else if(roomB>=popH){left=r.left+r.width/2-popW/2;top=r.bottom+gap;}
+                        else if(roomT>=popH){left=r.left+r.width/2-popW/2;top=r.top-gap-popH;}
+                        else{left=Math.max(margin,vw/2-popW/2);top=Math.max(margin,vh/2-popH/2);}
+                        // clamp to viewport
+                        left=Math.max(margin,Math.min(vw-popW-margin,left));
+                        top=Math.max(margin,Math.min(vh-popH-margin,top));
+                        pop.style.position="fixed";
+                        pop.style.left=left+"px";
+                        pop.style.top=top+"px";
+                        pop.style.width=popW+"px";
+                        pop.style.maxHeight=(vh-margin*2)+"px";
                       }
                     }}
                     onMouseLeave={e=>{const c=e.currentTarget.firstElementChild;if(c){c.style.transform="translateY(0)";c.style.borderColor=`rgba(${f.rgb},0.35)`;c.style.boxShadow=`0 4px 20px rgba(0,0,0,0.2),0 0 20px rgba(${f.rgb},0.1),inset 0 1px 0 rgba(255,255,255,0.05)`}}}>
@@ -5378,8 +5381,7 @@ html{scroll-behavior:smooth}
                       </div>
                       <p style={{position:"relative",fontSize:12,color:T.dark?"rgba(255,255,255,0.78)":T.dim,lineHeight:1.6,margin:0}}>{f.desc}</p>
                     </div>
-                    <div className="sc-feat-pop" style={{position:"absolute",top:"calc(100% + 12px)",left:0,right:0,minWidth:300,padding:"14px 16px 16px",borderRadius:12,background:T.dark?`linear-gradient(135deg,rgba(${f.rgb},0.18) 0%,rgba(20,22,32,0.99) 60%)`:`linear-gradient(135deg,rgba(${f.rgb},0.12) 0%,rgba(255,255,255,0.99) 60%)`,border:`1.5px solid rgba(${f.rgb},0.5)`,boxShadow:`0 12px 40px rgba(0,0,0,0.5),0 0 32px rgba(${f.rgb},0.25)`,zIndex:50}}>
-                      <div style={{position:"absolute",top:-7,left:28,width:12,height:12,transform:"rotate(45deg)",background:T.dark?`rgba(${f.rgb},0.18)`:`rgba(${f.rgb},0.12)`,borderTop:`1.5px solid rgba(${f.rgb},0.5)`,borderLeft:`1.5px solid rgba(${f.rgb},0.5)`}}/>
+                    <div className="sc-feat-pop" style={{position:"fixed",top:0,left:0,width:320,padding:"14px 16px 16px",borderRadius:12,background:T.dark?`linear-gradient(135deg,rgba(${f.rgb},0.18) 0%,rgba(20,22,32,0.99) 60%)`:`linear-gradient(135deg,rgba(${f.rgb},0.12) 0%,rgba(255,255,255,0.99) 60%)`,border:`1.5px solid rgba(${f.rgb},0.5)`,boxShadow:`0 12px 40px rgba(0,0,0,0.5),0 0 32px rgba(${f.rgb},0.25)`,zIndex:9999,overflowY:"auto"}}>
                       <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
                         <span style={{fontSize:14}}>{f.icon}</span>
                         <span style={{fontSize:11,fontWeight:800,color:f.color,letterSpacing:0.7,fontFamily:"monospace",textTransform:"uppercase"}}>{f.title}</span>
