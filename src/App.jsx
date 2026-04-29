@@ -5338,32 +5338,29 @@ html{scroll-behavior:smooth}
                 <h2 style={{fontSize:26,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",margin:"0 0 8px",letterSpacing:0.5}}>Why ShieldCraft</h2>
                 <p style={{fontSize:13,color:T.dim,maxWidth:720,margin:"0 auto",lineHeight:1.6,padding:"0 12px"}}>Nine things most password generators don't do — and we think every single one matters.</p>
               </div>
-              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(240px,1fr))",gap:14}}>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(240px,1fr))",gap:14,alignItems:"stretch"}}>
                 {feats.map((f,i)=>(
-                  <div key={i} className="sc-feat-wrap" style={{position:"relative"}}
+                  <div key={i} className="sc-feat-wrap" style={{position:"relative",display:"flex"}}
                     onMouseEnter={e=>{
                       const wrap=e.currentTarget;
                       const card=wrap.firstElementChild;
                       const pop=wrap.querySelector(".sc-feat-pop");
                       if(card){card.style.transform="translateY(-4px)";card.style.borderColor=`rgba(${f.rgb},0.7)`;card.style.boxShadow=`0 10px 36px rgba(0,0,0,0.35),0 0 40px rgba(${f.rgb},0.32),inset 0 1px 0 rgba(255,255,255,0.08)`}
-                      // Smart placement: anchor popover to viewport via position:fixed.
-                      // Try right of card → left of card → below → above, picking whichever has room.
+                      // Side-only placement: always right or left of the card. Never above/below/center.
                       if(pop){
                         const r=card.getBoundingClientRect();
                         const popW=Math.min(320,window.innerWidth-32);
                         const vw=window.innerWidth,vh=window.innerHeight;
-                        const gap=14;
-                        const margin=12;
+                        const gap=14,margin=12;
+                        const roomR=vw-r.right-gap,roomL=r.left-gap;
+                        let left;
+                        if(roomR>=popW){left=r.right+gap;}
+                        else if(roomL>=popW){left=r.left-gap-popW;}
+                        else if(roomR>=roomL){left=vw-popW-margin;}
+                        else{left=margin;}
+                        // vertical: anchor to card top, clamp to viewport
                         const popH=Math.min(pop.scrollHeight||260,vh-margin*2);
-                        let left,top;
-                        const roomR=vw-r.right-gap,roomL=r.left-gap,roomB=vh-r.bottom-gap,roomT=r.top-gap;
-                        if(roomR>=popW){left=r.right+gap;top=r.top;}
-                        else if(roomL>=popW){left=r.left-gap-popW;top=r.top;}
-                        else if(roomB>=popH){left=r.left+r.width/2-popW/2;top=r.bottom+gap;}
-                        else if(roomT>=popH){left=r.left+r.width/2-popW/2;top=r.top-gap-popH;}
-                        else{left=Math.max(margin,vw/2-popW/2);top=Math.max(margin,vh/2-popH/2);}
-                        // clamp to viewport
-                        left=Math.max(margin,Math.min(vw-popW-margin,left));
+                        let top=r.top;
                         top=Math.max(margin,Math.min(vh-popH-margin,top));
                         pop.style.position="fixed";
                         pop.style.left=left+"px";
@@ -5373,7 +5370,7 @@ html{scroll-behavior:smooth}
                       }
                     }}
                     onMouseLeave={e=>{const c=e.currentTarget.firstElementChild;if(c){c.style.transform="translateY(0)";c.style.borderColor=`rgba(${f.rgb},0.35)`;c.style.boxShadow=`0 4px 20px rgba(0,0,0,0.2),0 0 20px rgba(${f.rgb},0.1),inset 0 1px 0 rgba(255,255,255,0.05)`}}}>
-                    <div className="sc-feat-card" style={{padding:"20px 18px 18px",borderRadius:14,background:`linear-gradient(135deg,rgba(${f.rgb},0.08),rgba(${f.rgb},0.02))`,border:`1.5px solid rgba(${f.rgb},0.35)`,backdropFilter:"blur(14px)",WebkitBackdropFilter:"blur(14px)",boxShadow:`0 4px 20px rgba(0,0,0,0.2),0 0 20px rgba(${f.rgb},0.1),inset 0 1px 0 rgba(255,255,255,0.05)`,transition:"transform 0.3s,border-color 0.3s,box-shadow 0.3s",overflow:"hidden",cursor:"default",position:"relative"}}>
+                    <div className="sc-feat-card" style={{flex:1,padding:"20px 18px 18px",borderRadius:14,background:`linear-gradient(135deg,rgba(${f.rgb},0.08),rgba(${f.rgb},0.02))`,border:`1.5px solid rgba(${f.rgb},0.35)`,backdropFilter:"blur(14px)",WebkitBackdropFilter:"blur(14px)",boxShadow:`0 4px 20px rgba(0,0,0,0.2),0 0 20px rgba(${f.rgb},0.1),inset 0 1px 0 rgba(255,255,255,0.05)`,transition:"transform 0.3s,border-color 0.3s,box-shadow 0.3s",overflow:"hidden",cursor:"default",position:"relative"}}>
                       <div style={{position:"absolute",inset:0,background:`radial-gradient(circle at 100% 0%,rgba(${f.rgb},0.14) 0%,transparent 60%)`,pointerEvents:"none"}}/>
                       <div style={{position:"relative",display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
                         <div style={{width:36,height:36,borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,background:`rgba(${f.rgb},0.14)`,border:`1px solid rgba(${f.rgb},0.35)`,boxShadow:`0 0 12px rgba(${f.rgb},0.25)`,flexShrink:0}}>{f.icon}</div>
@@ -5381,12 +5378,13 @@ html{scroll-behavior:smooth}
                       </div>
                       <p style={{position:"relative",fontSize:12,color:T.dark?"rgba(255,255,255,0.78)":T.dim,lineHeight:1.6,margin:0}}>{f.desc}</p>
                     </div>
-                    <div className="sc-feat-pop" style={{position:"fixed",top:0,left:0,width:320,padding:"14px 16px 16px",borderRadius:12,background:T.dark?`linear-gradient(135deg,rgba(${f.rgb},0.18) 0%,rgba(20,22,32,0.99) 60%)`:`linear-gradient(135deg,rgba(${f.rgb},0.12) 0%,rgba(255,255,255,0.99) 60%)`,border:`1.5px solid rgba(${f.rgb},0.5)`,boxShadow:`0 12px 40px rgba(0,0,0,0.5),0 0 32px rgba(${f.rgb},0.25)`,zIndex:9999,overflowY:"auto"}}>
-                      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
+                    <div className="sc-feat-pop" style={{position:"fixed",top:0,left:0,width:320,padding:"16px 18px",borderRadius:12,background:T.dark?"#0f1220":"#ffffff",border:`1.5px solid rgba(${f.rgb},0.55)`,boxShadow:`0 12px 40px rgba(0,0,0,0.6),0 0 36px rgba(${f.rgb},0.3)`,zIndex:9999,overflowY:"auto"}}>
+                      <div style={{position:"absolute",inset:0,borderRadius:12,background:`radial-gradient(circle at 0% 0%,rgba(${f.rgb},0.12) 0%,transparent 55%)`,pointerEvents:"none"}}/>
+                      <div style={{position:"relative",display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
                         <span style={{fontSize:14}}>{f.icon}</span>
                         <span style={{fontSize:11,fontWeight:800,color:f.color,letterSpacing:0.7,fontFamily:"monospace",textTransform:"uppercase"}}>{f.title}</span>
                       </div>
-                      <p style={{fontSize:11.5,color:T.text,lineHeight:1.7,margin:0}}>{f.detail}</p>
+                      <p style={{position:"relative",fontSize:11.5,color:T.text,lineHeight:1.7,margin:0}}>{f.detail}</p>
                     </div>
                   </div>
                 ))}
