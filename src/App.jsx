@@ -5341,7 +5341,34 @@ html{scroll-behavior:smooth}
               <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(240px,1fr))",gap:14}}>
                 {feats.map((f,i)=>(
                   <div key={i} className="sc-feat-wrap" style={{position:"relative"}}
-                    onMouseEnter={e=>{const c=e.currentTarget.firstElementChild;if(c){c.style.transform="translateY(-4px)";c.style.borderColor=`rgba(${f.rgb},0.7)`;c.style.boxShadow=`0 10px 36px rgba(0,0,0,0.35),0 0 40px rgba(${f.rgb},0.32),inset 0 1px 0 rgba(255,255,255,0.08)`}}}
+                    onMouseEnter={e=>{
+                      const wrap=e.currentTarget;
+                      const card=wrap.firstElementChild;
+                      const pop=wrap.querySelector(".sc-feat-pop");
+                      const arrow=pop?.firstElementChild;
+                      if(card){card.style.transform="translateY(-4px)";card.style.borderColor=`rgba(${f.rgb},0.7)`;card.style.boxShadow=`0 10px 36px rgba(0,0,0,0.35),0 0 40px rgba(${f.rgb},0.32),inset 0 1px 0 rgba(255,255,255,0.08)`}
+                      // Smart vertical placement: prefer below, flip above if not enough room
+                      if(pop&&arrow){
+                        const r=wrap.getBoundingClientRect();
+                        const popH=pop.offsetHeight||220;
+                        const below=window.innerHeight-r.bottom;
+                        const above=r.top;
+                        const flip=below<popH+24&&above>below;
+                        if(flip){
+                          pop.style.top="auto";pop.style.bottom="calc(100% + 12px)";
+                          arrow.style.top="auto";arrow.style.bottom="-7px";
+                          arrow.style.borderTop="none";arrow.style.borderLeft="none";
+                          arrow.style.borderBottom=`1.5px solid rgba(${f.rgb},0.5)`;
+                          arrow.style.borderRight=`1.5px solid rgba(${f.rgb},0.5)`;
+                        }else{
+                          pop.style.top="calc(100% + 12px)";pop.style.bottom="auto";
+                          arrow.style.top="-7px";arrow.style.bottom="auto";
+                          arrow.style.borderTop=`1.5px solid rgba(${f.rgb},0.5)`;
+                          arrow.style.borderLeft=`1.5px solid rgba(${f.rgb},0.5)`;
+                          arrow.style.borderBottom="none";arrow.style.borderRight="none";
+                        }
+                      }
+                    }}
                     onMouseLeave={e=>{const c=e.currentTarget.firstElementChild;if(c){c.style.transform="translateY(0)";c.style.borderColor=`rgba(${f.rgb},0.35)`;c.style.boxShadow=`0 4px 20px rgba(0,0,0,0.2),0 0 20px rgba(${f.rgb},0.1),inset 0 1px 0 rgba(255,255,255,0.05)`}}}>
                     <div className="sc-feat-card" style={{padding:"20px 18px 18px",borderRadius:14,background:`linear-gradient(135deg,rgba(${f.rgb},0.08),rgba(${f.rgb},0.02))`,border:`1.5px solid rgba(${f.rgb},0.35)`,backdropFilter:"blur(14px)",WebkitBackdropFilter:"blur(14px)",boxShadow:`0 4px 20px rgba(0,0,0,0.2),0 0 20px rgba(${f.rgb},0.1),inset 0 1px 0 rgba(255,255,255,0.05)`,transition:"transform 0.3s,border-color 0.3s,box-shadow 0.3s",overflow:"hidden",cursor:"default",position:"relative"}}>
                       <div style={{position:"absolute",inset:0,background:`radial-gradient(circle at 100% 0%,rgba(${f.rgb},0.14) 0%,transparent 60%)`,pointerEvents:"none"}}/>
