@@ -1029,14 +1029,15 @@ export default function NotesCraft(){
   };
   const pmLockGhost=(name)=>{setPmGhostUnlocked(prev=>{const n=new Set(prev);n.delete(name);return n});if(pmFolderFilter===name){setPmFolderFilter(null);setPmView("list")}};
   const pmLockAllGhosts=()=>{setPmGhostUnlocked(new Set())};
-  // ShieldCraft "Why ShieldCraft" cards: stagger-animate in when scrolled into view
+  // ShieldCraft "Why ShieldCraft" cards: stagger-animate in when scrolled into view.
+  // Cards use CSS animation (one-shot) so hover transition stays on its own clock.
   React.useEffect(()=>{
     if(infoPage!=="password-manager"||typeof IntersectionObserver==="undefined")return;
     const obs=new IntersectionObserver(entries=>{
-      entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("ld-vis")});
+      entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("sc-feat-vis")});
     },{threshold:0.12,rootMargin:"0px 0px -40px 0px"});
     requestAnimationFrame(()=>{
-      document.querySelectorAll(".sc-feat-wrap, .sc-feat-head").forEach(el=>obs.observe(el));
+      document.querySelectorAll(".sc-feat-card, .sc-feat-head").forEach(el=>obs.observe(el));
     });
     return()=>obs.disconnect();
   },[infoPage]);
@@ -2107,6 +2108,9 @@ select option{background:${T.bg};color:${T.text}}
 .sc-grad-title{-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;color:transparent!important}
 .sc-feat-pop{opacity:0;pointer-events:none;transform:translateY(-6px);visibility:hidden;transition:opacity 0.22s ease-out,transform 0.22s ease-out,visibility 0s linear 0.22s}
 .sc-feat-wrap:hover .sc-feat-pop{opacity:1;pointer-events:auto;transform:translateY(0);visibility:visible;transition:opacity 0.22s ease-out,transform 0.22s ease-out,visibility 0s linear 0s}
+@keyframes scFeatIn{from{opacity:0;transform:translateY(28px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+.sc-feat-card{opacity:0}
+.sc-feat-card.sc-feat-vis{animation:scFeatIn 0.7s cubic-bezier(0.16,1,0.3,1) forwards}
 @keyframes flapWing{0%{transform:scaleX(1)}15%{transform:scaleX(0.6)}30%{transform:scaleX(1)}45%{transform:scaleX(0.55)}60%{transform:scaleX(1)}80%{transform:scaleX(0.7)}100%{transform:scaleX(1)}}
 @keyframes butterflyFly{0%{transform:translate(0,0) scaleX(1) rotate(0deg)}5%{transform:translate(80px,-30px) scaleX(1) rotate(4deg)}10%{transform:translate(180px,-50px) scaleX(1) rotate(7deg)}15%{transform:translate(260px,-25px) scaleX(1) rotate(5deg)}20%{transform:translate(300px,-10px) scaleX(1) rotate(2deg)}24%{transform:translate(280px,-5px) scaleX(-1) rotate(3deg)}30%{transform:translate(150px,-15px) scaleX(-1) rotate(6deg)}35%{transform:translate(50px,-25px) scaleX(-1) rotate(4deg)}40%{transform:translate(-30px,-35px) scaleX(-1) rotate(2deg)}45%{transform:translate(-120px,-50px) scaleX(-1) rotate(6deg)}50%{transform:translate(-220px,-60px) scaleX(-1) rotate(8deg)}55%{transform:translate(-300px,-35px) scaleX(-1) rotate(5deg)}60%{transform:translate(-280px,-20px) scaleX(-1) rotate(2deg)}64%{transform:translate(-240px,-25px) scaleX(1) rotate(-2deg)}70%{transform:translate(-100px,-15px) scaleX(1) rotate(-5deg)}75%{transform:translate(-20px,-10px) scaleX(1) rotate(-3deg)}80%{transform:translate(40px,-15px) scaleX(1) rotate(-2deg)}85%{transform:translate(25px,-10px) scaleX(1) rotate(-1deg)}90%{transform:translate(12px,-5px) scaleX(1) rotate(0deg)}95%{transform:translate(4px,-2px) scaleX(1) rotate(0deg)}100%{transform:translate(0,0) scaleX(1) rotate(0deg)}}
 @keyframes butterflyFly2{0%{transform:translate(0,0) scaleX(-1) rotate(0deg)}4%{transform:translate(-60px,-15px) scaleX(-1) rotate(3deg)}8%{transform:translate(-150px,-30px) scaleX(-1) rotate(6deg)}12%{transform:translate(-240px,-20px) scaleX(-1) rotate(4deg)}18%{transform:translate(-280px,-40px) scaleX(-1) rotate(1deg)}22%{transform:translate(-260px,-50px) scaleX(1) rotate(-3deg)}28%{transform:translate(-150px,-35px) scaleX(1) rotate(-5deg)}34%{transform:translate(-30px,-20px) scaleX(1) rotate(-3deg)}40%{transform:translate(80px,-30px) scaleX(1) rotate(-2deg)}46%{transform:translate(180px,-45px) scaleX(1) rotate(-4deg)}52%{transform:translate(260px,-30px) scaleX(1) rotate(-6deg)}58%{transform:translate(300px,-40px) scaleX(1) rotate(-4deg)}62%{transform:translate(280px,-35px) scaleX(-1) rotate(3deg)}68%{transform:translate(180px,-25px) scaleX(-1) rotate(4deg)}74%{transform:translate(80px,-15px) scaleX(-1) rotate(3deg)}80%{transform:translate(20px,-10px) scaleX(-1) rotate(2deg)}86%{transform:translate(-10px,-8px) scaleX(-1) rotate(1deg)}92%{transform:translate(-5px,-4px) scaleX(1) rotate(0deg)}100%{transform:translate(0,0) scaleX(1) rotate(0deg)}}
@@ -5351,7 +5355,7 @@ html{scroll-behavior:smooth}
               </div>
               <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(240px,1fr))",gap:14,alignItems:"stretch"}}>
                 {feats.map((f,i)=>(
-                  <div key={i} className="sc-feat-wrap ld-section" style={{position:"relative",display:"flex",transitionDelay:`${i*0.07}s`}}
+                  <div key={i} className="sc-feat-wrap" style={{position:"relative",display:"flex"}}
                     onMouseEnter={e=>{
                       const wrap=e.currentTarget;
                       const card=wrap.firstElementChild;
@@ -5381,7 +5385,7 @@ html{scroll-behavior:smooth}
                       }
                     }}
                     onMouseLeave={e=>{const c=e.currentTarget.firstElementChild;if(c){c.style.transform="translateY(0)";c.style.borderColor=`rgba(${f.rgb},0.35)`;c.style.boxShadow=`0 4px 20px rgba(0,0,0,0.2),0 0 20px rgba(${f.rgb},0.1),inset 0 1px 0 rgba(255,255,255,0.05)`}}}>
-                    <div className="sc-feat-card" style={{flex:1,padding:"20px 18px 18px",borderRadius:14,background:`linear-gradient(135deg,rgba(${f.rgb},0.08),rgba(${f.rgb},0.02))`,border:`1.5px solid rgba(${f.rgb},0.35)`,backdropFilter:"blur(14px)",WebkitBackdropFilter:"blur(14px)",boxShadow:`0 4px 20px rgba(0,0,0,0.2),0 0 20px rgba(${f.rgb},0.1),inset 0 1px 0 rgba(255,255,255,0.05)`,transition:"transform 0.3s,border-color 0.3s,box-shadow 0.3s",overflow:"hidden",cursor:"default",position:"relative"}}>
+                    <div className="sc-feat-card" style={{flex:1,padding:"20px 18px 18px",borderRadius:14,background:`linear-gradient(135deg,rgba(${f.rgb},0.08),rgba(${f.rgb},0.02))`,border:`1.5px solid rgba(${f.rgb},0.35)`,backdropFilter:"blur(14px)",WebkitBackdropFilter:"blur(14px)",boxShadow:`0 4px 20px rgba(0,0,0,0.2),0 0 20px rgba(${f.rgb},0.1),inset 0 1px 0 rgba(255,255,255,0.05)`,transition:"transform 0.3s,border-color 0.3s,box-shadow 0.3s",overflow:"hidden",cursor:"default",position:"relative",animationDelay:`${i*0.07}s`}}>
                       <div style={{position:"absolute",inset:0,background:`radial-gradient(circle at 100% 0%,rgba(${f.rgb},0.14) 0%,transparent 60%)`,pointerEvents:"none"}}/>
                       <div style={{position:"relative",display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
                         <div style={{width:36,height:36,borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,background:`rgba(${f.rgb},0.14)`,border:`1px solid rgba(${f.rgb},0.35)`,boxShadow:`0 0 12px rgba(${f.rgb},0.25)`,flexShrink:0}}>{f.icon}</div>
