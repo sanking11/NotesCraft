@@ -1034,7 +1034,7 @@ export default function NotesCraft(){
   React.useEffect(()=>{
     if(infoPage!=="password-manager"||typeof IntersectionObserver==="undefined")return;
     const obs=new IntersectionObserver(entries=>{
-      entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("sc-feat-vis")});
+      entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("sc-feat-vis","ld-vis")});
     },{threshold:0.12,rootMargin:"0px 0px -40px 0px"});
     requestAnimationFrame(()=>{
       document.querySelectorAll(".sc-feat-card, .sc-feat-head").forEach(el=>obs.observe(el));
@@ -5367,21 +5367,25 @@ html{scroll-behavior:smooth}
                         const popW=Math.min(320,window.innerWidth-32);
                         const vw=window.innerWidth,vh=window.innerHeight;
                         const gap=14,margin=12;
+                        // Set width/maxHeight first so scrollHeight reflects rendered layout
+                        pop.style.width=popW+"px";
+                        pop.style.maxHeight=(vh-margin*2)+"px";
                         const roomR=vw-r.right-gap,roomL=r.left-gap;
                         let left;
                         if(roomR>=popW){left=r.right+gap;}
                         else if(roomL>=popW){left=r.left-gap-popW;}
                         else if(roomR>=roomL){left=vw-popW-margin;}
                         else{left=margin;}
-                        // vertical: anchor to card top, clamp to viewport
+                        // Vertical: align popover with card based on which half of viewport
+                        // the card sits in — top-aligned for upper cards, bottom-aligned for
+                        // lower cards. Prevents popover extending past viewport into footer.
                         const popH=Math.min(pop.scrollHeight||260,vh-margin*2);
-                        let top=r.top;
+                        const cardMid=r.top+r.height/2;
+                        let top=cardMid<vh/2?r.top:r.bottom-popH;
                         top=Math.max(margin,Math.min(vh-popH-margin,top));
                         pop.style.position="fixed";
                         pop.style.left=left+"px";
                         pop.style.top=top+"px";
-                        pop.style.width=popW+"px";
-                        pop.style.maxHeight=(vh-margin*2)+"px";
                       }
                     }}
                     onMouseLeave={e=>{const c=e.currentTarget.firstElementChild;if(c){c.style.transform="translateY(0)";c.style.borderColor=`rgba(${f.rgb},0.35)`;c.style.boxShadow=`0 4px 20px rgba(0,0,0,0.2),0 0 20px rgba(${f.rgb},0.1),inset 0 1px 0 rgba(255,255,255,0.05)`}}}>
