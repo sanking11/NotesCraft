@@ -1029,6 +1029,17 @@ export default function NotesCraft(){
   };
   const pmLockGhost=(name)=>{setPmGhostUnlocked(prev=>{const n=new Set(prev);n.delete(name);return n});if(pmFolderFilter===name){setPmFolderFilter(null);setPmView("list")}};
   const pmLockAllGhosts=()=>{setPmGhostUnlocked(new Set())};
+  // ShieldCraft "Why ShieldCraft" cards: stagger-animate in when scrolled into view
+  React.useEffect(()=>{
+    if(infoPage!=="password-manager"||typeof IntersectionObserver==="undefined")return;
+    const obs=new IntersectionObserver(entries=>{
+      entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("ld-vis")});
+    },{threshold:0.12,rootMargin:"0px 0px -40px 0px"});
+    requestAnimationFrame(()=>{
+      document.querySelectorAll(".sc-feat-wrap, .sc-feat-head").forEach(el=>obs.observe(el));
+    });
+    return()=>obs.disconnect();
+  },[infoPage]);
   // cross-tab logout sync — when any tab logs out, clear this tab too
   const pmAuthBcRef=React.useRef(null);
   React.useEffect(()=>{
@@ -5333,14 +5344,14 @@ html{scroll-behavior:smooth}
               {icon:"🧬",title:"Entropy Visible",color:"#06b6d4",rgb:"6,182,212",desc:"See exact bits of entropy in real time — not just a vague strength bar. Informed decisions beat guesswork.",detail:"Information-theoretic entropy measures unpredictability: H = -Σ p(x) log₂ p(x). For uniformly-random passwords this collapses to log₂(possible combinations) — a literal count of how many universes' worth of guesses an attacker must search. 80 bits is the modern classical floor (centuries of brute-force); 128 bits is the post-quantum floor (Grover halves it to 64, still strong). The same word ‘entropy' appears in thermodynamics — disorder in a physical system, which the universe naturally tends toward by the Second Law. Your password's entropy is its share of that universal disorder, expressed in bits an attacker has to defeat."}
             ];
             return <div ref={pgFeatsRef} style={{marginTop:40,position:"relative",zIndex:1,scrollMarginTop:24}}>
-              <div style={{textAlign:"center",marginBottom:28}}>
+              <div className="sc-feat-head ld-section" style={{textAlign:"center",marginBottom:28}}>
                 <div style={{fontSize:10,fontWeight:700,color:T.accent,letterSpacing:3,marginBottom:8,textTransform:"uppercase"}}>Built Different</div>
                 <h2 style={{fontSize:26,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",margin:"0 0 8px",letterSpacing:0.5}}>Why ShieldCraft</h2>
                 <p style={{fontSize:13,color:T.dim,maxWidth:720,margin:"0 auto",lineHeight:1.6,padding:"0 12px"}}>Nine things most password generators don't do — and we think every single one matters.</p>
               </div>
               <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(240px,1fr))",gap:14,alignItems:"stretch"}}>
                 {feats.map((f,i)=>(
-                  <div key={i} className="sc-feat-wrap" style={{position:"relative",display:"flex"}}
+                  <div key={i} className="sc-feat-wrap ld-section" style={{position:"relative",display:"flex",transitionDelay:`${i*0.07}s`}}
                     onMouseEnter={e=>{
                       const wrap=e.currentTarget;
                       const card=wrap.firstElementChild;
