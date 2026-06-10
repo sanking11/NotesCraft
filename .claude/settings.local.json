@@ -18,7 +18,23 @@
       "Bash(netstat:*)",
       "Bash(npx netlify deploy:*)",
       "Bash(node -e:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(node _pm_replace.js)",
+      "Bash(node _vault_replace.cjs)",
+      "Bash(node _sc_upgrade.cjs)",
+      "WebFetch(domain:notescraft.app)",
+      "Bash(gh run list --limit 5)",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" run list --limit 5)",
+      "Bash(where gh.exe)",
+      "WebFetch(domain:futurism.com)",
+      "Bash(python3 patch_article.py)",
+      "Bash(python patch_article.py)",
+      "Bash(npm run *)",
+      "Bash(node --input-type=module -e \"import\\('./src/qrcode.js'\\).then\\(m=>{const r=m.qrEncode\\('6d8.bo4Q8w.\\)r4QcJUM8','M'\\);console.log\\('size=',r.size,'version=',r.version,'mask=',r.mask\\);let s='';for\\(const row of r.modules\\)s+=row.map\\(b=>b?'##':'  '\\).join\\(''\\)+'\\\\n';console.log\\(s\\);}\\)\")",
+      "Bash(node --input-type=module -e \"import\\('./src/qrcode.js'\\).then\\(m=>{const r=m.qrEncode\\('A'.repeat\\(65\\)+'!@#\\\\$%^&*\\(\\)1234567890','M'\\);console.log\\('65+char -> size=',r.size,'version=',r.version\\);const r2=m.qrEncode\\('word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word-word','M'\\);console.log\\('20-word phrase -> size=',r2.size,'version=',r2.version\\);}\\)\")",
+      "Bash(git check-ignore *)",
+      "Bash(node --input-type=module -e \"import\\('./src/qrcode.js'\\).then\\(m=>{const r=m.qrEncode\\('HelloWorld','M'\\);console.log\\('size=',r.size,'v=',r.version,'mask=',r.mask\\);console.log\\('col8 row0-5:',[0,1,2,3,4,5].map\\(y=>r.modules[y][8]?1:0\\).join\\(''\\)\\);console.log\\('row8 col0-5:',[0,1,2,3,4,5].map\\(x=>r.modules[8][x]?1:0\\).join\\(''\\)\\);}\\)\")",
+      "Bash(node --input-type=module -e ' *)"
     ]
   }
 }

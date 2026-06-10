@@ -5296,10 +5296,10 @@ html{scroll-behavior:smooth}
 <circle cx="100" cy="191" r="4.5" fill={T.accent} filter="url(#tcNG)" opacity="0.85"><animate attributeName="opacity" values="0.85;0.3;0.85" dur="2.4s" repeatCount="indefinite"/></circle>
 </svg>
               </div>
-              <div style={{display:"flex",flexDirection:"column",gap:1}}>
-                <span style={{fontSize:18,fontWeight:800,letterSpacing:3,fontFamily:`${F.heading},sans-serif`,background:`linear-gradient(135deg,${T.text} 30%,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",lineHeight:1.2}}>TECHCRAFT</span>
-                <span style={{fontSize:9,letterSpacing:1,color:`rgba(${T.accentRgb},0.8)`,fontFamily:`${F.heading},sans-serif`,lineHeight:1}}>Bits, Bots & the Big Bang</span>
-                <span style={{fontSize:7,letterSpacing:1.5,color:`rgba(${T.accentRgb},0.8)`,fontFamily:`${F.body},sans-serif`,lineHeight:1,marginTop:1}}>Crafted for Minds That Question Everything</span>
+              <div style={{display:"flex",flexDirection:"column",gap:2}}>
+                <span style={{fontSize:19,fontWeight:800,letterSpacing:3,fontFamily:`${F.heading},sans-serif`,background:`linear-gradient(135deg,${T.dark?T.text:"#f1f5f9"} 30%,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",lineHeight:1.2,filter:`drop-shadow(0 0 8px rgba(${T.accentRgb},0.35))`}}>TECHCRAFT</span>
+                <span style={{fontSize:11,fontWeight:600,letterSpacing:1.2,color:T.accent,fontFamily:`${F.heading},sans-serif`,lineHeight:1.1,textShadow:`0 0 10px rgba(${T.accentRgb},0.5)`}}>Bits, Bots & the Big Bang</span>
+                <span style={{fontSize:9.5,fontWeight:500,letterSpacing:1.5,color:"rgba(226,232,240,0.85)",fontFamily:`${F.body},sans-serif`,lineHeight:1.1,marginTop:1}}>Crafted for Minds That Question Everything</span>
               </div>
             </>:<>
               <ButterflyLogo s={28} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} flap/>
