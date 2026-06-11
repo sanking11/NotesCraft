@@ -2305,7 +2305,7 @@ html{scroll-behavior:smooth}
 .blog-card-overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;background:linear-gradient(0deg,rgba(0,0,0,0.85) 0%,rgba(0,0,0,0.3) 40%,transparent 100%);z-index:1}
 .blog-card-subtitle{max-height:0;opacity:0;overflow:hidden;transition:max-height 0.5s cubic-bezier(0.22,1,0.36,1),opacity 0.4s 0.1s;font-size:11px;color:rgba(255,255,255,0.7);line-height:1.5;margin-top:0}
 .blog-card:hover .blog-card-subtitle{max-height:100px;opacity:1;margin-top:8px}
-.blog-card-tag{display:inline-block;padding:3px 10px;border-radius:999px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.9);margin-bottom:10px;transition:all 0.3s;transform:translateY(10px);opacity:0}
+.blog-card-tag{display:inline-block;padding:4px 12px;border-radius:999px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;backdrop-filter:blur(18px) saturate(180%);-webkit-backdrop-filter:blur(18px) saturate(180%);border:1px solid rgba(255,255,255,0.22);background:linear-gradient(135deg,rgba(255,255,255,0.20),rgba(255,255,255,0.06) 45%,rgba(255,255,255,0.03) 65%,rgba(255,255,255,0.14));color:rgba(255,255,255,0.95);box-shadow:inset 0 1px 0 rgba(255,255,255,0.35),inset 0 -1px 0 rgba(255,255,255,0.08),inset 0 0 10px rgba(255,255,255,0.04),0 2px 12px rgba(0,0,0,0.35);margin-bottom:10px;transition:all 0.3s;transform:translateY(10px);opacity:0}
 .blog-card:hover .blog-card-tag{transform:translateY(0);opacity:1}
 .blog-card-title{font-size:16px;font-weight:800;color:#fff;line-height:1.25;text-shadow:0 2px 12px rgba(0,0,0,0.6);transition:transform 0.4s}
 .blog-card:hover .blog-card-title{transform:translateY(-4px)}
@@ -2328,10 +2328,12 @@ html{scroll-behavior:smooth}
 .blog-read-arrow{width:42px;height:42px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;transition:all 0.3s;color:#fff}
 .blog-ov-toolbar{position:fixed;top:18px;right:18px;display:flex;gap:8px;z-index:3000;opacity:0;transform:translateY(-10px);pointer-events:none;transition:opacity 0.25s 0.38s,transform 0.25s 0.38s}
 .blog-overlay.visible .blog-ov-toolbar{opacity:1;transform:translateY(0);pointer-events:all}
-.blog-ov-toolbar button{width:42px;height:42px;border-radius:50%;border:1.5px solid rgba(${T.accentRgb},0.5);background:rgba(${T.accentRgb},0.12);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;transition:all 0.2s;box-shadow:0 0 16px rgba(${T.accentRgb},0.2),0 2px 8px rgba(0,0,0,0.4)}
-.blog-ov-toolbar button:hover{background:rgba(${T.accentRgb},0.3);border-color:${T.accent};color:#fff;box-shadow:0 0 24px rgba(${T.accentRgb},0.4),0 0 48px rgba(${T.accentRgb},0.15),0 2px 8px rgba(0,0,0,0.4)}
-.blog-ov-toolbar button:disabled{opacity:0.3;cursor:not-allowed;box-shadow:none}
-.blog-ov-toolbar button:disabled:hover{background:rgba(${T.accentRgb},0.12);border-color:rgba(${T.accentRgb},0.5);box-shadow:none}
+.blog-ov-toolbar button{position:relative;overflow:hidden;width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,0.20);background:linear-gradient(160deg,rgba(255,255,255,0.16),rgba(255,255,255,0.05) 40%,rgba(${T.accentRgb},0.08) 75%,rgba(${T.accentRgb},0.14));backdrop-filter:blur(24px) saturate(185%);-webkit-backdrop-filter:blur(24px) saturate(185%);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.3s,background 0.3s,border-color 0.3s;box-shadow:inset 0 1px 0 rgba(255,255,255,0.35),inset 0 -1px 1px rgba(255,255,255,0.08),inset 0 0 14px rgba(255,255,255,0.04),0 6px 20px rgba(0,0,0,0.35),0 0 18px rgba(${T.accentRgb},0.12)}
+.blog-ov-toolbar button::before{content:"";position:absolute;top:5%;left:15%;width:70%;height:42%;border-radius:50%;background:linear-gradient(180deg,rgba(255,255,255,0.30),rgba(255,255,255,0));filter:blur(1px);pointer-events:none}
+.blog-ov-toolbar button:hover{transform:scale(1.1) translateY(-1px);background:linear-gradient(160deg,rgba(255,255,255,0.22),rgba(${T.accentRgb},0.14) 50%,rgba(${T.accentRgb},0.24));border-color:rgba(${T.accentRgb},0.7);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,0.45),inset 0 -1px 1px rgba(255,255,255,0.10),0 8px 26px rgba(0,0,0,0.4),0 0 30px rgba(${T.accentRgb},0.4),0 0 60px rgba(${T.accentRgb},0.15)}
+.blog-ov-toolbar button:active{transform:scale(0.94);box-shadow:inset 0 2px 6px rgba(0,0,0,0.25),inset 0 1px 0 rgba(255,255,255,0.2),0 2px 8px rgba(0,0,0,0.3)}
+.blog-ov-toolbar button:disabled{opacity:0.3;cursor:not-allowed;box-shadow:none;transform:none}
+.blog-ov-toolbar button:disabled:hover{background:linear-gradient(160deg,rgba(255,255,255,0.16),rgba(255,255,255,0.05) 40%,rgba(${T.accentRgb},0.08) 75%,rgba(${T.accentRgb},0.14));border-color:rgba(255,255,255,0.20);box-shadow:none;transform:none}
 .blog-reading-view{background:${T.dark?"#1a1a1a":"#faf8f0"}}
 .blog-reading-view .blog-content-section{font-family:Georgia,'Times New Roman',serif!important;line-height:2.2!important;max-width:680px!important;color:${T.dark?"#d4cfc4":"#3a3530"}!important}
 .blog-reading-view .blog-ov-hero{font-family:Georgia,'Times New Roman',serif}
@@ -2343,8 +2345,10 @@ html{scroll-behavior:smooth}
 .blog-article-light .blog-content-section div{color:#4a5568!important}
 .blog-article-light .blog-content-section span{color:#4a5568!important}
 .blog-article-light .blog-content-section h2{color:${T.accent}!important}
-.blog-article-light .blog-ov-toolbar button{background:rgba(255,255,255,0.85)!important;border-color:rgba(0,0,0,0.12)!important;color:#374151!important;box-shadow:0 2px 10px rgba(0,0,0,0.08)!important}
-.blog-article-light .blog-ov-toolbar button:hover{background:rgba(255,255,255,0.95)!important;border-color:rgba(0,0,0,0.2)!important}
+.blog-article-light .blog-ov-toolbar button{background:linear-gradient(160deg,rgba(255,255,255,0.92),rgba(255,255,255,0.68) 55%,rgba(255,255,255,0.85))!important;border-color:rgba(0,0,0,0.10)!important;color:#374151!important;box-shadow:inset 0 1px 0 rgba(255,255,255,1),inset 0 -1px 0 rgba(0,0,0,0.04),0 4px 16px rgba(0,0,0,0.10)!important}
+.blog-article-light .blog-ov-toolbar button:hover{background:linear-gradient(160deg,rgba(255,255,255,1),rgba(255,255,255,0.85))!important;border-color:rgba(0,0,0,0.18)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,1),0 6px 22px rgba(0,0,0,0.14)!important}
+.blog-article-light .lq-pill{background:linear-gradient(135deg,rgba(255,255,255,0.88),rgba(255,255,255,0.55) 45%,rgba(255,255,255,0.75))!important;border-color:rgba(0,0,0,0.10)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,0.95),inset 0 -1px 0 rgba(0,0,0,0.03),0 3px 14px rgba(0,0,0,0.08)!important}
+.blog-article-light .lq-chip{background:linear-gradient(135deg,rgba(255,255,255,0.92),rgba(255,255,255,0.62) 50%,rgba(255,255,255,0.82));border-color:rgba(0,0,0,0.10);color:rgba(0,0,0,0.5);box-shadow:inset 0 1px 0 rgba(255,255,255,1),inset 0 -1px 0 rgba(0,0,0,0.03),0 2px 10px rgba(0,0,0,0.07)}
 .blog-article-light::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12)!important}
 .blog-article-light .blog-read-btn{background:rgba(0,0,0,0.04)!important;border-color:rgba(0,0,0,0.15)!important}
 .blog-article-light .blog-read-btn span{color:#1a202c!important}
@@ -2353,6 +2357,14 @@ html{scroll-behavior:smooth}
 .blog-reading-view.blog-article-light .blog-content-section p{color:#3a3530!important}
 .blog-reading-view.blog-article-light .blog-ov-hero h1{color:#2a2520!important}
 .blog-reading-view.blog-article-light .blog-ov-hero p{color:rgba(58,53,48,0.6)!important}
+.lq-bar{background:linear-gradient(180deg,rgba(10,10,18,0.62) 0%,rgba(10,10,18,0.38) 60%,rgba(10,10,18,0.16) 100%);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border-bottom:1px solid rgba(255,255,255,0.08);box-shadow:inset 0 1px 0 rgba(255,255,255,0.10),0 10px 36px rgba(0,0,0,0.28)}
+.lq-bar::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,rgba(255,255,255,0.07) 0%,rgba(255,255,255,0.02) 30%,transparent 55%,rgba(255,255,255,0.04) 100%)}
+.lq-pill{position:relative;display:inline-block;padding:5px 16px;border-radius:999px;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;border:1px solid rgba(255,255,255,0.16);background:linear-gradient(135deg,rgba(255,255,255,0.13),rgba(255,255,255,0.04) 40%,rgba(255,255,255,0.02) 62%,rgba(255,255,255,0.10));backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.30),inset 0 -1px 0 rgba(255,255,255,0.07),inset 0 0 14px rgba(255,255,255,0.03),0 4px 18px rgba(0,0,0,0.28)}
+.lq-pill::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(115deg,rgba(255,255,255,0.16) 0%,rgba(255,255,255,0.05) 30%,transparent 52%,rgba(255,255,255,0.04) 78%,rgba(255,255,255,0.10) 100%)}
+.lq-chip{position:relative;display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:999px;font-size:11px;font-weight:600;letter-spacing:1px;border:1px solid rgba(255,255,255,0.14);background:linear-gradient(135deg,rgba(255,255,255,0.10),rgba(255,255,255,0.03) 45%,rgba(255,255,255,0.07));backdrop-filter:blur(18px) saturate(180%);-webkit-backdrop-filter:blur(18px) saturate(180%);box-shadow:inset 0 1px 0 rgba(255,255,255,0.25),inset 0 -1px 0 rgba(255,255,255,0.05),0 3px 14px rgba(0,0,0,0.25);color:rgba(255,255,255,0.55)}
+.lq-chip-btn{cursor:pointer;font-family:inherit;transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1),color 0.3s,border-color 0.3s,box-shadow 0.3s}
+.lq-chip-btn:hover{transform:scale(1.05);color:${T.accent};border-color:rgba(${T.accentRgb},0.5);box-shadow:inset 0 1px 0 rgba(255,255,255,0.3),0 4px 18px rgba(0,0,0,0.3),0 0 20px rgba(${T.accentRgb},0.25)}
+.lq-chip-btn:active{transform:scale(0.96)}
 @media(max-width:900px){.blog-hero-wrap{grid-template-columns:1fr!important;height:auto!important}.blog-hero-col{height:50vh}.blog-grid-wrap{grid-template-columns:repeat(2,1fr)!important}.blog-ov-left{display:none}.blog-ov-right{flex:0 0 100%}.blog-ov-hero{padding:28px 20px}}
 @media(max-width:560px){.blog-grid-wrap{grid-template-columns:1fr!important}}`;
 
@@ -3654,9 +3666,9 @@ html{scroll-behavior:smooth}
                 </div>
                 <h1 style={{fontSize:"clamp(24px,3.5vw,42px)",fontWeight:900,color:blogArticleTheme==='dark'?"#fff":"#1a202c",lineHeight:1.08,fontFamily:`${F.heading},sans-serif`,textTransform:"uppercase",letterSpacing:"-0.5px",margin:"0 0 20px"}}>{activeArticle.title}</h1>
                 <p style={{fontSize:14,color:blogArticleTheme==='dark'?"rgba(255,255,255,0.5)":"rgba(0,0,0,0.55)",lineHeight:1.7,margin:"0 0 12px",maxWidth:520}}>{activeArticle.subtitle}</p>
-                <div style={{display:"flex",alignItems:"center",gap:16,marginTop:8}}>
-                  <span style={{fontSize:11,color:blogArticleTheme==='dark'?"rgba(255,255,255,0.3)":"rgba(0,0,0,0.4)"}}>{activeArticle.date} • {activeArticle.icon}</span>
-                  <button onClick={()=>shareLink(activeArticle.slug)} style={{background:"none",border:"none",padding:0,fontSize:11,fontWeight:600,color:blogArticleTheme==='dark'?"rgba(255,255,255,0.3)":"rgba(0,0,0,0.4)",cursor:"pointer",fontFamily:"inherit",letterSpacing:1,transition:"color 0.2s"}} onMouseEnter={e=>{e.currentTarget.style.color=T.accent}} onMouseLeave={e=>{e.currentTarget.style.color=blogArticleTheme==='dark'?"rgba(255,255,255,0.3)":"rgba(0,0,0,0.4)"}}>SHARE ↗</button>
+                <div style={{display:"flex",alignItems:"center",gap:10,marginTop:10}}>
+                  <span className="lq-chip">{activeArticle.date} • {activeArticle.icon}</span>
+                  <button className="lq-chip lq-chip-btn" onClick={()=>shareLink(activeArticle.slug)}>SHARE ↗</button>
                 </div>
               </div>
               <div ref={blogContentRef} className="blog-content-section" style={{padding:"40px 44px 48px",maxWidth:blogReadingView?680:780,margin:"0 auto",boxSizing:"border-box",fontSize:Math.round(14*blogFontSize),fontFamily:blogReadingView?"Georgia,'Times New Roman',serif":"inherit",lineHeight:blogReadingView?2.2:undefined,transition:"font-size 0.2s,max-width 0.3s"}}>
@@ -3664,7 +3676,7 @@ html{scroll-behavior:smooth}
           {/* Article: csprng-vs-prng */}
           {activeArticle.slug==="csprng-vs-prng"&&<>
         <div style={{textAlign:"center",marginBottom:40}}>
-          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:T.accent,marginBottom:16}}>Security Deep-Dive</span>
+          <span className="lq-pill" style={{color:T.accent,marginBottom:16}}>Security Deep-Dive</span>
           <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>
             <span style={{background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Cryptographic</span> vs <span style={{color:T.err||"#f87171"}}>Normal</span> Password Generators
           </h2>
@@ -3862,7 +3874,7 @@ html{scroll-behavior:smooth}
           {/* Article: quantum-threat-to-passwords */}
           {activeArticle.slug==="quantum-threat-to-passwords"&&<>
         <div style={{textAlign:"center",marginBottom:40}}>
-          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:T.accent,marginBottom:16}}>Quantum Computing</span>
+          <span className="lq-pill" style={{color:T.accent,marginBottom:16}}>Quantum Computing</span>
           <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>
             How <span style={{background:`linear-gradient(135deg,#10b981,#059669)`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Quantum Computers</span> Will Break Your Passwords
           </h2>
@@ -3931,7 +3943,7 @@ html{scroll-behavior:smooth}
           {/* Article: ai-password-cracking */}
           {activeArticle.slug==="ai-password-cracking"&&<>
         <div style={{textAlign:"center",marginBottom:40}}>
-          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:T.accent,marginBottom:16}}>AI & Security</span>
+          <span className="lq-pill" style={{color:T.accent,marginBottom:16}}>AI & Security</span>
           <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>
             <span style={{background:`linear-gradient(135deg,${T.accent},${T.accent2||T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>AI-Powered</span> Password Cracking
           </h2>
@@ -3984,7 +3996,7 @@ html{scroll-behavior:smooth}
           {/* Article: post-quantum-cryptography */}
           {activeArticle.slug==="post-quantum-cryptography"&&<>
         <div style={{textAlign:"center",marginBottom:40}}>
-          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:T.accent,marginBottom:16}}>Quantum Research</span>
+          <span className="lq-pill" style={{color:T.accent,marginBottom:16}}>Quantum Research</span>
           <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>
             <span style={{background:"linear-gradient(135deg,#10b981,#06b6d4)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Post-Quantum Cryptography</span>: The New Standards
           </h2>
@@ -4037,7 +4049,7 @@ html{scroll-behavior:smooth}
           {/* Article: quantum-entanglement-communication */}
           {activeArticle.slug==="quantum-entanglement-communication"&&<>
         <div style={{textAlign:"center",marginBottom:40}}>
-          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:T.accent,marginBottom:16}}>Physics & Security</span>
+          <span className="lq-pill" style={{color:T.accent,marginBottom:16}}>Physics & Security</span>
           <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>
             <span style={{background:`linear-gradient(135deg,#8b5cf6,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Quantum Entanglement</span>: Unhackable Communication
           </h2>
@@ -4091,7 +4103,7 @@ html{scroll-behavior:smooth}
           {/* Article: physics-of-true-randomness */}
           {activeArticle.slug==="physics-of-true-randomness"&&<>
         <div style={{textAlign:"center",marginBottom:40}}>
-          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:T.accent,marginBottom:16}}>Physics Deep-Dive</span>
+          <span className="lq-pill" style={{color:T.accent,marginBottom:16}}>Physics Deep-Dive</span>
           <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>
             The Physics of <span style={{background:"linear-gradient(135deg,#f59e0b,#ef4444)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>True Randomness</span>
           </h2>
@@ -4150,7 +4162,7 @@ html{scroll-behavior:smooth}
           {activeArticle.slug==="ai-weapons-ethics"&&<>
         <div style={{borderRadius:16,overflow:"hidden",marginBottom:32}}>{blogImg("military")}</div>
         <div style={{textAlign:"center",marginBottom:40}}>
-          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:"#ef4444",marginBottom:16}}>AI & Ethics</span>
+          <span className="lq-pill" style={{color:"#ef4444",marginBottom:16}}>AI & Ethics</span>
           <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>When <span style={{color:"#ef4444"}}>AI Chooses Targets</span>: The Ethics of Autonomous Military Systems</h2>
           <p style={{fontSize:14,color:"#8892a4",maxWidth:500,margin:"0 auto",lineHeight:1.6}}>The rise of AI in military decision-making raises questions humanity isn't ready to answer.</p>
         </div>
@@ -4259,7 +4271,7 @@ html{scroll-behavior:smooth}
           {activeArticle.slug==="ai-supercharging-hackers"&&<>
         <div style={{borderRadius:16,overflow:"hidden",marginBottom:32}}>{blogImg("hacker")}</div>
         <div style={{textAlign:"center",marginBottom:40}}>
-          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:"#10b981",marginBottom:16}}>Cybersecurity</span>
+          <span className="lq-pill" style={{color:"#10b981",marginBottom:16}}>Cybersecurity</span>
           <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}><span style={{color:"#10b981"}}>Vibe Hacking</span>: How AI Tools Are Supercharging Cyber Attacks</h2>
           <p style={{fontSize:14,color:"#8892a4",maxWidth:500,margin:"0 auto",lineHeight:1.6}}>Attackers are using LLMs to write malware, craft phishing emails, and automate social engineering at unprecedented scale.</p>
         </div>
@@ -4433,7 +4445,7 @@ html{scroll-behavior:smooth}
           {activeArticle.slug==="biological-computing"&&<>
         <div style={{borderRadius:16,overflow:"hidden",marginBottom:32}}>{blogImg("brain")}</div>
         <div style={{textAlign:"center",marginBottom:40}}>
-          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:"#ec4899",marginBottom:16}}>Neuroscience</span>
+          <span className="lq-pill" style={{color:"#ec4899",marginBottom:16}}>Neuroscience</span>
           <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>Human <span style={{color:"#ec4899"}}>Brain Cells</span> Are Running Software</h2>
           <p style={{fontSize:14,color:"#8892a4",maxWidth:500,margin:"0 auto",lineHeight:1.6}}>Cortical Labs taught living neurons to play Doom. The implications for computing and consciousness are staggering.</p>
         </div>
@@ -4525,7 +4537,7 @@ html{scroll-behavior:smooth}
           {activeArticle.slug==="ai-hallucination-crisis"&&<>
         <div style={{borderRadius:16,overflow:"hidden",marginBottom:32}}>{blogImg("eye")}</div>
         <div style={{textAlign:"center",marginBottom:40}}>
-          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:"#f59e0b",marginBottom:16}}>AI & Trust</span>
+          <span className="lq-pill" style={{color:"#f59e0b",marginBottom:16}}>AI & Trust</span>
           <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>The AI <span style={{color:"#f59e0b"}}>Hallucination</span> Crisis</h2>
           <p style={{fontSize:14,color:"#8892a4",maxWidth:500,margin:"0 auto",lineHeight:1.6}}>From fake quotes in journalism to invented medical advice — AI hallucinations are eroding digital trust.</p>
         </div>
@@ -4608,7 +4620,7 @@ html{scroll-behavior:smooth}
           {activeArticle.slug==="robot-workforce"&&<>
         <div style={{borderRadius:16,overflow:"hidden",marginBottom:32}}>{blogImg("robot")}</div>
         <div style={{textAlign:"center",marginBottom:40}}>
-          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:"#6366f1",marginBottom:16}}>Robotics</span>
+          <span className="lq-pill" style={{color:"#6366f1",marginBottom:16}}>Robotics</span>
           <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>The <span style={{color:"#6366f1"}}>Robot Workforce</span>: When Automation Takes Over</h2>
           <p style={{fontSize:14,color:"#8892a4",maxWidth:500,margin:"0 auto",lineHeight:1.6}}>Autonomous delivery robots are replacing human drivers. This is just the beginning.</p>
         </div>
@@ -4703,7 +4715,7 @@ html{scroll-behavior:smooth}
           {activeArticle.slug==="jwst-universe-secrets"&&<>
         <div style={{borderRadius:16,overflow:"hidden",marginBottom:32}}>{blogImg("telescope")}</div>
         <div style={{textAlign:"center",marginBottom:40}}>
-          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:"#6366f1",marginBottom:16}}>Space & Physics</span>
+          <span className="lq-pill" style={{color:"#6366f1",marginBottom:16}}>Space & Physics</span>
           <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>James Webb Is <span style={{background:"linear-gradient(135deg,#6366f1,#06b6d4)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Rewriting the Universe</span></h2>
           <p style={{fontSize:14,color:"#8892a4",maxWidth:500,margin:"0 auto",lineHeight:1.6}}>From planetary atmospheres to the earliest galaxies — JWST is challenging everything we thought we knew.</p>
         </div>
@@ -4789,7 +4801,7 @@ html{scroll-behavior:smooth}
           {activeArticle.slug==="star-explosion-betelgeuse"&&<>
         <div style={{borderRadius:16,overflow:"hidden",marginBottom:32}}>{blogImg("star")}</div>
         <div style={{textAlign:"center",marginBottom:40}}>
-          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:"#ef4444",marginBottom:16}}>Astrophysics</span>
+          <span className="lq-pill" style={{color:"#ef4444",marginBottom:16}}>Astrophysics</span>
           <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>A Star Is About to <span style={{color:"#ef4444"}}>Explode</span></h2>
           <p style={{fontSize:14,color:"#8892a4",maxWidth:500,margin:"0 auto",lineHeight:1.6}}>Growing evidence suggests Betelgeuse may go supernova — an event visible in broad daylight from Earth.</p>
         </div>
@@ -4894,7 +4906,7 @@ html{scroll-behavior:smooth}
           {activeArticle.slug==="space-launches-atmosphere"&&<>
         <div style={{borderRadius:16,overflow:"hidden",marginBottom:32}}>{blogImg("rocket")}</div>
         <div style={{textAlign:"center",marginBottom:40}}>
-          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:"#06b6d4",marginBottom:16}}>Climate & Space</span>
+          <span className="lq-pill" style={{color:"#06b6d4",marginBottom:16}}>Climate & Space</span>
           <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>Rockets Are <span style={{color:"#06b6d4"}}>Punching Holes</span> in Our Atmosphere</h2>
           <p style={{fontSize:14,color:"#8892a4",maxWidth:500,margin:"0 auto",lineHeight:1.6}}>With 200+ launches per year, scientists warn about ozone depletion and upper atmosphere alteration.</p>
         </div>
@@ -4994,7 +5006,7 @@ html{scroll-behavior:smooth}
           {activeArticle.slug==="lab-grown-brains"&&<>
         <div style={{borderRadius:16,overflow:"hidden",marginBottom:32}}>{blogImg("dna")}</div>
         <div style={{textAlign:"center",marginBottom:40}}>
-          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:"#8b5cf6",marginBottom:16}}>Biotech</span>
+          <span className="lq-pill" style={{color:"#8b5cf6",marginBottom:16}}>Biotech</span>
           <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>Lab-Grown <span style={{color:"#8b5cf6"}}>Brains</span> Are Getting Smarter</h2>
           <p style={{fontSize:14,color:"#8892a4",maxWidth:500,margin:"0 auto",lineHeight:1.6}}>Neural organoids are developing electrical activity resembling premature infants. The ethics of creating consciousness in a dish.</p>
         </div>
@@ -5077,7 +5089,7 @@ html{scroll-behavior:smooth}
           {activeArticle.slug==="3d-printing-revolution"&&<>
         <div style={{borderRadius:16,overflow:"hidden",marginBottom:32}}>{blogImg("gear")}</div>
         <div style={{textAlign:"center",marginBottom:40}}>
-          <span style={{display:"inline-block",background:T.dark?"rgba(255,255,255,0.05)":"rgba(0,0,0,0.05)",border:`1px solid ${T.bdr}`,borderRadius:999,padding:"5px 16px",fontSize:11,fontWeight:600,letterSpacing:2,textTransform:"uppercase",color:"#f59e0b",marginBottom:16}}>Engineering</span>
+          <span className="lq-pill" style={{color:"#f59e0b",marginBottom:16}}>Engineering</span>
           <h2 style={{fontSize:"clamp(22px,4vw,32px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:T.dark?T.text:"#e2e8f0",lineHeight:1.2,marginBottom:12}}>MIT's 3D Printer Can Build <span style={{color:"#f59e0b"}}>Working Motors</span> in Hours</h2>
           <p style={{fontSize:14,color:"#8892a4",maxWidth:500,margin:"0 auto",lineHeight:1.6}}>A new multi-material printer fabricates fully functional electromechanical devices in a single session.</p>
         </div>
@@ -5217,7 +5229,7 @@ html{scroll-behavior:smooth}
           <div style={{position:"absolute",width:600,height:600,borderRadius:"50%",background:"radial-gradient(circle,rgba(139,92,246,0.2) 0%,transparent 70%)",filter:"blur(60px)",top:"-15%",left:"-10%",animation:"ldOrb1 25s ease-in-out infinite"}}/>
           <div style={{position:"absolute",width:500,height:500,borderRadius:"50%",background:`radial-gradient(circle,rgba(${T.accentRgb},0.18) 0%,transparent 70%)`,filter:"blur(45px)",bottom:"-10%",right:"-5%",animation:"ldOrb2 30s ease-in-out infinite"}}/>
         </div>
-        <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:100,display:(blogArticle||infoPage==="password-manager")?"none":"flex",padding:"16px 40px",alignItems:"center",justifyContent:"space-between",background:`linear-gradient(180deg,${T.dark?T.bg:"#0a0a12"} 0%,transparent 100%)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)"}}>
+        <nav className="lq-bar" style={{position:"fixed",top:0,left:0,right:0,zIndex:100,display:(blogArticle||infoPage==="password-manager")?"none":"flex",padding:"16px 40px",alignItems:"center",justifyContent:"space-between"}}>
           <div style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer"}} onClick={()=>{setBlogArticle(null);setBlogFullArticle(false);blogBusyRef.current=false;blogCardRectRef.current=null;setInfoPage(null)}}>
             {infoPage==="security-blog"?<>
               <div style={{position:"relative",width:52,height:60,flexShrink:0,filter:`drop-shadow(0 0 12px rgba(${T.accentRgb},0.6))`,animation:"cubeFloat 4s ease-in-out infinite"}}>
@@ -5474,7 +5486,7 @@ html{scroll-behavior:smooth}
         </div>
 
         {/* ── Navbar ── */}
-        <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:100,padding:"16px 40px",display:"flex",alignItems:"center",justifyContent:"space-between",background:`linear-gradient(180deg,${T.dark?T.bg:"#0a0a12"} 0%,transparent 100%)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)"}}>
+        <nav className="lq-bar" style={{position:"fixed",top:0,left:0,right:0,zIndex:100,padding:"16px 40px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             <ButterflyLogo s={28} accentRgb={T.accentRgb} accent={T.accent} accent2={T.accent2} text={T.dark?T.text:"#e2e8f0"} warn={T.warn} flap/>
             <span style={{fontSize:18,fontWeight:800,letterSpacing:3,fontFamily:`${F.heading},sans-serif`,background:`linear-gradient(135deg,${T.text} 30%,${T.accent})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>NOTESCRAFT</span>
