@@ -3356,11 +3356,11 @@ html{scroll-behavior:smooth}
           <button onClick={()=>{ccClearFile();setInfoPage(null);}} style={{background:`rgba(${acc},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${acc},0.4)`,borderRadius:8,padding:"8px 20px",color:txt,fontSize:13,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1}}>← Back</button>
         </nav>
 
-        <div style={{position:"relative",zIndex:1,maxWidth:920,margin:"0 auto",padding:"84px 24px 70px"}}>
+        <div style={{position:"relative",zIndex:1,maxWidth:920,margin:"0 auto",padding:"68px 24px 70px"}}>
           {/* HERO */}
-          <div className="ld-section" style={{textAlign:"center",marginBottom:22}}>
-            <div className="cc-hero-logo" style={{display:"flex",justifyContent:"center",marginBottom:12}}>
-              <svg viewBox="0 0 120 120" width={78} height={78} style={{display:"block"}}>
+          <div className="ld-section" style={{textAlign:"center",marginBottom:14}}>
+            <div className="cc-hero-logo" style={{display:"flex",justifyContent:"center",marginBottom:8}}>
+              <svg viewBox="0 0 120 120" width={62} height={62} style={{display:"block"}}>
                 <defs>
                   <linearGradient id="ccHeroG" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor={accHex}/><stop offset="100%" stopColor={T.accent2||accHex}/></linearGradient>
                   <filter id="ccHeroGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
@@ -3384,7 +3384,7 @@ html{scroll-behavior:smooth}
           </div>
 
           {/* TOOL CARD */}
-          <div className="cc-tool cc-tool-glow" style={{maxWidth:580,margin:"0 auto",background:cardBg,backdropFilter:"blur(32px)",WebkitBackdropFilter:"blur(32px)",border:`2px solid rgba(${acc},${ccDrag?0.95:0.5})`,borderRadius:24,padding:"26px 24px",position:"relative",overflow:"hidden",transition:"border-color 0.3s"}}>
+          <div className="cc-tool cc-tool-glow" style={{maxWidth:680,margin:"0 auto",background:cardBg,backdropFilter:"blur(32px)",WebkitBackdropFilter:"blur(32px)",border:`2px solid rgba(${acc},${ccDrag?0.95:0.5})`,borderRadius:26,padding:"34px 34px",position:"relative",overflow:"hidden",transition:"border-color 0.3s"}}>
             {/* clickable mode toggle */}
             <div style={{display:"flex",justifyContent:"center",marginBottom:18}}>
               <div className="cc-seg" role="tablist">
@@ -3401,7 +3401,7 @@ html{scroll-behavior:smooth}
                 onDragOver={e=>{e.preventDefault();setCcDrag(true);}}
                 onDragLeave={e=>{e.preventDefault();setCcDrag(false);}}
                 onDrop={e=>{e.preventDefault();setCcDrag(false);const f=e.dataTransfer.files&&e.dataTransfer.files[0];if(f)ccPickFile(f);}}
-                style={{position:"relative",border:`2px dashed rgba(${acc},${ccDrag?0.95:0.4})`,borderRadius:16,padding:"46px 20px",textAlign:"center",cursor:"pointer",background:ccDrag?`rgba(${acc},0.06)`:"transparent",transition:"all 0.25s"}}>
+                style={{position:"relative",border:`2px dashed rgba(${acc},${ccDrag?0.95:0.4})`,borderRadius:16,padding:"58px 24px",textAlign:"center",cursor:"pointer",background:ccDrag?`rgba(${acc},0.06)`:"transparent",transition:"all 0.25s"}}>
                 <div className="cc-dz-stripes"/>
                 <div className="cc-dz-brk cc-dz-tl"/><div className="cc-dz-brk cc-dz-tr"/><div className="cc-dz-brk cc-dz-bl"/><div className="cc-dz-brk cc-dz-br"/>
                 <div className="cc-dz-glow" style={{position:"relative",zIndex:1,display:"flex",justifyContent:"center",marginBottom:16}}>
