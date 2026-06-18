@@ -551,6 +551,36 @@ function NeoFlipCard({w,h,rgb,x,y,r,f,d,dl,title,plain,enc,opacity=1,delay=0}){
   );
 }
 
+/* Decryption-style scramble: starts scrambled, resolves to real text when scrolled into view */
+function ScrambleText({text,as:Tag="span",className,style,frames=20,speed=30}){
+  const GL="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*<>/\\";
+  const rnd=()=>GL[Math.floor(Math.random()*GL.length)];
+  const scrambled=()=>text.split("").map(c=>c===" "?" ":rnd()).join("");
+  const[disp,setDisp]=useState(scrambled);
+  const[done,setDone]=useState(false);
+  const ref=useRef(null);const doneRef=useRef(false);const timerRef=useRef(null);
+  useEffect(()=>{
+    const el=ref.current;
+    if(!el||typeof IntersectionObserver==="undefined"){setDisp(text);setDone(true);return;}
+    const run=()=>{
+      let frame=0;const len=text.length;const revealed=new Array(len).fill(false);
+      clearInterval(timerRef.current);
+      timerRef.current=setInterval(()=>{
+        frame++;const rc=Math.floor((frame/frames)*len);
+        for(let i=0;i<rc;i++)revealed[i]=true;
+        setDisp(text.split("").map((c,i)=>c===" "?" ":(revealed[i]?c:rnd())).join(""));
+        if(frame>=frames){clearInterval(timerRef.current);setDisp(text);setDone(true);}
+      },speed);
+    };
+    const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting&&!doneRef.current){doneRef.current=true;run();}})},{threshold:0.35});
+    obs.observe(el);
+    return()=>{obs.disconnect();clearInterval(timerRef.current);};
+  },[text]); // eslint-disable-line react-hooks/exhaustive-deps
+  // monospace + green tint while scrambling (no reflow jitter), settle to the real style
+  const liveStyle=done?style:{...style,fontFamily:"ui-monospace,Menlo,Consolas,monospace",letterSpacing:0.5};
+  return <Tag ref={ref} className={className} style={liveStyle}>{disp}</Tag>;
+}
+
 /* ═══════════════════════════════════════════════════
    MAIN COMPONENT
    ═══════════════════════════════════════════════════ */
@@ -1120,7 +1150,7 @@ export default function NotesCraft(){
       entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("sc-feat-vis","ld-vis")});
     },{threshold:0.12,rootMargin:"0px 0px -40px 0px"});
     requestAnimationFrame(()=>{
-      document.querySelectorAll(".sc-feat-card, .sc-feat-head, .ld-section, .cc-card").forEach(el=>obs.observe(el));
+      document.querySelectorAll(".sc-feat-card, .sc-feat-head, .ld-section").forEach(el=>obs.observe(el));
     });
     return()=>obs.disconnect();
   },[infoPage]);
@@ -2536,14 +2566,14 @@ html{scroll-behavior:smooth}
 .cc-gen-tog .cc-gen-box{width:16px;height:16px;border-radius:5px;border:1.5px solid rgba(${ccAcc},0.4);display:flex;align-items:center;justify-content:center;font-size:10px;transition:all 0.2s}
 .cc-gen-tog.cc-on .cc-gen-box{background:${accGenHex};border-color:${accGenHex};color:#fff}
 /* universal card glow + hover glow */
-/* Apple-style liquid glass: very translucent, bright specular rim, vivid backdrop */
-.cc-card{position:relative;opacity:0;border-radius:18px;background:linear-gradient(135deg,rgba(255,255,255,0.14),rgba(255,255,255,0.04) 42%,rgba(255,255,255,0.015) 60%,rgba(255,255,255,0.09));backdrop-filter:blur(12px) saturate(195%) brightness(1.15);-webkit-backdrop-filter:blur(12px) saturate(195%) brightness(1.15);border:1px solid rgba(255,255,255,0.22);box-shadow:inset 0 1px 1px rgba(255,255,255,0.5),inset 0 -2px 10px rgba(255,255,255,0.06),inset 0 0 34px rgba(255,255,255,0.05),0 10px 38px rgba(0,0,0,0.3),0 0 18px rgba(${ccAcc},0.12);transition:transform 0.3s cubic-bezier(0.22,1,0.36,1),box-shadow 0.35s,border-color 0.35s;transform-style:preserve-3d;will-change:transform}
-.cc-card::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;background:linear-gradient(125deg,rgba(255,255,255,0.26) 0%,rgba(255,255,255,0.07) 20%,transparent 42%,transparent 60%,rgba(255,255,255,0.05) 80%,rgba(255,255,255,0.16) 100%)}
-.cc-card::after{content:"";position:absolute;top:0;left:0;right:0;height:48%;border-radius:inherit;pointer-events:none;z-index:0;background:linear-gradient(180deg,rgba(255,255,255,0.16),transparent);opacity:0.75}
+/* Apple-style liquid glass: frosted, translucent, with two slowly drifting gloss layers (living water) */
+.cc-card{position:relative;border-radius:18px;background:linear-gradient(135deg,rgba(255,255,255,0.10),rgba(255,255,255,0.03) 45%,rgba(255,255,255,0.015) 62%,rgba(255,255,255,0.07));backdrop-filter:blur(22px) saturate(185%) brightness(1.1);-webkit-backdrop-filter:blur(22px) saturate(185%) brightness(1.1);border:1px solid rgba(255,255,255,0.22);box-shadow:inset 0 1px 1px rgba(255,255,255,0.5),inset 0 -2px 12px rgba(255,255,255,0.05),inset 0 0 40px rgba(255,255,255,0.04),0 12px 40px rgba(0,0,0,0.3),0 0 16px rgba(${ccAcc},0.1);transition:transform 0.3s cubic-bezier(0.22,1,0.36,1),box-shadow 0.35s,border-color 0.35s;transform-style:preserve-3d;will-change:transform}
+.cc-card::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;background:radial-gradient(120% 90% at 25% 18%,rgba(255,255,255,0.22),rgba(255,255,255,0.05) 40%,transparent 62%);background-size:200% 200%;animation:ccGlassDrift 11s ease-in-out infinite alternate}
+@keyframes ccGlassDrift{0%{background-position:8% 6%}100%{background-position:80% 66%}}
+.cc-card::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,0.12) 47%,rgba(255,255,255,0.03) 55%,transparent 70%);background-size:260% 260%;animation:ccGlassSheen 8.5s ease-in-out infinite alternate}
+@keyframes ccGlassSheen{0%{background-position:0% 100%}100%{background-position:100% 0%}}
 .cc-card>*{position:relative;z-index:1}
-.cc-card:hover{border-color:rgba(255,255,255,0.34);box-shadow:inset 0 1px 1px rgba(255,255,255,0.6),inset 0 0 40px rgba(255,255,255,0.07),0 16px 46px rgba(0,0,0,0.34),0 0 36px rgba(${ccAcc},0.42),0 0 66px rgba(${ccAcc},0.18)}
-.cc-card.ld-vis{animation:ccCardReveal 0.78s steps(1,end) forwards}
-@keyframes ccCardReveal{0%{opacity:0;clip-path:inset(0 0 100% 0);filter:brightness(2.2) hue-rotate(35deg) saturate(1.6)}12%{opacity:1;clip-path:inset(0 0 60% 0);filter:brightness(1.6) hue-rotate(-25deg)}24%{clip-path:inset(46% 0 22% 0)}36%{clip-path:inset(6% 0 64% 0);filter:brightness(1.35) hue-rotate(18deg)}50%{clip-path:inset(0 0 4% 0);filter:brightness(1.15)}62%{clip-path:inset(36% 0 32% 0);opacity:0.5}72%{clip-path:inset(10% 0 0 0);opacity:1}84%{clip-path:inset(0 0 26% 0);filter:brightness(1.4) hue-rotate(-12deg)}100%{opacity:1;clip-path:none;filter:none}}
+.cc-card:hover{border-color:rgba(255,255,255,0.34);box-shadow:inset 0 1px 1px rgba(255,255,255,0.6),inset 0 0 48px rgba(255,255,255,0.07),0 16px 48px rgba(0,0,0,0.34),0 0 36px rgba(${ccAcc},0.42),0 0 66px rgba(${ccAcc},0.18)}
 .cc-wobble{animation:ccWaterWobble 0.7s ease-out}
 @keyframes ccWaterWobble{0%{transform:scale(1.02) skewX(-2deg)}18%{transform:scale(0.985) skewX(1.6deg)}38%{transform:scale(1.012) skewX(-1deg)}58%{transform:scale(0.997) skewX(0.6deg)}78%{transform:scale(1.005) skewX(-0.3deg)}100%{transform:scale(1) skewX(0)}}
 .cc-faq{border-radius:12px;transition:background 0.3s,box-shadow 0.3s}
@@ -3583,7 +3613,7 @@ html{scroll-behavior:smooth}
           <div className="cc-grid" style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:16}}>
             {whyFeats.map((f,i)=><div key={i} className="cc-card" onMouseMove={ccCardMove} onMouseLeave={ccCardLeave} onMouseDown={ccCardWobble} style={{borderRadius:16,padding:"22px 20px"}}>
               <div style={{width:46,height:46,borderRadius:12,background:`rgba(${acc},0.12)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,marginBottom:14}}>{f.icon}</div>
-              <div style={{fontSize:15,fontWeight:700,color:txt,marginBottom:7}}>{f.t}</div>
+              <ScrambleText as="div" text={f.t} frames={18} speed={34} style={{fontSize:15,fontWeight:700,color:txt,marginBottom:7}}/>
               <p style={{fontSize:12.5,color:sub,margin:0,lineHeight:1.7}}>{f.d}</p>
             </div>)}
           </div>
