@@ -2568,13 +2568,13 @@ html{scroll-behavior:smooth}
 .cc-gen-tog.cc-on .cc-gen-box{background:${accGenHex};border-color:${accGenHex};color:#fff}
 /* universal card glow + hover glow */
 /* Apple-style liquid glass: frosted, translucent, with two slowly drifting gloss layers (living water) */
-.cc-card{position:relative;border-radius:18px;background:linear-gradient(135deg,rgba(255,255,255,0.055),rgba(255,255,255,0.015) 50%,rgba(255,255,255,0.04));backdrop-filter:blur(16px) saturate(210%) brightness(1.18);-webkit-backdrop-filter:blur(16px) saturate(210%) brightness(1.18);border:1px solid rgba(255,255,255,0.20);box-shadow:inset 0 1px 1px rgba(255,255,255,0.42),inset 0 -1px 8px rgba(255,255,255,0.04),0 12px 40px rgba(0,0,0,0.26),0 0 16px rgba(${ccAcc},0.12);transition:transform 0.3s cubic-bezier(0.22,1,0.36,1),box-shadow 0.35s,border-color 0.35s}
-.cc-card::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;background:radial-gradient(120% 90% at 25% 18%,rgba(255,255,255,0.15),rgba(255,255,255,0.03) 42%,transparent 64%);background-size:200% 200%;animation:ccGlassDrift 11s ease-in-out infinite alternate}
+.cc-card{position:relative;border-radius:18px;background:linear-gradient(135deg,rgba(255,255,255,0.045),rgba(255,255,255,0.006) 50%,rgba(255,255,255,0.03));backdrop-filter:blur(7px) saturate(230%) brightness(1.24);-webkit-backdrop-filter:blur(7px) saturate(230%) brightness(1.24);border:1px solid rgba(255,255,255,0.28);box-shadow:inset 0 1px 1.5px rgba(255,255,255,0.62),inset 0 -1px 10px rgba(255,255,255,0.06),inset 0 0 20px rgba(255,255,255,0.025),0 12px 40px rgba(0,0,0,0.22),0 0 18px rgba(${ccAcc},0.14);transition:transform 0.3s cubic-bezier(0.22,1,0.36,1),box-shadow 0.35s,border-color 0.35s}
+.cc-card::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;background:radial-gradient(120% 90% at 25% 16%,rgba(255,255,255,0.13),rgba(255,255,255,0.02) 44%,transparent 66%);background-size:200% 200%;animation:ccGlassDrift 11s ease-in-out infinite alternate}
 @keyframes ccGlassDrift{0%{background-position:8% 6%}100%{background-position:80% 66%}}
-.cc-card::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;background:linear-gradient(115deg,transparent 32%,rgba(255,255,255,0.09) 47%,rgba(255,255,255,0.02) 55%,transparent 70%);background-size:260% 260%;animation:ccGlassSheen 8.5s ease-in-out infinite alternate}
+.cc-card::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;background:linear-gradient(115deg,transparent 28%,rgba(255,255,255,0.20) 46%,rgba(255,255,255,0.05) 54%,transparent 68%);background-size:260% 260%;animation:ccGlassSheen 8.5s ease-in-out infinite alternate}
 @keyframes ccGlassSheen{0%{background-position:0% 100%}100%{background-position:100% 0%}}
-.cc-card>*{position:relative;z-index:1;text-shadow:0 1px 10px rgba(0,0,0,0.4)}
-.cc-card:hover{border-color:rgba(255,255,255,0.32);box-shadow:inset 0 1px 1px rgba(255,255,255,0.55),inset 0 0 46px rgba(255,255,255,0.06),0 16px 48px rgba(0,0,0,0.32),0 0 36px rgba(${ccAcc},0.42),0 0 66px rgba(${ccAcc},0.18)}
+.cc-card>*{position:relative;z-index:1;text-shadow:0 1px 14px rgba(0,0,0,0.6),0 0 3px rgba(0,0,0,0.4)}
+.cc-card:hover{border-color:rgba(255,255,255,0.42);box-shadow:inset 0 1px 1.5px rgba(255,255,255,0.75),inset 0 0 40px rgba(255,255,255,0.07),0 16px 48px rgba(0,0,0,0.3),0 0 38px rgba(${ccAcc},0.45),0 0 66px rgba(${ccAcc},0.2)}
 .cc-wobble{animation:ccWaterWobble 0.7s ease-out}
 @keyframes ccWaterWobble{0%{transform:scale(1.02) skewX(-2deg)}18%{transform:scale(0.985) skewX(1.6deg)}38%{transform:scale(1.012) skewX(-1deg)}58%{transform:scale(0.997) skewX(0.6deg)}78%{transform:scale(1.005) skewX(-0.3deg)}100%{transform:scale(1) skewX(0)}}
 .cc-faq{border-radius:12px;transition:background 0.3s,box-shadow 0.3s}
@@ -3380,12 +3380,12 @@ html{scroll-behavior:smooth}
     // colourful "water" behind the glass — vivid drifting orbs (green-shifted in quantum mode)
     const orbCols=ccQuantum?["16,185,129","5,150,105","20,184,166","52,211,153"]:[T.accentRgb,"139,92,246","236,72,153","6,182,212"];
     const ccOrbs=[
-      {s:680,top:"-10%",left:"-8%",c:0,o:0.55,a:"ldOrb1 22s ease-in-out infinite"},
-      {s:540,top:"6%",right:"-6%",c:1,o:0.50,a:"ldOrb2 28s ease-in-out infinite"},
-      {s:500,top:"36%",left:"2%",c:2,o:0.46,a:"pgGlowPulse 9s ease-in-out infinite"},
-      {s:540,top:"58%",right:"4%",c:3,o:0.48,a:"ldOrb1 26s ease-in-out infinite 2s"},
-      {s:600,bottom:"-8%",left:"26%",c:0,o:0.50,a:"ldOrb2 32s ease-in-out infinite"},
-      {s:440,top:"30%",left:"46%",c:1,o:0.42,a:"pgGlowPulse 6s ease-in-out infinite 1s"},
+      {s:700,top:"-10%",left:"-8%",c:0,o:0.68,a:"ldOrb1 22s ease-in-out infinite"},
+      {s:560,top:"4%",right:"-6%",c:1,o:0.62,a:"ldOrb2 28s ease-in-out infinite"},
+      {s:520,top:"34%",left:"0%",c:2,o:0.58,a:"pgGlowPulse 9s ease-in-out infinite"},
+      {s:560,top:"56%",right:"2%",c:3,o:0.60,a:"ldOrb1 26s ease-in-out infinite 2s"},
+      {s:620,bottom:"-8%",left:"24%",c:0,o:0.62,a:"ldOrb2 32s ease-in-out infinite"},
+      {s:460,top:"28%",left:"45%",c:1,o:0.54,a:"pgGlowPulse 6s ease-in-out infinite 1s"},
     ];
     const whyFeats=[
       {icon:"🔒",t:"XChaCha20-Poly1305",d:"A modern authenticated stream cipher (via libsodium's secretstream). Its huge 192-bit nonce removes any nonce-reuse risk, and the whole stream is integrity-checked — tampering, truncation, or reordering all fail loudly instead of returning corrupt data."},
