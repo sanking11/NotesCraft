@@ -4,6 +4,7 @@ import { generateSalt, deriveKey, hashPassword, exportKey, importKey, generateTO
 import { createSyncAdapter } from "./sync.js";
 import { EncryptedStorage } from "./storage.js";
 import { qrEncode } from "./qrcode.js";
+import { encryptFile, decryptFile, isEncryptedFile, generatePassphrase, passphraseBits, FC_EXT } from "./filecrypt.js";
 
 /* ═══════════════════════════════════════════════════
    THEMES
@@ -556,7 +557,7 @@ function NeoFlipCard({w,h,rgb,x,y,r,f,d,dl,title,plain,enc,opacity=1,delay=0}){
 export default function NotesCraft(){
   const[authMode,setAuthMode]=useState("login");
   const[showLanding,setShowLanding]=useState(true);
-  const validInfoPages=["about","privacy","terms","password-manager","security-blog"];
+  const validInfoPages=["about","privacy","terms","password-manager","security-blog","cipher-craft"];
   const[infoPage,setInfoPage]=useState(()=>{const h=window.location.hash.replace("#","");if(h.startsWith("blog/"))return"security-blog";return validInfoPages.includes(h)?h:null});
   const[blogArticle,setBlogArticle]=useState(()=>{const h=window.location.hash.replace("#","");return h.startsWith("blog/")?h.slice(5):null});
   const[blogFullArticle,setBlogFullArticle]=useState(()=>window.location.hash.replace("#","").startsWith("blog/"));
@@ -653,6 +654,21 @@ export default function NotesCraft(){
   const[pgQrOpen,setPgQrOpen]=useState(false);
   const[pgQrErr,setPgQrErr]=useState("");
   const pgScrambleRef=React.useRef(null);
+  /* ── CipherCraft (file encryption) state ── */
+  const[ccFile,setCcFile]=useState(null);
+  const[ccDecryptMode,setCcDecryptMode]=useState(false);
+  const[ccPass,setCcPass]=useState("");
+  const[ccShowPass,setCcShowPass]=useState(false);
+  const[ccQuantum,setCcQuantum]=useState(false);
+  const[ccWords,setCcWords]=useState(6);
+  const[ccBusy,setCcBusy]=useState(false);
+  const[ccProgress,setCcProgress]=useState(0);
+  const[ccPhase,setCcPhase]=useState("");
+  const[ccResult,setCcResult]=useState(null);
+  const[ccErr,setCcErr]=useState("");
+  const[ccDrag,setCcDrag]=useState(false);
+  const[ccCopied,setCcCopied]=useState(false);
+  const ccFileInputRef=React.useRef(null);
   // Password Manager state
   const[pmCredentials,setPmCredentials]=useState([]);
   const[pmSearch,setPmSearch]=useState("");
@@ -2056,6 +2072,10 @@ export default function NotesCraft(){
   },[F]);
 
   // ─── Styles ───
+  // CipherCraft accent (green in quantum mode, theme accent otherwise) + glitch channel colors
+  const ccAcc=ccQuantum?"16,185,129":T.accentRgb;
+  const accGlitch1=`rgba(${ccAcc},0.9)`;
+  const accGlitch2="rgba(255,0,90,0.75)";
   const css=`@import url('${fontUrl}');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Roboto:wght@300;400;700&family=Open+Sans:wght@300;400;700&family=Lato:wght@300;400;700&family=Montserrat:wght@300;400;600;700&family=Poppins:wght@300;400;600;700&family=Raleway:wght@300;400;700&family=Nunito:wght@300;400;700&family=Playfair+Display:wght@400;700&family=Merriweather:wght@300;400;700&family=Source+Code+Pro:wght@400;600&family=Fira+Code:wght@400;600&family=Dancing+Script:wght@400;700&family=Pacifico&family=Caveat:wght@400;700&family=Oswald:wght@300;400;700&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
@@ -2365,6 +2385,38 @@ html{scroll-behavior:smooth}
 .lq-chip-btn{cursor:pointer;font-family:inherit;transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1),color 0.3s,border-color 0.3s,box-shadow 0.3s}
 .lq-chip-btn:hover{transform:scale(1.05);color:${T.accent};border-color:rgba(${T.accentRgb},0.5);box-shadow:inset 0 1px 0 rgba(255,255,255,0.3),0 4px 18px rgba(0,0,0,0.3),0 0 20px rgba(${T.accentRgb},0.25)}
 .lq-chip-btn:active{transform:scale(0.96)}
+/* ── CipherCraft ── */
+.cc-glitch{position:relative;display:inline-block}
+.cc-glitch::before,.cc-glitch::after{content:attr(data-text);position:absolute;left:0;top:0;width:100%;height:100%;background:inherit;overflow:hidden;pointer-events:none;clip-path:inset(0 0 0 0)}
+.cc-glitch::before{color:${accGlitch1};transform:translate(0);animation:ccGlitch1 3.2s infinite steps(1);opacity:0.85;mix-blend-mode:screen}
+.cc-glitch::after{color:${accGlitch2};animation:ccGlitch2 2.6s infinite steps(1);opacity:0.8;mix-blend-mode:screen}
+@keyframes ccGlitch1{0%,92%,100%{clip-path:inset(0 0 100% 0);transform:translate(0)}93%{clip-path:inset(8% 0 78% 0);transform:translate(-2px,0)}95%{clip-path:inset(40% 0 40% 0);transform:translate(2px,0)}97%{clip-path:inset(70% 0 12% 0);transform:translate(-1px,0)}}
+@keyframes ccGlitch2{0%,90%,100%{clip-path:inset(100% 0 0 0);transform:translate(0)}91%{clip-path:inset(75% 0 10% 0);transform:translate(2px,0)}94%{clip-path:inset(30% 0 55% 0);transform:translate(-2px,0)}98%{clip-path:inset(12% 0 80% 0);transform:translate(1px,0)}}
+.cc-hero-logo{animation:ccFloat 4.5s ease-in-out infinite}
+@keyframes ccFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.cc-ring{transform-origin:60px 60px;animation:ccSpin 14s linear infinite}
+@keyframes ccSpin{to{transform:rotate(360deg)}}
+.cc-hero-scan{animation:ccHeroScan 2.4s ease-in-out infinite}
+@keyframes ccHeroScan{0%,100%{transform:translateY(0);opacity:0.2}50%{transform:translateY(27px);opacity:0.9}}
+.cc-scan-line{animation:ccNavScan 2.2s ease-in-out infinite}
+@keyframes ccNavScan{0%,100%{transform:translateY(-9px);opacity:0.2}50%{transform:translateY(9px);opacity:0.9}}
+.cc-bit{animation:ccBit 1.6s ease-in-out infinite}
+.cc-bit-1{animation-delay:0.3s}.cc-bit-2{animation-delay:0.6s}
+@keyframes ccBit{0%,100%{opacity:0.15}50%{opacity:0.85}}
+.cc-dice{transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1),background 0.3s}
+.cc-dice:hover{transform:rotate(-18deg) scale(1.12)}
+.cc-dice:active{transform:rotate(360deg) scale(0.92);transition:transform 0.5s}
+.cc-dropzone:hover{border-color:rgba(${ccAcc},0.7)!important;background:rgba(${ccAcc},0.04)!important}
+.cc-encrypt-btn:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(${ccAcc},0.55),0 0 40px rgba(${ccAcc},0.25)!important}
+.cc-encrypt-btn:not(:disabled):active{transform:translateY(0) scale(0.99)}
+.cc-encrypt-btn::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(110deg,transparent,rgba(255,255,255,0.35),transparent);transform:skewX(-18deg);pointer-events:none;z-index:2;animation:ccSheen 3.5s ease-in-out infinite}
+@keyframes ccSheen{0%,100%{left:-60%}55%,70%{left:130%}}
+.cc-encrypting::after{animation:ccSheen 1s linear infinite}
+.cc-encrypting{animation:ccPulse 1.1s ease-in-out infinite}
+@keyframes ccPulse{0%,100%{box-shadow:0 8px 24px rgba(${ccAcc},0.4)}50%{box-shadow:0 8px 30px rgba(${ccAcc},0.7),0 0 44px rgba(${ccAcc},0.35)}}
+.cc-result{animation:ccPop 0.4s cubic-bezier(0.34,1.56,0.64,1) both}
+@keyframes ccPop{from{opacity:0;transform:scale(0.94) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@media(max-width:680px){.cc-grid{grid-template-columns:1fr!important}}
 @media(max-width:900px){.blog-hero-wrap{grid-template-columns:1fr!important;height:auto!important}.blog-hero-col{height:50vh}.blog-grid-wrap{grid-template-columns:repeat(2,1fr)!important}.blog-ov-left{display:none}.blog-ov-right{flex:0 0 100%}.blog-ov-hero{padding:28px 20px}}
 @media(max-width:560px){.blog-grid-wrap{grid-template-columns:1fr!important}}`;
 
@@ -3117,6 +3169,295 @@ html{scroll-behavior:smooth}
       </div>}
 
     </div>);
+  }
+
+  /* ═══════════ CIPHERCRAFT — File Encryption ═══════════ */
+  const ccReset=()=>{if(ccResult?.url)URL.revokeObjectURL(ccResult.url);setCcResult(null);setCcErr("");setCcProgress(0);setCcPhase("")};
+  const ccPickFile=async(file)=>{
+    if(!file)return;
+    if(ccResult?.url)URL.revokeObjectURL(ccResult.url);
+    setCcResult(null);setCcErr("");setCcProgress(0);setCcPhase("");
+    setCcFile(file);
+    try{const enc=await isEncryptedFile(file);setCcDecryptMode(enc);}catch{setCcDecryptMode(false);}
+  };
+  const ccClearFile=()=>{ccReset();setCcFile(null);setCcDecryptMode(false);if(ccFileInputRef.current)ccFileInputRef.current.value="";};
+  const ccGenPass=()=>{setCcPass(generatePassphrase(ccWords,{digit:true,symbol:true}));setCcShowPass(true);setCcCopied(false);};
+  const ccCopyPass=()=>{if(!ccPass)return;navigator.clipboard.writeText(ccPass).then(()=>{setCcCopied(true);setTimeout(()=>setCcCopied(false),1500)}).catch(()=>{});};
+  const ccRun=async()=>{
+    if(!ccFile||!ccPass||ccBusy)return;
+    if(ccResult?.url)URL.revokeObjectURL(ccResult.url);
+    setCcBusy(true);setCcErr("");setCcResult(null);setCcProgress(0);setCcPhase(ccDecryptMode?"Decrypting":"Encrypting");
+    try{
+      const onProgress=({phase,percent})=>{setCcPhase(phase);setCcProgress(percent);};
+      const out=ccDecryptMode
+        ?await decryptFile(ccFile,ccPass,{onProgress})
+        :await encryptFile(ccFile,ccPass,{quantum:ccQuantum,onProgress});
+      const url=URL.createObjectURL(out.blob);
+      setCcResult({url,name:out.name,size:out.blob.size,mode:ccDecryptMode?"decrypt":"encrypt"});
+    }catch(e){setCcErr((e&&e.message)||"Something went wrong.");}
+    finally{setCcBusy(false);}
+  };
+  if(infoPage==="cipher-craft"){
+    const fmtB=(n)=>{if(n<1024)return n+" B";if(n<1048576)return (n/1024).toFixed(1)+" KB";if(n<1073741824)return (n/1048576).toFixed(1)+" MB";return (n/1073741824).toFixed(2)+" GB";};
+    const ccStrength=ccPass?calcPwStrength(ccPass):null;
+    const ccBits=ccPass?passphraseBits(ccWords):0;
+    const acc=ccQuantum?"16,185,129":T.accentRgb;
+    const accHex=ccQuantum?"#10b981":T.accent;
+    const cardBg=T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.05)";
+    const sub="#8892a4";
+    const txt=T.dark?T.text:"#e2e8f0";
+    const whyFeats=[
+      {icon:"🔒",t:"AES-256-GCM",d:"Authenticated encryption — the same NIST standard that protects banking, TLS and government secrets. Tamper a single byte and decryption fails loudly."},
+      {icon:"🧠",t:"PBKDF2-SHA-512",d:"Your passphrase is stretched through 600K–1.2M hash rounds, making each brute-force guess astronomically expensive. Weak guesses simply can't keep up."},
+      {icon:"⚛️",t:"Quantum-Ready Mode",d:"AES-256 keeps ~128-bit strength even against Grover's algorithm. Quantum mode doubles the key-derivation work factor on top, for a post-quantum safety margin."},
+      {icon:"📡",t:"Nothing Uploaded",d:"There is no server. Encryption runs entirely in your browser tab via WebAssembly-class Web Crypto. Pull your network cable — it still works."},
+      {icon:"🗂️",t:"Any File, Any Size",d:"Files are streamed in 1 MiB chunks, so multi-gigabyte archives never have to load into memory all at once. Documents, photos, videos, backups — anything."},
+      {icon:"🎲",t:"Built-in Passphrase Forge",d:"Tap the dice to mint a high-entropy passphrase straight in the box — drawn from real hardware randomness, never a predictable formula."},
+      {icon:"🕵️",t:"Encrypted Filenames",d:"The original filename, size and type are encrypted inside the container too. A .ccx file leaks nothing about what's inside it."},
+      {icon:"♾️",t:"Free & Offline Forever",d:"No account, no email, no rate limits, no tracking, no ads. A static page with nothing to phone home — install it as a PWA and run it on a plane."}
+    ];
+    const cmpRows=[
+      ["Runs fully in-browser (no upload)","Yes","Sometimes","No"],
+      ["Authenticated encryption (tamper-proof)","AES-256-GCM","Varies","Often none"],
+      ["Key derivation hardening","PBKDF2-SHA-512 · up to 1.2M","Varies","Plain hash"],
+      ["Quantum-resistant mode","Yes","Rarely","No"],
+      ["Built-in passphrase generator","Yes","Rarely","No"],
+      ["Encrypted filename & metadata","Yes","Rarely","No"],
+      ["Streams large files (low memory)","Yes","Sometimes","No"],
+      ["Account / signup required","Never","Sometimes","Often"],
+      ["Price","Free forever","Freemium","Paid"]
+    ];
+    const faqs=[
+      ["Is it really all in my browser?","Yes. Every byte is encrypted and decrypted locally using your browser's built-in Web Crypto engine. Your file and passphrase are never transmitted. You can switch your device to airplane mode before encrypting and it will still work — proof that nothing leaves the tab."],
+      ["What if I forget my passphrase?","Then the file is gone, and that is the point. There is no backdoor, no recovery key and no master password. Strong encryption means not even we can help — so use the built-in generator and store the passphrase somewhere safe."],
+      ["What is a .ccx file and how do I open it?","A .ccx file is a CipherCraft container. It starts with the bytes \"CCRYPT\", holding your data sealed with AES-256-GCM and your encrypted filename. To open one, drop it back into CipherCraft and enter the passphrase it was locked with — the tool auto-detects it and decrypts back to the original file, all in your browser."],
+      ["Why AES-256-GCM and PBKDF2-SHA-512?","AES-256-GCM is hardware-accelerated on virtually every modern CPU, so it's both extremely fast and authenticated (it detects tampering). PBKDF2-HMAC-SHA-512 is a FIPS-approved key-derivation function available natively in every browser — no fragile third-party crypto to ship. Together they give you audited, standards-based security with zero external dependencies."],
+      ["How is this quantum-resistant?","Symmetric ciphers like AES are not broken by quantum computers the way RSA is. Grover's algorithm only square-roots the search space, so AES-256 still offers about 128 bits of security against a quantum attacker — comfortably beyond reach. Quantum mode additionally doubles the PBKDF2 iteration count to widen the margin against future hardware."],
+      ["Should I use the passphrase generator?","We recommend it. Tap the dice and it builds a multi-word passphrase chosen with your browser's cryptographic random generator. Words are far easier to remember and type than random symbols, while still delivering strong entropy — and a weak passphrase is the one real way to undermine otherwise unbreakable encryption."],
+      ["Is it free, and how?","Completely free, forever. CipherCraft is a static page with no servers to run and nothing to monetize. No ads, no tracking, no paid tier, no asterisk."]
+    ];
+    return(
+      <div style={{width:"100%",height:"100vh",overflowY:"auto",overflowX:"hidden",background:T.dark?T.bg:"#0a0a12",color:txt,fontFamily:`${F.body},sans-serif`,position:"relative"}}>
+        <style>{css}</style>
+        {/* ambient background */}
+        <div style={{position:"fixed",inset:0,zIndex:0,overflow:"hidden",pointerEvents:"none"}}>
+          <div style={{position:"absolute",width:620,height:620,borderRadius:"50%",background:`radial-gradient(circle,rgba(${acc},0.22) 0%,transparent 70%)`,filter:"blur(70px)",top:"-12%",left:"-12%",animation:"ldOrb1 24s ease-in-out infinite",transition:"background 0.8s"}}/>
+          <div style={{position:"absolute",width:520,height:520,borderRadius:"50%",background:ccQuantum?"radial-gradient(circle,rgba(16,185,129,0.18) 0%,transparent 70%)":"radial-gradient(circle,rgba(139,92,246,0.2) 0%,transparent 70%)",filter:"blur(60px)",bottom:"-8%",right:"-10%",animation:"ldOrb2 30s ease-in-out infinite",transition:"background 0.8s"}}/>
+        </div>
+
+        {/* top nav */}
+        <nav className="lq-bar" style={{position:"fixed",top:0,left:0,right:0,zIndex:100,padding:"14px 40px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+          <div style={{display:"flex",alignItems:"center",gap:12,cursor:"pointer"}} onClick={()=>{ccClearFile();setInfoPage(null);}}>
+            <div className="cc-logo-mark" style={{width:40,height:40,position:"relative",flexShrink:0}}>
+              <svg viewBox="0 0 48 48" width={40} height={40} style={{display:"block",filter:`drop-shadow(0 0 8px rgba(${acc},0.6))`}}>
+                <defs><linearGradient id="ccNavG" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor={accHex}/><stop offset="100%" stopColor={T.accent2||accHex}/></linearGradient></defs>
+                <rect x="10" y="21" width="28" height="20" rx="4" fill="none" stroke="url(#ccNavG)" strokeWidth="2.5"/>
+                <path d="M15 21v-5a9 9 0 0 1 18 0v5" fill="none" stroke="url(#ccNavG)" strokeWidth="2.5"/>
+                <circle cx="24" cy="29" r="2.6" fill={accHex}/><rect x="22.8" y="30.5" width="2.4" height="6" rx="1.2" fill={accHex}/>
+                <line className="cc-scan-line" x1="12" y1="31" x2="36" y2="31" stroke={accHex} strokeWidth="1.4" opacity="0.8"/>
+              </svg>
+            </div>
+            <div style={{display:"flex",flexDirection:"column",gap:1}}>
+              <span className="cc-glitch" data-text="CIPHERCRAFT" style={{fontSize:19,fontWeight:800,letterSpacing:3,fontFamily:`${F.heading},sans-serif`,color:txt,lineHeight:1.1}}>CIPHERCRAFT</span>
+              <span style={{fontSize:9,fontWeight:600,letterSpacing:1.4,color:accHex,fontFamily:`${F.body},sans-serif`}}>Seal Anything · Trust No Server</span>
+            </div>
+          </div>
+          <button onClick={()=>{ccClearFile();setInfoPage(null);}} style={{background:`rgba(${acc},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${acc},0.4)`,borderRadius:8,padding:"8px 20px",color:txt,fontSize:13,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1}}>← Back</button>
+        </nav>
+
+        <div style={{position:"relative",zIndex:1,maxWidth:920,margin:"0 auto",padding:"110px 24px 70px"}}>
+          {/* HERO */}
+          <div className="ld-section" style={{textAlign:"center",marginBottom:36}}>
+            <div className="cc-hero-logo" style={{display:"flex",justifyContent:"center",marginBottom:18}}>
+              <svg viewBox="0 0 120 120" width={108} height={108} style={{display:"block"}}>
+                <defs>
+                  <linearGradient id="ccHeroG" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor={accHex}/><stop offset="100%" stopColor={T.accent2||accHex}/></linearGradient>
+                  <filter id="ccHeroGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                </defs>
+                <circle cx="60" cy="60" r="52" fill="none" stroke={`rgba(${acc},0.18)`} strokeWidth="1.5" strokeDasharray="4 6" className="cc-ring"/>
+                <circle cx="60" cy="60" r="44" fill="none" stroke={`rgba(${acc},0.12)`} strokeWidth="1"/>
+                <g filter="url(#ccHeroGlow)">
+                  <rect x="40" y="56" width="40" height="30" rx="6" fill="none" stroke="url(#ccHeroG)" strokeWidth="3"/>
+                  <path d="M47 56v-8a13 13 0 0 1 26 0v8" fill="none" stroke="url(#ccHeroG)" strokeWidth="3"/>
+                  <circle cx="60" cy="68" r="3.6" fill={accHex}/><rect x="58.3" y="70" width="3.4" height="9" rx="1.7" fill={accHex}/>
+                </g>
+                {/* scanning encrypt line */}
+                <rect className="cc-hero-scan" x="40" y="56" width="40" height="3" fill={accHex} opacity="0.85"/>
+                {/* glitch bits */}
+                {[0,1,2,3,4,5].map(i=><text key={i} x={26+i*13} y={26} fontSize="7" fill={accHex} opacity="0.7" className={`cc-bit cc-bit-${i%3}`} style={{fontFamily:"monospace"}}>{i%2?"01":"10"}</text>)}
+              </svg>
+            </div>
+            <div style={{fontSize:11,fontWeight:700,color:accHex,letterSpacing:3,marginBottom:14,textTransform:"uppercase"}}>— Free Forever · Zero Upload · Quantum-Ready —</div>
+            <h1 style={{fontSize:"clamp(28px,5vw,52px)",fontWeight:900,fontFamily:`${F.heading},sans-serif`,color:txt,lineHeight:1.08,margin:"0 0 18px",letterSpacing:"-0.5px"}}>Encrypt any file.<br/><span style={{background:`linear-gradient(135deg,${accHex},${T.accent2||accHex})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Right in your browser.</span></h1>
+            <p style={{fontSize:16,color:sub,maxWidth:560,margin:"0 auto",lineHeight:1.7}}>Drop a file, set a passphrase, done. Everything happens <strong style={{color:txt}}>inside your browser</strong>, so your files and password <strong style={{color:txt}}>never touch a server</strong>. No account, no catch, free for life.</p>
+          </div>
+
+          {/* TOOL CARD */}
+          <div className="cc-tool" style={{background:cardBg,backdropFilter:"blur(32px)",WebkitBackdropFilter:"blur(32px)",border:`2px solid rgba(${acc},${ccDrag?0.9:0.5})`,borderRadius:24,padding:"26px 24px",boxShadow:`0 16px 60px rgba(0,0,0,0.4),0 0 40px rgba(${acc},0.15),inset 0 1px 0 rgba(255,255,255,0.06)`,position:"relative",overflow:"hidden",transition:"border-color 0.3s,box-shadow 0.6s"}}>
+            {/* mode badge */}
+            <div style={{display:"flex",justifyContent:"center",marginBottom:18}}>
+              <span className="lq-chip" style={{color:accHex,borderColor:`rgba(${acc},0.4)`,fontWeight:700,letterSpacing:1.5}}>{ccDecryptMode?"🔓 DECRYPT MODE":"🔐 ENCRYPT MODE"}</span>
+            </div>
+
+            {/* dropzone */}
+            <input ref={ccFileInputRef} type="file" style={{display:"none"}} onChange={e=>{const f=e.target.files&&e.target.files[0];if(f)ccPickFile(f);}}/>
+            {!ccFile?(
+              <div className={`cc-dropzone${ccDrag?" cc-drag":""}`}
+                onClick={()=>ccFileInputRef.current&&ccFileInputRef.current.click()}
+                onDragOver={e=>{e.preventDefault();setCcDrag(true);}}
+                onDragLeave={e=>{e.preventDefault();setCcDrag(false);}}
+                onDrop={e=>{e.preventDefault();setCcDrag(false);const f=e.dataTransfer.files&&e.dataTransfer.files[0];if(f)ccPickFile(f);}}
+                style={{border:`2px dashed rgba(${acc},${ccDrag?0.9:0.35})`,borderRadius:16,padding:"38px 20px",textAlign:"center",cursor:"pointer",background:ccDrag?`rgba(${acc},0.08)`:"transparent",transition:"all 0.25s"}}>
+                <div style={{fontSize:38,marginBottom:10,filter:`drop-shadow(0 4px 14px rgba(${acc},0.4))`}}>📁</div>
+                <div style={{fontSize:15,fontWeight:700,color:txt,marginBottom:4}}>Drop a file here, or click to browse</div>
+                <div style={{fontSize:12,color:sub}}>Any file type · encrypt to <strong style={{color:accHex}}>.ccx</strong> or drop a <strong style={{color:accHex}}>.ccx</strong> to decrypt</div>
+              </div>
+            ):(
+              <div style={{display:"flex",alignItems:"center",gap:12,padding:"14px 16px",borderRadius:14,background:`rgba(${acc},0.06)`,border:`1px solid rgba(${acc},0.2)`,marginBottom:4}}>
+                <div style={{fontSize:26,flexShrink:0}}>{ccDecryptMode?"🔒":"📄"}</div>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontSize:14,fontWeight:700,color:txt,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{ccFile.name}</div>
+                  <div style={{fontSize:11,color:sub}}>{fmtB(ccFile.size)}</div>
+                </div>
+                <span className="lq-chip" style={{color:accHex,borderColor:`rgba(${acc},0.4)`,fontWeight:700,fontSize:10}}>{ccDecryptMode?"WILL DECRYPT":"WILL ENCRYPT"}</span>
+                <button onClick={ccClearFile} title="Remove" style={{background:"none",border:"none",color:sub,cursor:"pointer",fontSize:18,padding:4,lineHeight:1}}>✕</button>
+              </div>
+            )}
+
+            {/* passphrase */}
+            <div style={{marginTop:18}}>
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
+                <label style={{fontSize:12,fontWeight:600,color:txt}}>Passphrase</label>
+                {!ccDecryptMode&&<div style={{display:"flex",alignItems:"center",gap:8}}>
+                  <span style={{fontSize:10,color:sub}}>Words</span>
+                  <input type="range" min={4} max={12} value={ccWords} onChange={e=>setCcWords(+e.target.value)} style={{width:90,accentColor:accHex}}/>
+                  <span style={{fontSize:11,fontWeight:700,color:accHex,width:16}}>{ccWords}</span>
+                </div>}
+              </div>
+              <div style={{display:"flex",alignItems:"center",gap:8,padding:"4px 6px 4px 14px",borderRadius:12,background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.06)",border:`1px solid rgba(${acc},0.25)`}}>
+                <input type={ccShowPass?"text":"password"} value={ccPass} onChange={e=>setCcPass(e.target.value)} placeholder="Enter a strong passphrase" autoComplete="off"
+                  style={{flex:1,minWidth:0,background:"transparent",border:"none",outline:"none",color:txt,fontSize:14,fontFamily:`${F.mono||"monospace"},monospace`,padding:"8px 0"}}/>
+                {!ccDecryptMode&&<button onClick={ccGenPass} title="Generate passphrase" className="cc-dice" style={{background:`rgba(${acc},0.12)`,border:`1px solid rgba(${acc},0.3)`,borderRadius:8,width:34,height:34,cursor:"pointer",color:accHex,fontSize:15,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>🎲</button>}
+                <button onClick={ccCopyPass} title="Copy" style={{background:"none",border:"none",cursor:"pointer",color:ccCopied?accHex:sub,fontSize:15,width:30,height:30,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{ccCopied?"✓":"⧉"}</button>
+                <button onClick={()=>setCcShowPass(s=>!s)} title="Show/hide" style={{background:"none",border:"none",cursor:"pointer",color:sub,fontSize:15,width:30,height:30,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginRight:4}}>{ccShowPass?"🙈":"👁"}</button>
+              </div>
+              {/* strength */}
+              {ccPass&&!ccDecryptMode&&ccStrength&&<div style={{marginTop:8}}>
+                <div style={{display:"flex",justifyContent:"space-between",fontSize:10.5,marginBottom:4}}>
+                  <span style={{color:ccStrength.color,fontWeight:700}}>Strength: {ccStrength.label}</span>
+                  <span style={{color:sub}}>≈ {ccStrength.bits} bits{ccBits?` · forge: ~${ccBits} bits`:""}</span>
+                </div>
+                <div style={{height:4,borderRadius:2,background:"rgba(255,255,255,0.08)",overflow:"hidden"}}><div style={{height:"100%",width:`${ccStrength.percent}%`,background:ccStrength.color,borderRadius:2,transition:"width 0.4s,background 0.4s"}}/></div>
+              </div>}
+            </div>
+
+            {/* quantum toggle */}
+            {!ccDecryptMode&&<div onClick={()=>setCcQuantum(q=>!q)} style={{marginTop:16,display:"flex",alignItems:"center",gap:12,padding:"12px 14px",borderRadius:12,background:ccQuantum?"rgba(16,185,129,0.08)":T.dark?"rgba(255,255,255,0.03)":"rgba(255,255,255,0.04)",border:`1px solid rgba(${acc},0.2)`,cursor:"pointer",transition:"all 0.3s"}}>
+              <div style={{fontSize:20}}>⚛️</div>
+              <div style={{flex:1}}>
+                <div style={{fontSize:13,fontWeight:700,color:txt}}>Quantum-Resistant Mode</div>
+                <div style={{fontSize:11,color:sub}}>Doubles key-derivation work (1.2M rounds) for a post-quantum safety margin. Slightly slower.</div>
+              </div>
+              <div style={{width:42,height:24,borderRadius:12,background:ccQuantum?"#10b981":"rgba(255,255,255,0.15)",position:"relative",transition:"background 0.3s",flexShrink:0}}>
+                <div style={{width:18,height:18,borderRadius:"50%",background:"#fff",position:"absolute",top:3,left:ccQuantum?21:3,transition:"left 0.3s",boxShadow:"0 1px 4px rgba(0,0,0,0.4)"}}/>
+              </div>
+            </div>}
+
+            {/* action button */}
+            <button onClick={ccRun} disabled={!ccFile||!ccPass||ccBusy}
+              className={`cc-encrypt-btn${ccBusy?" cc-encrypting":""}`}
+              style={{position:"relative",overflow:"hidden",width:"100%",marginTop:18,padding:"15px 0",borderRadius:14,border:"none",cursor:(!ccFile||!ccPass||ccBusy)?"not-allowed":"pointer",fontFamily:`${F.heading},sans-serif`,fontSize:15,fontWeight:800,letterSpacing:1,color:"#fff",opacity:(!ccFile||!ccPass)?0.5:1,background:`linear-gradient(135deg,${accHex},${T.accent2||accHex})`,boxShadow:`0 8px 24px rgba(${acc},0.4)`}}>
+              {ccBusy&&<div className="cc-prog-fill" style={{position:"absolute",inset:0,width:`${ccProgress}%`,background:"rgba(255,255,255,0.18)",transition:"width 0.2s",zIndex:0}}/>}
+              <span style={{position:"relative",zIndex:1,display:"inline-flex",alignItems:"center",gap:8}}>
+                {ccBusy?`${ccPhase}… ${ccProgress}%`:(ccDecryptMode?"🔓 Decrypt File":"🔐 Encrypt File")}
+              </span>
+            </button>
+
+            {ccErr&&<div style={{marginTop:14,padding:"12px 14px",borderRadius:12,background:"rgba(239,68,68,0.1)",border:"1px solid rgba(239,68,68,0.3)",color:"#fca5a5",fontSize:12.5,fontWeight:500,display:"flex",alignItems:"center",gap:8}}><span>⚠️</span>{ccErr}</div>}
+
+            {ccResult&&<div className="cc-result" style={{marginTop:16,padding:"18px 16px",borderRadius:14,background:`rgba(${acc},0.08)`,border:`1px solid rgba(${acc},0.35)`,textAlign:"center"}}>
+              <div style={{fontSize:30,marginBottom:6}}>{ccResult.mode==="encrypt"?"🔒":"✅"}</div>
+              <div style={{fontSize:14,fontWeight:700,color:txt,marginBottom:2}}>{ccResult.mode==="encrypt"?"File encrypted":"File decrypted"}</div>
+              <div style={{fontSize:11.5,color:sub,marginBottom:14,wordBreak:"break-all"}}>{ccResult.name} · {fmtB(ccResult.size)}</div>
+              <a href={ccResult.url} download={ccResult.name} style={{display:"inline-flex",alignItems:"center",gap:8,padding:"11px 26px",borderRadius:12,background:`linear-gradient(135deg,${accHex},${T.accent2||accHex})`,color:"#fff",fontSize:13,fontWeight:700,textDecoration:"none",boxShadow:`0 6px 20px rgba(${acc},0.4)`}}>⬇ Download {ccResult.mode==="encrypt"?".ccx file":"file"}</a>
+            </div>}
+
+            <div style={{marginTop:16,textAlign:"center",fontSize:11.5,color:accHex,display:"flex",alignItems:"center",justifyContent:"center",gap:6}}><span>🔐</span> No upload. Your file never leaves your device.</div>
+          </div>
+
+          {/* trust pills */}
+          <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:10,margin:"28px 0 8px"}}>
+            {["✓ Nothing uploaded","✓ No account","✓ Works offline","✓ AES-256-GCM","✓ Quantum-ready","✓ Open math"].map((p,i)=><span key={i} className="lq-chip" style={{color:sub,fontSize:11}}>{p}</span>)}
+          </div>
+
+          {/* WHY section */}
+          <div className="ld-section" style={{marginTop:64,textAlign:"center"}}>
+            <div style={{fontSize:10,fontWeight:700,color:accHex,letterSpacing:3,marginBottom:8,textTransform:"uppercase"}}>Built Different</div>
+            <h2 style={{fontSize:"clamp(22px,4vw,34px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:txt,margin:"0 0 6px"}}>Why people use CipherCraft</h2>
+            <p style={{fontSize:14,color:sub,margin:"0 0 28px"}}>Everything you need. Nothing you don't.</p>
+          </div>
+          <div className="cc-grid" style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:16}}>
+            {whyFeats.map((f,i)=><div key={i} className="ld-section" style={{background:cardBg,border:`1px solid rgba(${acc},0.15)`,borderRadius:16,padding:"22px 20px",boxShadow:`inset 0 1px 0 rgba(255,255,255,0.04)`}}>
+              <div style={{width:46,height:46,borderRadius:12,background:`rgba(${acc},0.12)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,marginBottom:14}}>{f.icon}</div>
+              <div style={{fontSize:15,fontWeight:700,color:txt,marginBottom:7}}>{f.t}</div>
+              <p style={{fontSize:12.5,color:sub,margin:0,lineHeight:1.7}}>{f.d}</p>
+            </div>)}
+          </div>
+
+          {/* COMPARISON */}
+          <div className="ld-section" style={{marginTop:64,textAlign:"center"}}>
+            <div style={{fontSize:10,fontWeight:700,color:accHex,letterSpacing:3,marginBottom:8,textTransform:"uppercase"}}>Head to Head</div>
+            <h2 style={{fontSize:"clamp(22px,4vw,34px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:txt,margin:"0 0 28px"}}>How it compares</h2>
+          </div>
+          <div className="ld-section" style={{overflowX:"auto",background:cardBg,border:`1px solid rgba(${acc},0.15)`,borderRadius:16,padding:"6px 6px"}}>
+            <table style={{width:"100%",borderCollapse:"collapse",fontSize:12.5,minWidth:480}}>
+              <thead><tr>
+                <th style={{textAlign:"left",padding:"14px 14px",color:sub,fontWeight:600}}>Capability</th>
+                <th style={{padding:"14px 10px",color:accHex,fontWeight:800,fontFamily:`${F.heading},sans-serif`}}>CipherCraft</th>
+                <th style={{padding:"14px 10px",color:sub,fontWeight:600}}>Browser tools</th>
+                <th style={{padding:"14px 10px",color:sub,fontWeight:600}}>Desktop apps</th>
+              </tr></thead>
+              <tbody>
+                {cmpRows.map((r,i)=><tr key={i} style={{borderTop:`1px solid rgba(${acc},0.1)`}}>
+                  <td style={{textAlign:"left",padding:"12px 14px",color:txt}}>{r[0]}</td>
+                  <td style={{padding:"12px 10px",textAlign:"center",color:accHex,fontWeight:700}}>{r[1]}</td>
+                  <td style={{padding:"12px 10px",textAlign:"center",color:sub}}>{r[2]}</td>
+                  <td style={{padding:"12px 10px",textAlign:"center",color:sub}}>{r[3]}</td>
+                </tr>)}
+              </tbody>
+            </table>
+          </div>
+
+          {/* ALGORITHM note */}
+          <div className="ld-section" style={{marginTop:40,background:`linear-gradient(135deg,rgba(${acc},0.08),rgba(${acc},0.02))`,border:`1px solid rgba(${acc},0.2)`,borderRadius:16,padding:"24px 22px"}}>
+            <h3 style={{fontSize:16,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:txt,margin:"0 0 10px",display:"flex",alignItems:"center",gap:8}}>🧪 The cryptography, briefly</h3>
+            <p style={{fontSize:13,color:sub,lineHeight:1.8,margin:"0 0 8px"}}>CipherCraft deliberately builds on the algorithms your browser already ships and your CPU already accelerates — no exotic third-party crypto to audit or trust. Encryption is <strong style={{color:txt}}>AES-256-GCM</strong>, an authenticated cipher: it both hides your data and detects tampering. Keys come from your passphrase via <strong style={{color:txt}}>PBKDF2-HMAC-SHA-512</strong> at 600K–1.2M iterations, so even a short passphrase is expensive to attack.</p>
+            <p style={{fontSize:13,color:sub,lineHeight:1.8,margin:0}}>Every file gets a fresh random salt and a unique IV per chunk, so identical files never produce identical ciphertext and an IV is never reused. The result: standards-based, hardware-fast, fully-offline encryption with zero dependencies — auditable by anyone.</p>
+          </div>
+
+          {/* FAQ */}
+          <div className="ld-section" style={{marginTop:64,textAlign:"center"}}>
+            <div style={{fontSize:10,fontWeight:700,color:accHex,letterSpacing:3,marginBottom:8,textTransform:"uppercase"}}>FAQ</div>
+            <h2 style={{fontSize:"clamp(22px,4vw,34px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:txt,margin:"0 0 6px"}}>Good things to know</h2>
+            <p style={{fontSize:14,color:sub,margin:"0 0 28px"}}>Before you start.</p>
+          </div>
+          <div style={{display:"flex",flexDirection:"column",gap:0}}>
+            {faqs.map((q,i)=><div key={i} className="ld-section" style={{padding:"20px 4px",borderTop:i>0?`1px solid rgba(${acc},0.12)`:"none"}}>
+              <div style={{fontSize:15,fontWeight:700,color:txt,marginBottom:8}}>{q[0]}</div>
+              <p style={{fontSize:13.5,color:sub,lineHeight:1.8,margin:0}}>{q[1]}</p>
+            </div>)}
+          </div>
+
+          {/* footer cta */}
+          <div className="ld-section" style={{marginTop:56,textAlign:"center",padding:"36px 20px",borderRadius:20,background:`linear-gradient(135deg,rgba(${acc},0.1),rgba(${acc},0.03))`,border:`1px solid rgba(${acc},0.22)`}}>
+            <div style={{fontSize:30,marginBottom:10}}>🛡️</div>
+            <h3 style={{fontSize:20,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:txt,margin:"0 0 8px"}}>Your files. Your keys. Your device.</h3>
+            <p style={{fontSize:13,color:sub,maxWidth:440,margin:"0 auto 18px",lineHeight:1.7}}>Scroll back up, drop a file, and seal it in seconds — part of the NotesCraft privacy suite alongside ShieldCraft and TechCraft.</p>
+            <button onClick={()=>window.scrollTo({top:0,behavior:"smooth"})} style={{padding:"12px 28px",borderRadius:12,border:"none",cursor:"pointer",fontFamily:`${F.heading},sans-serif`,fontSize:13,fontWeight:700,color:"#fff",background:`linear-gradient(135deg,${accHex},${T.accent2||accHex})`,boxShadow:`0 8px 24px rgba(${acc},0.4)`}}>↑ Encrypt a file</button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   /* ═══════════ INFO PAGES (About / Privacy / Terms) ═══════════ */
@@ -5495,6 +5836,7 @@ html{scroll-behavior:smooth}
             <a href="#features" className="ld-nav-btn" style={{color:"rgba(226,232,240,0.8)",fontSize:13,fontWeight:500,textDecoration:"none",fontFamily:"inherit"}}>Features</a>
             <a href="#pricing" className="ld-nav-btn" style={{color:"rgba(226,232,240,0.8)",fontSize:13,fontWeight:500,textDecoration:"none",fontFamily:"inherit"}}>Pricing</a>
             <button onClick={()=>setInfoPage("password-manager")} className="ld-nav-btn" style={{color:"rgba(226,232,240,0.8)",fontSize:13,fontWeight:500,background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>ShieldCraft</button>
+            <button onClick={()=>setInfoPage("cipher-craft")} className="ld-nav-btn" style={{color:"rgba(226,232,240,0.8)",fontSize:13,fontWeight:500,background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>CipherCraft</button>
             <button onClick={()=>setInfoPage("security-blog")} className="ld-nav-btn" style={{color:"rgba(226,232,240,0.8)",fontSize:13,fontWeight:500,background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>TechCraft</button>
             <button onClick={()=>goAuth("login")} className="ld-nav-btn" style={{background:`rgba(${T.accentRgb},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${T.accentRgb},0.4)`,borderRadius:8,padding:"8px 20px",color:T.dark?T.text:"#e2e8f0",fontSize:13,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1}}>Sign In</button>
           </div>
@@ -5678,6 +6020,7 @@ html{scroll-behavior:smooth}
             <button onClick={()=>setInfoPage("privacy")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Privacy</button>
             <button onClick={()=>setInfoPage("terms")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Terms</button>
             <button onClick={()=>setInfoPage("password-manager")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>ShieldCraft</button>
+            <button onClick={()=>setInfoPage("cipher-craft")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>CipherCraft</button>
             <button onClick={()=>setInfoPage("security-blog")} style={{fontSize:12,color:"#94a3b8",textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>TechCraft</button>
           </div>
           <p style={{fontSize:11,color:"#7a8898",letterSpacing:0.8,display:"flex",alignItems:"center",justifyContent:"center",gap:6,flexWrap:"wrap",lineHeight:2,margin:0}}>
@@ -5884,6 +6227,7 @@ html{scroll-behavior:smooth}
             <button onClick={()=>{setInfoPage("privacy");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Privacy</button>
             <button onClick={()=>{setInfoPage("terms");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>Terms</button>
             <button onClick={()=>{setInfoPage("password-manager");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>ShieldCraft</button>
+            <button onClick={()=>{setInfoPage("cipher-craft");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>CipherCraft</button>
             <button onClick={()=>{setInfoPage("security-blog");setShowLanding(true)}} style={{fontSize:11,color:T.dim,opacity:0.7,textDecoration:"none",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit"}}>TechCraft</button>
           </div>
           <p style={{fontSize:11,color:T.dim,fontFamily:`${F.body},sans-serif`,letterSpacing:0.8,display:"flex",alignItems:"center",justifyContent:"center",gap:6,flexWrap:"wrap",lineHeight:2,margin:0}}>
