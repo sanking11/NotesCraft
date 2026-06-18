@@ -682,6 +682,8 @@ export default function NotesCraft(){
   const[ccGenScrambling,setCcGenScrambling]=useState(false);
   const[ccGenCopied,setCcGenCopied]=useState(false);
   const ccGenScrambleRef=React.useRef(null);
+  const[ccBtnText,setCcBtnText]=useState("");
+  const ccProgressRef=React.useRef(0);ccProgressRef.current=ccProgress;
   // Password Manager state
   const[pmCredentials,setPmCredentials]=useState([]);
   const[pmSearch,setPmSearch]=useState("");
@@ -894,6 +896,17 @@ export default function NotesCraft(){
     },35);
     return()=>{if(ccGenScrambleRef.current)clearInterval(ccGenScrambleRef.current)};
   },[ccGenResult]);
+  // Encrypt/decrypt button — "text being encrypted" scramble while busy
+  useEffect(()=>{
+    if(!ccBusy){setCcBtnText("");return;}
+    const GLITCH="!<>-_\\/[]{}=+*^?#§$%01ABCDEF░▒▓";
+    const word=ccDecryptMode?"DECRYPTING":"ENCRYPTING";
+    const id=setInterval(()=>{
+      const reveal=Math.floor((ccProgressRef.current/100)*word.length);
+      setCcBtnText(word.split("").map((c,i)=>i<reveal?c:GLITCH[secRand(GLITCH.length)]).join(""));
+    },55);
+    return()=>clearInterval(id);
+  },[ccBusy,ccDecryptMode]);
 
   // Scramble animation for side card password generator
   useEffect(()=>{
@@ -2456,10 +2469,15 @@ html{scroll-behavior:smooth}
 .cc-result{animation:ccPop 0.4s cubic-bezier(0.34,1.56,0.64,1) both}
 @keyframes ccPop{from{opacity:0;transform:scale(0.94) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
 /* tool card glow */
-.cc-tool-glow{animation:ccToolGlow 4.5s ease-in-out infinite}
-@keyframes ccToolGlow{0%,100%{box-shadow:0 16px 60px rgba(0,0,0,0.4),0 0 26px rgba(${ccAcc},0.18),inset 0 1px 0 rgba(255,255,255,0.06)}50%{box-shadow:0 16px 72px rgba(0,0,0,0.45),0 0 52px rgba(${ccAcc},0.42),0 0 100px rgba(${ccAcc},0.16),inset 0 1px 0 rgba(255,255,255,0.09)}}
+.cc-tool-glow{animation:ccToolGlow 7s ease-in-out infinite}
+@keyframes ccToolGlow{0%,100%{box-shadow:0 16px 60px rgba(0,0,0,0.4),0 0 24px rgba(${ccAcc},0.22),0 0 50px rgba(${ccAcc},0.10),inset 0 1px 0 rgba(255,255,255,0.06)}50%{box-shadow:0 16px 64px rgba(0,0,0,0.42),0 0 34px rgba(${ccAcc},0.32),0 0 66px rgba(${ccAcc},0.15),inset 0 1px 0 rgba(255,255,255,0.08)}}
+/* inner elements — subtle base glow + stronger on hover/focus */
+.cc-glowbox{box-shadow:0 0 0 1px rgba(${ccAcc},0.04),0 0 14px rgba(${ccAcc},0.10);transition:box-shadow 0.3s,border-color 0.3s,transform 0.25s}
+.cc-glowbox:hover{border-color:rgba(${ccAcc},0.6)!important;box-shadow:0 0 0 1px rgba(${ccAcc},0.10),0 0 22px rgba(${ccAcc},0.32)}
+.cc-glowbox:focus-within{border-color:rgba(${ccAcc},0.65)!important;box-shadow:0 0 0 1px rgba(${ccAcc},0.14),0 0 26px rgba(${ccAcc},0.38)}
+.cc-qchip:hover{transform:translateY(-1px)}
 /* animated dropzone */
-.cc-dz{position:relative;overflow:hidden}
+.cc-dz{position:relative;overflow:hidden;box-shadow:0 0 18px rgba(${ccAcc},0.10),inset 0 0 26px rgba(${ccAcc},0.04);transition:box-shadow 0.3s,border-color 0.3s}
 .cc-dz-stripes{position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(${ccAcc},0.13) 0,rgba(${ccAcc},0.13) 10px,transparent 10px,transparent 20px);background-size:28.28px 28.28px;animation:ccStripes 1s linear infinite;pointer-events:none;opacity:0.55;transition:opacity 0.3s}
 @keyframes ccStripes{to{background-position:28.28px 0}}
 .cc-dz:hover .cc-dz-stripes{opacity:0.8}
@@ -2477,7 +2495,8 @@ html{scroll-behavior:smooth}
 .cc-dz-glow{animation:ccDzGlow 3s ease-in-out infinite}
 @keyframes ccDzGlow{0%,100%{filter:drop-shadow(0 0 6px rgba(${ccAcc},0.4))}50%{filter:drop-shadow(0 0 16px rgba(${ccAcc},0.8))}}
 /* encrypt/decrypt segmented toggle */
-.cc-seg{display:inline-flex;padding:4px;border-radius:12px;background:rgba(${ccAcc},0.06);border:1px solid rgba(${ccAcc},0.2);gap:4px}
+.cc-seg{display:inline-flex;padding:4px;border-radius:12px;background:rgba(${ccAcc},0.06);border:1px solid rgba(${ccAcc},0.2);gap:4px;box-shadow:0 0 14px rgba(${ccAcc},0.12);transition:box-shadow 0.3s}
+.cc-seg:hover{box-shadow:0 0 22px rgba(${ccAcc},0.28)}
 .cc-seg button{border:none;background:transparent;color:${T.dim};font-family:inherit;font-size:11.5px;font-weight:700;letter-spacing:1px;padding:7px 16px;border-radius:9px;cursor:pointer;transition:all 0.25s;display:flex;align-items:center;gap:6px}
 .cc-seg button.cc-seg-on{background:linear-gradient(135deg,rgba(${ccAcc},0.9),rgba(${ccAcc},0.55));color:#fff;box-shadow:0 2px 12px rgba(${ccAcc},0.45),0 0 18px rgba(${ccAcc},0.3)}
 .cc-seg button:not(.cc-seg-on):hover{color:${T.text};background:rgba(${ccAcc},0.08)}
@@ -3347,50 +3366,34 @@ html{scroll-behavior:smooth}
                 <line className="cc-scan-line" x1="12" y1="31" x2="36" y2="31" stroke={accHex} strokeWidth="1.4" opacity="0.8"/>
               </svg>
             </div>
-            <div style={{display:"flex",flexDirection:"column",gap:2}}>
-              <span className="cc-glitch" data-text="CIPHERCRAFT" style={{fontSize:19,fontWeight:800,letterSpacing:3,fontFamily:`${F.heading},sans-serif`,color:txt,lineHeight:1.2,filter:`drop-shadow(0 0 8px rgba(${acc},0.35))`}}>CIPHERCRAFT</span>
-              <span style={{fontSize:11,fontWeight:600,letterSpacing:1.2,color:accHex,fontFamily:`${F.heading},sans-serif`,lineHeight:1.1,textShadow:`0 0 10px rgba(${acc},0.5)`}}>Seal Anything · Trust No Server</span>
-              <span style={{fontSize:9.5,fontWeight:500,letterSpacing:1.5,color:"rgba(226,232,240,0.85)",fontFamily:`${F.body},sans-serif`,lineHeight:1.1,marginTop:1}}>Encrypt Everything, Reveal Nothing</span>
-            </div>
+            <span style={{fontSize:20,fontWeight:800,letterSpacing:3,fontFamily:`${F.heading},sans-serif`,background:`linear-gradient(135deg,${txt} 30%,${accHex})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",filter:`drop-shadow(0 0 8px rgba(${acc},0.3))`}}>CIPHERCRAFT</span>
           </div>
           <button onClick={()=>{ccClearFile();setInfoPage(null);}} style={{background:`rgba(${acc},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${acc},0.4)`,borderRadius:8,padding:"8px 20px",color:txt,fontSize:13,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1}}>← Back</button>
         </nav>
 
-        <div style={{position:"relative",zIndex:1,maxWidth:920,margin:"0 auto",padding:"68px 24px 70px"}}>
+        <div style={{position:"relative",zIndex:1,maxWidth:920,margin:"0 auto",padding:"52px 24px 70px"}}>
           {/* HERO */}
           <div className="ld-section" style={{textAlign:"center",marginBottom:14}}>
-            <div className="cc-hero-logo" style={{display:"flex",justifyContent:"center",marginBottom:8}}>
-              <svg viewBox="0 0 120 120" width={62} height={62} style={{display:"block"}}>
-                <defs>
-                  <linearGradient id="ccHeroG" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor={accHex}/><stop offset="100%" stopColor={T.accent2||accHex}/></linearGradient>
-                  <filter id="ccHeroGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-                </defs>
-                <circle cx="60" cy="60" r="52" fill="none" stroke={`rgba(${acc},0.18)`} strokeWidth="1.5" strokeDasharray="4 6" className="cc-ring"/>
-                <circle cx="60" cy="60" r="44" fill="none" stroke={`rgba(${acc},0.12)`} strokeWidth="1"/>
-                <g filter="url(#ccHeroGlow)">
-                  <rect x="40" y="56" width="40" height="30" rx="6" fill="none" stroke="url(#ccHeroG)" strokeWidth="3"/>
-                  <path d="M47 56v-8a13 13 0 0 1 26 0v8" fill="none" stroke="url(#ccHeroG)" strokeWidth="3"/>
-                  <circle cx="60" cy="68" r="3.6" fill={accHex}/><rect x="58.3" y="70" width="3.4" height="9" rx="1.7" fill={accHex}/>
-                </g>
-                {/* scanning encrypt line */}
-                <rect className="cc-hero-scan" x="40" y="56" width="40" height="3" fill={accHex} opacity="0.85"/>
-                {/* glitch bits */}
-                {[0,1,2,3,4,5].map(i=><text key={i} x={26+i*13} y={26} fontSize="7" fill={accHex} opacity="0.7" className={`cc-bit cc-bit-${i%3}`} style={{fontFamily:"monospace"}}>{i%2?"01":"10"}</text>)}
-              </svg>
-            </div>
             <div style={{fontSize:10.5,fontWeight:700,color:accHex,letterSpacing:3,marginBottom:10,textTransform:"uppercase"}}>— Free Forever · Zero Upload · Quantum-Ready —</div>
             <h1 style={{fontSize:"clamp(24px,4.2vw,42px)",fontWeight:900,fontFamily:`${F.heading},sans-serif`,lineHeight:1.1,margin:"0 0 12px",letterSpacing:"-0.5px"}}><span style={{color:txt}}>Encrypt any file. </span><span style={{color:accHex,textShadow:`0 0 24px rgba(${acc},0.5)`}}>Right in your browser.</span></h1>
             <p style={{fontSize:14.5,color:sub,maxWidth:520,margin:"0 auto",lineHeight:1.6}}>Drop a file, set a passphrase, done. Everything happens <strong style={{color:txt}}>inside your browser</strong>, so your files and password <strong style={{color:txt}}>never touch a server</strong>. No account, no catch, free for life.</p>
           </div>
 
           {/* TOOL CARD */}
-          <div className="cc-tool cc-tool-glow" style={{maxWidth:680,margin:"0 auto",background:cardBg,backdropFilter:"blur(32px)",WebkitBackdropFilter:"blur(32px)",border:`2px solid rgba(${acc},${ccDrag?0.95:0.5})`,borderRadius:26,padding:"34px 34px",position:"relative",overflow:"hidden",transition:"border-color 0.3s"}}>
-            {/* clickable mode toggle */}
-            <div style={{display:"flex",justifyContent:"center",marginBottom:18}}>
+          <div className="cc-tool cc-tool-glow" style={{maxWidth:760,margin:"0 auto",background:cardBg,backdropFilter:"blur(32px)",WebkitBackdropFilter:"blur(32px)",border:`2px solid rgba(${acc},${ccDrag?0.95:0.5})`,borderRadius:26,padding:"34px 36px",position:"relative",overflow:"hidden",transition:"border-color 0.3s"}}>
+            {/* top row: mode toggle + quantum switch */}
+            <div style={{display:"flex",alignItems:"center",justifyContent:"center",flexWrap:"wrap",gap:12,marginBottom:20}}>
               <div className="cc-seg" role="tablist">
                 <button className={!ccDecryptMode?"cc-seg-on":""} onClick={()=>{setCcDecryptMode(false);ccReset();}}>🔐 ENCRYPT</button>
                 <button className={ccDecryptMode?"cc-seg-on":""} onClick={()=>{setCcDecryptMode(true);ccReset();}}>🔓 DECRYPT</button>
               </div>
+              {!ccDecryptMode&&<div onClick={()=>setCcQuantum(q=>!q)} className={`cc-qchip cc-glowbox${ccQuantum?" cc-on":""}`} title="Quantum-Resistant Mode — doubles key-derivation work to 1.2M rounds for a post-quantum safety margin (slightly slower)" style={{display:"flex",alignItems:"center",gap:8,padding:"7px 12px",borderRadius:999,border:`1px solid rgba(${ccQuantum?"16,185,129":acc},0.4)`,background:ccQuantum?"rgba(16,185,129,0.12)":"transparent",cursor:"pointer"}}>
+                <span style={{fontSize:14,lineHeight:1}}>⚛️</span>
+                <span style={{fontSize:11,fontWeight:700,letterSpacing:0.5,color:ccQuantum?"#10b981":sub}}>Quantum</span>
+                <div className={`cc-switch${ccQuantum?" cc-on":""}`} style={{width:34,height:20,borderRadius:10,background:ccQuantum?"#10b981":"rgba(255,255,255,0.15)",position:"relative",flexShrink:0}}>
+                  <div style={{width:14,height:14,borderRadius:"50%",background:"#fff",position:"absolute",top:3,left:ccQuantum?17:3,transition:"left 0.3s",boxShadow:"0 1px 3px rgba(0,0,0,0.4)"}}/>
+                </div>
+              </div>}
             </div>
 
             {/* dropzone */}
@@ -3435,7 +3438,7 @@ html{scroll-behavior:smooth}
                 <label style={{fontSize:12,fontWeight:600,color:txt}}>Passphrase</label>
                 {!ccDecryptMode&&<button onClick={()=>setCcGenOpen(o=>!o)} style={{display:"flex",alignItems:"center",gap:6,background:ccGenOpen?`rgba(${acc},0.15)`:"transparent",border:`1px solid rgba(${acc},${ccGenOpen?0.4:0.2})`,borderRadius:8,padding:"5px 10px",color:accHex,fontSize:10.5,fontWeight:700,letterSpacing:0.5,cursor:"pointer",fontFamily:"inherit",transition:"all 0.25s"}}>🎲 Generator {ccGenOpen?"▲":"▼"}</button>}
               </div>
-              <div style={{display:"flex",alignItems:"center",gap:8,padding:"4px 6px 4px 14px",borderRadius:12,background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.06)",border:`1px solid rgba(${acc},0.25)`}}>
+              <div className="cc-glowbox" style={{display:"flex",alignItems:"center",gap:8,padding:"4px 6px 4px 14px",borderRadius:12,background:T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.06)",border:`1px solid rgba(${acc},0.25)`}}>
                 <input type={ccShowPass?"text":"password"} value={ccPass} onChange={e=>setCcPass(e.target.value)} placeholder="Enter a strong passphrase" autoComplete="off"
                   style={{flex:1,minWidth:0,background:"transparent",border:"none",outline:"none",color:txt,fontSize:14,fontFamily:`${F.mono||"monospace"},monospace`,padding:"8px 0"}}/>
                 {!ccDecryptMode&&<button onClick={()=>setCcGenOpen(o=>!o)} title="Open passphrase generator" className="cc-dice" style={{background:`rgba(${acc},0.12)`,border:`1px solid rgba(${acc},0.3)`,borderRadius:8,width:34,height:34,cursor:"pointer",color:accHex,fontSize:15,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>🎲</button>}
@@ -3504,25 +3507,13 @@ html{scroll-behavior:smooth}
               })()}
             </div>
 
-            {/* quantum toggle */}
-            {!ccDecryptMode&&<div onClick={()=>setCcQuantum(q=>!q)} className={`cc-qrow${ccQuantum?" cc-on":""}`} style={{marginTop:16,display:"flex",alignItems:"center",gap:12,padding:"12px 14px",borderRadius:12,background:ccQuantum?"rgba(16,185,129,0.08)":T.dark?"rgba(255,255,255,0.03)":"rgba(255,255,255,0.04)",border:`1px solid rgba(${acc},0.2)`,cursor:"pointer"}}>
-              <div style={{fontSize:20}}>⚛️</div>
-              <div style={{flex:1}}>
-                <div style={{fontSize:13,fontWeight:700,color:txt}}>Quantum-Resistant Mode</div>
-                <div style={{fontSize:11,color:sub}}>Doubles key-derivation work (1.2M rounds) for a post-quantum safety margin. Slightly slower.</div>
-              </div>
-              <div className={`cc-switch${ccQuantum?" cc-on":""}`} style={{width:42,height:24,borderRadius:12,background:ccQuantum?"#10b981":"rgba(255,255,255,0.15)",position:"relative",flexShrink:0}}>
-                <div style={{width:18,height:18,borderRadius:"50%",background:"#fff",position:"absolute",top:3,left:ccQuantum?21:3,transition:"left 0.3s",boxShadow:"0 1px 4px rgba(0,0,0,0.4)"}}/>
-              </div>
-            </div>}
-
             {/* action button */}
             <button onClick={ccRun} disabled={!ccFile||!ccPass||ccBusy}
               className={`cc-encrypt-btn${ccBusy?" cc-encrypting":""}`}
               style={{position:"relative",overflow:"hidden",width:"100%",marginTop:18,padding:"15px 0",borderRadius:14,border:"none",cursor:(!ccFile||!ccPass||ccBusy)?"not-allowed":"pointer",fontFamily:`${F.heading},sans-serif`,fontSize:15,fontWeight:800,letterSpacing:1,color:"#fff",opacity:(!ccFile||!ccPass)?0.5:1,background:`linear-gradient(135deg,${accHex},${T.accent2||accHex})`,boxShadow:`0 8px 24px rgba(${acc},0.4)`}}>
               {ccBusy&&<div className="cc-prog-fill" style={{position:"absolute",inset:0,width:`${ccProgress}%`,background:"rgba(255,255,255,0.18)",transition:"width 0.2s",zIndex:0}}/>}
-              <span style={{position:"relative",zIndex:1,display:"inline-flex",alignItems:"center",gap:8}}>
-                {ccBusy?`${ccPhase}… ${ccProgress}%`:(ccDecryptMode?"🔓 Decrypt File":"🔐 Encrypt File")}
+              <span style={{position:"relative",zIndex:1,display:"inline-flex",alignItems:"center",justifyContent:"center",gap:10}}>
+                {ccBusy?<><span style={{fontFamily:`${F.mono||"monospace"},monospace`,letterSpacing:3}}>{ccBtnText||"…"}</span><span style={{opacity:0.85,fontVariantNumeric:"tabular-nums"}}>{ccProgress}%</span></>:(ccDecryptMode?"🔓 Decrypt File":"🔐 Encrypt File")}
               </span>
             </button>
 
