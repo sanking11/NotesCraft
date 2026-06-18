@@ -699,6 +699,7 @@ export default function NotesCraft(){
   const[ccDrag,setCcDrag]=useState(false);
   const[ccCopied,setCcCopied]=useState(false);
   const ccFileInputRef=React.useRef(null);
+  const ccScrollRef=React.useRef(null);
   /* CipherCraft passphrase generator (ShieldCraft-style) */
   const[ccGenOpen,setCcGenOpen]=useState(false);
   const[ccGenMode,setCcGenMode]=useState("memorable");
@@ -2567,7 +2568,7 @@ html{scroll-behavior:smooth}
 .cc-gen-tog.cc-on .cc-gen-box{background:${accGenHex};border-color:${accGenHex};color:#fff}
 /* universal card glow + hover glow */
 /* Apple-style liquid glass: frosted, translucent, with two slowly drifting gloss layers (living water) */
-.cc-card{position:relative;border-radius:18px;background:linear-gradient(135deg,rgba(255,255,255,0.10),rgba(255,255,255,0.03) 45%,rgba(255,255,255,0.015) 62%,rgba(255,255,255,0.07));backdrop-filter:blur(22px) saturate(185%) brightness(1.1);-webkit-backdrop-filter:blur(22px) saturate(185%) brightness(1.1);border:1px solid rgba(255,255,255,0.22);box-shadow:inset 0 1px 1px rgba(255,255,255,0.5),inset 0 -2px 12px rgba(255,255,255,0.05),inset 0 0 40px rgba(255,255,255,0.04),0 12px 40px rgba(0,0,0,0.3),0 0 16px rgba(${ccAcc},0.1);transition:transform 0.3s cubic-bezier(0.22,1,0.36,1),box-shadow 0.35s,border-color 0.35s;transform-style:preserve-3d;will-change:transform}
+.cc-card{position:relative;border-radius:18px;background:linear-gradient(135deg,rgba(255,255,255,0.07),rgba(255,255,255,0.02) 48%,rgba(255,255,255,0.008) 64%,rgba(255,255,255,0.05));backdrop-filter:blur(17px) saturate(215%) brightness(1.14);-webkit-backdrop-filter:blur(17px) saturate(215%) brightness(1.14);border:1px solid rgba(255,255,255,0.22);box-shadow:inset 0 1px 1px rgba(255,255,255,0.5),inset 0 -2px 12px rgba(255,255,255,0.05),inset 0 0 40px rgba(255,255,255,0.03),0 12px 40px rgba(0,0,0,0.28),0 0 16px rgba(${ccAcc},0.1);transition:transform 0.3s cubic-bezier(0.22,1,0.36,1),box-shadow 0.35s,border-color 0.35s;transform-style:preserve-3d;will-change:transform}
 .cc-card::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;background:radial-gradient(120% 90% at 25% 18%,rgba(255,255,255,0.22),rgba(255,255,255,0.05) 40%,transparent 62%);background-size:200% 200%;animation:ccGlassDrift 11s ease-in-out infinite alternate}
 @keyframes ccGlassDrift{0%{background-position:8% 6%}100%{background-position:80% 66%}}
 .cc-card::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,0.12) 47%,rgba(255,255,255,0.03) 55%,transparent 70%);background-size:260% 260%;animation:ccGlassSheen 8.5s ease-in-out infinite alternate}
@@ -3376,6 +3377,16 @@ html{scroll-behavior:smooth}
     const cardBg=T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.05)";
     const sub="#8892a4";
     const txt=T.dark?T.text:"#e2e8f0";
+    // colourful "water" behind the glass — vivid drifting orbs (green-shifted in quantum mode)
+    const orbCols=ccQuantum?["16,185,129","5,150,105","20,184,166","52,211,153"]:[T.accentRgb,"139,92,246","236,72,153","6,182,212"];
+    const ccOrbs=[
+      {s:640,top:"-12%",left:"-10%",c:0,o:0.34,a:"ldOrb1 22s ease-in-out infinite"},
+      {s:480,top:"8%",right:"-8%",c:1,o:0.30,a:"ldOrb2 28s ease-in-out infinite"},
+      {s:440,top:"38%",left:"4%",c:2,o:0.26,a:"pgGlowPulse 9s ease-in-out infinite"},
+      {s:480,top:"60%",right:"6%",c:3,o:0.28,a:"ldOrb1 26s ease-in-out infinite 2s"},
+      {s:560,bottom:"-10%",left:"28%",c:0,o:0.30,a:"ldOrb2 32s ease-in-out infinite"},
+      {s:380,top:"30%",left:"48%",c:1,o:0.24,a:"pgGlowPulse 6s ease-in-out infinite 1s"},
+    ];
     const whyFeats=[
       {icon:"🔒",t:"AES-256-GCM",d:"The gold-standard authenticated cipher, hardware-accelerated on modern chips. It locks and integrity-checks your data in a single pass — change even one byte and decryption refuses to run rather than return corrupted output."},
       {icon:"🧠",t:"Argon2id Key Derivation",d:"The winner of the Password Hashing Competition and OWASP's top recommendation. It's memory-hard (64–256 MiB), so it crushes GPU and ASIC brute-force attacks that shrug off older KDFs like PBKDF2."},
@@ -3407,14 +3418,12 @@ html{scroll-behavior:smooth}
       ["Is it free, and how?","Completely free, forever. CipherCraft is a static page with no servers to run and nothing to monetize. No ads, no tracking, no paid tier, no asterisk."]
     ];
     return(
-      <div style={{width:"100%",height:"100vh",overflowY:"auto",overflowX:"hidden",background:T.dark?T.bg:"#0a0a12",color:txt,fontFamily:`${F.body},sans-serif`,position:"relative"}}>
+      <div ref={ccScrollRef} style={{width:"100%",height:"100vh",overflowY:"auto",overflowX:"hidden",background:T.dark?T.bg:"#0a0a12",color:txt,fontFamily:`${F.body},sans-serif`,position:"relative"}}>
         <style>{css}</style>
         {/* ambient background — canvas grid (quantum-aware) + drifting orbs */}
         <div style={{position:"fixed",inset:0,zIndex:0,overflow:"hidden",pointerEvents:"none"}}>
           <canvas ref={gridCvsRef} style={{position:"absolute",inset:0,width:"100%",height:"100%",opacity:0.9}}/>
-          <div style={{position:"absolute",width:620,height:620,borderRadius:"50%",background:`radial-gradient(circle,rgba(${acc},0.22) 0%,transparent 70%)`,filter:"blur(70px)",top:"-12%",left:"-12%",animation:"ldOrb1 24s ease-in-out infinite",transition:"background 0.8s"}}/>
-          <div style={{position:"absolute",width:520,height:520,borderRadius:"50%",background:ccQuantum?"radial-gradient(circle,rgba(16,185,129,0.18) 0%,transparent 70%)":"radial-gradient(circle,rgba(139,92,246,0.2) 0%,transparent 70%)",filter:"blur(60px)",bottom:"-8%",right:"-10%",animation:"ldOrb2 30s ease-in-out infinite",transition:"background 0.8s"}}/>
-          <div style={{position:"absolute",width:340,height:340,borderRadius:"50%",background:`radial-gradient(circle,rgba(${acc},0.16) 0%,transparent 65%)`,filter:"blur(50px)",top:"30%",left:"50%",transform:"translateX(-50%)",animation:"pgGlowPulse 5s ease-in-out infinite",transition:"background 0.8s"}}/>
+          {ccOrbs.map((o,i)=><div key={i} style={{position:"absolute",width:o.s,height:o.s,borderRadius:"50%",background:`radial-gradient(circle,rgba(${orbCols[o.c]},${o.o}) 0%,rgba(${orbCols[o.c]},${(o.o*0.35).toFixed(3)}) 38%,transparent 68%)`,filter:"blur(55px)",top:o.top,bottom:o.bottom,left:o.left,right:o.right,animation:o.a,transition:"background 0.8s"}}/>)}
         </div>
 
         {/* top nav */}
@@ -3655,9 +3664,9 @@ html{scroll-behavior:smooth}
             <h2 style={{fontSize:"clamp(22px,4vw,34px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:txt,margin:"0 0 6px"}}>Good things to know</h2>
             <p style={{fontSize:14,color:sub,margin:"0 0 28px"}}>Before you start.</p>
           </div>
-          <div style={{display:"flex",flexDirection:"column",gap:0}}>
-            {faqs.map((q,i)=><div key={i} className="ld-section cc-faq" style={{padding:"18px 14px",borderTop:i>0?`1px solid rgba(${acc},0.12)`:"none"}}>
-              <div style={{fontSize:15,fontWeight:700,color:txt,marginBottom:8}}>{q[0]}</div>
+          <div style={{display:"flex",flexDirection:"column",gap:14}}>
+            {faqs.map((q,i)=><div key={i} className="cc-card" onMouseMove={ccCardMove} onMouseLeave={ccCardLeave} onMouseDown={ccCardWobble} style={{borderRadius:16,padding:"20px 22px"}}>
+              <ScrambleText as="div" text={q[0]} frames={18} speed={34} style={{fontSize:15,fontWeight:700,color:txt,marginBottom:8}}/>
               <p style={{fontSize:13.5,color:sub,lineHeight:1.8,margin:0}}>{q[1]}</p>
             </div>)}
           </div>
@@ -3667,7 +3676,7 @@ html{scroll-behavior:smooth}
             <div style={{fontSize:30,marginBottom:10}}>🛡️</div>
             <h3 style={{fontSize:20,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:txt,margin:"0 0 8px"}}>Your files. Your keys. Your device.</h3>
             <p style={{fontSize:13,color:sub,maxWidth:440,margin:"0 auto 18px",lineHeight:1.7}}>Scroll back up, drop a file, and seal it in seconds — part of the NotesCraft privacy suite alongside ShieldCraft and TechCraft.</p>
-            <button onClick={()=>window.scrollTo({top:0,behavior:"smooth"})} style={{padding:"12px 28px",borderRadius:12,border:"none",cursor:"pointer",fontFamily:`${F.heading},sans-serif`,fontSize:13,fontWeight:700,color:"#fff",background:`linear-gradient(135deg,${accHex},${T.accent2||accHex})`,boxShadow:`0 8px 24px rgba(${acc},0.4)`}}>↑ Encrypt a file</button>
+            <button onClick={()=>ccScrollRef.current?.scrollTo({top:0,behavior:"smooth"})} style={{padding:"12px 28px",borderRadius:12,border:"none",cursor:"pointer",fontFamily:`${F.heading},sans-serif`,fontSize:13,fontWeight:700,color:"#fff",background:`linear-gradient(135deg,${accHex},${T.accent2||accHex})`,boxShadow:`0 8px 24px rgba(${acc},0.4)`}}>↑ Encrypt a file</button>
           </div>
         </div>
       </div>
