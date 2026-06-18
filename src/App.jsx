@@ -683,6 +683,7 @@ export default function NotesCraft(){
   const[ccGenCopied,setCcGenCopied]=useState(false);
   const ccGenScrambleRef=React.useRef(null);
   const[ccBtnText,setCcBtnText]=useState("");
+  const[ccIdleScramble,setCcIdleScramble]=useState("");
   const ccProgressRef=React.useRef(0);ccProgressRef.current=ccProgress;
   // Password Manager state
   const[pmCredentials,setPmCredentials]=useState([]);
@@ -907,6 +908,21 @@ export default function NotesCraft(){
     },55);
     return()=>clearInterval(id);
   },[ccBusy,ccDecryptMode]);
+  // Encrypt/decrypt button — glitch-scramble the label while the passphrase is being typed
+  useEffect(()=>{
+    if(ccBusy)return;
+    const target=ccDecryptMode?"Decrypt File":"Encrypt File";
+    if(!ccPass){setCcIdleScramble("");return;}
+    const GLITCH="!<>-_\\/[]{}=+*^?#01ABCDEF";
+    let frame=0;const total=14,len=target.length,revealed=new Array(len).fill(false);
+    const id=setInterval(()=>{
+      frame++;const rc=Math.floor((frame/total)*len);
+      for(let i=0;i<rc;i++)revealed[i]=true;
+      setCcIdleScramble(target.split("").map((c,i)=>c===" "?" ":(revealed[i]?c:GLITCH[secRand(GLITCH.length)])).join(""));
+      if(frame>=total){clearInterval(id);setCcIdleScramble(target);}
+    },35);
+    return()=>clearInterval(id);
+  },[ccPass,ccDecryptMode,ccBusy]);
 
   // Scramble animation for side card password generator
   useEffect(()=>{
@@ -2520,8 +2536,14 @@ html{scroll-behavior:smooth}
 .cc-gen-tog .cc-gen-box{width:16px;height:16px;border-radius:5px;border:1.5px solid rgba(${ccAcc},0.4);display:flex;align-items:center;justify-content:center;font-size:10px;transition:all 0.2s}
 .cc-gen-tog.cc-on .cc-gen-box{background:${accGenHex};border-color:${accGenHex};color:#fff}
 /* universal card glow + hover glow */
-.cc-card{border:1px solid rgba(${ccAcc},0.22);box-shadow:0 4px 22px rgba(0,0,0,0.22),0 0 16px rgba(${ccAcc},0.10),inset 0 1px 0 rgba(255,255,255,0.04);transition:transform 0.32s cubic-bezier(0.22,1,0.36,1),box-shadow 0.32s,border-color 0.32s}
-.cc-card:hover{transform:translateY(-5px);border-color:rgba(${ccAcc},0.65);box-shadow:0 12px 36px rgba(0,0,0,0.34),0 0 30px rgba(${ccAcc},0.42),0 0 60px rgba(${ccAcc},0.18),inset 0 1px 0 rgba(255,255,255,0.08)}
+.cc-card{position:relative;background:linear-gradient(135deg,rgba(255,255,255,0.09),rgba(255,255,255,0.03) 44%,rgba(255,255,255,0.018) 62%,rgba(255,255,255,0.06));backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid rgba(${ccAcc},0.22);box-shadow:0 4px 22px rgba(0,0,0,0.22),0 0 16px rgba(${ccAcc},0.10),inset 0 1px 0 rgba(255,255,255,0.20),inset 0 -1px 0 rgba(255,255,255,0.05);transition:transform 0.32s cubic-bezier(0.22,1,0.36,1),box-shadow 0.32s,border-color 0.32s;transform-style:preserve-3d;will-change:transform}
+.cc-card::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;background:linear-gradient(115deg,rgba(255,255,255,0.16) 0%,rgba(255,255,255,0.05) 26%,transparent 48%,rgba(255,255,255,0.03) 72%,rgba(255,255,255,0.10) 100%)}
+.cc-card>*{position:relative;z-index:1}
+.cc-card:hover{border-color:rgba(${ccAcc},0.65);box-shadow:0 14px 40px rgba(0,0,0,0.36),0 0 32px rgba(${ccAcc},0.45),0 0 64px rgba(${ccAcc},0.2),inset 0 1px 0 rgba(255,255,255,0.30),inset 0 -1px 0 rgba(255,255,255,0.06)}
+.cc-card.ld-vis{animation:ccCardGlitch 0.62s steps(1,end)}
+@keyframes ccCardGlitch{0%{clip-path:inset(0 0 0 0);filter:brightness(1.7) hue-rotate(20deg)}12%{clip-path:inset(0 0 66% 0)}24%{clip-path:inset(44% 0 26% 0);filter:brightness(1.3) hue-rotate(-22deg)}36%{clip-path:inset(8% 0 56% 0)}48%{clip-path:inset(0 0 0 0);filter:brightness(1.15)}60%{clip-path:inset(32% 0 30% 0);opacity:0.7}72%{clip-path:inset(0 0 0 0);opacity:1;filter:none}100%{clip-path:inset(0 0 0 0);filter:none}}
+.cc-wobble{animation:ccWaterWobble 0.7s ease-out}
+@keyframes ccWaterWobble{0%{transform:scale(1.02) skewX(-2deg)}18%{transform:scale(0.985) skewX(1.6deg)}38%{transform:scale(1.012) skewX(-1deg)}58%{transform:scale(0.997) skewX(0.6deg)}78%{transform:scale(1.005) skewX(-0.3deg)}100%{transform:scale(1) skewX(0)}}
 .cc-faq{border-radius:12px;transition:background 0.3s,box-shadow 0.3s}
 .cc-faq:hover{background:rgba(${ccAcc},0.05);box-shadow:0 0 24px rgba(${ccAcc},0.14)}
 .cc-pill{transition:transform 0.25s,border-color 0.25s,box-shadow 0.25s}
@@ -3309,6 +3331,10 @@ html{scroll-behavior:smooth}
     }catch(e){setCcErr((e&&e.message)||"Something went wrong.");}
     finally{setCcBusy(false);}
   };
+  // CipherCraft card "liquid" interactions — tilt toward cursor, wobble on press
+  const ccCardMove=(e)=>{const el=e.currentTarget;const r=el.getBoundingClientRect();const px=(e.clientX-r.left)/r.width-0.5;const py=(e.clientY-r.top)/r.height-0.5;el.style.transform=`perspective(800px) rotateY(${(px*9).toFixed(2)}deg) rotateX(${(-py*9).toFixed(2)}deg) translateY(-4px)`;};
+  const ccCardLeave=(e)=>{e.currentTarget.style.transform="";};
+  const ccCardWobble=(e)=>{const el=e.currentTarget;el.classList.remove("cc-wobble");void el.offsetWidth;el.classList.add("cc-wobble");setTimeout(()=>el.classList.remove("cc-wobble"),700);};
   if(infoPage==="cipher-craft"){
     const fmtB=(n)=>{if(n<1024)return n+" B";if(n<1048576)return (n/1024).toFixed(1)+" KB";if(n<1073741824)return (n/1048576).toFixed(1)+" MB";return (n/1073741824).toFixed(2)+" GB";};
     const ccStrength=ccPass?calcPwStrength(ccPass):null;
@@ -3523,7 +3549,9 @@ html{scroll-behavior:smooth}
               style={{position:"relative",overflow:"hidden",width:"100%",marginTop:18,padding:"15px 0",borderRadius:14,border:"none",cursor:(!ccFile||!ccPass||ccBusy)?"not-allowed":"pointer",fontFamily:`${F.heading},sans-serif`,fontSize:15,fontWeight:800,letterSpacing:1,color:"#fff",opacity:(!ccFile||!ccPass)?0.5:1,background:`linear-gradient(135deg,${accHex},${T.accent2||accHex})`,boxShadow:`0 8px 24px rgba(${acc},0.4)`}}>
               {ccBusy&&<div className="cc-prog-fill" style={{position:"absolute",inset:0,width:`${ccProgress}%`,background:"rgba(255,255,255,0.18)",transition:"width 0.2s",zIndex:0}}/>}
               <span style={{position:"relative",zIndex:1,display:"inline-flex",alignItems:"center",justifyContent:"center",gap:10}}>
-                {ccBusy?<><span style={{fontFamily:`${F.mono||"monospace"},monospace`,letterSpacing:3}}>{ccBtnText||"…"}</span><span style={{opacity:0.85,fontVariantNumeric:"tabular-nums"}}>{ccProgress}%</span></>:(ccDecryptMode?"🔓 Decrypt File":"🔐 Encrypt File")}
+                {ccBusy
+                  ?<><span style={{fontFamily:`${F.mono||"monospace"},monospace`,letterSpacing:3}}>{ccBtnText||"…"}</span><span style={{opacity:0.85,fontVariantNumeric:"tabular-nums"}}>{ccProgress}%</span></>
+                  :<><span>{ccDecryptMode?"🔓":"🔐"}</span><span style={{fontFamily:ccIdleScramble&&ccIdleScramble!==(ccDecryptMode?"Decrypt File":"Encrypt File")?`${F.mono||"monospace"},monospace`:"inherit",letterSpacing:ccIdleScramble&&ccIdleScramble!==(ccDecryptMode?"Decrypt File":"Encrypt File")?2:0,transition:"letter-spacing 0.2s"}}>{ccIdleScramble||(ccDecryptMode?"Decrypt File":"Encrypt File")}</span></>}
               </span>
             </button>
 
@@ -3551,7 +3579,7 @@ html{scroll-behavior:smooth}
             <p style={{fontSize:14,color:sub,margin:"0 0 28px"}}>Everything you need. Nothing you don't.</p>
           </div>
           <div className="cc-grid" style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:16}}>
-            {whyFeats.map((f,i)=><div key={i} className="ld-section cc-card" style={{background:cardBg,borderRadius:16,padding:"22px 20px"}}>
+            {whyFeats.map((f,i)=><div key={i} className="ld-section cc-card" onMouseMove={ccCardMove} onMouseLeave={ccCardLeave} onMouseDown={ccCardWobble} style={{borderRadius:16,padding:"22px 20px"}}>
               <div style={{width:46,height:46,borderRadius:12,background:`rgba(${acc},0.12)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,marginBottom:14}}>{f.icon}</div>
               <div style={{fontSize:15,fontWeight:700,color:txt,marginBottom:7}}>{f.t}</div>
               <p style={{fontSize:12.5,color:sub,margin:0,lineHeight:1.7}}>{f.d}</p>
@@ -3563,7 +3591,7 @@ html{scroll-behavior:smooth}
             <div style={{fontSize:10,fontWeight:700,color:accHex,letterSpacing:3,marginBottom:8,textTransform:"uppercase"}}>Head to Head</div>
             <h2 style={{fontSize:"clamp(22px,4vw,34px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:txt,margin:"0 0 28px"}}>How it compares</h2>
           </div>
-          <div className="ld-section cc-card" style={{overflowX:"auto",background:cardBg,borderRadius:16,padding:"6px 6px"}}>
+          <div className="ld-section cc-card" style={{overflowX:"auto",borderRadius:16,padding:"6px 6px"}}>
             <table style={{width:"100%",borderCollapse:"collapse",fontSize:12.5,minWidth:480}}>
               <thead><tr>
                 <th style={{textAlign:"left",padding:"14px 14px",color:sub,fontWeight:600}}>Capability</th>
