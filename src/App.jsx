@@ -1120,7 +1120,7 @@ export default function NotesCraft(){
       entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("sc-feat-vis","ld-vis")});
     },{threshold:0.12,rootMargin:"0px 0px -40px 0px"});
     requestAnimationFrame(()=>{
-      document.querySelectorAll(".sc-feat-card, .sc-feat-head, .ld-section").forEach(el=>obs.observe(el));
+      document.querySelectorAll(".sc-feat-card, .sc-feat-head, .ld-section, .cc-card").forEach(el=>obs.observe(el));
     });
     return()=>obs.disconnect();
   },[infoPage]);
@@ -2536,12 +2536,14 @@ html{scroll-behavior:smooth}
 .cc-gen-tog .cc-gen-box{width:16px;height:16px;border-radius:5px;border:1.5px solid rgba(${ccAcc},0.4);display:flex;align-items:center;justify-content:center;font-size:10px;transition:all 0.2s}
 .cc-gen-tog.cc-on .cc-gen-box{background:${accGenHex};border-color:${accGenHex};color:#fff}
 /* universal card glow + hover glow */
-.cc-card{position:relative;background:linear-gradient(135deg,rgba(255,255,255,0.09),rgba(255,255,255,0.03) 44%,rgba(255,255,255,0.018) 62%,rgba(255,255,255,0.06));backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid rgba(${ccAcc},0.22);box-shadow:0 4px 22px rgba(0,0,0,0.22),0 0 16px rgba(${ccAcc},0.10),inset 0 1px 0 rgba(255,255,255,0.20),inset 0 -1px 0 rgba(255,255,255,0.05);transition:transform 0.32s cubic-bezier(0.22,1,0.36,1),box-shadow 0.32s,border-color 0.32s;transform-style:preserve-3d;will-change:transform}
-.cc-card::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;background:linear-gradient(115deg,rgba(255,255,255,0.16) 0%,rgba(255,255,255,0.05) 26%,transparent 48%,rgba(255,255,255,0.03) 72%,rgba(255,255,255,0.10) 100%)}
+/* Apple-style liquid glass: very translucent, bright specular rim, vivid backdrop */
+.cc-card{position:relative;opacity:0;border-radius:18px;background:linear-gradient(135deg,rgba(255,255,255,0.14),rgba(255,255,255,0.04) 42%,rgba(255,255,255,0.015) 60%,rgba(255,255,255,0.09));backdrop-filter:blur(12px) saturate(195%) brightness(1.15);-webkit-backdrop-filter:blur(12px) saturate(195%) brightness(1.15);border:1px solid rgba(255,255,255,0.22);box-shadow:inset 0 1px 1px rgba(255,255,255,0.5),inset 0 -2px 10px rgba(255,255,255,0.06),inset 0 0 34px rgba(255,255,255,0.05),0 10px 38px rgba(0,0,0,0.3),0 0 18px rgba(${ccAcc},0.12);transition:transform 0.3s cubic-bezier(0.22,1,0.36,1),box-shadow 0.35s,border-color 0.35s;transform-style:preserve-3d;will-change:transform}
+.cc-card::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;background:linear-gradient(125deg,rgba(255,255,255,0.26) 0%,rgba(255,255,255,0.07) 20%,transparent 42%,transparent 60%,rgba(255,255,255,0.05) 80%,rgba(255,255,255,0.16) 100%)}
+.cc-card::after{content:"";position:absolute;top:0;left:0;right:0;height:48%;border-radius:inherit;pointer-events:none;z-index:0;background:linear-gradient(180deg,rgba(255,255,255,0.16),transparent);opacity:0.75}
 .cc-card>*{position:relative;z-index:1}
-.cc-card:hover{border-color:rgba(${ccAcc},0.65);box-shadow:0 14px 40px rgba(0,0,0,0.36),0 0 32px rgba(${ccAcc},0.45),0 0 64px rgba(${ccAcc},0.2),inset 0 1px 0 rgba(255,255,255,0.30),inset 0 -1px 0 rgba(255,255,255,0.06)}
-.cc-card.ld-vis{animation:ccCardGlitch 0.62s steps(1,end)}
-@keyframes ccCardGlitch{0%{clip-path:inset(0 0 0 0);filter:brightness(1.7) hue-rotate(20deg)}12%{clip-path:inset(0 0 66% 0)}24%{clip-path:inset(44% 0 26% 0);filter:brightness(1.3) hue-rotate(-22deg)}36%{clip-path:inset(8% 0 56% 0)}48%{clip-path:inset(0 0 0 0);filter:brightness(1.15)}60%{clip-path:inset(32% 0 30% 0);opacity:0.7}72%{clip-path:inset(0 0 0 0);opacity:1;filter:none}100%{clip-path:inset(0 0 0 0);filter:none}}
+.cc-card:hover{border-color:rgba(255,255,255,0.34);box-shadow:inset 0 1px 1px rgba(255,255,255,0.6),inset 0 0 40px rgba(255,255,255,0.07),0 16px 46px rgba(0,0,0,0.34),0 0 36px rgba(${ccAcc},0.42),0 0 66px rgba(${ccAcc},0.18)}
+.cc-card.ld-vis{animation:ccCardReveal 0.78s steps(1,end) forwards}
+@keyframes ccCardReveal{0%{opacity:0;clip-path:inset(0 0 100% 0);filter:brightness(2.2) hue-rotate(35deg) saturate(1.6)}12%{opacity:1;clip-path:inset(0 0 60% 0);filter:brightness(1.6) hue-rotate(-25deg)}24%{clip-path:inset(46% 0 22% 0)}36%{clip-path:inset(6% 0 64% 0);filter:brightness(1.35) hue-rotate(18deg)}50%{clip-path:inset(0 0 4% 0);filter:brightness(1.15)}62%{clip-path:inset(36% 0 32% 0);opacity:0.5}72%{clip-path:inset(10% 0 0 0);opacity:1}84%{clip-path:inset(0 0 26% 0);filter:brightness(1.4) hue-rotate(-12deg)}100%{opacity:1;clip-path:none;filter:none}}
 .cc-wobble{animation:ccWaterWobble 0.7s ease-out}
 @keyframes ccWaterWobble{0%{transform:scale(1.02) skewX(-2deg)}18%{transform:scale(0.985) skewX(1.6deg)}38%{transform:scale(1.012) skewX(-1deg)}58%{transform:scale(0.997) skewX(0.6deg)}78%{transform:scale(1.005) skewX(-0.3deg)}100%{transform:scale(1) skewX(0)}}
 .cc-faq{border-radius:12px;transition:background 0.3s,box-shadow 0.3s}
@@ -3579,7 +3581,7 @@ html{scroll-behavior:smooth}
             <p style={{fontSize:14,color:sub,margin:"0 0 28px"}}>Everything you need. Nothing you don't.</p>
           </div>
           <div className="cc-grid" style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:16}}>
-            {whyFeats.map((f,i)=><div key={i} className="ld-section cc-card" onMouseMove={ccCardMove} onMouseLeave={ccCardLeave} onMouseDown={ccCardWobble} style={{borderRadius:16,padding:"22px 20px"}}>
+            {whyFeats.map((f,i)=><div key={i} className="cc-card" onMouseMove={ccCardMove} onMouseLeave={ccCardLeave} onMouseDown={ccCardWobble} style={{borderRadius:16,padding:"22px 20px"}}>
               <div style={{width:46,height:46,borderRadius:12,background:`rgba(${acc},0.12)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,marginBottom:14}}>{f.icon}</div>
               <div style={{fontSize:15,fontWeight:700,color:txt,marginBottom:7}}>{f.t}</div>
               <p style={{fontSize:12.5,color:sub,margin:0,lineHeight:1.7}}>{f.d}</p>
@@ -3591,7 +3593,7 @@ html{scroll-behavior:smooth}
             <div style={{fontSize:10,fontWeight:700,color:accHex,letterSpacing:3,marginBottom:8,textTransform:"uppercase"}}>Head to Head</div>
             <h2 style={{fontSize:"clamp(22px,4vw,34px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:txt,margin:"0 0 28px"}}>How it compares</h2>
           </div>
-          <div className="ld-section cc-card" style={{overflowX:"auto",borderRadius:16,padding:"6px 6px"}}>
+          <div className="cc-card" onMouseMove={ccCardMove} onMouseLeave={ccCardLeave} onMouseDown={ccCardWobble} style={{overflowX:"auto",borderRadius:16,padding:"6px 6px"}}>
             <table style={{width:"100%",borderCollapse:"collapse",fontSize:12.5,minWidth:480}}>
               <thead><tr>
                 <th style={{textAlign:"left",padding:"14px 14px",color:sub,fontWeight:600}}>Capability</th>
@@ -3611,7 +3613,7 @@ html{scroll-behavior:smooth}
           </div>
 
           {/* ALGORITHM note */}
-          <div className="ld-section cc-card" style={{marginTop:40,background:`linear-gradient(135deg,rgba(${acc},0.08),rgba(${acc},0.02))`,borderRadius:16,padding:"24px 22px"}}>
+          <div className="cc-card" onMouseMove={ccCardMove} onMouseLeave={ccCardLeave} onMouseDown={ccCardWobble} style={{marginTop:40,background:`linear-gradient(135deg,rgba(${acc},0.08),rgba(${acc},0.02))`,borderRadius:16,padding:"24px 22px"}}>
             <h3 style={{fontSize:16,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:txt,margin:"0 0 10px",display:"flex",alignItems:"center",gap:8}}>🧪 The cryptography, briefly</h3>
             <p style={{fontSize:13,color:sub,lineHeight:1.8,margin:"0 0 8px"}}>Your passphrase is turned into a key with <strong style={{color:txt}}>Argon2id</strong> — the memory-hard function that won the Password Hashing Competition and tops OWASP's recommendations. Standard mode uses 64 MiB / 3 passes; Quantum mode uses 256 MiB / 4. Because each guess must commit that much memory, the cheap parallel GPU/ASIC rigs that make older KDFs (like PBKDF2) crackable simply can't scale.</p>
             <p style={{fontSize:13,color:sub,lineHeight:1.8,margin:0}}>The file itself is sealed with <strong style={{color:txt}}>AES-256-GCM</strong>, a NIST-standard authenticated cipher run via your browser's hardware-accelerated Web Crypto — it both hides your data and detects tampering. Every file gets a fresh random salt and a unique IV per chunk, so identical files never produce identical ciphertext and an IV is never reused. Best-in-class KDF, best-in-class cipher — and it all runs offline.</p>
@@ -3631,7 +3633,7 @@ html{scroll-behavior:smooth}
           </div>
 
           {/* footer cta */}
-          <div className="ld-section cc-card" style={{marginTop:56,textAlign:"center",padding:"36px 20px",borderRadius:20,background:`linear-gradient(135deg,rgba(${acc},0.1),rgba(${acc},0.03))`}}>
+          <div className="cc-card" style={{marginTop:56,textAlign:"center",padding:"36px 20px",borderRadius:20,background:`linear-gradient(135deg,rgba(${acc},0.1),rgba(${acc},0.03))`}}>
             <div style={{fontSize:30,marginBottom:10}}>🛡️</div>
             <h3 style={{fontSize:20,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:txt,margin:"0 0 8px"}}>Your files. Your keys. Your device.</h3>
             <p style={{fontSize:13,color:sub,maxWidth:440,margin:"0 auto 18px",lineHeight:1.7}}>Scroll back up, drop a file, and seal it in seconds — part of the NotesCraft privacy suite alongside ShieldCraft and TechCraft.</p>
