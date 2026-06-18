@@ -2426,7 +2426,7 @@ html{scroll-behavior:smooth}
 .lq-chip-btn:active{transform:scale(0.96)}
 /* ── CipherCraft ── */
 .cc-glitch{position:relative;display:inline-block}
-.cc-glitch::before,.cc-glitch::after{content:attr(data-text);position:absolute;left:0;top:0;width:100%;height:100%;background:inherit;overflow:hidden;pointer-events:none;clip-path:inset(0 0 0 0)}
+.cc-glitch::before,.cc-glitch::after{content:attr(data-text);position:absolute;left:0;top:0;width:100%;height:100%;background:transparent;overflow:hidden;pointer-events:none;clip-path:inset(0 0 0 0)}
 .cc-glitch::before{color:${accGlitch1};transform:translate(0);animation:ccGlitch1 3.2s infinite steps(1);opacity:0.85;mix-blend-mode:screen}
 .cc-glitch::after{color:${accGlitch2};animation:ccGlitch2 2.6s infinite steps(1);opacity:0.8;mix-blend-mode:screen}
 @keyframes ccGlitch1{0%,92%,100%{clip-path:inset(0 0 100% 0);transform:translate(0)}93%{clip-path:inset(8% 0 78% 0);transform:translate(-2px,0)}95%{clip-path:inset(40% 0 40% 0);transform:translate(2px,0)}97%{clip-path:inset(70% 0 12% 0);transform:translate(-1px,0)}}
@@ -2495,6 +2495,15 @@ html{scroll-behavior:smooth}
 .cc-gen-tog{display:flex;align-items:center;gap:7px;cursor:pointer;font-size:11px;color:${T.dim};user-select:none}
 .cc-gen-tog .cc-gen-box{width:16px;height:16px;border-radius:5px;border:1.5px solid rgba(${ccAcc},0.4);display:flex;align-items:center;justify-content:center;font-size:10px;transition:all 0.2s}
 .cc-gen-tog.cc-on .cc-gen-box{background:${accGenHex};border-color:${accGenHex};color:#fff}
+/* universal card glow + hover glow */
+.cc-card{border:1px solid rgba(${ccAcc},0.22);box-shadow:0 4px 22px rgba(0,0,0,0.22),0 0 16px rgba(${ccAcc},0.10),inset 0 1px 0 rgba(255,255,255,0.04);transition:transform 0.32s cubic-bezier(0.22,1,0.36,1),box-shadow 0.32s,border-color 0.32s}
+.cc-card:hover{transform:translateY(-5px);border-color:rgba(${ccAcc},0.65);box-shadow:0 12px 36px rgba(0,0,0,0.34),0 0 30px rgba(${ccAcc},0.42),0 0 60px rgba(${ccAcc},0.18),inset 0 1px 0 rgba(255,255,255,0.08)}
+.cc-faq{border-radius:12px;transition:background 0.3s,box-shadow 0.3s}
+.cc-faq:hover{background:rgba(${ccAcc},0.05);box-shadow:0 0 24px rgba(${ccAcc},0.14)}
+.cc-pill{transition:transform 0.25s,border-color 0.25s,box-shadow 0.25s}
+.cc-pill:hover{transform:translateY(-2px);border-color:rgba(${ccAcc},0.55)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,0.3),0 4px 14px rgba(0,0,0,0.3),0 0 18px rgba(${ccAcc},0.35)!important}
+.cc-tool-glow:hover{animation:none;box-shadow:0 18px 72px rgba(0,0,0,0.45),0 0 54px rgba(${ccAcc},0.5),0 0 100px rgba(${ccAcc},0.22),inset 0 1px 0 rgba(255,255,255,0.09)}
+.cc-dz:hover{border-color:rgba(${ccAcc},0.75)!important;box-shadow:0 0 26px rgba(${ccAcc},0.25),inset 0 0 30px rgba(${ccAcc},0.05)}
 @media(max-width:680px){.cc-grid{grid-template-columns:1fr!important}}
 @media(max-width:900px){.blog-hero-wrap{grid-template-columns:1fr!important;height:auto!important}.blog-hero-col{height:50vh}.blog-grid-wrap{grid-template-columns:repeat(2,1fr)!important}.blog-ov-left{display:none}.blog-ov-right{flex:0 0 100%}.blog-ov-hero{padding:28px 20px}}
 @media(max-width:560px){.blog-grid-wrap{grid-template-columns:1fr!important}}`;
@@ -3286,7 +3295,7 @@ html{scroll-behavior:smooth}
     const sub="#8892a4";
     const txt=T.dark?T.text:"#e2e8f0";
     const whyFeats=[
-      {icon:"🔒",t:"AES-256-GCM",d:"Authenticated encryption — the same NIST standard that protects banking, TLS and government secrets. Tamper a single byte and decryption fails loudly."},
+      {icon:"🔒",t:"AES-256-GCM",d:"The gold-standard authenticated cipher, hardware-accelerated on modern chips. It locks and integrity-checks your data in a single pass — change even one byte and decryption refuses to run rather than return corrupted output."},
       {icon:"🧠",t:"PBKDF2-SHA-512",d:"Your passphrase is stretched through 600K–1.2M hash rounds, making each brute-force guess astronomically expensive. Weak guesses simply can't keep up."},
       {icon:"⚛️",t:"Quantum-Ready Mode",d:"AES-256 keeps ~128-bit strength even against Grover's algorithm. Quantum mode doubles the key-derivation work factor on top, for a post-quantum safety margin."},
       {icon:"📡",t:"Nothing Uploaded",d:"There is no server. Encryption runs entirely in your browser tab via WebAssembly-class Web Crypto. Pull your network cable — it still works."},
@@ -3338,19 +3347,20 @@ html{scroll-behavior:smooth}
                 <line className="cc-scan-line" x1="12" y1="31" x2="36" y2="31" stroke={accHex} strokeWidth="1.4" opacity="0.8"/>
               </svg>
             </div>
-            <div style={{display:"flex",flexDirection:"column",gap:1}}>
-              <span className="cc-glitch" data-text="CIPHERCRAFT" style={{fontSize:19,fontWeight:800,letterSpacing:3,fontFamily:`${F.heading},sans-serif`,color:txt,lineHeight:1.1}}>CIPHERCRAFT</span>
-              <span style={{fontSize:9,fontWeight:600,letterSpacing:1.4,color:accHex,fontFamily:`${F.body},sans-serif`}}>Seal Anything · Trust No Server</span>
+            <div style={{display:"flex",flexDirection:"column",gap:2}}>
+              <span className="cc-glitch" data-text="CIPHERCRAFT" style={{fontSize:19,fontWeight:800,letterSpacing:3,fontFamily:`${F.heading},sans-serif`,color:txt,lineHeight:1.2,filter:`drop-shadow(0 0 8px rgba(${acc},0.35))`}}>CIPHERCRAFT</span>
+              <span style={{fontSize:11,fontWeight:600,letterSpacing:1.2,color:accHex,fontFamily:`${F.heading},sans-serif`,lineHeight:1.1,textShadow:`0 0 10px rgba(${acc},0.5)`}}>Seal Anything · Trust No Server</span>
+              <span style={{fontSize:9.5,fontWeight:500,letterSpacing:1.5,color:"rgba(226,232,240,0.85)",fontFamily:`${F.body},sans-serif`,lineHeight:1.1,marginTop:1}}>Encrypt Everything, Reveal Nothing</span>
             </div>
           </div>
           <button onClick={()=>{ccClearFile();setInfoPage(null);}} style={{background:`rgba(${acc},0.08)`,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1.5px solid rgba(${acc},0.4)`,borderRadius:8,padding:"8px 20px",color:txt,fontSize:13,fontWeight:600,fontFamily:"inherit",cursor:"pointer",letterSpacing:1}}>← Back</button>
         </nav>
 
-        <div style={{position:"relative",zIndex:1,maxWidth:920,margin:"0 auto",padding:"110px 24px 70px"}}>
+        <div style={{position:"relative",zIndex:1,maxWidth:920,margin:"0 auto",padding:"84px 24px 70px"}}>
           {/* HERO */}
-          <div className="ld-section" style={{textAlign:"center",marginBottom:36}}>
-            <div className="cc-hero-logo" style={{display:"flex",justifyContent:"center",marginBottom:18}}>
-              <svg viewBox="0 0 120 120" width={108} height={108} style={{display:"block"}}>
+          <div className="ld-section" style={{textAlign:"center",marginBottom:22}}>
+            <div className="cc-hero-logo" style={{display:"flex",justifyContent:"center",marginBottom:12}}>
+              <svg viewBox="0 0 120 120" width={78} height={78} style={{display:"block"}}>
                 <defs>
                   <linearGradient id="ccHeroG" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor={accHex}/><stop offset="100%" stopColor={T.accent2||accHex}/></linearGradient>
                   <filter id="ccHeroGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
@@ -3368,13 +3378,13 @@ html{scroll-behavior:smooth}
                 {[0,1,2,3,4,5].map(i=><text key={i} x={26+i*13} y={26} fontSize="7" fill={accHex} opacity="0.7" className={`cc-bit cc-bit-${i%3}`} style={{fontFamily:"monospace"}}>{i%2?"01":"10"}</text>)}
               </svg>
             </div>
-            <div style={{fontSize:11,fontWeight:700,color:accHex,letterSpacing:3,marginBottom:14,textTransform:"uppercase"}}>— Free Forever · Zero Upload · Quantum-Ready —</div>
-            <h1 style={{fontSize:"clamp(28px,5vw,52px)",fontWeight:900,fontFamily:`${F.heading},sans-serif`,color:txt,lineHeight:1.08,margin:"0 0 18px",letterSpacing:"-0.5px"}}>Encrypt any file.<br/><span style={{background:`linear-gradient(135deg,${accHex},${T.accent2||accHex})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Right in your browser.</span></h1>
-            <p style={{fontSize:16,color:sub,maxWidth:560,margin:"0 auto",lineHeight:1.7}}>Drop a file, set a passphrase, done. Everything happens <strong style={{color:txt}}>inside your browser</strong>, so your files and password <strong style={{color:txt}}>never touch a server</strong>. No account, no catch, free for life.</p>
+            <div style={{fontSize:10.5,fontWeight:700,color:accHex,letterSpacing:3,marginBottom:10,textTransform:"uppercase"}}>— Free Forever · Zero Upload · Quantum-Ready —</div>
+            <h1 style={{fontSize:"clamp(24px,4.2vw,42px)",fontWeight:900,fontFamily:`${F.heading},sans-serif`,lineHeight:1.1,margin:"0 0 12px",letterSpacing:"-0.5px"}}><span style={{color:txt}}>Encrypt any file. </span><span style={{color:accHex,textShadow:`0 0 24px rgba(${acc},0.5)`}}>Right in your browser.</span></h1>
+            <p style={{fontSize:14.5,color:sub,maxWidth:520,margin:"0 auto",lineHeight:1.6}}>Drop a file, set a passphrase, done. Everything happens <strong style={{color:txt}}>inside your browser</strong>, so your files and password <strong style={{color:txt}}>never touch a server</strong>. No account, no catch, free for life.</p>
           </div>
 
           {/* TOOL CARD */}
-          <div className="cc-tool cc-tool-glow" style={{background:cardBg,backdropFilter:"blur(32px)",WebkitBackdropFilter:"blur(32px)",border:`2px solid rgba(${acc},${ccDrag?0.95:0.5})`,borderRadius:24,padding:"26px 24px",position:"relative",overflow:"hidden",transition:"border-color 0.3s"}}>
+          <div className="cc-tool cc-tool-glow" style={{maxWidth:580,margin:"0 auto",background:cardBg,backdropFilter:"blur(32px)",WebkitBackdropFilter:"blur(32px)",border:`2px solid rgba(${acc},${ccDrag?0.95:0.5})`,borderRadius:24,padding:"26px 24px",position:"relative",overflow:"hidden",transition:"border-color 0.3s"}}>
             {/* clickable mode toggle */}
             <div style={{display:"flex",justifyContent:"center",marginBottom:18}}>
               <div className="cc-seg" role="tablist">
@@ -3530,7 +3540,7 @@ html{scroll-behavior:smooth}
 
           {/* trust pills */}
           <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:10,margin:"28px 0 8px"}}>
-            {["✓ Nothing uploaded","✓ No account","✓ Works offline","✓ AES-256-GCM","✓ Quantum-ready","✓ Open math"].map((p,i)=><span key={i} className="lq-chip" style={{color:sub,fontSize:11}}>{p}</span>)}
+            {["✓ Nothing uploaded","✓ No account","✓ Works offline","✓ AES-256-GCM","✓ Quantum-ready","✓ Open math"].map((p,i)=><span key={i} className="lq-chip cc-pill" style={{color:sub,fontSize:11}}>{p}</span>)}
           </div>
 
           {/* WHY section */}
@@ -3540,7 +3550,7 @@ html{scroll-behavior:smooth}
             <p style={{fontSize:14,color:sub,margin:"0 0 28px"}}>Everything you need. Nothing you don't.</p>
           </div>
           <div className="cc-grid" style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:16}}>
-            {whyFeats.map((f,i)=><div key={i} className="ld-section" style={{background:cardBg,border:`1px solid rgba(${acc},0.15)`,borderRadius:16,padding:"22px 20px",boxShadow:`inset 0 1px 0 rgba(255,255,255,0.04)`}}>
+            {whyFeats.map((f,i)=><div key={i} className="ld-section cc-card" style={{background:cardBg,borderRadius:16,padding:"22px 20px"}}>
               <div style={{width:46,height:46,borderRadius:12,background:`rgba(${acc},0.12)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,marginBottom:14}}>{f.icon}</div>
               <div style={{fontSize:15,fontWeight:700,color:txt,marginBottom:7}}>{f.t}</div>
               <p style={{fontSize:12.5,color:sub,margin:0,lineHeight:1.7}}>{f.d}</p>
@@ -3552,7 +3562,7 @@ html{scroll-behavior:smooth}
             <div style={{fontSize:10,fontWeight:700,color:accHex,letterSpacing:3,marginBottom:8,textTransform:"uppercase"}}>Head to Head</div>
             <h2 style={{fontSize:"clamp(22px,4vw,34px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:txt,margin:"0 0 28px"}}>How it compares</h2>
           </div>
-          <div className="ld-section" style={{overflowX:"auto",background:cardBg,border:`1px solid rgba(${acc},0.15)`,borderRadius:16,padding:"6px 6px"}}>
+          <div className="ld-section cc-card" style={{overflowX:"auto",background:cardBg,borderRadius:16,padding:"6px 6px"}}>
             <table style={{width:"100%",borderCollapse:"collapse",fontSize:12.5,minWidth:480}}>
               <thead><tr>
                 <th style={{textAlign:"left",padding:"14px 14px",color:sub,fontWeight:600}}>Capability</th>
@@ -3572,7 +3582,7 @@ html{scroll-behavior:smooth}
           </div>
 
           {/* ALGORITHM note */}
-          <div className="ld-section" style={{marginTop:40,background:`linear-gradient(135deg,rgba(${acc},0.08),rgba(${acc},0.02))`,border:`1px solid rgba(${acc},0.2)`,borderRadius:16,padding:"24px 22px"}}>
+          <div className="ld-section cc-card" style={{marginTop:40,background:`linear-gradient(135deg,rgba(${acc},0.08),rgba(${acc},0.02))`,borderRadius:16,padding:"24px 22px"}}>
             <h3 style={{fontSize:16,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:txt,margin:"0 0 10px",display:"flex",alignItems:"center",gap:8}}>🧪 The cryptography, briefly</h3>
             <p style={{fontSize:13,color:sub,lineHeight:1.8,margin:"0 0 8px"}}>CipherCraft deliberately builds on the algorithms your browser already ships and your CPU already accelerates — no exotic third-party crypto to audit or trust. Encryption is <strong style={{color:txt}}>AES-256-GCM</strong>, an authenticated cipher: it both hides your data and detects tampering. Keys come from your passphrase via <strong style={{color:txt}}>PBKDF2-HMAC-SHA-512</strong> at 600K–1.2M iterations, so even a short passphrase is expensive to attack.</p>
             <p style={{fontSize:13,color:sub,lineHeight:1.8,margin:0}}>Every file gets a fresh random salt and a unique IV per chunk, so identical files never produce identical ciphertext and an IV is never reused. The result: standards-based, hardware-fast, fully-offline encryption with zero dependencies — auditable by anyone.</p>
@@ -3585,14 +3595,14 @@ html{scroll-behavior:smooth}
             <p style={{fontSize:14,color:sub,margin:"0 0 28px"}}>Before you start.</p>
           </div>
           <div style={{display:"flex",flexDirection:"column",gap:0}}>
-            {faqs.map((q,i)=><div key={i} className="ld-section" style={{padding:"20px 4px",borderTop:i>0?`1px solid rgba(${acc},0.12)`:"none"}}>
+            {faqs.map((q,i)=><div key={i} className="ld-section cc-faq" style={{padding:"18px 14px",borderTop:i>0?`1px solid rgba(${acc},0.12)`:"none"}}>
               <div style={{fontSize:15,fontWeight:700,color:txt,marginBottom:8}}>{q[0]}</div>
               <p style={{fontSize:13.5,color:sub,lineHeight:1.8,margin:0}}>{q[1]}</p>
             </div>)}
           </div>
 
           {/* footer cta */}
-          <div className="ld-section" style={{marginTop:56,textAlign:"center",padding:"36px 20px",borderRadius:20,background:`linear-gradient(135deg,rgba(${acc},0.1),rgba(${acc},0.03))`,border:`1px solid rgba(${acc},0.22)`}}>
+          <div className="ld-section cc-card" style={{marginTop:56,textAlign:"center",padding:"36px 20px",borderRadius:20,background:`linear-gradient(135deg,rgba(${acc},0.1),rgba(${acc},0.03))`}}>
             <div style={{fontSize:30,marginBottom:10}}>🛡️</div>
             <h3 style={{fontSize:20,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:txt,margin:"0 0 8px"}}>Your files. Your keys. Your device.</h3>
             <p style={{fontSize:13,color:sub,maxWidth:440,margin:"0 auto 18px",lineHeight:1.7}}>Scroll back up, drop a file, and seal it in seconds — part of the NotesCraft privacy suite alongside ShieldCraft and TechCraft.</p>
