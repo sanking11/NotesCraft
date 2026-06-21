@@ -2568,13 +2568,17 @@ html{scroll-behavior:smooth}
 .cc-gen-tog.cc-on .cc-gen-box{background:${accGenHex};border-color:${accGenHex};color:#fff}
 /* universal card glow + hover glow */
 /* Apple-style liquid glass: frosted, translucent, with two slowly drifting gloss layers (living water) */
-.cc-card{position:relative;border-radius:18px;background:linear-gradient(135deg,rgba(8,10,22,0.22),rgba(8,10,22,0.10) 50%,rgba(8,10,22,0.18));backdrop-filter:blur(4px) saturate(240%) brightness(1.05);-webkit-backdrop-filter:blur(4px) saturate(240%) brightness(1.05);border:1px solid rgba(255,255,255,0.32);box-shadow:inset 0 1px 2px rgba(255,255,255,0.7),inset 0 -1px 12px rgba(255,255,255,0.06),inset 0 0 16px rgba(255,255,255,0.02),0 14px 44px rgba(0,0,0,0.22),0 0 18px rgba(${ccAcc},0.16);transition:transform 0.3s cubic-bezier(0.22,1,0.36,1),box-shadow 0.35s,border-color 0.35s}
+.cc-card{position:relative;border-radius:18px;background:linear-gradient(135deg,rgba(8,10,22,0.22),rgba(8,10,22,0.10) 50%,rgba(8,10,22,0.18));backdrop-filter:blur(4px) saturate(240%) brightness(1.05);-webkit-backdrop-filter:blur(4px) saturate(240%) brightness(1.05);border:1px solid rgba(255,255,255,0.32);box-shadow:inset 0 1px 2px rgba(255,255,255,0.7),inset 0 -1px 12px rgba(255,255,255,0.06),inset 0 0 16px rgba(255,255,255,0.02),0 14px 44px rgba(0,0,0,0.22),0 0 18px rgba(${ccAcc},0.16);transition:box-shadow 0.35s,border-color 0.35s;animation:ccIdleWave 7s ease-in-out infinite}
+.cc-card:nth-child(even){animation:ccIdleWave2 8.5s ease-in-out infinite}
+@keyframes ccIdleWave{0%,100%{transform:skew(0deg,0deg) scale(1)}25%{transform:skew(0.7deg,0.3deg) scale(1.006)}50%{transform:skew(0deg,0deg) scale(1)}75%{transform:skew(-0.6deg,-0.25deg) scale(0.996)}}
+@keyframes ccIdleWave2{0%,100%{transform:skew(0deg,0deg) scale(1)}25%{transform:skew(-0.65deg,0.25deg) scale(0.996)}50%{transform:skew(0deg,0deg) scale(1)}75%{transform:skew(0.6deg,-0.3deg) scale(1.006)}}
+@keyframes ccHoverWave{0%,100%{transform:skew(0deg,0deg) scale(1.012) rotate(0deg)}15%{transform:skew(2.4deg,1deg) scale(1.03) rotate(0.6deg)}32%{transform:skew(-2.1deg,-0.9deg) scale(0.994) rotate(-0.7deg)}50%{transform:skew(1.7deg,-0.7deg) scale(1.025) rotate(0.5deg)}68%{transform:skew(-1.4deg,0.6deg) scale(1.0) rotate(-0.4deg)}85%{transform:skew(0.9deg,-0.3deg) scale(1.016) rotate(0.2deg)}}
 .cc-card::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;background:radial-gradient(120% 90% at 25% 14%,rgba(255,255,255,0.16),rgba(255,255,255,0.02) 44%,transparent 66%);background-size:200% 200%;animation:ccGlassDrift 11s ease-in-out infinite alternate}
 @keyframes ccGlassDrift{0%{background-position:8% 6%}100%{background-position:80% 66%}}
 .cc-card::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;background:linear-gradient(115deg,transparent 26%,rgba(255,255,255,0.26) 45%,rgba(255,255,255,0.06) 54%,transparent 66%);background-size:260% 260%;animation:ccGlassSheen 8.5s ease-in-out infinite alternate}
 @keyframes ccGlassSheen{0%{background-position:0% 100%}100%{background-position:100% 0%}}
 .cc-card>*{position:relative;z-index:1;text-shadow:0 0 1px rgba(0,0,0,0.95),0 1px 3px rgba(0,0,0,0.95),0 0 10px rgba(0,0,0,0.85)}
-.cc-card:hover{border-color:rgba(255,255,255,0.5);box-shadow:inset 0 1px 2px rgba(255,255,255,0.9),inset 0 0 36px rgba(255,255,255,0.08),0 18px 50px rgba(0,0,0,0.28),0 0 40px rgba(${ccAcc},0.48),0 0 68px rgba(${ccAcc},0.22)}
+.cc-card:hover{border-color:rgba(255,255,255,0.5);box-shadow:inset 0 1px 2px rgba(255,255,255,0.9),inset 0 0 36px rgba(255,255,255,0.08),0 18px 50px rgba(0,0,0,0.28),0 0 40px rgba(${ccAcc},0.48),0 0 68px rgba(${ccAcc},0.22);animation:ccHoverWave 1.5s ease-in-out infinite}
 .cc-wobble{animation:ccWaterWobble 0.7s ease-out}
 @keyframes ccWaterWobble{0%{transform:scale(1.02) skewX(-2deg)}18%{transform:scale(0.985) skewX(1.6deg)}38%{transform:scale(1.012) skewX(-1deg)}58%{transform:scale(0.997) skewX(0.6deg)}78%{transform:scale(1.005) skewX(-0.3deg)}100%{transform:scale(1) skewX(0)}}
 .cc-faq{border-radius:12px;transition:background 0.3s,box-shadow 0.3s}
@@ -3620,7 +3624,7 @@ html{scroll-behavior:smooth}
             <p style={{fontSize:14,color:sub,margin:"0 0 28px"}}>Everything you need. Nothing you don't.</p>
           </div>
           <div className="cc-grid" style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:16}}>
-            {whyFeats.map((f,i)=><div key={i} className="cc-card" onMouseMove={ccCardMove} onMouseLeave={ccCardLeave} onMouseDown={ccCardWobble} style={{borderRadius:16,padding:"22px 20px"}}>
+            {whyFeats.map((f,i)=><div key={i} className="cc-card" style={{borderRadius:16,padding:"22px 20px"}}>
               <div style={{width:46,height:46,borderRadius:12,background:`rgba(${acc},0.12)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,marginBottom:14}}>{f.icon}</div>
               <ScrambleText as="div" text={f.t} frames={18} speed={34} style={{fontSize:15,fontWeight:700,color:txt,marginBottom:7}}/>
               <p style={{fontSize:12.5,color:sub,margin:0,lineHeight:1.7}}>{f.d}</p>
@@ -3632,7 +3636,7 @@ html{scroll-behavior:smooth}
             <div style={{fontSize:10,fontWeight:700,color:accHex,letterSpacing:3,marginBottom:8,textTransform:"uppercase"}}>Head to Head</div>
             <h2 style={{fontSize:"clamp(22px,4vw,34px)",fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:txt,margin:"0 0 28px"}}>How it compares</h2>
           </div>
-          <div className="cc-card" onMouseMove={ccCardMove} onMouseLeave={ccCardLeave} onMouseDown={ccCardWobble} style={{overflowX:"auto",borderRadius:16,padding:"6px 6px"}}>
+          <div className="cc-card" style={{overflowX:"auto",borderRadius:16,padding:"6px 6px"}}>
             <table style={{width:"100%",borderCollapse:"collapse",fontSize:12.5,minWidth:480}}>
               <thead><tr>
                 <th style={{textAlign:"left",padding:"14px 14px",color:sub,fontWeight:600}}>Capability</th>
@@ -3652,7 +3656,7 @@ html{scroll-behavior:smooth}
           </div>
 
           {/* ALGORITHM note */}
-          <div className="cc-card" onMouseMove={ccCardMove} onMouseLeave={ccCardLeave} onMouseDown={ccCardWobble} style={{marginTop:40,background:`linear-gradient(135deg,rgba(${acc},0.08),rgba(${acc},0.02))`,borderRadius:16,padding:"24px 22px"}}>
+          <div className="cc-card" style={{marginTop:40,background:`linear-gradient(135deg,rgba(${acc},0.08),rgba(${acc},0.02))`,borderRadius:16,padding:"24px 22px"}}>
             <h3 style={{fontSize:16,fontWeight:800,fontFamily:`${F.heading},sans-serif`,color:txt,margin:"0 0 10px",display:"flex",alignItems:"center",gap:8}}>🧪 The cryptography, briefly</h3>
             <p style={{fontSize:13,color:sub,lineHeight:1.8,margin:"0 0 8px"}}>Your passphrase is turned into a key with <strong style={{color:txt}}>Argon2id</strong> — the memory-hard function that won the Password Hashing Competition and tops OWASP's recommendations. Standard mode uses 64 MiB / 3 passes; Quantum mode uses 256 MiB / 4. Because each guess must commit that much memory, the cheap parallel GPU/ASIC rigs that make older KDFs (like PBKDF2) crackable simply can't scale.</p>
             <p style={{fontSize:13,color:sub,lineHeight:1.8,margin:0}}>The file itself is sealed with <strong style={{color:txt}}>XChaCha20-Poly1305</strong> using libsodium's audited <strong style={{color:txt}}>secretstream</strong> construction — the modern standard for encrypting files in chunks. Its 192-bit nonce removes nonce-reuse risk, and the stream is authenticated end-to-end, so tampering, truncation or reordering all fail loudly. Every file gets a fresh random salt. Best-in-class KDF, best-in-class cipher — and it all runs offline.</p>
@@ -3665,7 +3669,7 @@ html{scroll-behavior:smooth}
             <p style={{fontSize:14,color:sub,margin:"0 0 28px"}}>Before you start.</p>
           </div>
           <div style={{display:"flex",flexDirection:"column",gap:14}}>
-            {faqs.map((q,i)=><div key={i} className="cc-card" onMouseMove={ccCardMove} onMouseLeave={ccCardLeave} onMouseDown={ccCardWobble} style={{borderRadius:16,padding:"20px 22px"}}>
+            {faqs.map((q,i)=><div key={i} className="cc-card" style={{borderRadius:16,padding:"20px 22px"}}>
               <ScrambleText as="div" text={q[0]} frames={18} speed={34} style={{fontSize:15,fontWeight:700,color:txt,marginBottom:8}}/>
               <p style={{fontSize:13.5,color:sub,lineHeight:1.8,margin:0}}>{q[1]}</p>
             </div>)}
