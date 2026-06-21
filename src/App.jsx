@@ -2568,12 +2568,12 @@ html{scroll-behavior:smooth}
 .cc-gen-tog.cc-on .cc-gen-box{background:${accGenHex};border-color:${accGenHex};color:#fff}
 /* universal card glow + hover glow */
 /* Apple-style liquid glass: frosted, translucent, with two slowly drifting gloss layers (living water) */
-.cc-card{position:relative;border-radius:18px;background:linear-gradient(135deg,rgba(255,255,255,0.035),rgba(255,255,255,0.004) 50%,rgba(255,255,255,0.02));backdrop-filter:blur(3px) saturate(250%) brightness(1.32);-webkit-backdrop-filter:blur(3px) saturate(250%) brightness(1.32);border:1px solid rgba(255,255,255,0.34);box-shadow:inset 0 1px 2px rgba(255,255,255,0.75),inset 0 -1px 12px rgba(255,255,255,0.07),inset 0 0 16px rgba(255,255,255,0.02),0 14px 44px rgba(0,0,0,0.2),0 0 18px rgba(${ccAcc},0.16);transition:transform 0.3s cubic-bezier(0.22,1,0.36,1),box-shadow 0.35s,border-color 0.35s}
+.cc-card{position:relative;border-radius:18px;background:linear-gradient(135deg,rgba(8,10,22,0.22),rgba(8,10,22,0.10) 50%,rgba(8,10,22,0.18));backdrop-filter:blur(4px) saturate(240%) brightness(1.05);-webkit-backdrop-filter:blur(4px) saturate(240%) brightness(1.05);border:1px solid rgba(255,255,255,0.32);box-shadow:inset 0 1px 2px rgba(255,255,255,0.7),inset 0 -1px 12px rgba(255,255,255,0.06),inset 0 0 16px rgba(255,255,255,0.02),0 14px 44px rgba(0,0,0,0.22),0 0 18px rgba(${ccAcc},0.16);transition:transform 0.3s cubic-bezier(0.22,1,0.36,1),box-shadow 0.35s,border-color 0.35s}
 .cc-card::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;background:radial-gradient(120% 90% at 25% 14%,rgba(255,255,255,0.16),rgba(255,255,255,0.02) 44%,transparent 66%);background-size:200% 200%;animation:ccGlassDrift 11s ease-in-out infinite alternate}
 @keyframes ccGlassDrift{0%{background-position:8% 6%}100%{background-position:80% 66%}}
 .cc-card::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;background:linear-gradient(115deg,transparent 26%,rgba(255,255,255,0.26) 45%,rgba(255,255,255,0.06) 54%,transparent 66%);background-size:260% 260%;animation:ccGlassSheen 8.5s ease-in-out infinite alternate}
 @keyframes ccGlassSheen{0%{background-position:0% 100%}100%{background-position:100% 0%}}
-.cc-card>*{position:relative;z-index:1;text-shadow:0 1px 2px rgba(0,0,0,0.9),0 2px 18px rgba(0,0,0,0.7)}
+.cc-card>*{position:relative;z-index:1;text-shadow:0 0 1px rgba(0,0,0,0.95),0 1px 3px rgba(0,0,0,0.95),0 0 10px rgba(0,0,0,0.85)}
 .cc-card:hover{border-color:rgba(255,255,255,0.5);box-shadow:inset 0 1px 2px rgba(255,255,255,0.9),inset 0 0 36px rgba(255,255,255,0.08),0 18px 50px rgba(0,0,0,0.28),0 0 40px rgba(${ccAcc},0.48),0 0 68px rgba(${ccAcc},0.22)}
 .cc-wobble{animation:ccWaterWobble 0.7s ease-out}
 @keyframes ccWaterWobble{0%{transform:scale(1.02) skewX(-2deg)}18%{transform:scale(0.985) skewX(1.6deg)}38%{transform:scale(1.012) skewX(-1deg)}58%{transform:scale(0.997) skewX(0.6deg)}78%{transform:scale(1.005) skewX(-0.3deg)}100%{transform:scale(1) skewX(0)}}
@@ -3375,7 +3375,7 @@ html{scroll-behavior:smooth}
     const acc=ccQuantum?"16,185,129":T.accentRgb;
     const accHex=ccQuantum?"#10b981":T.accent;
     const cardBg=T.dark?"rgba(255,255,255,0.04)":"rgba(255,255,255,0.05)";
-    const sub="#8892a4";
+    const sub="#c2cad6";
     const txt=T.dark?T.text:"#e2e8f0";
     // colourful "water" behind the glass — vivid drifting orbs (green-shifted in quantum mode)
     const orbCols=ccQuantum?["16,185,129","5,150,105","20,184,166","52,211,153"]:[T.accentRgb,"139,92,246","236,72,153","6,182,212"];
